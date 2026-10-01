@@ -50,7 +50,10 @@ try {
   await page.getByRole('button', { name: 'افزودن حلواارده سنتی به سبد خرید' }).first().click();
   await page.getByRole('button', { name: 'افزایش تعداد حلواارده سنتی' }).first().click();
   await page.reload({ waitUntil: 'networkidle' });
-  assert.equal(await page.locator('#product-traditional-halva-500 output').textContent(), '۲');
+  assert.equal(
+    await page.locator('[data-product-slug="traditional-halva-500"] output').textContent(),
+    '۲',
+  );
   await page.getByRole('button', { name: 'سبد خرید، ۲ محصول' }).click();
   await page.getByRole('dialog').waitFor();
   assert.ok((await page.getByRole('dialog').textContent()).includes('۴۹۰٬۰۰۰ تومان'));

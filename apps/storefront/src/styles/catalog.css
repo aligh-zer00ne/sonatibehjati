@@ -156,8 +156,7 @@
   font-size: 14px;
 }
 
-/* Reference crops contain a decorative heart in this corner; the live control owns it. */
-.product-image > img,
-.category-card img {
-  clip-path: polygon(0 22%, 20% 22%, 20% 0, 100% 0, 100% 100%, 0 100%);
+.wishlist {
+  background: #f4ecdf;
+  border-radius: 50%;
 }

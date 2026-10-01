@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@fontsource-variable/vazirmatn';
 import './globals.css';
 import { BRAND_NAME } from '@behjati/shared';
+import ClientRuntime from '@/components/layout/ClientRuntime';
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   title: { default: BRAND_NAME, template: `%s | ${BRAND_NAME}` },
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           رفتن به محتوای اصلی
         </a>
+        <ClientRuntime />
         {children}
       </body>
     </html>

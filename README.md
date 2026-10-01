@@ -52,7 +52,7 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Seed فقط با `NODE_ENV=development` اجرا می‌شود. شامل دسته‌ها، محصولات، کاربر و سفارش نمونه و کد تخفیف `DEV10` است؛ مدیر تنها با متغیرهای محیطی بالا ساخته می‌شود. هیچ مدیر پیش‌فرض production وجود ندارد. Migration MySQL در ریپو موجود است؛ ساخت SQL آن بدون اتصال دیتابیس انجام شده، ولی اعمال migration و اجرای seed به MySQL فعال نیاز دارند.
+Seed فقط با `NODE_ENV=development` اجرا می‌شود. شامل دسته‌ها، محصولات، کاربر و سفارش نمونه و کد تخفیف `DEV10` است؛ مدیر تنها با متغیرهای محیطی بالا ساخته می‌شود. هیچ مدیر پیش‌فرض production وجود ندارد. Migration MySQL در ریپو موجود است. Migration و Seed روی MySQL 8.4 محلیِ جدا بررسی شده‌اند و اجرای دوبارهٔ Seed دادهٔ تکراری ایجاد نمی‌کند. برای اجرای آن‌ها MySQL فعال نیاز است.
 
 قیمت‌ها عدد صحیح تومان هستند. OrderItem اطلاعات محصول را snapshot می‌کند؛ روابط سفارش با محصول و نشانی `Restrict` هستند. سبد مرورگر مرجع مالی سفارش نیست. محاسبات قیمت، تخفیف و ارسال در checkout باید روی سرور اجرا شوند.
 
@@ -81,6 +81,8 @@ npm run build
 npm run format:check
 # نیاز به Google Chrome محلی دارد؛ مسیر دیگر با CHROME_PATH
 npm run verify:home
+# با DATABASE_URL دیتابیس آزمایشی migrated و seeded
+npm run verify:api
 ```
 
 برای تولید: `npm run start -w @behjati/storefront` و `npm run start -w @behjati/api`؛ پنل admin خروجی static در `apps/admin/dist` دارد. build و typecheck دیتابیس زنده لازم ندارند.
@@ -96,3 +98,7 @@ npm run verify:home
 ## فازهای بعد
 
 ۴: commerce؛ ۵: OTP و tokens؛ ۶: آدرس، نقشه، ارسال، تخفیف، سفارش؛ ۷: حساب؛ ۸: مدیریت؛ ۹: SEO/GEO. هیچ پرداخت موفق ساختگی یا درگاه فعالی در این پروژه وجود ندارد.
+
+## روند Git
+
+هر ویژگی کامل پس از بررسی با پیام مناسب روی برنچ `dev` کامیت و به `origin/dev` پوش می‌شود. نام و ایمیل Git با دسترسی GitHub مستقل‌اند؛ پوش نیازمند احراز هویت حساب است.

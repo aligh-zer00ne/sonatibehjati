@@ -10,6 +10,7 @@ export async function executeGraphQL<TResult, TVariables extends Record<string, 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: print(document), variables }),
     credentials: 'include',
+    cache: 'no-store',
   });
   const result = (await response.json()) as { data?: TResult; errors?: { message: string }[] };
   if (!response.ok || result.errors || !result.data)
