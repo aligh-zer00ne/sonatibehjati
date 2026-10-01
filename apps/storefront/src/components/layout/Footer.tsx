@@ -3,7 +3,7 @@ import { BRAND_NAME } from '@behjati/shared';
 import { ArrowLeft } from 'lucide-react';
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-[#f0e4d1] pt-9 pb-[100px] md:pb-[35px]">
+    <footer className="border-t border-border bg-[#f0e4d1]/85 pt-9 pb-[100px] md:pb-[35px]">
       <div className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0 grid gap-7 md:grid-cols-[1.4fr_1fr_1fr] md:gap-10 xl:pt-2.5">
         <div>
           <Image

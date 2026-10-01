@@ -9,6 +9,8 @@ import { formatPrice } from '@behjati/shared';
 import { useCart } from '@/stores/cart';
 import ProductBadge from './ProductBadge';
 import QuantityControl from './QuantityControl';
+import { SesamePattern } from '@/components/decoration/sesame-pattern';
+import { productMotif } from './product-motif';
 export default function ProductCard({
   product,
 }: {
@@ -20,7 +22,11 @@ export default function ProductCard({
   const toggle = useCart((state) => state.toggleFavorite);
   return (
     <article className="min-w-0" data-product-slug={product.slug}>
-      <Card className="h-full overflow-hidden rounded-[19px] border-earth/7 bg-white/42 p-2 shadow-none lg:p-3">
+      <Card className="relative isolate h-full overflow-hidden rounded-[19px] border-earth/10 bg-[linear-gradient(155deg,#fdf8ee,#f4e6d2)] p-2 shadow-[0_4px_18px_rgba(98,69,47,0.04)] lg:p-3">
+        <SesamePattern
+          motif={productMotif(product)}
+          className="-z-10 text-[#a97b47] opacity-[0.26]"
+        />
         <div className="relative aspect-square overflow-hidden rounded-[14px] bg-[#f4ecdf]">
           <Image
             className="object-contain p-1.5 mix-blend-multiply"
