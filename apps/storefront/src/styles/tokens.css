@@ -1,0 +1,26 @@
+:root {
+  --background: #fbf7ee;
+  --surface: #f4e8d3;
+  --sesame: #e5d1aa;
+  --tahini: #d2b68c;
+  --clay: #b7825b;
+  --earth: #62452f;
+  --ink: #2e251e;
+  --muted: #76685d;
+  --brand-red: #96140d;
+  --brand-red-dark: #76100b;
+  --brand-gold: #d5ac55;
+  --heritage-green: #557c3e;
+  --white: #fff;
+  --border: rgba(98, 69, 47, 0.14);
+  --shadow: 0 12px 32px rgba(70, 44, 25, 0.08);
+  --radius: 18px;
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--ink);
+  --color-primary: var(--brand-red);
+  --color-primary-foreground: var(--white);
+  --color-border: var(--border);
+  --font-sans: 'Vazirmatn Variable', sans-serif;
+}
