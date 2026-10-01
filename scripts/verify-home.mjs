@@ -1,4 +1,4 @@
-import { chromium } from '@playwright/test';
+import { chromium, expect } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
@@ -34,7 +34,17 @@ async function scrollAll(page) {
   await page.evaluate(async () => {
     for (const image of document.images) image.loading = 'eager';
     await Promise.all(Array.from(document.images, (image) => image.decode()));
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => {})),
+    );
   });
+}
+async function closePanel(page) {
+  await page.keyboard.press('Escape');
+  await page.locator('[data-slot="dialog-content"]').waitFor({ state: 'hidden' });
 }
 try {
   const page = await browser.newPage({
@@ -61,18 +71,19 @@ try {
   await page.getByRole('button', { name: 'سبد خرید، ۲ محصول' }).click();
   await page.getByRole('dialog').waitFor();
   assert.ok((await page.getByRole('dialog').textContent()).includes('۴۹۰٬۰۰۰ تومان'));
-  await page.keyboard.press('Escape');
+  await closePanel(page);
   await page.getByRole('button', { name: 'جستجو در محصولات سنتی بهجتی...' }).click();
   await page.getByLabel('جستجوی محصول').fill('محصول ناموجود');
   await page.getByText('محصولی پیدا نشد').waitFor();
   await page.getByLabel('جستجوی محصول').fill('شکلاتی');
   assert.equal(await page.getByRole('dialog').locator('article[data-product-slug]').count(), 1);
-  await page.keyboard.press('Escape');
+  await closePanel(page);
   await page.locator('#categories button').filter({ hasText: 'روغن ارده' }).click();
   assert.equal(await page.getByRole('dialog').locator('article[data-product-slug]').count(), 1);
-  await page.keyboard.press('Escape');
+  await closePanel(page);
   await page.getByRole('button', { name: 'باز کردن فهرست' }).click();
   await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی' }).click();
+  await page.locator('[data-slot="dialog-content"]').waitFor({ state: 'hidden' });
   assert.equal(await page.getByRole('dialog').count(), 0);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(baseURL, { waitUntil: 'networkidle' });
@@ -83,9 +94,36 @@ try {
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     'Desktop horizontal overflow',
   );
+  const product = page.locator('article[data-product-slug="sesame-oil-250"]').first();
+  const card = product.locator('[data-slot="card"]');
+  await product.scrollIntoViewIfNeeded();
+  await product.hover();
+  await expect(card).toHaveCSS('translate', '0px -8px');
+  await expect(product.locator('img')).toHaveCSS('scale', '1.08');
+  await page.screenshot({ path: '/tmp/behjati-current-hover.png' });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(card).toHaveCSS('translate', 'none');
+  await expect(card).toHaveCSS('transition-property', 'none');
+  await expect(product.locator('img')).toHaveCSS('scale', 'none');
+  await expect(page.locator('section[aria-labelledby="hero-title"]')).toHaveCSS(
+    'animation-name',
+    'none',
+  );
+  await page.getByRole('button', { name: 'سبد خرید، ۲ محصول' }).click();
+  await expect(page.getByRole('dialog')).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('[data-slot="dialog-overlay"]')).toHaveCSS('animation-name', 'none');
+  await closePanel(page);
+  const noJS = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
+  const staticPage = await noJS.newPage();
+  await staticPage.goto(baseURL, { waitUntil: 'networkidle' });
+  await expect(staticPage.getByRole('heading', { level: 1 })).toBeVisible();
+  for (const reveal of await staticPage.locator('[data-slot="reveal"]').all()) {
+    await expect(reveal).toHaveCSS('opacity', '1');
+  }
+  await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, no runtime errors.',
+    'Homepage checks passed: RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

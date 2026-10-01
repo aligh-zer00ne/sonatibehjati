@@ -33,7 +33,12 @@ export default function QuantityControl({
       >
         <Plus size={17} />
       </Button>
-      <output className="text-sm" aria-label="تعداد" aria-live="polite">
+      <output
+        key={quantity}
+        className="animate-in fade-in slide-in-from-bottom-2 text-sm duration-250 motion-reduce:animate-none"
+        aria-label="تعداد"
+        aria-live="polite"
+      >
         {formatNumber(quantity)}
       </output>
       <Button

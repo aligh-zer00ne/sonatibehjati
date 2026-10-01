@@ -3,13 +3,13 @@ import { ArrowLeft } from 'lucide-react';
 export default function HeritageSection() {
   return (
     <section
-      className="overflow-hidden rounded-[26px] bg-[#efddc0] md:grid md:min-h-[350px] md:grid-cols-2"
+      className="group/heritage overflow-hidden rounded-[26px] bg-[#efddc0] md:grid md:min-h-[350px] md:grid-cols-2"
       id="ardakan"
       aria-labelledby="heritage-title"
     >
       <div className="relative h-[265px] md:col-start-2 md:row-start-1 md:h-full md:min-h-[350px]">
         <Image
-          className="object-cover [mask-image:linear-gradient(to_bottom,#000_70%,transparent)] md:[mask-image:linear-gradient(to_right,#000_75%,transparent)]"
+          className="object-cover transition-transform duration-1000 ease-out motion-safe:group-hover/heritage:scale-105 motion-reduce:transition-none [mask-image:linear-gradient(to_bottom,#000_70%,transparent)] md:[mask-image:linear-gradient(to_right,#000_75%,transparent)]"
           src="/images/heritage.webp"
           alt="بادگیر و گنبد در معماری خشتی اردکان"
           fill
@@ -28,7 +28,10 @@ export default function HeritageSection() {
           <br />
           جایی که طعم کنجد با فرهنگ زندگی پیوند می‌خورد.
         </p>
-        <a className="mt-2.5 flex min-h-11 items-center gap-2 text-xs text-primary" href="#story">
+        <a
+          className="mt-2.5 flex min-h-11 items-center gap-2 text-xs text-primary [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:hover:[&_svg]:-translate-x-1.5 motion-reduce:[&_svg]:transition-none"
+          href="#story"
+        >
           بیشتر دربارهٔ داستان سنتی بهجتی <ArrowLeft size={17} />
         </a>
       </div>

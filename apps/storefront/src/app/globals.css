@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 :root {
   --background: #fbf7ee;
   --foreground: #2e251e;

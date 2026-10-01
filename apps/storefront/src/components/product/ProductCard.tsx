@@ -21,15 +21,15 @@ export default function ProductCard({
   const add = useCart((state) => state.add);
   const toggle = useCart((state) => state.toggleFavorite);
   return (
-    <article className="min-w-0" data-product-slug={product.slug}>
-      <Card className="relative isolate h-full overflow-hidden rounded-[19px] border-earth/10 bg-[linear-gradient(155deg,#fdf8ee,#f4e6d2)] p-2 shadow-[0_4px_18px_rgba(98,69,47,0.04)] lg:p-3">
+    <article className="group/product min-w-0" data-product-slug={product.slug}>
+      <Card className="relative isolate h-full overflow-hidden rounded-[19px] border-earth/10 bg-[linear-gradient(155deg,#fdf8ee,#f4e6d2)] p-2 shadow-[0_4px_18px_rgba(98,69,47,0.04)] transition-[translate,box-shadow,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/product:border-clay/40 group-hover/product:shadow-[0_16px_32px_rgba(98,69,47,0.16)] group-focus-within/product:border-clay/40 motion-safe:group-hover/product:-translate-y-2 motion-safe:group-focus-within/product:-translate-y-1 motion-reduce:transition-none lg:p-3">
         <SesamePattern
           motif={productMotif(product)}
-          className="-z-10 text-[#a97b47] opacity-[0.26]"
+          className="-z-10 text-[#a97b47] opacity-[0.26] transition-opacity duration-500 group-hover/product:opacity-45 motion-reduce:transition-none"
         />
         <div className="relative aspect-square overflow-hidden rounded-[14px] bg-[#f4ecdf]">
           <Image
-            className="object-contain p-1.5 mix-blend-multiply"
+            className="object-contain p-1.5 mix-blend-multiply transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover/product:scale-[1.08] motion-safe:group-focus-within/product:scale-[1.04] motion-reduce:transition-none"
             src={product.images[0]?.url ?? '/images/tahini.webp'}
             alt={product.images[0]?.alt ?? product.title}
             fill
@@ -47,7 +47,16 @@ export default function ProductCard({
             aria-pressed={favorite}
             onClick={() => toggle(product.id)}
           >
-            <Heart size={19} fill={favorite ? 'currentColor' : 'none'} />
+            <Heart
+              key={String(favorite)}
+              className={
+                favorite
+                  ? 'animate-in zoom-in-50 duration-300 motion-reduce:animate-none'
+                  : undefined
+              }
+              size={19}
+              fill={favorite ? 'currentColor' : 'none'}
+            />
           </Button>
         </div>
         <div className="pt-2.5 text-center lg:pt-3.5 lg:pb-0.5">

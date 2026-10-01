@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-export default function Loading() {
+export default function HomeSkeleton() {
   return (
     <main
       className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0 pt-4"

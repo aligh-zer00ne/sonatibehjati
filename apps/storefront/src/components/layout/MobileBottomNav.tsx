@@ -9,7 +9,7 @@ export default function MobileBottomNav() {
   const count = useCart((state) => Object.values(state.items).reduce((a, b) => a + b, 0));
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-[#fcf7ed] px-[5px] pt-[7px] pb-[calc(7px+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(70,44,25,0.04)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-[#fcf7ed] px-[5px] pt-[7px] pb-[calc(7px+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(70,44,25,0.04)] md:hidden [&_a]:transition-[color,scale] [&_a]:duration-300 [&_a:hover]:text-primary motion-safe:[&_a:active]:scale-95 motion-safe:[&_a_svg]:transition-transform motion-safe:[&_a_svg]:duration-300 motion-safe:[&_a:hover_svg]:-translate-y-1 motion-reduce:[&_a]:transition-none"
       aria-label="ناوبری موبایل"
     >
       <a
@@ -42,7 +42,10 @@ export default function MobileBottomNav() {
         <span className="relative">
           <ShoppingCart className="size-[21px]" />
           {count > 0 && (
-            <span className="absolute -top-[5px] -right-2 min-w-[17px] rounded-full bg-primary text-center text-[10px] leading-[17px] text-white">
+            <span
+              key={count}
+              className="absolute -top-[5px] -right-2 min-w-[17px] animate-in zoom-in-50 fade-in rounded-full bg-primary text-center text-[10px] leading-[17px] text-white duration-300 motion-reduce:animate-none"
+            >
               {formatNumber(count)}
             </span>
           )}

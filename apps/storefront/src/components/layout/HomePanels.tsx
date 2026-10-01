@@ -5,6 +5,7 @@ import type { HomepageCatalogQuery } from '@/generated/graphql';
 import MobileMenu from './MobileMenu';
 import SearchPanel from './SearchPanel';
 import CartPanel from './CartPanel';
+import { useEffect, useState } from 'react';
 const titles = {
   menu: 'فهرست سنتی بهجتی',
   search: 'جستجو در محصولات',
@@ -14,25 +15,31 @@ const titles = {
 export default function HomePanels({ products }: { products: HomepageCatalogQuery['products'] }) {
   const panel = useUI((state) => state.panel);
   const setPanel = useUI((state) => state.setPanel);
+  const [lastPanel, setLastPanel] = useState(panel);
+  useEffect(() => {
+    if (panel) setLastPanel(panel);
+  }, [panel]);
+  // Preserve content while Radix runs its exit animation.
+  const activePanel = panel ?? lastPanel;
   return (
     <Dialog
       open={panel !== null}
       onOpenChange={(open) => {
         if (!open) setPanel(null);
       }}
-      title={panel ? titles[panel] : ''}
+      title={activePanel ? titles[activePanel] : ''}
       description={
-        panel === 'cart'
+        activePanel === 'cart'
           ? 'محصولات انتخاب‌شدهٔ شما'
-          : panel === 'search'
+          : activePanel === 'search'
             ? 'طعم دلخواهتان را پیدا کنید'
             : 'حلواارده سنتی بهجتی اردکان'
       }
     >
-      {panel === 'menu' && <MobileMenu />}
-      {panel === 'search' && <SearchPanel products={products} />}
-      {panel === 'cart' && <CartPanel products={products} />}
-      {panel === 'account' && (
+      {activePanel === 'menu' && <MobileMenu />}
+      {activePanel === 'search' && <SearchPanel products={products} />}
+      {activePanel === 'cart' && <CartPanel products={products} />}
+      {activePanel === 'account' && (
         <div className="px-[18px] py-9 text-center">
           <h3 className="mb-2.5 text-[19px] font-[750]">به سنتی بهجتی خوش آمدید</h3>
           <p className="text-[13px] leading-[2] text-muted-foreground">

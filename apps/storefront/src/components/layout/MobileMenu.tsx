@@ -24,7 +24,7 @@ export default function MobileMenu() {
       <nav className="flex flex-col" aria-label="فهرست اصلی">
         {links.map(({ href, label, icon: Icon }) => (
           <a
-            className="flex min-h-14 items-center gap-3.5 border-b border-border"
+            className="flex min-h-14 items-center gap-3.5 rounded-xl border-b border-border transition-[padding,background-color,color,translate,scale] duration-300 ease-out hover:bg-accent hover:px-3 hover:text-primary motion-safe:hover:-translate-x-1 motion-safe:active:scale-[0.98] motion-reduce:transition-none"
             href={href}
             key={href}
             onClick={() => close(null)}

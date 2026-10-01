@@ -11,6 +11,7 @@ import HeritageSection from '@/components/home/HeritageSection';
 import BrandStory from '@/components/home/BrandStory';
 import BenefitsSection from '@/components/home/BenefitsSection';
 import { getHomepageCatalog } from '@/lib/catalog/service';
+import { Reveal } from '@/components/ui/reveal';
 export default async function Home() {
   const { products, categories } = await getHomepageCatalog();
   return (
@@ -20,16 +21,28 @@ export default async function Home() {
       <SearchBar />
       <main id="main" className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0">
         <HeroSection />
-        <CategorySection categories={categories} />
-        <ProductSection
-          title="پرفروش‌های سنتی بهجتی"
-          id="products"
-          products={products.slice(0, 4)}
-        />
-        <HeritageSection />
-        <ProductSection title="محصولات کنجدی" id="all-products" products={products.slice(2)} />
-        <BrandStory />
-        <BenefitsSection />
+        <Reveal>
+          <CategorySection categories={categories} />
+        </Reveal>
+        <Reveal>
+          <ProductSection
+            title="پرفروش‌های سنتی بهجتی"
+            id="products"
+            products={products.slice(0, 4)}
+          />
+        </Reveal>
+        <Reveal>
+          <HeritageSection />
+        </Reveal>
+        <Reveal>
+          <ProductSection title="محصولات کنجدی" id="all-products" products={products.slice(2)} />
+        </Reveal>
+        <Reveal>
+          <BrandStory />
+        </Reveal>
+        <Reveal>
+          <BenefitsSection />
+        </Reveal>
         <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
           محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
         </p>

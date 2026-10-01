@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 export default function BrandStory() {
   return (
     <section
-      className="my-8 md:my-12 xl:my-14 overflow-hidden rounded-3xl bg-[linear-gradient(140deg,#f2e2cb,#faf5ec)] md:grid md:grid-cols-2"
+      className="group/story my-8 md:my-12 xl:my-14 overflow-hidden rounded-3xl bg-[linear-gradient(140deg,#f2e2cb,#faf5ec)] md:grid md:grid-cols-2"
       id="story"
     >
-      <div className="relative h-[260px] md:h-full md:min-h-[360px]">
+      <div className="relative h-[260px] overflow-hidden md:h-full md:min-h-[360px]">
         <Image
-          className="object-cover"
+          className="object-cover transition-transform duration-1000 ease-out motion-safe:group-hover/story:scale-105 motion-reduce:transition-none"
           src="/images/story.webp"
           alt="فضای سنتی با دیوارهای خشتی و آسیاب سنگی"
           fill

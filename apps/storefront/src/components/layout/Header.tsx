@@ -33,7 +33,10 @@ export default function Header() {
           <small className="text-[10px] text-muted-foreground">طعم اصیل اردکان، از دل کنجد</small>
         </span>
       </a>
-      <nav className="hidden items-center gap-[26px] text-[13px] lg:flex" aria-label="ناوبری اصلی">
+      <nav
+        className="hidden items-center gap-[26px] text-[13px] lg:flex [&_a]:relative [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-primary [&_a]:after:absolute [&_a]:after:right-0 [&_a]:after:bottom-1 [&_a]:after:h-0.5 [&_a]:after:w-full [&_a]:after:origin-right [&_a]:after:scale-x-0 [&_a]:after:rounded-full [&_a]:after:bg-primary [&_a]:after:transition-transform [&_a]:after:duration-300 [&_a]:after:content-[''] [&_a:hover]:after:scale-x-100 motion-reduce:[&_a]:transition-none motion-reduce:[&_a]:after:transition-none"
+        aria-label="ناوبری اصلی"
+      >
         <a className="py-3 text-primary" href="/">
           خانه
         </a>
@@ -59,7 +62,10 @@ export default function Header() {
       >
         <ShoppingCart />
         {count > 0 && (
-          <span className="absolute top-0 -right-px min-w-[17px] rounded-full bg-primary text-center text-[10px] leading-[17px] text-white">
+          <span
+            key={count}
+            className="absolute top-0 -right-px min-w-[17px] animate-in zoom-in-50 fade-in rounded-full bg-primary text-center text-[10px] leading-[17px] text-white duration-300 motion-reduce:animate-none"
+          >
             {formatNumber(count)}
           </span>
         )}

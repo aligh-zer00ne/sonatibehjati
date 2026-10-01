@@ -12,8 +12,8 @@ export default function BenefitsSection() {
       aria-label="آشنایی با سنتی بهجتی"
     >
       {benefits.map(({ icon: Icon, title, text }) => (
-        <div key={title}>
-          <span className="mb-2.5 inline-grid size-[52px] place-items-center rounded-full border border-[#e9cda8] bg-[#f5e7d1] text-[#a5652e]">
+        <div key={title} className="group/benefit">
+          <span className="mb-2.5 inline-grid size-[52px] place-items-center rounded-full border border-[#e9cda8] bg-[#f5e7d1] text-[#a5652e] transition-[translate,rotate,background-color,box-shadow] duration-500 ease-out group-hover/benefit:bg-sesame/60 group-hover/benefit:shadow-[0_8px_18px_rgba(98,69,47,0.12)] motion-safe:group-hover/benefit:-translate-y-1 motion-safe:group-hover/benefit:-rotate-6 motion-reduce:transition-none">
             <Icon size={25} />
           </span>
           <h3 className="text-[13px] font-[750] lg:text-base">{title}</h3>

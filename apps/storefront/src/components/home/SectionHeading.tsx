@@ -13,7 +13,7 @@ export default function SectionHeading({
       <h2 className="text-[21px] font-extrabold min-[480px]:text-2xl lg:text-[27px]">{title}</h2>
       {href && (
         <a
-          className="flex min-h-11 items-center gap-[5px] text-[11px] whitespace-nowrap text-[#94602c]"
+          className="flex min-h-11 items-center gap-[5px] text-[11px] whitespace-nowrap text-[#94602c] transition-colors duration-300 hover:text-primary [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:hover:[&_svg]:-translate-x-1.5 motion-reduce:transition-none motion-reduce:[&_svg]:transition-none"
           href={href}
         >
           {label}

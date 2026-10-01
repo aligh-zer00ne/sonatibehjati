@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 export default function HeroSection() {
   return (
     <section
-      className="relative isolate flex min-h-[620px] flex-col overflow-hidden rounded-[25px] bg-[linear-gradient(125deg,#f4dfbf,#efcf9e)] px-5 pt-[25px] pb-[33px] text-center before:pointer-events-none before:absolute before:inset-0 before:z-[3] before:rounded-[inherit] before:border before:border-earth/8 before:content-[''] min-[480px]:min-h-[680px] md:grid md:min-h-[430px] md:grid-cols-[1fr_1.15fr] md:items-center md:gap-2.5 md:px-10 md:py-[50px] md:text-right lg:min-h-[470px] lg:p-[60px] xl:min-h-[500px]"
+      className="relative isolate flex min-h-[620px] flex-col overflow-hidden rounded-[25px] bg-[linear-gradient(125deg,#f4dfbf,#efcf9e)] px-5 pt-[25px] pb-[33px] text-center animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out motion-reduce:animate-none before:pointer-events-none before:absolute before:inset-0 before:z-[3] before:rounded-[inherit] before:border before:border-earth/8 before:content-[''] min-[480px]:min-h-[680px] md:grid md:min-h-[430px] md:grid-cols-[1fr_1.15fr] md:items-center md:gap-2.5 md:px-10 md:py-[50px] md:text-right lg:min-h-[470px] lg:p-[60px] xl:min-h-[500px]"
       aria-labelledby="hero-title"
     >
       <div className="contents md:relative md:z-[2] md:block">
@@ -28,7 +28,10 @@ export default function HeroSection() {
               مشاهده محصولات <ArrowLeft size={19} />
             </a>
           </Button>
-          <a className="flex min-h-11 items-center gap-2.5 font-[650] text-primary" href="#story">
+          <a
+            className="group/story-link flex min-h-11 items-center gap-2.5 font-[650] text-primary transition-colors duration-300 hover:text-brand-red-dark [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:hover:[&_svg]:-translate-x-1.5 motion-reduce:[&_svg]:transition-none"
+            href="#story"
+          >
             داستان سنتی بهجتی <ArrowLeft size={17} />
           </a>
         </div>
