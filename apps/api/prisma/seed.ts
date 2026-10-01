@@ -21,7 +21,7 @@ async function seed() {
       update: {},
       create: {
         slug: `sample-${slug}`,
-        title: `${title} بهجتی`,
+        title: `${title} سنتی بهجتی`,
         shortDescription: 'محصول نمونه برای توسعه',
         description: 'اطلاعات و قیمت نمونه؛ پیش از انتشار جایگزین شود.',
         price: 245000,

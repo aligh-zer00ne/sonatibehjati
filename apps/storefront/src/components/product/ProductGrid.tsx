@@ -1,15 +1,29 @@
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import ProductCard from './ProductCard';
-export default function ProductGrid({ products }: { products: HomepageCatalogQuery['products'] }) {
+import { EmptyState } from '@/components/ui/empty-state';
+import { cn } from '@/lib/utils';
+export default function ProductGrid({
+  products,
+  compact = false,
+}: {
+  products: HomepageCatalogQuery['products'];
+  compact?: boolean;
+}) {
   if (!products.length)
     return (
-      <div className="empty-state">
-        <h3>محصولی برای نمایش وجود ندارد</h3>
-        <p>به‌زودی محصولات این بخش معرفی می‌شوند.</p>
-      </div>
+      <EmptyState
+        title="محصولی برای نمایش وجود ندارد"
+        description="به‌زودی محصولات این بخش معرفی می‌شوند."
+      />
     );
   return (
-    <div className="product-grid">
+    <div
+      data-slot="product-grid"
+      className={cn(
+        'grid grid-cols-2 gap-x-3 gap-y-4 min-[480px]:gap-5',
+        compact ? 'md:grid-cols-2' : 'md:grid-cols-3 lg:grid-cols-4 lg:gap-6',
+      )}
+    >
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

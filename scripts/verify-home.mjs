@@ -25,12 +25,16 @@ const browser = await chromium.launch({
 async function scrollAll(page) {
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 500) {
-      scrollTo(0, y);
+      scrollTo({ top: y, behavior: 'instant' });
       await new Promise((resolve) => setTimeout(resolve, 60));
     }
-    scrollTo(0, 0);
+    scrollTo({ top: 0, behavior: 'instant' });
   });
-  await page.waitForTimeout(300);
+  await page.waitForLoadState('networkidle');
+  await page.evaluate(async () => {
+    for (const image of document.images) image.loading = 'eager';
+    await Promise.all(Array.from(document.images, (image) => image.decode()));
+  });
 }
 try {
   const page = await browser.newPage({
@@ -58,23 +62,23 @@ try {
   await page.getByRole('dialog').waitFor();
   assert.ok((await page.getByRole('dialog').textContent()).includes('۴۹۰٬۰۰۰ تومان'));
   await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'جستجو در محصولات بهجتی...' }).click();
+  await page.getByRole('button', { name: 'جستجو در محصولات سنتی بهجتی...' }).click();
   await page.getByLabel('جستجوی محصول').fill('محصول ناموجود');
   await page.getByText('محصولی پیدا نشد').waitFor();
   await page.getByLabel('جستجوی محصول').fill('شکلاتی');
-  assert.equal(await page.getByRole('dialog').locator('.product-card').count(), 1);
+  assert.equal(await page.getByRole('dialog').locator('article[data-product-slug]').count(), 1);
   await page.keyboard.press('Escape');
   await page.locator('#categories button').filter({ hasText: 'روغن ارده' }).click();
-  assert.equal(await page.getByRole('dialog').locator('.product-card').count(), 1);
+  assert.equal(await page.getByRole('dialog').locator('article[data-product-slug]').count(), 1);
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'باز کردن فهرست' }).click();
-  await page.getByRole('dialog').getByRole('link', { name: 'داستان بهجتی' }).click();
+  await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی' }).click();
   assert.equal(await page.getByRole('dialog').count(), 0);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(baseURL, { waitUntil: 'networkidle' });
   await scrollAll(page);
   await page.screenshot({ path: '/tmp/behjati-current-desktop.png', fullPage: true });
-  assert.equal(await page.locator('.bottom-nav').isVisible(), false);
+  assert.equal(await page.getByRole('navigation', { name: 'ناوبری موبایل' }).isVisible(), false);
   assert.ok(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     'Desktop horizontal overflow',

@@ -11,7 +11,7 @@ export default function ProductSection({
   id: string;
 }) {
   return (
-    <section className="home-section" id={id}>
+    <section className="my-8 md:my-12 xl:my-14" id={id}>
       <SectionHeading title={title} href="#all-products" />
       <ProductGrid products={products} />
     </section>

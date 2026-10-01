@@ -19,9 +19,12 @@ export const metadata: Metadata = {
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fa" dir="rtl">
-      <body>
-        <a className="skip-link" href="#main">
+    <html lang="fa" dir="rtl" className="scroll-smooth scroll-pt-6 motion-reduce:scroll-auto">
+      <body className="bg-background font-sans text-sm leading-[1.8] text-foreground [&_a]:touch-manipulation [&_a]:outline-offset-4 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-primary [&_button]:touch-manipulation">
+        <a
+          className="fixed -top-[100px] right-[15px] z-[100] bg-white p-2.5 text-primary focus:top-2.5"
+          href="#main"
+        >
           رفتن به محتوای اصلی
         </a>
         <ClientRuntime />

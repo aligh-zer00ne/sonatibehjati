@@ -50,7 +50,7 @@ export const mockCatalog: HomepageCatalogQuery = {
     weight,
     badge,
     isActive: true,
-    shortDescription: 'نمونه‌ای از فرآورده‌های کنجدی بهجتی',
+    shortDescription: 'نمونه‌ای از فرآورده‌های کنجدی سنتی بهجتی',
     description:
       'اطلاعات و قیمت این محصول نمونه است و پیش از انتشار با اطلاعات تأییدشده جایگزین خواهد شد.',
     images: [{ id: `image-${id}`, url: `/images/${image}.webp`, alt: title }],

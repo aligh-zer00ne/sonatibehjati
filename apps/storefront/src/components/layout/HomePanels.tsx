@@ -6,7 +6,7 @@ import MobileMenu from './MobileMenu';
 import SearchPanel from './SearchPanel';
 import CartPanel from './CartPanel';
 const titles = {
-  menu: 'فهرست بهجتی',
+  menu: 'فهرست سنتی بهجتی',
   search: 'جستجو در محصولات',
   cart: 'سبد خرید',
   account: 'حساب کاربری',
@@ -33,9 +33,9 @@ export default function HomePanels({ products }: { products: HomepageCatalogQuer
       {panel === 'search' && <SearchPanel products={products} />}
       {panel === 'cart' && <CartPanel products={products} />}
       {panel === 'account' && (
-        <div className="empty-state">
-          <h3>به بهجتی خوش آمدید</h3>
-          <p>
+        <div className="px-[18px] py-9 text-center">
+          <h3 className="mb-2.5 text-[19px] font-[750]">به سنتی بهجتی خوش آمدید</h3>
+          <p className="text-[13px] leading-[2] text-muted-foreground">
             ورود با شماره موبایل و رمز یکبار مصرف در فاز ۵ فعال می‌شود. برای دیدن محصولات و ساخت سبد
             نیازی به ورود ندارید.
           </p>

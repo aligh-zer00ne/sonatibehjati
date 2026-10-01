@@ -16,9 +16,10 @@ export default function SearchPanel({ products }: { products: HomepageCatalogQue
       <label className="sr-only" htmlFor="product-search">
         جستجوی محصول
       </label>
-      <div className="search-input">
-        <Search size={20} />
+      <div className="relative">
+        <Search className="absolute top-[15px] right-3.5 text-muted-foreground" size={20} />
         <Input
+          className="pr-[45px]"
           id="product-search"
           placeholder="مثلاً ارده کنجدی"
           value={query}
@@ -26,16 +27,18 @@ export default function SearchPanel({ products }: { products: HomepageCatalogQue
           autoComplete="off"
         />
       </div>
-      <p className="search-result-count" aria-live="polite">
+      <p className="my-[15px] text-xs text-muted-foreground" aria-live="polite">
         {new Intl.NumberFormat('fa-IR').format(results.length)} محصول
       </p>
       {results.length ? (
-        <ProductGrid products={results} />
+        <ProductGrid products={results} compact />
       ) : (
-        <div className="empty-state">
-          <Search size={36} />
-          <h3>محصولی پیدا نشد</h3>
-          <p>نام محصول دیگری را جستجو کنید.</p>
+        <div className="px-[18px] py-9 text-center">
+          <Search className="mx-auto mb-[15px] text-clay" size={36} />
+          <h3 className="mb-2.5 text-[19px] font-[750]">محصولی پیدا نشد</h3>
+          <p className="text-[13px] leading-[2] text-muted-foreground">
+            نام محصول دیگری را جستجو کنید.
+          </p>
         </div>
       )}
     </div>

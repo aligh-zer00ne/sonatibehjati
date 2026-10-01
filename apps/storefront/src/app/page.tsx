@@ -18,15 +18,19 @@ export default async function Home() {
       <AnnouncementBar />
       <Header />
       <SearchBar />
-      <main id="main" className="container">
+      <main id="main" className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0">
         <HeroSection />
         <CategorySection categories={categories} />
-        <ProductSection title="پرفروش‌های بهجتی" id="products" products={products.slice(0, 4)} />
+        <ProductSection
+          title="پرفروش‌های سنتی بهجتی"
+          id="products"
+          products={products.slice(0, 4)}
+        />
         <HeritageSection />
         <ProductSection title="محصولات کنجدی" id="all-products" products={products.slice(2)} />
         <BrandStory />
         <BenefitsSection />
-        <p className="catalog-note">
+        <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
           محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
         </p>
       </main>
