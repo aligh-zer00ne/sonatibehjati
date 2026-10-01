@@ -54,6 +54,11 @@ try {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(baseURL, { waitUntil: 'networkidle' });
+  const icon = await page.locator('link[rel="icon"][href^="/favicon.ico"]').getAttribute('href');
+  assert.ok(icon, 'Branded favicon link is missing');
+  const iconResponse = await page.request.get(`${baseURL}${icon}`);
+  assert.equal(iconResponse.status(), 200);
+  assert.ok((await iconResponse.body()).byteLength > 100);
   await scrollAll(page);
   await page.screenshot({ path: '/tmp/behjati-current-mobile.png', fullPage: true });
   assert.equal(await page.locator('html').getAttribute('dir'), 'rtl');
