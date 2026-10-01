@@ -1,0 +1,33 @@
+{
+  "name": "@behjati/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc && node scripts/copy-schema.mjs",
+    "start": "node dist/app.js",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "express": "^5.2.1",
+    "graphql": "^16.13.1",
+    "graphql-yoga": "^5.18.0",
+    "helmet": "^8.1.0",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^8.2.1",
+    "dotenv": "^17.3.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/cors": "^2.8.19",
+    "@types/node": "^22.19.0",
+    "prisma": "6.19.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

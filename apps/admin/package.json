@@ -1,0 +1,25 @@
+{
+  "name": "@behjati/admin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3001",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@behjati/shared": "*",
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "antd": "^6.3.0",
+    "graphql": "^16.13.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.9.3",
+    "vite": "6.4.3"
+  }
+}

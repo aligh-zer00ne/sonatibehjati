@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: behjati
+      MYSQL_USER: behjati
+      MYSQL_PASSWORD: development_only
+      MYSQL_ROOT_PASSWORD: development_root_only
+    ports: ['127.0.0.1:3306:3306']
+    volumes: ['mysql-data:/var/lib/mysql']
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      retries: 10
+volumes:
+  mysql-data:

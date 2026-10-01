@@ -1,0 +1,32 @@
+type ProductImage {
+  id: ID!
+  url: String!
+  alt: String!
+}
+type Category {
+  id: ID!
+  slug: String!
+  title: String!
+  image: String!
+}
+type Product {
+  id: ID!
+  slug: String!
+  title: String!
+  shortDescription: String!
+  description: String!
+  category: Category!
+  price: Int!
+  weight: String!
+  images: [ProductImage!]!
+  isActive: Boolean!
+  badge: String
+  createdAt: String!
+  updatedAt: String!
+}
+type Query {
+  health: String!
+  products(category: String, search: String): [Product!]!
+  product(slug: String!): Product
+  categories: [Category!]!
+}

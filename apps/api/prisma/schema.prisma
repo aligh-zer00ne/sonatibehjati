@@ -1,0 +1,171 @@
+generator client {
+ provider = "prisma-client-js"
+}
+datasource db {
+ provider = "mysql"
+ url = env("DATABASE_URL")
+}
+enum OrderStatus {
+ CREATED
+ PENDING_PAYMENT
+ PROCESSING
+ SHIPPED
+ DELIVERED
+ CANCELED
+}
+enum DiscountType {
+ PERCENT
+ FIXED
+}
+model User {
+ id String @id @default(cuid())
+ phone String @unique
+ firstName String?
+ lastName String?
+ email String?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ addresses Address[]
+ orders Order[]
+ refreshTokens RefreshToken[]
+}
+model Address {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ title String
+ recipientName String
+ recipientPhone String
+ province String
+ city String
+ postalAddress String @db.Text
+ postalCode String
+ latitude Float?
+ longitude Float?
+ isDefault Boolean @default(false)
+ orders Order[]
+ @@index([userId])
+}
+model Admin {
+ id String @id @default(cuid())
+ email String @unique
+ passwordHash String
+ createdAt DateTime @default(now())
+ refreshTokens AdminRefreshToken[]
+}
+model Category {
+ id String @id @default(cuid())
+ slug String @unique
+ title String
+ image String
+ products Product[]
+}
+model Product {
+ id String @id @default(cuid())
+ slug String @unique
+ title String
+ shortDescription String @db.Text
+ description String @db.Text
+ categoryId String
+ category Category @relation(fields:[categoryId],references:[id],onDelete:Restrict)
+ price Int
+ weight String
+ images ProductImage[]
+ isActive Boolean @default(true)
+ badge String?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ orderItems OrderItem[]
+ @@index([categoryId,isActive])
+}
+model ProductImage {
+ id String @id @default(cuid())
+ productId String
+ product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+ url String
+ alt String
+ @@index([productId])
+}
+model DiscountCode {
+ id String @id @default(cuid())
+ code String @unique
+ type DiscountType
+ value Int
+ minOrderAmount Int @default(0)
+ maxDiscountAmount Int?
+ startsAt DateTime
+ expiresAt DateTime
+ usageLimit Int?
+ usageCount Int @default(0)
+ isActive Boolean @default(true)
+ orders Order[]
+}
+model Order {
+ id String @id @default(cuid())
+ number Int @unique @default(autoincrement())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+ addressId String
+ address Address @relation(fields:[addressId],references:[id],onDelete:Restrict)
+ addressSnapshot Json
+ status OrderStatus @default(PENDING_PAYMENT)
+ subtotal Int
+ discount Int @default(0)
+ shipping Int
+ total Int
+ discountCodeId String?
+ discountCode DiscountCode? @relation(fields:[discountCodeId],references:[id],onDelete:Restrict)
+ items OrderItem[]
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([userId,createdAt])
+ @@index([status,createdAt])
+}
+model OrderItem {
+ id String @id @default(cuid())
+ orderId String
+ order Order @relation(fields:[orderId],references:[id],onDelete:Restrict)
+ productId String
+ product Product @relation(fields:[productId],references:[id],onDelete:Restrict)
+ productTitle String
+ productWeight String
+ unitPrice Int
+ quantity Int
+ lineTotal Int
+ @@index([orderId])
+ @@index([productId])
+}
+model OtpCode {
+ id String @id @default(cuid())
+ phone String
+ codeHash String
+ expiresAt DateTime
+ attempts Int @default(0)
+ consumedAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([phone,createdAt])
+}
+model RefreshToken {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ tokenHash String @unique
+ familyId String
+ expiresAt DateTime
+ revokedAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([userId])
+ @@index([familyId])
+}
+model AdminRefreshToken {
+ id String @id @default(cuid())
+ adminId String
+ admin Admin @relation(fields:[adminId],references:[id],onDelete:Cascade)
+ tokenHash String @unique
+ familyId String
+ expiresAt DateTime
+ revokedAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([adminId])
+ @@index([familyId])
+}
