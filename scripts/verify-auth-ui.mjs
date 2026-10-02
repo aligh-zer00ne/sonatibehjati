@@ -12,7 +12,8 @@ import {
 } from './auth-harness.mjs';
 let browser;
 try {
-  await startAPI();
+  const development = process.env.AUTH_VERIFY_DEVELOPMENT === 'true';
+  await startAPI({ environment: development ? 'development' : 'test', developmentCode: '123456' });
   await startStorefront();
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
@@ -64,12 +65,14 @@ try {
   await page.getByRole('button', { name: 'دریافت کد ورود' }).click();
   await expect(page).toHaveURL(/\/verify\?challenge=/);
   await expect(page.getByLabel('کد ورود', { exact: true })).toBeVisible();
+  await expect(page.locator('#otp-help bdi')).toHaveText(/^[۰-۹]{2}:[۰-۹]{2}$/);
   await expect(page.getByText(mobile, { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /ارسال مجدد تا/ })).toBeDisabled();
   await page.reload({ waitUntil: 'networkidle' });
   await expect(page.getByLabel('کد ورود', { exact: true })).toBeVisible();
   const code = codes.get(mobile);
   assert.ok(code);
+  if (development) assert.equal(code, '123456');
   await page.getByLabel('کد ورود', { exact: true }).fill(code === '999999' ? '000000' : '999999');
   await page.getByRole('button', { name: 'تأیید و ورود' }).click();
   await expect(page.locator('main p[role="alert"]')).toContainText('کد نادرست');

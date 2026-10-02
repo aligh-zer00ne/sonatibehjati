@@ -134,9 +134,17 @@ export default function VerifyForm({
           autoFocus
         />
         <p id="otp-help" className="mt-2 text-center text-xs text-muted-foreground">
-          {expiry
-            ? `اعتبار کد: ${formatNumber(Math.floor(expiry / 60))}:${String(expiry % 60).padStart(2, '0')}`
-            : 'مهلت کد پایان یافته؛ کد تازه درخواست کنید.'}
+          {expiry ? (
+            <>
+              اعتبار کد:{' '}
+              <bdi dir="ltr">
+                {formatNumber(Math.floor(expiry / 60)).padStart(2, '۰')}:
+                {formatNumber(expiry % 60).padStart(2, '۰')}
+              </bdi>
+            </>
+          ) : (
+            'مهلت کد پایان یافته؛ کد تازه درخواست کنید.'
+          )}
         </p>
       </div>
       {error && (
