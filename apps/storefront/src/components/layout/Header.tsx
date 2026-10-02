@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Menu, ShoppingCart } from 'lucide-react';
+import { Menu, ShoppingCart, UserRound } from 'lucide-react';
 import { useCart } from '@/stores/cart';
 import { useUI } from '@/stores/ui';
 import { formatNumber, BRAND_NAME } from '@behjati/shared';
@@ -71,6 +71,11 @@ export default function Header() {
           اردکان
         </Link>
       </nav>
+      <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex">
+        <Link href="/account" aria-label="حساب کاربری">
+          <UserRound />
+        </Link>
+      </Button>
       <Button
         variant="ghost"
         size="icon"

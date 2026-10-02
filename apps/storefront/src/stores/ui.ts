@@ -1,6 +1,6 @@
 'use client';
 import { create } from 'zustand';
-type Panel = 'menu' | 'search' | 'cart' | 'account' | null;
+type Panel = 'menu' | 'search' | 'cart' | null;
 export const useUI = create<{
   panel: Panel;
   searchQuery: string;

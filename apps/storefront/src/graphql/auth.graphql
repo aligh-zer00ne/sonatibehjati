@@ -1,0 +1,39 @@
+fragment SessionUser on AuthUser {
+  id
+  phone
+  firstName
+  lastName
+  email
+}
+query CurrentUser {
+  me {
+    ...SessionUser
+  }
+}
+mutation RequestOtp($input: RequestOtpInput!) {
+  requestOtp(input: $input) {
+    challengeId
+    phone
+    expiresAt
+    resendAt
+  }
+}
+mutation VerifyOtp($input: VerifyOtpInput!) {
+  verifyOtp(input: $input) {
+    user {
+      ...SessionUser
+    }
+    accessExpiresAt
+  }
+}
+mutation RefreshUserSession {
+  refreshToken {
+    user {
+      ...SessionUser
+    }
+    accessExpiresAt
+  }
+}
+mutation LogoutUser {
+  logout
+}

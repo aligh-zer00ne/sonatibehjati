@@ -10,7 +10,6 @@ const titles = {
   menu: 'فهرست سنتی بهجتی',
   search: 'جستجو در محصولات',
   cart: 'سبد خرید',
-  account: 'حساب کاربری',
 };
 export default function HomePanels({ products }: { products: HomepageCatalogQuery['products'] }) {
   const panel = useUI((state) => state.panel);
@@ -39,15 +38,6 @@ export default function HomePanels({ products }: { products: HomepageCatalogQuer
       {activePanel === 'menu' && <MobileMenu />}
       {activePanel === 'search' && <SearchPanel products={products} />}
       {activePanel === 'cart' && <CartPanel />}
-      {activePanel === 'account' && (
-        <div className="px-[18px] py-9 text-center">
-          <h3 className="mb-2.5 text-[19px] font-[750]">به سنتی بهجتی خوش آمدید</h3>
-          <p className="text-[13px] leading-[2] text-muted-foreground">
-            ورود با شماره موبایل و رمز یکبار مصرف به‌زودی فعال می‌شود. برای دیدن محصولات و ساخت سبد
-            نیازی به ورود ندارید.
-          </p>
-        </div>
-      )}
     </Dialog>
   );
 }

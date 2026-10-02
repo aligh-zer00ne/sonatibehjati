@@ -3,10 +3,13 @@ export const BRAND_NAME = 'حلواارده سنتی بهجتی اردکان';
 export const formatNumber = (value: number) => new Intl.NumberFormat('fa-IR').format(value);
 export const formatPrice = (value: number) => `${formatNumber(value)} تومان`;
 export const normalizeDigits = (value: string) =>
-  value.replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)));
+  value
+    .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)));
 export const phoneSchema = z
   .string()
-  .transform(normalizeDigits)
+  .max(30)
+  .transform((value) => normalizeDigits(value.trim()))
   .pipe(z.string().regex(/^09\d{9}$/, 'شماره موبایل معتبر وارد کنید.'));
 export const cartLineSchema = z.object({
   productId: z.string().min(1),
@@ -64,3 +67,50 @@ export type CatalogFilter = z.infer<typeof catalogFilterSchema>;
 export const selectionSchema = z
   .object({ ids: z.array(z.string().min(1).max(100)).max(MAX_CART_LINES) })
   .strict();
+
+export const otpRequestSchema = z.object({ phone: phoneSchema }).strict();
+export const otpVerifySchema = z
+  .object({
+    challengeId: z.string().uuid(),
+    phone: phoneSchema,
+    code: z
+      .string()
+      .max(12)
+      .transform(normalizeDigits)
+      .pipe(z.string().regex(/^\d{6}$/, 'کد شش‌رقمی را وارد کنید.')),
+  })
+  .strict();
+export const OTP_LENGTH = 6;
+export const OTP_LIFETIME_SECONDS = 180;
+export const OTP_RESEND_SECONDS = 60;
+export const OTP_MAX_ATTEMPTS = 5;
+export const safeReturnPath = (value: string | null | undefined) => {
+  if (
+    !value ||
+    value.length > 500 ||
+    !value.startsWith('/') ||
+    value.startsWith('//') ||
+    value.includes('\\') ||
+    [...value].some((character) => character.charCodeAt(0) <= 32)
+  )
+    return '/account';
+  try {
+    const parsed = new URL(value, 'https://return.invalid');
+    const pathname = decodeURIComponent(parsed.pathname).replace(/\/+$/, '');
+    if (
+      parsed.origin !== 'https://return.invalid' ||
+      ['/login', '/verify', '/api'].includes(pathname) ||
+      pathname.startsWith('/api/') ||
+      pathname.startsWith('//') ||
+      pathname.includes('\\') ||
+      pathname.includes('%') ||
+      [...pathname].some((character) => character.charCodeAt(0) <= 32)
+    )
+      return '/account';
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    return '/account';
+  }
+};
+export const USER_ACCESS_COOKIE = 'behjati_user_access';
+export const USER_REFRESH_COOKIE = 'behjati_user_refresh';

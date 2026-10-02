@@ -16,6 +16,21 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AuthSession = {
+  __typename?: 'AuthSession';
+  accessExpiresAt: Scalars['String']['output'];
+  user: AuthUser;
+};
+
+export type AuthUser = {
+  __typename?: 'AuthUser';
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  phone: Scalars['String']['output'];
+};
+
 export type CatalogInput = {
   category?: InputMaybe<Scalars['String']['input']>;
   excludeSlug?: InputMaybe<Scalars['String']['input']>;
@@ -42,6 +57,32 @@ export type Category = {
   image: Scalars['String']['output'];
   slug: Scalars['String']['output'];
   title: Scalars['String']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  logout: Scalars['Boolean']['output'];
+  refreshToken: AuthSession;
+  requestOtp: OtpChallenge;
+  verifyOtp: AuthSession;
+};
+
+
+export type MutationRequestOtpArgs = {
+  input: RequestOtpInput;
+};
+
+
+export type MutationVerifyOtpArgs = {
+  input: VerifyOtpInput;
+};
+
+export type OtpChallenge = {
+  __typename?: 'OtpChallenge';
+  challengeId: Scalars['ID']['output'];
+  expiresAt: Scalars['String']['output'];
+  phone: Scalars['String']['output'];
+  resendAt: Scalars['String']['output'];
 };
 
 export type Product = {
@@ -81,6 +122,7 @@ export type Query = {
   catalog: CatalogPage;
   categories: Array<Category>;
   health: Scalars['String']['output'];
+  me?: Maybe<AuthUser>;
   product?: Maybe<Product>;
   products: Array<Product>;
   productsByIds: Array<Product>;
@@ -105,6 +147,16 @@ export type QueryProductsArgs = {
 
 export type QueryProductsByIdsArgs = {
   ids: Array<Scalars['ID']['input']>;
+};
+
+export type RequestOtpInput = {
+  phone: Scalars['String']['input'];
+};
+
+export type VerifyOtpInput = {
+  challengeId: Scalars['ID']['input'];
+  code: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
 };
 
 export type AdminCatalogQueryVariables = Exact<{ [key: string]: never; }>;

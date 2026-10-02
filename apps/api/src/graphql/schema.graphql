@@ -25,6 +25,7 @@ type Product {
   updatedAt: String!
 }
 type Query {
+  me: AuthUser
   health: String!
   products(category: String, search: String): [Product!]!
   product(slug: String!): Product
@@ -55,4 +56,36 @@ type CatalogPage {
   page: Int!
   pageSize: Int!
   totalPages: Int!
+}
+
+type AuthUser {
+  id: ID!
+  phone: String!
+  firstName: String
+  lastName: String
+  email: String
+}
+type OtpChallenge {
+  challengeId: ID!
+  phone: String!
+  expiresAt: String!
+  resendAt: String!
+}
+type AuthSession {
+  user: AuthUser!
+  accessExpiresAt: String!
+}
+input RequestOtpInput {
+  phone: String!
+}
+input VerifyOtpInput {
+  challengeId: ID!
+  phone: String!
+  code: String!
+}
+type Mutation {
+  requestOtp(input: RequestOtpInput!): OtpChallenge!
+  verifyOtp(input: VerifyOtpInput!): AuthSession!
+  refreshToken: AuthSession!
+  logout: Boolean!
 }

@@ -28,6 +28,7 @@ model User {
  addresses Address[]
  orders Order[]
  refreshTokens RefreshToken[]
+ sessions UserSession[]
 }
 model Address {
  id String @id @default(cuid())
@@ -139,6 +140,7 @@ model OtpCode {
  id String @id @default(cuid())
  phone String
  codeHash String
+ sentAt DateTime?
  expiresAt DateTime
  attempts Int @default(0)
  consumedAt DateTime?
@@ -151,6 +153,7 @@ model RefreshToken {
  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
  tokenHash String @unique
  familyId String
+ session UserSession @relation(fields:[familyId],references:[id],onDelete:Cascade)
  expiresAt DateTime
  revokedAt DateTime?
  createdAt DateTime @default(now())
@@ -168,4 +171,23 @@ model AdminRefreshToken {
  createdAt DateTime @default(now())
  @@index([adminId])
  @@index([familyId])
+}
+
+model AuthThrottle {
+ key String @id @db.VarChar(64)
+ count Int @default(0)
+ expiresAt DateTime
+ @@index([expiresAt])
+}
+
+model UserSession {
+ id String @id
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ expiresAt DateTime
+ revokedAt DateTime?
+ createdAt DateTime @default(now())
+ refreshTokens RefreshToken[]
+ @@index([userId])
+ @@index([expiresAt])
 }

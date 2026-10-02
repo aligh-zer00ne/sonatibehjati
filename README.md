@@ -1,12 +1,12 @@
 # حلواارده سنتی بهجتی اردکان
 
-فازهای ۱ و ۲، صفحهٔ اصلی فاز ۳ و فاز ۴ Commerce پیاده‌سازی شده‌اند. فروشگاه، دسته‌بندی، محصول، جستجو، سبد مهمان و علاقه‌مندی‌ها آماده‌اند؛ ورود، ثبت سفارش و مدیریت عملیاتی در فازهای بعد ساخته می‌شوند.
+فازهای ۱ و ۲، صفحهٔ اصلی فاز ۳، فاز ۴ Commerce و فاز ۵ Authentication پیاده‌سازی شده‌اند. فروشگاه، محصول، جستجو، سبد مهمان، علاقه‌مندی‌ها و ورود پیامکی آماده‌اند؛ ثبت سفارش و مدیریت عملیاتی در فازهای بعد ساخته می‌شوند.
 
 ## معماری
 
 - `apps/storefront`: Next.js App Router، RSC، TypeScript، Tailwind 4، primitiveهای shadcn/Radix، Vazirmatn محلی، Zustand برای سبد مهمان.
 - `apps/admin`: React / Vite / Ant Design، مستقل از رابط فروشگاه؛ فعلاً پوستهٔ پنل، بدون API مدیریتی عمومی.
-- `apps/api`: Express / GraphQL Yoga / Prisma / MySQL؛ کاتالوگ خواندنی با مدل‌های پایهٔ همهٔ دامنه‌ها.
+- `apps/api`: Express / GraphQL Yoga / Prisma / MySQL؛ کاتالوگ خواندنی و ورود پیامکی با نشست‌های کاربر.
 - `packages/shared`, `graphql`, `types`, `config`: اعتبارسنجی، ابزارهای مشترک، کلاینت تایپ‌شده و قراردادها.
 - منبع قرارداد API: `apps/api/src/graphql/schema.graphql`. تایپ‌های GraphQL با Codegen ساخته می‌شوند.
 
@@ -41,7 +41,9 @@ npm مدیر اصلی نصب و `package-lock.json` فایل قفل مرجع ا�
 | `ADMIN_ACCESS_TOKEN_SECRET`, `ADMIN_REFRESH_TOKEN_SECRET` | اسرار مستقل مدیر، متفاوت از اسرار کاربر                                       |
 | `DEV_ADMIN_EMAIL`, `DEV_ADMIN_PASSWORD`                   | ایجاد اختیاری مدیر توسعه در seed؛ رمز حداقل ۱۲ کاراکتر                        |
 
-در این فاز فروشگاه به‌صورت پیش‌فرض کاتالوگ نمونه دارد. تنظیم `CATALOG_SOURCE=api` باید هنگام build نیز انجام شود. تولید رمز/توکن، ورود و rotation در فاز ۵ و ۸ پیاده‌سازی می‌شود؛ اسرار اینجا تنها اعتبارسنجی زیرساخت هستند.
+فروشگاه به‌صورت پیش‌فرض کاتالوگ نمونه دارد. تنظیم `CATALOG_SOURCE=api` باید هنگام build نیز انجام شود. ورود کاربر، توکن‌ها و rotation در فاز ۵ فعال‌اند؛ احراز هویت مدیر در فاز ۸ اجرا می‌شود و اسرار آن مستقل‌اند.
+
+پس از آماده‌شدن دیتابیس، `npm run setup:auth` اسرار تصادفی توسعه را در فایل‌های خصوصی و gitignored ایجاد می‌کند و کلید پراکسی API و Next را هماهنگ می‌کند. مقادیر موجود حفظ می‌شوند؛ تعیین صریح `DATABASE_URL` هنگام اجرای این فرمان اتصال محلی را عوض می‌کند. این فرمان برای production نیست. در حالت `SMS_PROVIDER=mock` کد ورود فقط در کنسول API توسعه نمایش داده می‌شود. برای سرویس واقعی `SMS_PROVIDER=melipayamak`، `MELI_PAYAMAK_API_KEY` و `MELI_PAYAMAK_OTP_BODY_ID` را در محیط API تنظیم کنید؛ راهنمای کامل در [docs/phase5.md](docs/phase5.md) است.
 
 ## دیتابیس، Migration و Seed
 
@@ -84,6 +86,8 @@ npm run verify:home
 npm run verify:commerce
 # با DATABASE_URL دیتابیس آزمایشی migrated و seeded
 npm run verify:api
+npm run verify:auth
+npm run verify:auth-ui
 ```
 
 برای تولید: `npm run start -w @behjati/storefront` و `npm run start -w @behjati/api`؛ پنل admin خروجی static در `apps/admin/dist` دارد. build و typecheck دیتابیس زنده لازم ندارند.
@@ -96,11 +100,11 @@ npm run verify:api
 
 فایل robots فعلاً خزیدن را مسدود می‌کند، چون نسخهٔ توسعه حاوی قیمت نمونه است. SEO/GEO کامل و structured data معتبر در فاز ۹ اجرا می‌شود.
 
-جزئیات قراردادهای کاتالوگ، محدودیت‌های سبد و وضعیت آزمون‌ها در [docs/phase4.md](docs/phase4.md) ثبت شده است.
+جزئیات کاتالوگ و سبد در [docs/phase4.md](docs/phase4.md) و ورود، پیامک، نشست‌ها و آزمون‌های احراز هویت در [docs/phase5.md](docs/phase5.md) ثبت شده است. مسیرهای جدید `/login`، `/verify` و `/account` هستند. حساب فعلاً وضعیت ورود و خروج را نمایش می‌دهد؛ پروفایل، نشانی‌ها و سفارش‌ها در فاز ۷ تکمیل می‌شوند. مرور و سبد همچنان برای مهمان قابل استفاده‌اند.
 
 ## فازهای بعد
 
-۵: OTP و tokens؛ ۶: آدرس، نقشه، ارسال، تخفیف، سفارش؛ ۷: حساب؛ ۸: مدیریت؛ ۹: SEO/GEO. هیچ پرداخت موفق ساختگی یا درگاه فعالی در این پروژه وجود ندارد.
+۶: آدرس، نقشه، ارسال، تخفیف، سفارش؛ ۷: حساب؛ ۸: مدیریت؛ ۹: SEO/GEO. هیچ پرداخت موفق ساختگی یا درگاه فعالی در این پروژه وجود ندارد.
 
 ## روند Git
 

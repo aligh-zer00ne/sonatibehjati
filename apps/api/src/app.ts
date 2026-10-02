@@ -1,4 +1,6 @@
 import express from 'express';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import { createAuthContext, type AuthContext } from './graphql/context.js';
 import cors from 'cors';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
@@ -18,8 +20,10 @@ app.use(
 );
 app.use(express.json({ limit: '32kb' }));
 app.get('/health', (_request, response) => response.json({ status: 'ok' }));
-const yoga = createYoga({
-  schema: createSchema({
+const yoga = createYoga<{ req: IncomingMessage; res: ServerResponse }, AuthContext>({
+  context: createAuthContext,
+  cors: false,
+  schema: createSchema<AuthContext & { req: IncomingMessage; res: ServerResponse }>({
     typeDefs: readFileSync(new URL('./graphql/schema.graphql', import.meta.url), 'utf8'),
     resolvers,
   }),
@@ -33,7 +37,9 @@ const yoga = createYoga({
     },
   ],
 });
-app.use('/graphql', yoga);
+app.use('/graphql', (req, res) => {
+  void yoga(req, res, { req, res });
+});
 const server = app.listen(env.PORT, () => console.info(`API listening on ${env.PORT}`));
 async function shutdown() {
   server.close();

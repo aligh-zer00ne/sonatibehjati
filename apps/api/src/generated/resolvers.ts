@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { AuthContext } from '../graphql/context.js';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -14,6 +15,21 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+};
+
+export type AuthSession = {
+  __typename?: 'AuthSession';
+  accessExpiresAt: Scalars['String']['output'];
+  user: AuthUser;
+};
+
+export type AuthUser = {
+  __typename?: 'AuthUser';
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  phone: Scalars['String']['output'];
 };
 
 export type CatalogInput = {
@@ -42,6 +58,32 @@ export type Category = {
   image: Scalars['String']['output'];
   slug: Scalars['String']['output'];
   title: Scalars['String']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  logout: Scalars['Boolean']['output'];
+  refreshToken: AuthSession;
+  requestOtp: OtpChallenge;
+  verifyOtp: AuthSession;
+};
+
+
+export type MutationRequestOtpArgs = {
+  input: RequestOtpInput;
+};
+
+
+export type MutationVerifyOtpArgs = {
+  input: VerifyOtpInput;
+};
+
+export type OtpChallenge = {
+  __typename?: 'OtpChallenge';
+  challengeId: Scalars['ID']['output'];
+  expiresAt: Scalars['String']['output'];
+  phone: Scalars['String']['output'];
+  resendAt: Scalars['String']['output'];
 };
 
 export type Product = {
@@ -81,6 +123,7 @@ export type Query = {
   catalog: CatalogPage;
   categories: Array<Category>;
   health: Scalars['String']['output'];
+  me?: Maybe<AuthUser>;
   product?: Maybe<Product>;
   products: Array<Product>;
   productsByIds: Array<Product>;
@@ -105,6 +148,16 @@ export type QueryProductsArgs = {
 
 export type QueryProductsByIdsArgs = {
   ids: Array<Scalars['ID']['input']>;
+};
+
+export type RequestOtpInput = {
+  phone: Scalars['String']['input'];
+};
+
+export type VerifyOtpInput = {
+  challengeId: Scalars['ID']['input'];
+  code: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
 };
 
 
@@ -180,34 +233,59 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AuthSession: ResolverTypeWrapper<AuthSession>;
+  AuthUser: ResolverTypeWrapper<AuthUser>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CatalogInput: CatalogInput;
   CatalogPage: ResolverTypeWrapper<CatalogPage>;
   Category: ResolverTypeWrapper<Category>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  OtpChallenge: ResolverTypeWrapper<OtpChallenge>;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
   ProductSort: ProductSort;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  RequestOtpInput: RequestOtpInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  VerifyOtpInput: VerifyOtpInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AuthSession: AuthSession;
+  AuthUser: AuthUser;
   Boolean: Scalars['Boolean']['output'];
   CatalogInput: CatalogInput;
   CatalogPage: CatalogPage;
   Category: Category;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  Mutation: Record<PropertyKey, never>;
+  OtpChallenge: OtpChallenge;
   Product: Product;
   ProductImage: ProductImage;
   Query: Record<PropertyKey, never>;
+  RequestOtpInput: RequestOtpInput;
   String: Scalars['String']['output'];
+  VerifyOtpInput: VerifyOtpInput;
 };
 
-export type CatalogPageResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogPage'] = ResolversParentTypes['CatalogPage']> = {
+export type AuthSessionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AuthSession'] = ResolversParentTypes['AuthSession']> = {
+  accessExpiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType>;
+};
+
+export type AuthUserResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AuthUser'] = ResolversParentTypes['AuthUser']> = {
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type CatalogPageResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CatalogPage'] = ResolversParentTypes['CatalogPage']> = {
   items?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
   page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   pageSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -215,14 +293,28 @@ export type CatalogPageResolvers<ContextType = any, ParentType extends Resolvers
   totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
-export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
+export type CategoryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type ProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
+export type MutationResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType>;
+  requestOtp?: Resolver<ResolversTypes['OtpChallenge'], ParentType, ContextType, RequireFields<MutationRequestOtpArgs, 'input'>>;
+  verifyOtp?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType, RequireFields<MutationVerifyOtpArgs, 'input'>>;
+};
+
+export type OtpChallengeResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OtpChallenge'] = ResolversParentTypes['OtpChallenge']> = {
+  challengeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  expiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  resendAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type ProductResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
   badge?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -238,24 +330,29 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   weight?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type ProductImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductImage'] = ResolversParentTypes['ProductImage']> = {
+export type ProductImageResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['ProductImage'] = ResolversParentTypes['ProductImage']> = {
   alt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   catalog?: Resolver<ResolversTypes['CatalogPage'], ParentType, ContextType, RequireFields<QueryCatalogArgs, 'input'>>;
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  me?: Resolver<Maybe<ResolversTypes['AuthUser']>, ParentType, ContextType>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'slug'>>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, Partial<QueryProductsArgs>>;
   productsByIds?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductsByIdsArgs, 'ids'>>;
 };
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = AuthContext> = {
+  AuthSession?: AuthSessionResolvers<ContextType>;
+  AuthUser?: AuthUserResolvers<ContextType>;
   CatalogPage?: CatalogPageResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  OtpChallenge?: OtpChallengeResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductImage?: ProductImageResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

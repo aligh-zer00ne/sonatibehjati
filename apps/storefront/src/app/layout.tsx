@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@fontsource-variable/vazirmatn';
 import './globals.css';
 import { BRAND_NAME } from '@behjati/shared';
+import AuthProvider from '@/components/auth/AuthProvider';
 import ClientRuntime from '@/components/layout/ClientRuntime';
 import StorefrontBackdrop from '@/components/decoration/storefront-backdrop';
 export const metadata: Metadata = {
@@ -29,8 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           رفتن به محتوای اصلی
         </a>
-        <ClientRuntime />
-        {children}
+        <AuthProvider>
+          <ClientRuntime />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

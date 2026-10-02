@@ -2,7 +2,10 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
   schema: 'apps/api/src/graphql/schema.graphql',
   generates: {
-    'apps/api/src/generated/resolvers.ts': { plugins: ['typescript', 'typescript-resolvers'] },
+    'apps/api/src/generated/resolvers.ts': {
+      plugins: ['typescript', 'typescript-resolvers'],
+      config: { contextType: '../graphql/context.js#AuthContext' },
+    },
     'apps/storefront/src/generated/': {
       preset: 'client',
       presetConfig: { fragmentMasking: false },
