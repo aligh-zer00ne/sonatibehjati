@@ -20,7 +20,8 @@
     "dev:bun": "bun run dev",
     "check": "npm run codegen && npm run lint && npm run typecheck && npm test && npm run build",
     "verify:home": "node scripts/verify-home.mjs",
-    "verify:api": "node scripts/verify-api.mjs"
+    "verify:api": "node scripts/verify-api.mjs",
+    "verify:commerce": "node scripts/verify-commerce.mjs"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^6.1.0",

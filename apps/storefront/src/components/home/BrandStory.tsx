@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,9 +32,9 @@ export default function BrandStory() {
           داستان کامل برند، پس از دریافت اطلاعات تأییدشده، در این بخش منتشر می‌شود.
         </p>
         <Button className="text-xs" variant="outline" asChild>
-          <a href="#products">
+          <Link href="/shop">
             آشنایی با محصولات <ArrowLeft size={17} />
-          </a>
+          </Link>
         </Button>
       </div>
     </section>

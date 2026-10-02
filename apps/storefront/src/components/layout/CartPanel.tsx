@@ -1,68 +1,57 @@
 'use client';
-import Image from 'next/image';
+import Link from 'next/link';
+import { ShoppingCart, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useCart, getSubtotal } from '@/stores/cart';
+import { useCartHydrated } from '@/hooks/use-cart-hydrated';
+import { useSelectedProducts } from '@/hooks/use-selected-products';
 import { formatPrice } from '@behjati/shared';
-import type { HomepageCatalogQuery } from '@/generated/graphql';
-import QuantityControl from '@/components/product/QuantityControl';
-export default function CartPanel({ products }: { products: HomepageCatalogQuery['products'] }) {
+import CartItem from '@/components/cart/CartItem';
+export default function CartPanel() {
   const items = useCart((state) => state.items);
-  const remove = useCart((state) => state.remove);
-  const selected = products.filter((product) => items[product.id]);
-  if (!selected.length)
+  const hydrated = useCartHydrated();
+  const ids = Object.keys(items);
+  const { products, loading, error, retry } = useSelectedProducts(ids, hydrated);
+  if (loading) return <Skeleton className="h-64 rounded-2xl" aria-label="در حال دریافت سبد خرید" />;
+  if (error)
     return (
-      <div className="px-[18px] py-9 text-center">
-        <ShoppingCart className="mx-auto mb-[15px] text-clay" size={40} />
-        <h3 className="mb-2.5 text-[19px] font-[750]">سبد خرید شما خالی است</h3>
-        <p className="text-[13px] leading-[2] text-muted-foreground">
-          طعم دلخواهتان را از محصولات انتخاب کنید.
-        </p>
-      </div>
+      <EmptyState title="سبد دریافت نشد" description={error} icon={<AlertCircle size={36} />}>
+        <Button className="mt-4" onClick={retry}>
+          تلاش دوباره
+        </Button>
+      </EmptyState>
     );
   return (
     <div>
-      <div>
-        {selected.map((product) => (
-          <div
-            className="flex items-center gap-3 border-b border-border py-[15px]"
-            key={product.id}
-          >
-            <Image
-              className="rounded-xl mix-blend-multiply"
-              src={product.images[0]!.url}
-              alt={product.title}
-              width={72}
-              height={72}
-            />
-            <div className="flex-1">
-              <h3 className="text-[13px] font-bold">{product.title}</h3>
-              <small className="text-[11px] text-muted-foreground">{product.weight}</small>
-              <strong className="my-1.5 block text-xs text-primary">
-                {formatPrice(product.price)}
-              </strong>
-              <QuantityControl className="w-[140px]" id={product.id} title={product.title} />
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-xl text-foreground"
-              aria-label={`حذف ${product.title}`}
-              onClick={() => remove(product.id)}
-            >
-              <Trash2 size={19} />
-            </Button>
+      {!ids.length ? (
+        <EmptyState
+          title="سبد خرید شما خالی است"
+          description="طعم دلخواهتان را از محصولات انتخاب کنید."
+          icon={<ShoppingCart size={40} />}
+        />
+      ) : (
+        <>
+          {products.map((product) => (
+            <CartItem key={product.id} product={product} />
+          ))}
+          {ids.length > products.length && (
+            <p role="status" className="my-4 text-sm">
+              برخی محصولات دیگر در دسترس نیستند. آن‌ها را در صفحهٔ سبد بررسی کنید.
+            </p>
+          )}
+          <div className="mt-6 flex justify-between text-sm">
+            <span>جمع محصولات</span>
+            <strong className="text-primary">{formatPrice(getSubtotal(items, products))}</strong>
           </div>
-        ))}
-      </div>
-      <div className="mt-6 flex justify-between text-sm">
-        <span>جمع محصولات</span>
-        <strong className="text-primary">{formatPrice(getSubtotal(items, products))}</strong>
-      </div>
-      <p className="mt-4 text-xs leading-6 text-muted-foreground">
-        سبد نمونه در مرورگر شما ذخیره می‌شود. ثبت سفارش و محاسبهٔ هزینهٔ ارسال در فازهای بعد فعال
-        خواهد شد.
-      </p>
+        </>
+      )}
+      <Button className="mt-5 w-full" asChild>
+        <Link href={ids.length ? '/cart' : '/shop'}>
+          {ids.length ? 'مشاهده سبد خرید' : 'مشاهده محصولات'}
+        </Link>
+      </Button>
     </div>
   );
 }

@@ -1,15 +1,17 @@
 'use client';
 import { useUI } from '@/stores/ui';
 import { Search } from 'lucide-react';
+import Link from 'next/link';
+import { normalizeSearch } from '@behjati/shared';
+import { Button } from '@/components/ui/button';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import { Input } from '@/components/ui/input';
 import ProductGrid from '@/components/product/ProductGrid';
 export default function SearchPanel({ products }: { products: HomepageCatalogQuery['products'] }) {
   const query = useUI((state) => state.searchQuery);
   const setQuery = useUI((state) => state.setSearchQuery);
-  const results = products.filter(
-    (product) =>
-      product.title.includes(query.trim()) || product.category.title.includes(query.trim()),
+  const results = products.filter((product) =>
+    normalizeSearch(`${product.title} ${product.category.title}`).includes(normalizeSearch(query)),
   );
   return (
     <div>
@@ -30,6 +32,9 @@ export default function SearchPanel({ products }: { products: HomepageCatalogQue
       <p className="my-[15px] text-xs text-muted-foreground" aria-live="polite">
         {new Intl.NumberFormat('fa-IR').format(results.length)} محصول
       </p>
+      <Button asChild variant="outline" className="mb-4 w-full">
+        <Link href={`/search?q=${encodeURIComponent(query)}`}>مشاهده نتایج کامل جستجو</Link>
+      </Button>
       {results.length ? (
         <ProductGrid products={results} compact />
       ) : (

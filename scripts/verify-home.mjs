@@ -75,7 +75,7 @@ try {
   );
   await page.getByRole('button', { name: 'سبد خرید، ۲ محصول' }).click();
   await page.getByRole('dialog').waitFor();
-  assert.ok((await page.getByRole('dialog').textContent()).includes('۴۹۰٬۰۰۰ تومان'));
+  await expect(page.getByRole('dialog')).toContainText('۴۹۰٬۰۰۰ تومان');
   await closePanel(page);
   await page.getByRole('button', { name: 'جستجو در محصولات سنتی بهجتی...' }).click();
   await page.getByLabel('جستجوی محصول').fill('محصول ناموجود');
@@ -83,9 +83,10 @@ try {
   await page.getByLabel('جستجوی محصول').fill('شکلاتی');
   assert.equal(await page.getByRole('dialog').locator('article[data-product-slug]').count(), 1);
   await closePanel(page);
-  await page.locator('#categories button').filter({ hasText: 'روغن ارده' }).click();
-  assert.equal(await page.getByRole('dialog').locator('article[data-product-slug]').count(), 1);
-  await closePanel(page);
+  await page.locator('#categories a').filter({ hasText: 'روغن ارده' }).click();
+  await expect(page).toHaveURL(`${baseURL}/category/oil`);
+  await expect(page.locator('main article[data-product-slug]')).toHaveCount(1);
+  await page.goto(baseURL, { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: 'باز کردن فهرست' }).click();
   await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی' }).click();
   await page.locator('[data-slot="dialog-content"]').waitFor({ state: 'hidden' });

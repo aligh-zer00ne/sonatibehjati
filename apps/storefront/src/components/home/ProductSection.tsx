@@ -12,7 +12,7 @@ export default function ProductSection({
 }) {
   return (
     <section className="my-8 md:my-12 xl:my-14" id={id}>
-      <SectionHeading title={title} href="#all-products" />
+      <SectionHeading title={title} href="/shop" />
       <ProductGrid products={products} />
     </section>
   );

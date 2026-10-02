@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,16 +25,16 @@ export default function HeroSection() {
         </p>
         <div className="relative z-[2] order-3 -mt-[5px] flex flex-col items-center gap-2 md:mt-6 md:flex-row md:flex-wrap md:gap-[18px]">
           <Button className="w-[86%] md:w-auto" asChild>
-            <a href="#products">
+            <Link href="/shop">
               مشاهده محصولات <ArrowLeft size={19} />
-            </a>
+            </Link>
           </Button>
-          <a
+          <Link
             className="group/story-link flex min-h-11 items-center gap-2.5 font-[650] text-primary transition-colors duration-300 hover:text-brand-red-dark [&_svg]:transition-transform [&_svg]:duration-300 motion-safe:hover:[&_svg]:-translate-x-1.5 motion-reduce:[&_svg]:transition-none"
             href="#story"
           >
             داستان سنتی بهجتی <ArrowLeft size={17} />
-          </a>
+          </Link>
         </div>
       </div>
       <div className="relative order-2 -mx-5 h-[290px] w-[calc(100%+40px)] shrink-0 min-[480px]:h-[340px] md:absolute md:bottom-0 md:left-0 md:m-0 md:h-full md:w-[55%] xl:w-[57%]">

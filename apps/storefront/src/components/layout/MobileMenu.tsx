@@ -1,14 +1,15 @@
 'use client';
+import Link from 'next/link';
 import Image from 'next/image';
 import { House, Store, LayoutGrid, BookOpen, MapPin } from 'lucide-react';
 import { useUI } from '@/stores/ui';
 import { BRAND_NAME } from '@behjati/shared';
 const links = [
   { href: '/', label: 'خانه', icon: House },
-  { href: '#products', label: 'محصولات', icon: Store },
-  { href: '#categories', label: 'دسته‌بندی محصولات', icon: LayoutGrid },
-  { href: '#story', label: 'داستان سنتی بهجتی', icon: BookOpen },
-  { href: '#ardakan', label: 'اردکان', icon: MapPin },
+  { href: '/shop', label: 'محصولات', icon: Store },
+  { href: '/shop#categories', label: 'دسته‌بندی محصولات', icon: LayoutGrid },
+  { href: '/#story', label: 'داستان سنتی بهجتی', icon: BookOpen },
+  { href: '/#ardakan', label: 'اردکان', icon: MapPin },
 ];
 export default function MobileMenu() {
   const close = useUI((state) => state.setPanel);
@@ -23,7 +24,7 @@ export default function MobileMenu() {
       />
       <nav className="flex flex-col" aria-label="فهرست اصلی">
         {links.map(({ href, label, icon: Icon }) => (
-          <a
+          <Link
             className="flex min-h-14 items-center gap-3.5 rounded-xl border-b border-border transition-[padding,background-color,color,translate,scale] duration-300 ease-out hover:bg-accent hover:px-3 hover:text-primary motion-safe:hover:-translate-x-1 motion-safe:active:scale-[0.98] motion-reduce:transition-none"
             href={href}
             key={href}
@@ -31,7 +32,7 @@ export default function MobileMenu() {
           >
             <Icon size={21} />
             {label}
-          </a>
+          </Link>
         ))}
       </nav>
       <div

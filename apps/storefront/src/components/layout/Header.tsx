@@ -1,11 +1,17 @@
 'use client';
 import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Menu, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/stores/cart';
 import { useUI } from '@/stores/ui';
 import { formatNumber, BRAND_NAME } from '@behjati/shared';
 export default function Header() {
+  const pathname = usePathname();
+  const shopActive =
+    ['/shop', '/search', '/favorites'].includes(pathname) || pathname.startsWith('/product/');
+  const categoryActive = pathname.startsWith('/category/');
   const count = useCart((state) => Object.values(state.items).reduce((a, b) => a + b, 0));
   const open = useUI((state) => state.setPanel);
   return (
@@ -19,7 +25,7 @@ export default function Header() {
       >
         <Menu />
       </Button>
-      <a href="/" className="flex items-center gap-3" aria-label={BRAND_NAME}>
+      <Link href="/" className="flex items-center gap-3" aria-label={BRAND_NAME}>
         <Image
           className="h-[76px] w-[54px] object-contain mix-blend-multiply"
           src="/images/logo-brand.png"
@@ -32,26 +38,38 @@ export default function Header() {
           <strong className="text-sm">حلواارده سنتی بهجتی اردکان</strong>
           <small className="text-[10px] text-muted-foreground">طعم اصیل اردکان، از دل کنجد</small>
         </span>
-      </a>
+      </Link>
       <nav
         className="hidden items-center gap-[26px] text-[13px] lg:flex [&_a]:relative [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-primary [&_a]:after:absolute [&_a]:after:right-0 [&_a]:after:bottom-1 [&_a]:after:h-0.5 [&_a]:after:w-full [&_a]:after:origin-right [&_a]:after:scale-x-0 [&_a]:after:rounded-full [&_a]:after:bg-primary [&_a]:after:transition-transform [&_a]:after:duration-300 [&_a]:after:content-[''] [&_a:hover]:after:scale-x-100 motion-reduce:[&_a]:transition-none motion-reduce:[&_a]:after:transition-none"
         aria-label="ناوبری اصلی"
       >
-        <a className="py-3 text-primary" href="/">
+        <Link
+          className={`py-3 ${pathname === '/' ? 'text-primary' : ''}`}
+          aria-current={pathname === '/' ? 'page' : undefined}
+          href="/"
+        >
           خانه
-        </a>
-        <a className="py-3" href="#products">
+        </Link>
+        <Link
+          className={`py-3 ${shopActive ? 'text-primary' : ''}`}
+          aria-current={shopActive ? 'page' : undefined}
+          href="/shop"
+        >
           محصولات
-        </a>
-        <a className="py-3" href="#categories">
+        </Link>
+        <Link
+          className={`py-3 ${categoryActive ? 'text-primary' : ''}`}
+          aria-current={categoryActive ? 'page' : undefined}
+          href="/shop#categories"
+        >
           دسته‌بندی‌ها
-        </a>
-        <a className="py-3" href="#story">
+        </Link>
+        <Link className="py-3" href="/#story">
           داستان سنتی بهجتی
-        </a>
-        <a className="py-3" href="#ardakan">
+        </Link>
+        <Link className="py-3" href="/#ardakan">
           اردکان
-        </a>
+        </Link>
       </nav>
       <Button
         variant="ghost"

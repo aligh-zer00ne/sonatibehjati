@@ -1,7 +1,7 @@
 'use client';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { buttonVariants } from './button';
 import { cn } from '@/lib/utils';
 export function Dialog({
@@ -17,6 +17,7 @@ export function Dialog({
   description: string;
   children: ReactNode;
 }) {
+  const opener = useRef<HTMLElement | null>(null);
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
@@ -26,6 +27,13 @@ export function Dialog({
         />
         <DialogPrimitive.Content
           data-slot="dialog-content"
+          onOpenAutoFocus={() => {
+            opener.current = document.activeElement as HTMLElement | null;
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            if (opener.current?.isConnected) opener.current.focus({ preventScroll: true });
+          }}
           dir="rtl"
           className="fixed top-1/2 left-1/2 z-[51] max-h-[88dvh] w-[min(94vw,560px)] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-3xl border border-border bg-popover px-[22px] py-7 text-popover-foreground shadow-[0_12px_32px_rgba(70,44,25,0.08)] ease-[cubic-bezier(0.22,1,0.36,1)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4 data-[state=open]:duration-400 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-2 data-[state=closed]:duration-200 motion-reduce:animate-none!"
         >
