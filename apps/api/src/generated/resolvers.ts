@@ -16,6 +16,26 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CatalogInput = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  excludeSlug?: InputMaybe<Scalars['String']['input']>;
+  maxPrice?: InputMaybe<Scalars['Int']['input']>;
+  minPrice?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<ProductSort>;
+};
+
+export type CatalogPage = {
+  __typename?: 'CatalogPage';
+  items: Array<Product>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type Category = {
   __typename?: 'Category';
   id: Scalars['ID']['output'];
@@ -48,12 +68,27 @@ export type ProductImage = {
   url: Scalars['String']['output'];
 };
 
+export enum ProductSort {
+  Featured = 'FEATURED',
+  NameAsc = 'NAME_ASC',
+  Newest = 'NEWEST',
+  PriceAsc = 'PRICE_ASC',
+  PriceDesc = 'PRICE_DESC'
+}
+
 export type Query = {
   __typename?: 'Query';
+  catalog: CatalogPage;
   categories: Array<Category>;
   health: Scalars['String']['output'];
   product?: Maybe<Product>;
   products: Array<Product>;
+  productsByIds: Array<Product>;
+};
+
+
+export type QueryCatalogArgs = {
+  input: CatalogInput;
 };
 
 
@@ -65,6 +100,11 @@ export type QueryProductArgs = {
 export type QueryProductsArgs = {
   category?: InputMaybe<Scalars['String']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryProductsByIdsArgs = {
+  ids: Array<Scalars['ID']['input']>;
 };
 
 
@@ -141,11 +181,14 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CatalogInput: CatalogInput;
+  CatalogPage: ResolverTypeWrapper<CatalogPage>;
   Category: ResolverTypeWrapper<Category>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
+  ProductSort: ProductSort;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 };
@@ -153,6 +196,8 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  CatalogInput: CatalogInput;
+  CatalogPage: CatalogPage;
   Category: Category;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
@@ -160,6 +205,14 @@ export type ResolversParentTypes = {
   ProductImage: ProductImage;
   Query: Record<PropertyKey, never>;
   String: Scalars['String']['output'];
+};
+
+export type CatalogPageResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogPage'] = ResolversParentTypes['CatalogPage']> = {
+  items?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
@@ -192,13 +245,16 @@ export type ProductImageResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  catalog?: Resolver<ResolversTypes['CatalogPage'], ParentType, ContextType, RequireFields<QueryCatalogArgs, 'input'>>;
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'slug'>>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, Partial<QueryProductsArgs>>;
+  productsByIds?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductsByIdsArgs, 'ids'>>;
 };
 
 export type Resolvers<ContextType = any> = {
+  CatalogPage?: CatalogPageResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductImage?: ProductImageResolvers<ContextType>;

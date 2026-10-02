@@ -1,0 +1,51 @@
+fragment CatalogProduct on Product {
+  id
+  slug
+  title
+  shortDescription
+  description
+  price
+  weight
+  badge
+  isActive
+  images {
+    id
+    url
+    alt
+  }
+  category {
+    id
+    slug
+    title
+    image
+  }
+  createdAt
+  updatedAt
+}
+query CatalogPage($input: CatalogInput!) {
+  categories {
+    id
+    slug
+    title
+    image
+  }
+  catalog(input: $input) {
+    items {
+      ...CatalogProduct
+    }
+    total
+    page
+    pageSize
+    totalPages
+  }
+}
+query ProductDetail($slug: String!) {
+  product(slug: $slug) {
+    ...CatalogProduct
+  }
+}
+query SelectedProducts($ids: [ID!]!) {
+  productsByIds(ids: $ids) {
+    ...CatalogProduct
+  }
+}

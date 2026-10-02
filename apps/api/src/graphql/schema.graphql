@@ -29,4 +29,30 @@ type Query {
   products(category: String, search: String): [Product!]!
   product(slug: String!): Product
   categories: [Category!]!
+  catalog(input: CatalogInput!): CatalogPage!
+  productsByIds(ids: [ID!]!): [Product!]!
+}
+enum ProductSort {
+  FEATURED
+  NEWEST
+  PRICE_ASC
+  PRICE_DESC
+  NAME_ASC
+}
+input CatalogInput {
+  search: String
+  category: String
+  excludeSlug: String
+  minPrice: Int
+  maxPrice: Int
+  sort: ProductSort
+  page: Int
+  pageSize: Int
+}
+type CatalogPage {
+  items: [Product!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+  totalPages: Int!
 }

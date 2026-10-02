@@ -14,9 +14,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "fragment CatalogProduct on Product {\n  id\n  slug\n  title\n  shortDescription\n  description\n  price\n  weight\n  badge\n  isActive\n  images {\n    id\n    url\n    alt\n  }\n  category {\n    id\n    slug\n    title\n    image\n  }\n  createdAt\n  updatedAt\n}\n\nquery CatalogPage($input: CatalogInput!) {\n  categories {\n    id\n    slug\n    title\n    image\n  }\n  catalog(input: $input) {\n    items {\n      ...CatalogProduct\n    }\n    total\n    page\n    pageSize\n    totalPages\n  }\n}\n\nquery ProductDetail($slug: String!) {\n  product(slug: $slug) {\n    ...CatalogProduct\n  }\n}\n\nquery SelectedProducts($ids: [ID!]!) {\n  productsByIds(ids: $ids) {\n    ...CatalogProduct\n  }\n}": typeof types.CatalogProductFragmentDoc,
     "query HomepageCatalog {\n  categories {\n    id\n    slug\n    title\n    image\n  }\n  products {\n    id\n    slug\n    title\n    shortDescription\n    description\n    price\n    weight\n    badge\n    isActive\n    images {\n      id\n      url\n      alt\n    }\n    category {\n      id\n      slug\n      title\n      image\n    }\n    createdAt\n    updatedAt\n  }\n}": typeof types.HomepageCatalogDocument,
 };
 const documents: Documents = {
+    "fragment CatalogProduct on Product {\n  id\n  slug\n  title\n  shortDescription\n  description\n  price\n  weight\n  badge\n  isActive\n  images {\n    id\n    url\n    alt\n  }\n  category {\n    id\n    slug\n    title\n    image\n  }\n  createdAt\n  updatedAt\n}\n\nquery CatalogPage($input: CatalogInput!) {\n  categories {\n    id\n    slug\n    title\n    image\n  }\n  catalog(input: $input) {\n    items {\n      ...CatalogProduct\n    }\n    total\n    page\n    pageSize\n    totalPages\n  }\n}\n\nquery ProductDetail($slug: String!) {\n  product(slug: $slug) {\n    ...CatalogProduct\n  }\n}\n\nquery SelectedProducts($ids: [ID!]!) {\n  productsByIds(ids: $ids) {\n    ...CatalogProduct\n  }\n}": types.CatalogProductFragmentDoc,
     "query HomepageCatalog {\n  categories {\n    id\n    slug\n    title\n    image\n  }\n  products {\n    id\n    slug\n    title\n    shortDescription\n    description\n    price\n    weight\n    badge\n    isActive\n    images {\n      id\n      url\n      alt\n    }\n    category {\n      id\n      slug\n      title\n      image\n    }\n    createdAt\n    updatedAt\n  }\n}": types.HomepageCatalogDocument,
 };
 
@@ -34,6 +36,10 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "fragment CatalogProduct on Product {\n  id\n  slug\n  title\n  shortDescription\n  description\n  price\n  weight\n  badge\n  isActive\n  images {\n    id\n    url\n    alt\n  }\n  category {\n    id\n    slug\n    title\n    image\n  }\n  createdAt\n  updatedAt\n}\n\nquery CatalogPage($input: CatalogInput!) {\n  categories {\n    id\n    slug\n    title\n    image\n  }\n  catalog(input: $input) {\n    items {\n      ...CatalogProduct\n    }\n    total\n    page\n    pageSize\n    totalPages\n  }\n}\n\nquery ProductDetail($slug: String!) {\n  product(slug: $slug) {\n    ...CatalogProduct\n  }\n}\n\nquery SelectedProducts($ids: [ID!]!) {\n  productsByIds(ids: $ids) {\n    ...CatalogProduct\n  }\n}"): (typeof documents)["fragment CatalogProduct on Product {\n  id\n  slug\n  title\n  shortDescription\n  description\n  price\n  weight\n  badge\n  isActive\n  images {\n    id\n    url\n    alt\n  }\n  category {\n    id\n    slug\n    title\n    image\n  }\n  createdAt\n  updatedAt\n}\n\nquery CatalogPage($input: CatalogInput!) {\n  categories {\n    id\n    slug\n    title\n    image\n  }\n  catalog(input: $input) {\n    items {\n      ...CatalogProduct\n    }\n    total\n    page\n    pageSize\n    totalPages\n  }\n}\n\nquery ProductDetail($slug: String!) {\n  product(slug: $slug) {\n    ...CatalogProduct\n  }\n}\n\nquery SelectedProducts($ids: [ID!]!) {\n  productsByIds(ids: $ids) {\n    ...CatalogProduct\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

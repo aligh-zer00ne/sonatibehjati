@@ -5,6 +5,8 @@ const config: CodegenConfig = {
     'apps/api/src/generated/resolvers.ts': { plugins: ['typescript', 'typescript-resolvers'] },
     'apps/storefront/src/generated/': {
       preset: 'client',
+      presetConfig: { fragmentMasking: false },
+      config: { enumsAsTypes: true },
       documents: ['apps/storefront/src/**/*.graphql'],
     },
     'apps/admin/src/generated/': { preset: 'client', documents: ['apps/admin/src/**/*.graphql'] },

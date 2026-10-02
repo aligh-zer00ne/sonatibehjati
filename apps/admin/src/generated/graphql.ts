@@ -16,6 +16,26 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CatalogInput = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  excludeSlug?: InputMaybe<Scalars['String']['input']>;
+  maxPrice?: InputMaybe<Scalars['Int']['input']>;
+  minPrice?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<ProductSort>;
+};
+
+export type CatalogPage = {
+  __typename?: 'CatalogPage';
+  items: Array<Product>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type Category = {
   __typename?: 'Category';
   id: Scalars['ID']['output'];
@@ -48,12 +68,27 @@ export type ProductImage = {
   url: Scalars['String']['output'];
 };
 
+export enum ProductSort {
+  Featured = 'FEATURED',
+  NameAsc = 'NAME_ASC',
+  Newest = 'NEWEST',
+  PriceAsc = 'PRICE_ASC',
+  PriceDesc = 'PRICE_DESC'
+}
+
 export type Query = {
   __typename?: 'Query';
+  catalog: CatalogPage;
   categories: Array<Category>;
   health: Scalars['String']['output'];
   product?: Maybe<Product>;
   products: Array<Product>;
+  productsByIds: Array<Product>;
+};
+
+
+export type QueryCatalogArgs = {
+  input: CatalogInput;
 };
 
 
@@ -65,6 +100,11 @@ export type QueryProductArgs = {
 export type QueryProductsArgs = {
   category?: InputMaybe<Scalars['String']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryProductsByIdsArgs = {
+  ids: Array<Scalars['ID']['input']>;
 };
 
 export type AdminCatalogQueryVariables = Exact<{ [key: string]: never; }>;
