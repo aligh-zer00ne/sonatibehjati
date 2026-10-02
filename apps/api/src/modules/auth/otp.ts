@@ -1,4 +1,4 @@
-import { randomInt, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import {
   otpRequestSchema,
   otpVerifySchema,
@@ -12,6 +12,8 @@ import { hashOtp, matchesOtp } from './crypto.js';
 import { consumeAuthLimit } from './rate-limit.js';
 import { authError } from './errors.js';
 import { createSession } from './sessions.js';
+import { env } from '../../config/env.js';
+import { createOtpCode } from './otp-code.js';
 export async function requestOtp(raw: unknown, ip: string) {
   const parsed = otpRequestSchema.safeParse(raw);
   if (!parsed.success) throw authError('شماره موبایل معتبر وارد کنید.', 'BAD_USER_INPUT');
@@ -20,7 +22,7 @@ export async function requestOtp(raw: unknown, ip: string) {
   await consumeAuthLimit(`otp-resend:${phone}`, 1, OTP_RESEND_SECONDS);
   await consumeAuthLimit(`otp-phone:${phone}`, 5, 3600);
   const id = randomUUID();
-  const code = String(randomInt(0, 1000000)).padStart(6, '0');
+  const code = createOtpCode(env.NODE_ENV, env.DEV_OTP_CODE);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + OTP_LIFETIME_SECONDS * 1000);
   await db.$transaction(async (tx) => {

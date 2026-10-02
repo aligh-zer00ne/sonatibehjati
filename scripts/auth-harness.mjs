@@ -38,13 +38,14 @@ export async function ready(url) {
   }
   throw new Error('Local verification service did not start');
 }
-export async function startAPI() {
+export async function startAPI({ environment = 'test', developmentCode = '' } = {}) {
   assert.ok(process.env.DATABASE_URL, 'Set DATABASE_URL to the migrated test database');
   const server = spawn(process.execPath, ['dist/app.js'], {
     cwd: 'apps/api',
     env: {
       ...process.env,
-      NODE_ENV: 'test',
+      NODE_ENV: environment,
+      DEV_OTP_CODE: developmentCode,
       PORT: '4003',
       STOREFRONT_ORIGIN: origin,
       SMS_PROVIDER: 'mock',

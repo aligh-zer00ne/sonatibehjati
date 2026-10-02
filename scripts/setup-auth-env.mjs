@@ -28,6 +28,7 @@ for (const key of [
   if (!get(api, key)) api = put(api, key, randomBytes(48).toString('hex'));
 }
 if (process.env.DATABASE_URL) api = put(api, 'DATABASE_URL', process.env.DATABASE_URL);
+if (get(api, 'DEV_OTP_CODE') === undefined) api = put(api, 'DEV_OTP_CODE', '123456');
 let storefront = load(storefrontPath, 'apps/storefront/.env.example');
 storefront = put(storefront, 'AUTH_PROXY_SECRET', get(api, 'AUTH_PROXY_SECRET'));
 storefront = put(

@@ -16,6 +16,13 @@ const schema = z.object({
   AUTH_PROXY_SECRET: optionalSecret,
   AUTH_TRUST_PROXY_HEADERS: z.enum(['true', 'false']).default('false'),
   SMS_PROVIDER: z.enum(['mock', 'melipayamak']).default('mock'),
+  DEV_OTP_CODE: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string()
+      .regex(/^\d{6}$/)
+      .optional(),
+  ),
   MELI_PAYAMAK_HOSTNAME: z.string().default('console.melipayamak.com'),
   MELI_PAYAMAK_PATH: z.preprocess(
     (value) => (value === '' ? undefined : value),

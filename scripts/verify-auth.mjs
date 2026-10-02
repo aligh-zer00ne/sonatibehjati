@@ -14,7 +14,8 @@ import {
   throttleKey,
 } from './auth-harness.mjs';
 try {
-  await startAPI();
+  const development = process.env.AUTH_VERIFY_DEVELOPMENT === 'true';
+  await startAPI({ environment: development ? 'development' : 'test', developmentCode: '123456' });
   const adminCount = await db.adminRefreshToken.count();
   errorCode(await gql(keys.request, { input: { phone: 'not-a-phone' } }), 'BAD_USER_INPUT');
   errorCode(
@@ -22,6 +23,7 @@ try {
     'FORBIDDEN',
   );
   const otp = await challenge();
+  if (development) assert.equal(codes.get(otp.phone), '123456');
   const record = await db.otpCode.findUniqueOrThrow({ where: { id: otp.challengeId } });
   assert.equal(record.codeHash.length, 64);
   assert.notEqual(record.codeHash, codes.get(otp.phone));
