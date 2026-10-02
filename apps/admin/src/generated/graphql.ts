@@ -19,6 +19,7 @@ export type Scalars = {
 export type AuthSession = {
   __typename?: 'AuthSession';
   accessExpiresAt: Scalars['String']['output'];
+  accessToken: Scalars['String']['output'];
   user: AuthUser;
 };
 

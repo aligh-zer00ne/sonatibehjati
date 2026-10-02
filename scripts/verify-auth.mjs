@@ -57,7 +57,22 @@ try {
           !cookie.includes('Domain='),
       ),
   );
-  assert.equal('accessToken' in login.data.verifyOtp, false);
+  assert.equal(typeof login.data.verifyOtp.accessToken, 'string');
+  assert.ok(
+    login.response.headers
+      .getSetCookie()
+      .find((value) => value.startsWith('behjati_user_access='))
+      .includes('Max-Age=0'),
+  );
+  const cookieOnly = await fetch('http://localhost:4003/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: `behjati_user_access=${login.data.verifyOtp.accessToken}`,
+    },
+    body: JSON.stringify({ query: keys.me }),
+  });
+  assert.equal((await cookieOnly.json()).data.me, null);
   assert.equal((await gql(keys.me, {}, login.cookies)).data.me.id, userId);
   errorCode(await gql(keys.verify, input), 'INVALID_OTP');
   const before = await db.refreshToken.findFirstOrThrow({ where: { userId } });

@@ -73,6 +73,7 @@ type OtpChallenge {
 }
 type AuthSession {
   user: AuthUser!
+  accessToken: String!
   accessExpiresAt: String!
 }
 input RequestOtpInput {

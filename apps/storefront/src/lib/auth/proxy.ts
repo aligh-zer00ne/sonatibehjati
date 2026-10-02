@@ -42,9 +42,7 @@ export const authCookies = (cookie: string | null) =>
   (cookie ?? '')
     .split(';')
     .map((value) => value.trim())
-    .filter((value) =>
-      [USER_ACCESS_COOKIE, USER_REFRESH_COOKIE].some((name) => value.startsWith(`${name}=`)),
-    )
+    .filter((value) => value.startsWith(`${USER_REFRESH_COOKIE}=`))
     .join('; ');
 const failure = (message: string, code: string, status: number) =>
   Response.json(
@@ -56,11 +54,15 @@ export async function proxyAuth(request: Request, input: ProxyInput) {
   const parsed = operation.schema.safeParse(input.variables);
   if (!parsed.success) return failure('اطلاعات ورود را بررسی کنید.', 'BAD_USER_INPUT', 400);
   const cookie = authCookies(request.headers.get('cookie'));
-  if (input.operation === 'CurrentUser' && !cookie)
+  const authorization = request.headers.get('authorization') ?? '';
+  if (input.operation === 'CurrentUser' && !authorization)
     return Response.json({ data: { me: null } }, { headers: { 'Cache-Control': 'no-store' } });
+  if (input.operation === 'RefreshUserSession' && !cookie)
+    return failure('نشست شما پایان یافته است.', 'UNAUTHENTICATED', 401);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Cookie: cookie,
+    Authorization: authorization,
     Origin: new URL(
       process.env.STOREFRONT_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? request.url,
     ).origin,
@@ -82,19 +84,7 @@ export async function proxyAuth(request: Request, input: ProxyInput) {
     return { response, body: await response.json() };
   };
   try {
-    let result = await call(operation.document, parsed.data);
-    if (
-      input.operation === 'CurrentUser' &&
-      !result.body.errors &&
-      !result.body.data?.me &&
-      cookie.includes(`${USER_REFRESH_COOKIE}=`)
-    ) {
-      result = await call(RefreshUserSessionDocument, {});
-      if (result.body.errors?.[0]?.extensions?.code === 'UNAUTHENTICATED')
-        result.body = { data: { me: null } };
-      else if (result.body.data?.refreshToken)
-        result.body = { data: { me: result.body.data.refreshToken.user } };
-    }
+    const result = await call(operation.document, parsed.data);
     const known = [
       'BAD_USER_INPUT',
       'RATE_LIMITED',

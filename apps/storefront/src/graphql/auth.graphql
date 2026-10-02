@@ -20,6 +20,7 @@ mutation RequestOtp($input: RequestOtpInput!) {
 }
 mutation VerifyOtp($input: VerifyOtpInput!) {
   verifyOtp(input: $input) {
+    accessToken
     user {
       ...SessionUser
     }
@@ -28,6 +29,7 @@ mutation VerifyOtp($input: VerifyOtpInput!) {
 }
 mutation RefreshUserSession {
   refreshToken {
+    accessToken
     user {
       ...SessionUser
     }

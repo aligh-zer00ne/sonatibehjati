@@ -13,7 +13,7 @@ import {
   LogoutUserDocument,
   type SessionUserFragment,
 } from '@/generated/graphql';
-import { authRequest } from '@/lib/auth/client';
+import { authRequest, clearAccessToken } from '@/lib/auth/client';
 interface AuthState {
   user: SessionUserFragment | null;
   loading: boolean;
@@ -48,6 +48,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     if (typeof BroadcastChannel !== 'undefined') {
       channel.current = new BroadcastChannel('behjati-auth');
       channel.current.onmessage = () => {
+        clearAccessToken();
         void refresh();
       };
     }

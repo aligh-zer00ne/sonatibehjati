@@ -2,7 +2,7 @@ import type { Resolvers } from '../../generated/resolvers.js';
 import { env } from '../../config/env.js';
 import { requireAuthOrigin } from '../../graphql/context.js';
 import {
-  ACCESS_COOKIE,
+  readBearer,
   REFRESH_COOKIE,
   readCookie,
   setSessionCookies,
@@ -15,7 +15,7 @@ const secure = env.NODE_ENV === 'production';
 export const authResolvers: Resolvers = {
   Query: {
     me: (_parent, _args, context) =>
-      currentUser(readCookie(context.request.headers.get('cookie'), ACCESS_COOKIE)),
+      currentUser(readBearer(context.request.headers.get('authorization'))),
   },
   Mutation: {
     requestOtp: (_parent, { input }, context) => {
@@ -26,7 +26,11 @@ export const authResolvers: Resolvers = {
       requireAuthOrigin(context);
       const result = await verifyOtp(input, context.ip);
       setSessionCookies(context.response, result.pair, secure);
-      return { user: result.user, accessExpiresAt: result.pair.accessExpiresAt.toISOString() };
+      return {
+        user: result.user,
+        accessToken: result.pair.access,
+        accessExpiresAt: result.pair.accessExpiresAt.toISOString(),
+      };
     },
     refreshToken: async (_parent, _args, context) => {
       requireAuthOrigin(context);
@@ -36,7 +40,11 @@ export const authResolvers: Resolvers = {
           readCookie(context.request.headers.get('cookie'), REFRESH_COOKIE),
         );
         setSessionCookies(context.response, result.pair, secure);
-        return { user: result.user, accessExpiresAt: result.pair.accessExpiresAt.toISOString() };
+        return {
+          user: result.user,
+          accessToken: result.pair.access,
+          accessExpiresAt: result.pair.accessExpiresAt.toISOString(),
+        };
       } catch (error) {
         if (
           error instanceof Error &&
@@ -50,7 +58,7 @@ export const authResolvers: Resolvers = {
     logout: async (_parent, _args, context) => {
       requireAuthOrigin(context);
       await revokeSession(
-        readCookie(context.request.headers.get('cookie'), ACCESS_COOKIE),
+        readBearer(context.request.headers.get('authorization')),
         readCookie(context.request.headers.get('cookie'), REFRESH_COOKIE),
       );
       clearSessionCookies(context.response, secure);

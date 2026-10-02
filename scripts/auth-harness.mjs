@@ -21,12 +21,13 @@ export const keys = {
   request:
     'mutation($input:RequestOtpInput!){requestOtp(input:$input){challengeId phone expiresAt resendAt}}',
   verify:
-    'mutation($input:VerifyOtpInput!){verifyOtp(input:$input){user{id phone} accessExpiresAt}}',
-  refresh: 'mutation{refreshToken{user{id phone} accessExpiresAt}}',
+    'mutation($input:VerifyOtpInput!){verifyOtp(input:$input){user{id phone} accessToken accessExpiresAt}}',
+  refresh: 'mutation{refreshToken{user{id phone} accessToken accessExpiresAt}}',
   logout: 'mutation{logout}',
   me: '{me{id phone}}',
 };
 export const processes = [];
+const accessTokens = new Map();
 export async function ready(url) {
   for (let i = 0; i < 100; i++) {
     try {
@@ -104,6 +105,7 @@ export async function gql(
       'Content-Type': 'application/json',
       Origin: requestOrigin,
       Cookie: cookie,
+      ...(accessTokens.get(cookie) ? { Authorization: `Bearer ${accessTokens.get(cookie)}` } : {}),
       'X-Client-IP': ip,
       ...(authenticatedProxy ? { 'X-Auth-Proxy-Key': proxySecret } : {}),
     },
@@ -111,13 +113,16 @@ export async function gql(
     signal: AbortSignal.timeout(15000),
   });
   const body = await response.json();
+  const cookies = response.headers
+    .getSetCookie()
+    .map((value) => value.split(';')[0])
+    .join('; ');
+  const session = body.data?.verifyOtp ?? body.data?.refreshToken;
+  if (session?.accessToken) accessTokens.set(cookies, session.accessToken);
   return {
     response,
     ...body,
-    cookies: response.headers
-      .getSetCookie()
-      .map((value) => value.split(';')[0])
-      .join('; '),
+    cookies,
   };
 }
 export async function challenge(mobile = phone(), ip) {

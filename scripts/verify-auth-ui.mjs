@@ -23,6 +23,14 @@ try {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const errors = [];
+  let bearerRequests = 0;
+  page.on('request', (request) => {
+    if (
+      request.url().endsWith('/api/auth') &&
+      request.headers().authorization?.startsWith('Bearer ')
+    )
+      bearerRequests++;
+  });
   page.on('pageerror', (error) => errors.push(error.message));
   const goto = (path) => page.goto(`${origin}${path}`, { waitUntil: 'networkidle' });
   await goto('/shop');
@@ -106,7 +114,11 @@ try {
       .filter((cookie) => cookie.name.startsWith('behjati_user_'))
       .every((cookie) => cookie.httpOnly && cookie.sameSite === 'Lax'),
   );
-  assert.equal(jar.filter((cookie) => cookie.name.startsWith('behjati_user_')).length, 2);
+  assert.equal(jar.filter((cookie) => cookie.name.startsWith('behjati_user_')).length, 1);
+  assert.equal(
+    jar.some((cookie) => cookie.name === 'behjati_user_access'),
+    false,
+  );
   assert.ok(!(await page.evaluate(() => document.cookie)).includes('behjati_user_'));
   assert.equal(await page.evaluate(() => sessionStorage.getItem('behjati-otp-challenge')), null);
   await goto('/account');
@@ -127,7 +139,19 @@ try {
   await expect(page.getByText(mobile, { exact: true })).toBeVisible();
   await expect(tab.getByText(mobile, { exact: true })).toBeVisible();
   const currentJar = await context.cookies();
-  assert.ok(currentJar.some((cookie) => cookie.name === 'behjati_user_access'));
+  assert.equal(
+    currentJar.some((cookie) => cookie.name === 'behjati_user_access'),
+    false,
+  );
+  assert.ok(bearerRequests > 0);
+  assert.equal(
+    await page.evaluate(() =>
+      [...Object.values(localStorage), ...Object.values(sessionStorage)].some((value) =>
+        /eyJ[A-Za-z0-9_-]+\./.test(value),
+      ),
+    ),
+    false,
+  );
   assert.notEqual(
     currentJar.find((cookie) => cookie.name === 'behjati_user_refresh').value,
     previousRefresh,

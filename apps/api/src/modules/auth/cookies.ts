@@ -26,12 +26,8 @@ export function serializeCookie(name: string, token: string, seconds: number, se
 }
 export function setSessionCookies(response: ServerResponse, pair: TokenPair, secure: boolean) {
   response.appendHeader('Set-Cookie', [
-    serializeCookie(
-      ACCESS_COOKIE,
-      pair.access,
-      (pair.accessExpiresAt.getTime() - Date.now()) / 1000,
-      secure,
-    ),
+    // Remove the access cookie used by earlier storefront versions.
+    serializeCookie(ACCESS_COOKIE, '', 0, secure),
     serializeCookie(
       REFRESH_COOKIE,
       pair.refresh,
@@ -40,6 +36,10 @@ export function setSessionCookies(response: ServerResponse, pair: TokenPair, sec
     ),
   ]);
   response.setHeader('Cache-Control', 'no-store');
+}
+export function readBearer(header: string | null) {
+  if (!header || header.length > 4103) return undefined;
+  return /^Bearer ([A-Za-z0-9._-]+)$/i.exec(header)?.[1];
 }
 export function clearSessionCookies(response: ServerResponse, secure: boolean) {
   response.appendHeader('Set-Cookie', [

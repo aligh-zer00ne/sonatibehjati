@@ -4,9 +4,9 @@
 
 ## قرارداد و رابط
 
-Schema اصلی GraphQL دارای `me` و mutationهای `requestOtp`, `verifyOtp`, `refreshToken`, `logout` است. خروجی ورود فقط اطلاعات کاربر و زمان پایان access است؛ توکن خام در JSON برنمی‌گردد. تایپ‌ها و documentهای frontend با Codegen ساخته می‌شوند و اعتبارسنجی شماره، کد و مسیر بازگشت در `packages/shared` مشترک است. ارقام فارسی و عربی پذیرفته و به ASCII تبدیل می‌شوند.
+Schema اصلی GraphQL دارای `me` و mutationهای `requestOtp`, `verifyOtp`, `refreshToken`, `logout` است. خروجی ورود اطلاعات کاربر، accessToken و زمان پایان access است؛ refresh فقط از Set-Cookie عبور می‌کند. تایپ‌ها و documentهای frontend با Codegen ساخته می‌شوند و اعتبارسنجی شماره، کد و مسیر بازگشت در `packages/shared` مشترک است. ارقام فارسی و عربی پذیرفته و به ASCII تبدیل می‌شوند.
 
-رابط RTL با Card، Input و Button از primitiveهای shadcn، classNameهای Tailwind، لوگوی اصلاح‌شده، وکتورهای کنجد و تم فعلی ساخته شده است. خطای ارسال، کد اشتباه، انقضا، ارسال مجدد، countdown، loading و retry نمایش داده می‌شوند. فقط اطلاعات challenge در sessionStorage برای reload ذخیره می‌شود؛ کد OTP persist نمی‌شود و توکن به storage یا state جاوااسکریپت نمی‌رود. قاب و فرم اولیهٔ ورود SSR دارند؛ عملیات پیامک به JavaScript نیاز دارد.
+رابط RTL با Card، Input و Button از primitiveهای shadcn، classNameهای Tailwind، لوگوی اصلاح‌شده، وکتورهای کنجد و تم فعلی ساخته شده است. خطای ارسال، کد اشتباه، انقضا، ارسال مجدد، countdown، loading و retry نمایش داده می‌شوند. فقط اطلاعات challenge در sessionStorage برای reload ذخیره می‌شود؛ کد OTP persist نمی‌شود و access فقط در حافظهٔ ماژول کلاینت نگهداری می‌شود؛ هیچ توکنی persist نمی‌شود و refresh برای جاوااسکریپت قابل خواندن نیست. قاب و فرم اولیهٔ ورود SSR دارند؛ عملیات پیامک به JavaScript نیاز دارد.
 
 ## سرویس پیامک ارسالی کاربر
 
@@ -39,7 +39,7 @@ Schema اصلی GraphQL دارای `me` و mutationهای `requestOtp`, `verifyO
 
 ## توکن و کوکی
 
-Access پانزده دقیقه و refresh با پایان مطلق سی روز هستند. JWTهای HS256 با `jose` امضا می‌شوند؛ issuer، audience، kind، typ، زمان و شناسهٔ خانواده اعتبارسنجی می‌شوند. اسرار access، refresh، OTP و اسرار مدیر مستقل‌اند. فقط هش refresh در دیتابیس ذخیره می‌شود. Cookieهای `behjati_user_access` و `behjati_user_refresh`، host-only، `HttpOnly`، `SameSite=Lax` و `Path=/` هستند؛ در production نیز `Secure` دارند و HTTPS الزامی است.
+Access پانزده دقیقه و refresh با پایان مطلق سی روز هستند. JWTهای HS256 با `jose` امضا می‌شوند؛ issuer، audience، kind، typ، زمان و شناسهٔ خانواده اعتبارسنجی می‌شوند. اسرار access، refresh، OTP و اسرار مدیر مستقل‌اند. فقط هش refresh در دیتابیس ذخیره می‌شود. فقط refresh در کوکی `behjati_user_refresh`، host-only، `HttpOnly`، `SameSite=Lax` و `Path=/` نگهداری می‌شود. Access در حافظه است و با `Authorization: Bearer` ارسال می‌شود. کوکی access نسخهٔ قبلی پاک می‌شود و API آن را برای احراز هویت قبول نمی‌کند؛ در production نیز `Secure` دارند و HTTPS الزامی است.
 
 هر refresh یک توکن جدید و ابطال توکن قبلی می‌سازد و پایان سی‌روزه را تمدید نمی‌کند. بازپخش refresh مصرف‌شده تمام خانواده را باطل می‌کند. رکورد `UserSession` در rotation و logout قفل می‌شود تا خروج هم‌زمان نشست را دوباره فعال نکند. `me` علاوه بر امضا و انقضای access، فعال‌بودن خانواده در دیتابیس را بررسی می‌کند؛ بنابراین logout و تشخیص replay دسترسی را بلافاصله قطع می‌کنند.
 
@@ -49,7 +49,7 @@ Access پانزده دقیقه و refresh با پایان مطلق سی روز �
 
 مرورگر فقط `/api/auth` همان دامنه را فراخوانی می‌کند. این route مبدأ و Fetch Metadata را بررسی می‌کند، JSON محدود و ورودی مشترک می‌پذیرد و فقط پنج عملیات ثابت تولیدشده با Codegen را به API می‌فرستد. کوکی‌های مدیر و GraphQL دلخواه عبور نمی‌کنند. پاسخ‌ها `no-store` هستند و خطای داخلی API به پیام عمومی فارسی تبدیل می‌شود. API نیز Origin mutationهای ورود را بررسی می‌کند.
 
-دریافت کاربر در صورت نیاز refresh را انجام می‌دهد. Web Locks درخواست‌های نشست را میان تب‌ها سری می‌کند تا rotation هم‌زمان به‌عنوان replay شناخته نشود؛ BroadcastChannel تغییر ورود و خروج را به تب‌های دیگر اعلام می‌کند. مرورگرهای فاقد Web Locks همچنان ورود دارند، اما تضمین سری‌شدن refresh میان تب‌ها را ندارند. برنامه در شروع، بازگشت به تب و هر پنج دقیقهٔ فعال، نشست را بررسی می‌کند.
+کلاینت در شروع و نزدیک انقضای access، از طریق refresh-cookie یک access تازه می‌گیرد؛ پراکسی به‌جای refresh خودکار، هدر Authorization را منتقل می‌کند. Web Locks درخواست‌های نشست را میان تب‌ها سری می‌کند تا rotation هم‌زمان به‌عنوان replay شناخته نشود؛ BroadcastChannel تغییر ورود و خروج را به تب‌های دیگر اعلام می‌کند. مرورگرهای فاقد Web Locks همچنان ورود دارند، اما تضمین سری‌شدن refresh میان تب‌ها را ندارند. برنامه در شروع، بازگشت به تب و هر پنج دقیقهٔ فعال، نشست را بررسی می‌کند.
 
 `AUTH_PROXY_SECRET` باید در API و محیط server-only فروشگاه یکسان باشد. `AUTH_TRUST_PROXY_HEADERS` پیش‌فرض `false` است؛ در این حالت IP اتصال Next به API ملاک rate limit خواهد بود و کاربران پشت همان پراکسی bucket مشترک دارند. برای IP واقعی، فقط پشت پراکسی معتبری که `X-Forwarded-For` ارسالی کاربر را بازنویسی می‌کند این گزینه را در هر دو برنامه `true` کنید. API فقط همراه کلید صحیح پراکسی و IP معتبر، `X-Client-IP` را می‌پذیرد. هیچ کلید خصوصی را در متغیر `NEXT_PUBLIC` قرار ندهید.
 

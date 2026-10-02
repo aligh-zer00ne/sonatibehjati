@@ -20,6 +20,7 @@ export type Scalars = {
 export type AuthSession = {
   __typename?: 'AuthSession';
   accessExpiresAt: Scalars['String']['output'];
+  accessToken: Scalars['String']['output'];
   user: AuthUser;
 };
 
@@ -274,6 +275,7 @@ export type ResolversParentTypes = {
 
 export type AuthSessionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AuthSession'] = ResolversParentTypes['AuthSession']> = {
   accessExpiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType>;
 };
 
