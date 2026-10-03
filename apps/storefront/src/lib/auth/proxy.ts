@@ -8,11 +8,16 @@ import {
   checkoutInputSchema,
   createOrderInputSchema,
   coordinatesSchema,
+  profileInputSchema,
+  ordersFilterSchema,
   USER_ACCESS_COOKIE,
   USER_REFRESH_COOKIE,
 } from '@behjati/shared';
 import {
   CurrentUserDocument,
+  UpdateAccountProfileDocument,
+  AccountOrdersDocument,
+  AccountOrderDetailsDocument,
   RequestOtpDocument,
   VerifyOtpDocument,
   RefreshUserSessionDocument,
@@ -28,6 +33,18 @@ import {
 } from '@/generated/graphql';
 const empty = z.object({}).strict();
 const operations = {
+  UpdateAccountProfile: {
+    document: UpdateAccountProfileDocument,
+    schema: z.object({ input: profileInputSchema }).strict(),
+  },
+  AccountOrders: {
+    document: AccountOrdersDocument,
+    schema: z.object({ input: ordersFilterSchema }).strict(),
+  },
+  AccountOrderDetails: {
+    document: AccountOrderDetailsDocument,
+    schema: z.object({ id: z.string().min(1).max(100) }).strict(),
+  },
   CurrentUser: { document: CurrentUserDocument, schema: empty },
   RequestOtp: {
     document: RequestOtpDocument,
@@ -68,6 +85,9 @@ const operations = {
 export const proxyInputSchema = z
   .object({
     operation: z.enum([
+      'UpdateAccountProfile',
+      'AccountOrders',
+      'AccountOrderDetails',
       'CurrentUser',
       'RequestOtp',
       'VerifyOtp',

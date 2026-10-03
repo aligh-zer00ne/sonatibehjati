@@ -4,7 +4,7 @@ const config: CodegenConfig = {
   generates: {
     'apps/api/src/generated/resolvers.ts': {
       plugins: ['typescript', 'typescript-resolvers'],
-      config: { contextType: '../graphql/context.js#AuthContext' },
+      config: { contextType: '../graphql/context.js#AuthContext', enumsAsTypes: true },
     },
     'apps/storefront/src/generated/': {
       preset: 'client',

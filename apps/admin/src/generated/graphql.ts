@@ -16,6 +16,29 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AccountOrder = {
+  __typename?: 'AccountOrder';
+  address: OrderAddressSnapshot;
+  createdAt: Scalars['String']['output'];
+  discount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  items: Array<OrderItemSnapshot>;
+  number: Scalars['Int']['output'];
+  shipping: Scalars['Int']['output'];
+  status: OrderStatus;
+  subtotal: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type AccountOrderSummary = {
+  __typename?: 'AccountOrderSummary';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['Int']['output'];
+  status: OrderStatus;
+  total: Scalars['Int']['output'];
+};
+
 export type Address = {
   __typename?: 'Address';
   city: Scalars['String']['output'];
@@ -136,6 +159,7 @@ export type Mutation = {
   refreshToken: AuthSession;
   requestOtp: OtpChallenge;
   saveAddress: Address;
+  updateProfile: AuthUser;
   verifyOtp: AuthSession;
 };
 
@@ -161,8 +185,52 @@ export type MutationSaveAddressArgs = {
 };
 
 
+export type MutationUpdateProfileArgs = {
+  input: ProfileInput;
+};
+
+
 export type MutationVerifyOtpArgs = {
   input: VerifyOtpInput;
+};
+
+export type MyOrdersInput = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<OrderStatus>;
+};
+
+export type MyOrdersPage = {
+  __typename?: 'MyOrdersPage';
+  items: Array<AccountOrderSummary>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type OrderAddressSnapshot = {
+  __typename?: 'OrderAddressSnapshot';
+  city?: Maybe<Scalars['String']['output']>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  postalAddress?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
+  recipientName?: Maybe<Scalars['String']['output']>;
+  recipientPhone?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderItemSnapshot = {
+  __typename?: 'OrderItemSnapshot';
+  id: Scalars['ID']['output'];
+  lineTotal: Scalars['Int']['output'];
+  productId: Scalars['ID']['output'];
+  productTitle: Scalars['String']['output'];
+  productWeight: Scalars['String']['output'];
+  quantity: Scalars['Int']['output'];
+  unitPrice: Scalars['Int']['output'];
 };
 
 export type OrderReceipt = {
@@ -176,6 +244,15 @@ export type OrderReceipt = {
   subtotal: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
 };
+
+export enum OrderStatus {
+  Canceled = 'CANCELED',
+  Created = 'CREATED',
+  Delivered = 'DELIVERED',
+  PendingPayment = 'PENDING_PAYMENT',
+  Processing = 'PROCESSING',
+  Shipped = 'SHIPPED'
+}
 
 export type OtpChallenge = {
   __typename?: 'OtpChallenge';
@@ -217,6 +294,12 @@ export enum ProductSort {
   PriceDesc = 'PRICE_DESC'
 }
 
+export type ProfileInput = {
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+};
+
 export type Query = {
   __typename?: 'Query';
   catalog: CatalogPage;
@@ -225,6 +308,8 @@ export type Query = {
   health: Scalars['String']['output'];
   me?: Maybe<AuthUser>;
   myAddresses: Array<Address>;
+  myOrder: AccountOrder;
+  myOrders: MyOrdersPage;
   orderByRequestId?: Maybe<OrderReceipt>;
   orderReceipt: OrderReceipt;
   product?: Maybe<Product>;
@@ -241,6 +326,16 @@ export type QueryCatalogArgs = {
 
 export type QueryCheckoutQuoteArgs = {
   input: CheckoutInput;
+};
+
+
+export type QueryMyOrderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryMyOrdersArgs = {
+  input: MyOrdersInput;
 };
 
 

@@ -72,7 +72,7 @@ export default function OrderConfirmation({ id }: { id: string }) {
         <Link href="/shop">ادامهٔ خرید</Link>
       </Button>
       <Button className="w-full" variant="outline" asChild>
-        <Link href="/account">حساب کاربری</Link>
+        <Link href={`/account/orders/${id}`}>جزئیات سفارش</Link>
       </Button>
     </Card>
   );

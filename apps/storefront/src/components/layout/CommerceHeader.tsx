@@ -14,7 +14,7 @@ export default function CommerceHeader() {
   );
   const title = path.startsWith('/checkout')
     ? 'ثبت سفارش'
-    : ['/login', '/verify', '/account'].includes(path)
+    : path.startsWith('/account') || ['/login', '/verify'].includes(path)
       ? 'حساب کاربری'
       : path.startsWith('/product/')
         ? 'جزئیات محصول'

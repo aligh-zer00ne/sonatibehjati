@@ -17,6 +17,29 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AccountOrder = {
+  __typename?: 'AccountOrder';
+  address: OrderAddressSnapshot;
+  createdAt: Scalars['String']['output'];
+  discount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  items: Array<OrderItemSnapshot>;
+  number: Scalars['Int']['output'];
+  shipping: Scalars['Int']['output'];
+  status: OrderStatus;
+  subtotal: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type AccountOrderSummary = {
+  __typename?: 'AccountOrderSummary';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['Int']['output'];
+  status: OrderStatus;
+  total: Scalars['Int']['output'];
+};
+
 export type Address = {
   __typename?: 'Address';
   city: Scalars['String']['output'];
@@ -137,6 +160,7 @@ export type Mutation = {
   refreshToken: AuthSession;
   requestOtp: OtpChallenge;
   saveAddress: Address;
+  updateProfile: AuthUser;
   verifyOtp: AuthSession;
 };
 
@@ -162,8 +186,52 @@ export type MutationSaveAddressArgs = {
 };
 
 
+export type MutationUpdateProfileArgs = {
+  input: ProfileInput;
+};
+
+
 export type MutationVerifyOtpArgs = {
   input: VerifyOtpInput;
+};
+
+export type MyOrdersInput = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<OrderStatus>;
+};
+
+export type MyOrdersPage = {
+  __typename?: 'MyOrdersPage';
+  items: Array<AccountOrderSummary>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type OrderAddressSnapshot = {
+  __typename?: 'OrderAddressSnapshot';
+  city?: Maybe<Scalars['String']['output']>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  postalAddress?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
+  recipientName?: Maybe<Scalars['String']['output']>;
+  recipientPhone?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type OrderItemSnapshot = {
+  __typename?: 'OrderItemSnapshot';
+  id: Scalars['ID']['output'];
+  lineTotal: Scalars['Int']['output'];
+  productId: Scalars['ID']['output'];
+  productTitle: Scalars['String']['output'];
+  productWeight: Scalars['String']['output'];
+  quantity: Scalars['Int']['output'];
+  unitPrice: Scalars['Int']['output'];
 };
 
 export type OrderReceipt = {
@@ -177,6 +245,14 @@ export type OrderReceipt = {
   subtotal: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
 };
+
+export type OrderStatus =
+  | 'CANCELED'
+  | 'CREATED'
+  | 'DELIVERED'
+  | 'PENDING_PAYMENT'
+  | 'PROCESSING'
+  | 'SHIPPED';
 
 export type OtpChallenge = {
   __typename?: 'OtpChallenge';
@@ -210,13 +286,18 @@ export type ProductImage = {
   url: Scalars['String']['output'];
 };
 
-export enum ProductSort {
-  Featured = 'FEATURED',
-  NameAsc = 'NAME_ASC',
-  Newest = 'NEWEST',
-  PriceAsc = 'PRICE_ASC',
-  PriceDesc = 'PRICE_DESC'
-}
+export type ProductSort =
+  | 'FEATURED'
+  | 'NAME_ASC'
+  | 'NEWEST'
+  | 'PRICE_ASC'
+  | 'PRICE_DESC';
+
+export type ProfileInput = {
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+};
 
 export type Query = {
   __typename?: 'Query';
@@ -226,6 +307,8 @@ export type Query = {
   health: Scalars['String']['output'];
   me?: Maybe<AuthUser>;
   myAddresses: Array<Address>;
+  myOrder: AccountOrder;
+  myOrders: MyOrdersPage;
   orderByRequestId?: Maybe<OrderReceipt>;
   orderReceipt: OrderReceipt;
   product?: Maybe<Product>;
@@ -242,6 +325,16 @@ export type QueryCatalogArgs = {
 
 export type QueryCheckoutQuoteArgs = {
   input: CheckoutInput;
+};
+
+
+export type QueryMyOrderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryMyOrdersArgs = {
+  input: MyOrdersInput;
 };
 
 
@@ -359,6 +452,8 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AccountOrder: ResolverTypeWrapper<AccountOrder>;
+  AccountOrderSummary: ResolverTypeWrapper<AccountOrderSummary>;
   Address: ResolverTypeWrapper<Address>;
   AddressInput: AddressInput;
   AuthSession: ResolverTypeWrapper<AuthSession>;
@@ -376,11 +471,17 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  MyOrdersInput: MyOrdersInput;
+  MyOrdersPage: ResolverTypeWrapper<MyOrdersPage>;
+  OrderAddressSnapshot: ResolverTypeWrapper<OrderAddressSnapshot>;
+  OrderItemSnapshot: ResolverTypeWrapper<OrderItemSnapshot>;
   OrderReceipt: ResolverTypeWrapper<OrderReceipt>;
+  OrderStatus: OrderStatus;
   OtpChallenge: ResolverTypeWrapper<OtpChallenge>;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
   ProductSort: ProductSort;
+  ProfileInput: ProfileInput;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   RequestOtpInput: RequestOtpInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -389,6 +490,8 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AccountOrder: AccountOrder;
+  AccountOrderSummary: AccountOrderSummary;
   Address: Address;
   AddressInput: AddressInput;
   AuthSession: AuthSession;
@@ -406,14 +509,40 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: Record<PropertyKey, never>;
+  MyOrdersInput: MyOrdersInput;
+  MyOrdersPage: MyOrdersPage;
+  OrderAddressSnapshot: OrderAddressSnapshot;
+  OrderItemSnapshot: OrderItemSnapshot;
   OrderReceipt: OrderReceipt;
   OtpChallenge: OtpChallenge;
   Product: Product;
   ProductImage: ProductImage;
+  ProfileInput: ProfileInput;
   Query: Record<PropertyKey, never>;
   RequestOtpInput: RequestOtpInput;
   String: Scalars['String']['output'];
   VerifyOtpInput: VerifyOtpInput;
+};
+
+export type AccountOrderResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AccountOrder'] = ResolversParentTypes['AccountOrder']> = {
+  address?: Resolver<ResolversTypes['OrderAddressSnapshot'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['OrderItemSnapshot']>, ParentType, ContextType>;
+  number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
+  subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type AccountOrderSummaryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AccountOrderSummary'] = ResolversParentTypes['AccountOrderSummary']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AddressResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = {
@@ -485,7 +614,38 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   refreshToken?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType>;
   requestOtp?: Resolver<ResolversTypes['OtpChallenge'], ParentType, ContextType, RequireFields<MutationRequestOtpArgs, 'input'>>;
   saveAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationSaveAddressArgs, 'input'>>;
+  updateProfile?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   verifyOtp?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType, RequireFields<MutationVerifyOtpArgs, 'input'>>;
+};
+
+export type MyOrdersPageResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['MyOrdersPage'] = ResolversParentTypes['MyOrdersPage']> = {
+  items?: Resolver<Array<ResolversTypes['AccountOrderSummary']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type OrderAddressSnapshotResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OrderAddressSnapshot'] = ResolversParentTypes['OrderAddressSnapshot']> = {
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  latitude?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  longitude?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  postalAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  postalCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  province?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  recipientName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  recipientPhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
+export type OrderItemSnapshotResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OrderItemSnapshot'] = ResolversParentTypes['OrderItemSnapshot']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lineTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  productTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  productWeight?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  unitPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type OrderReceiptResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OrderReceipt'] = ResolversParentTypes['OrderReceipt']> = {
@@ -535,6 +695,8 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['AuthUser']>, ParentType, ContextType>;
   myAddresses?: Resolver<Array<ResolversTypes['Address']>, ParentType, ContextType>;
+  myOrder?: Resolver<ResolversTypes['AccountOrder'], ParentType, ContextType, RequireFields<QueryMyOrderArgs, 'id'>>;
+  myOrders?: Resolver<ResolversTypes['MyOrdersPage'], ParentType, ContextType, RequireFields<QueryMyOrdersArgs, 'input'>>;
   orderByRequestId?: Resolver<Maybe<ResolversTypes['OrderReceipt']>, ParentType, ContextType, RequireFields<QueryOrderByRequestIdArgs, 'requestId'>>;
   orderReceipt?: Resolver<ResolversTypes['OrderReceipt'], ParentType, ContextType, RequireFields<QueryOrderReceiptArgs, 'id'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'slug'>>;
@@ -544,6 +706,8 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
 };
 
 export type Resolvers<ContextType = AuthContext> = {
+  AccountOrder?: AccountOrderResolvers<ContextType>;
+  AccountOrderSummary?: AccountOrderSummaryResolvers<ContextType>;
   Address?: AddressResolvers<ContextType>;
   AuthSession?: AuthSessionResolvers<ContextType>;
   AuthUser?: AuthUserResolvers<ContextType>;
@@ -552,6 +716,9 @@ export type Resolvers<ContextType = AuthContext> = {
   CheckoutLine?: CheckoutLineResolvers<ContextType>;
   CheckoutQuote?: CheckoutQuoteResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  MyOrdersPage?: MyOrdersPageResolvers<ContextType>;
+  OrderAddressSnapshot?: OrderAddressSnapshotResolvers<ContextType>;
+  OrderItemSnapshot?: OrderItemSnapshotResolvers<ContextType>;
   OrderReceipt?: OrderReceiptResolvers<ContextType>;
   OtpChallenge?: OtpChallengeResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;

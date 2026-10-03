@@ -1,0 +1,55 @@
+mutation UpdateAccountProfile($input: ProfileInput!) {
+  updateProfile(input: $input) {
+    ...SessionUser
+  }
+}
+fragment AccountOrderSummaryFields on AccountOrderSummary {
+  id
+  number
+  status
+  total
+  createdAt
+}
+query AccountOrders($input: MyOrdersInput!) {
+  myOrders(input: $input) {
+    items {
+      ...AccountOrderSummaryFields
+    }
+    total
+    page
+    pageSize
+    totalPages
+  }
+}
+query AccountOrderDetails($id: ID!) {
+  myOrder(id: $id) {
+    id
+    number
+    status
+    createdAt
+    subtotal
+    discount
+    shipping
+    total
+    address {
+      title
+      recipientName
+      recipientPhone
+      province
+      city
+      postalAddress
+      postalCode
+      latitude
+      longitude
+    }
+    items {
+      id
+      productId
+      productTitle
+      productWeight
+      unitPrice
+      quantity
+      lineTotal
+    }
+  }
+}

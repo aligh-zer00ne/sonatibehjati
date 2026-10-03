@@ -160,7 +160,13 @@ export async function cleanup() {
   await db.user.deleteMany({ where: { id: { in: userIds } } });
   const throttleKeys = phones.flatMap((mobile) => [`otp-resend:${mobile}`, `otp-phone:${mobile}`]);
   for (const id of userIds)
-    throttleKeys.push(`address:${id}`, `quote:${id}`, `order:${id}`, `location:${id}`);
+    throttleKeys.push(
+      `address:${id}`,
+      `quote:${id}`,
+      `order:${id}`,
+      `location:${id}`,
+      `profile:${id}`,
+    );
   for (const ip of [
     '127.0.0.1',
     '::ffff:127.0.0.1',

@@ -25,6 +25,8 @@ type Product {
   updatedAt: String!
 }
 type Query {
+  myOrders(input: MyOrdersInput!): MyOrdersPage!
+  myOrder(id: ID!): AccountOrder!
   reverseLocation(latitude: Float!, longitude: Float!): String
   myAddresses: [Address!]!
   checkoutQuote(input: CheckoutInput!): CheckoutQuote!
@@ -90,6 +92,7 @@ input VerifyOtpInput {
   code: String!
 }
 type Mutation {
+  updateProfile(input: ProfileInput!): AuthUser!
   saveAddress(id: ID, input: AddressInput!): Address!
   deleteAddress(id: ID!): Boolean!
   createOrder(input: CreateOrderInput!): OrderReceipt!
@@ -166,4 +169,69 @@ type OrderReceipt {
   shipping: Int!
   total: Int!
   createdAt: String!
+}
+
+input ProfileInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+}
+enum OrderStatus {
+  CREATED
+  PENDING_PAYMENT
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+input MyOrdersInput {
+  page: Int
+  pageSize: Int
+  status: OrderStatus
+}
+type MyOrdersPage {
+  items: [AccountOrderSummary!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+  totalPages: Int!
+}
+type AccountOrderSummary {
+  id: ID!
+  number: Int!
+  status: OrderStatus!
+  total: Int!
+  createdAt: String!
+}
+type AccountOrder {
+  id: ID!
+  number: Int!
+  status: OrderStatus!
+  createdAt: String!
+  subtotal: Int!
+  discount: Int!
+  shipping: Int!
+  total: Int!
+  address: OrderAddressSnapshot!
+  items: [OrderItemSnapshot!]!
+}
+type OrderAddressSnapshot {
+  title: String
+  recipientName: String
+  recipientPhone: String
+  province: String
+  city: String
+  postalAddress: String
+  postalCode: String
+  latitude: Float
+  longitude: Float
+}
+type OrderItemSnapshot {
+  id: ID!
+  productId: ID!
+  productTitle: String!
+  productWeight: String!
+  unitPrice: Int!
+  quantity: Int!
+  lineTotal: Int!
 }

@@ -18,7 +18,9 @@ export default function MobileBottomNav() {
     ? '/shop#categories'
     : pathname === '/' || pathname === '/cart'
       ? pathname
-      : ['/account', '/login', '/verify'].includes(pathname)
+      : pathname === '/account' ||
+          pathname.startsWith('/account/') ||
+          ['/login', '/verify'].includes(pathname)
         ? '/account'
         : '/shop';
   return (
@@ -54,11 +56,9 @@ export default function MobileBottomNav() {
         href="/account"
         className={cn(
           'flex min-h-12 flex-col items-center justify-center gap-[3px] text-[10px]',
-          ['/account', '/login', '/verify'].includes(pathname)
-            ? 'font-bold text-primary'
-            : 'text-muted-foreground',
+          active === '/account' ? 'font-bold text-primary' : 'text-muted-foreground',
         )}
-        aria-current={['/account', '/login', '/verify'].includes(pathname) ? 'page' : undefined}
+        aria-current={active === '/account' ? 'page' : undefined}
       >
         <UserRound className="size-[21px]" />
         <span>حساب</span>

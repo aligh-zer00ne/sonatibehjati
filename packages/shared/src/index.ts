@@ -167,3 +167,57 @@ export const createOrderInputSchema = checkoutInputSchema.safeExtend({
   requestId: z.string().uuid(),
   expectedTotal: z.number().int().min(0).max(2147483647),
 });
+
+export const profileInputSchema = z
+  .object({
+    firstName: boundedText(1, 80),
+    lastName: boundedText(1, 80),
+    email: z
+      .string()
+      .trim()
+      .max(254)
+      .transform((value) => value.toLowerCase())
+      .pipe(z.union([z.literal(''), z.email()])),
+  })
+  .strict();
+export const orderStatuses = [
+  'CREATED',
+  'PENDING_PAYMENT',
+  'PROCESSING',
+  'SHIPPED',
+  'DELIVERED',
+  'CANCELED',
+] as const;
+export const orderStatusLabels: Record<(typeof orderStatuses)[number], string> = {
+  CREATED: 'ثبت‌شده',
+  PENDING_PAYMENT: 'در انتظار پرداخت',
+  PROCESSING: 'در حال آماده‌سازی',
+  SHIPPED: 'ارسال‌شده',
+  DELIVERED: 'تحویل‌شده',
+  CANCELED: 'لغوشده',
+};
+export const ordersFilterSchema = z
+  .object({
+    page: z.number().int().min(1).max(10000).default(1),
+    pageSize: z.number().int().min(1).max(20).default(10),
+    status: z.enum(orderStatuses).nullish(),
+  })
+  .strict();
+export const orderAddressSnapshotSchema = z.object({
+  title: z.string().nullish(),
+  recipientName: z.string().nullish(),
+  recipientPhone: z.string().nullish(),
+  province: z.string().nullish(),
+  city: z.string().nullish(),
+  postalAddress: z.string().nullish(),
+  postalCode: z.string().nullish(),
+  latitude: coordinatesSchema.shape.latitude.nullish(),
+  longitude: coordinatesSchema.shape.longitude.nullish(),
+});
+export const formatDate = (value: string) =>
+  new Intl.DateTimeFormat('fa-IR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Tehran',
+  }).format(new Date(value));
