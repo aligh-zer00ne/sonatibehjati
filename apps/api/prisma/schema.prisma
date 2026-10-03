@@ -104,6 +104,8 @@ model DiscountCode {
 model Order {
  id String @id @default(cuid())
  number Int @unique @default(autoincrement())
+ clientRequestId String? @db.VarChar(36)
+ requestHash String? @db.VarChar(64)
  userId String
  user User @relation(fields:[userId],references:[id],onDelete:Restrict)
  addressId String
@@ -121,6 +123,7 @@ model Order {
  updatedAt DateTime @updatedAt
  @@index([userId,createdAt])
  @@index([status,createdAt])
+ @@unique([userId,clientRequestId])
 }
 model OrderItem {
  id String @id @default(cuid())

@@ -63,9 +63,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       if (document.visibilityState === 'visible') void refresh();
     };
     document.addEventListener('visibilitychange', visible);
+    const expired = () => {
+      setUser(null);
+      setLoading(false);
+      setError('');
+    };
+    window.addEventListener('behjati-session-expired', expired);
     return () => {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', visible);
+      window.removeEventListener('behjati-session-expired', expired);
       channel.current?.close();
       channel.current = null;
     };

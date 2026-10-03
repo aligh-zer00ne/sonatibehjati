@@ -1,0 +1,72 @@
+fragment CheckoutAddress on Address {
+  id
+  title
+  recipientName
+  recipientPhone
+  province
+  city
+  postalAddress
+  postalCode
+  latitude
+  longitude
+  isDefault
+}
+query MyAddresses {
+  myAddresses {
+    ...CheckoutAddress
+  }
+}
+query RecoverCheckoutOrder($requestId: ID!) {
+  orderByRequestId(requestId: $requestId) {
+    ...Receipt
+  }
+}
+query ReverseCheckoutLocation($latitude: Float!, $longitude: Float!) {
+  reverseLocation(latitude: $latitude, longitude: $longitude)
+}
+mutation SaveCheckoutAddress($id: ID, $input: AddressInput!) {
+  saveAddress(id: $id, input: $input) {
+    ...CheckoutAddress
+  }
+}
+mutation DeleteCheckoutAddress($id: ID!) {
+  deleteAddress(id: $id)
+}
+query CheckoutQuote($input: CheckoutInput!) {
+  checkoutQuote(input: $input) {
+    addressId
+    subtotal
+    discount
+    shipping
+    total
+    items {
+      productId
+      title
+      weight
+      imageUrl
+      quantity
+      unitPrice
+      lineTotal
+    }
+  }
+}
+fragment Receipt on OrderReceipt {
+  id
+  number
+  status
+  subtotal
+  discount
+  shipping
+  total
+  createdAt
+}
+mutation CreateCheckoutOrder($input: CreateOrderInput!) {
+  createOrder(input: $input) {
+    ...Receipt
+  }
+}
+query CheckoutOrderReceipt($id: ID!) {
+  orderReceipt(id: $id) {
+    ...Receipt
+  }
+}

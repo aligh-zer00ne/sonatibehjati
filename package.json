@@ -24,6 +24,8 @@
     "verify:commerce": "node scripts/verify-commerce.mjs",
     "verify:auth": "node scripts/verify-auth.mjs",
     "verify:auth-ui": "node scripts/verify-auth-ui.mjs",
+    "verify:checkout": "node scripts/verify-checkout.mjs",
+    "verify:checkout-ui": "node scripts/verify-checkout-ui.mjs",
     "setup:auth": "node scripts/setup-auth-env.mjs"
   },
   "devDependencies": {

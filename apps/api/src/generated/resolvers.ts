@@ -17,6 +17,34 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Address = {
+  __typename?: 'Address';
+  city: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  postalAddress: Scalars['String']['output'];
+  postalCode: Scalars['String']['output'];
+  province: Scalars['String']['output'];
+  recipientName: Scalars['String']['output'];
+  recipientPhone: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type AddressInput = {
+  city: Scalars['String']['input'];
+  isDefault: Scalars['Boolean']['input'];
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  postalAddress: Scalars['String']['input'];
+  postalCode: Scalars['String']['input'];
+  province: Scalars['String']['input'];
+  recipientName: Scalars['String']['input'];
+  recipientPhone: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
 export type AuthSession = {
   __typename?: 'AuthSession';
   accessExpiresAt: Scalars['String']['output'];
@@ -61,12 +89,65 @@ export type Category = {
   title: Scalars['String']['output'];
 };
 
+export type CheckoutInput = {
+  addressId: Scalars['ID']['input'];
+  discountCode: Scalars['String']['input'];
+  items: Array<CheckoutLineInput>;
+};
+
+export type CheckoutLine = {
+  __typename?: 'CheckoutLine';
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  lineTotal: Scalars['Int']['output'];
+  productId: Scalars['ID']['output'];
+  quantity: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  unitPrice: Scalars['Int']['output'];
+  weight: Scalars['String']['output'];
+};
+
+export type CheckoutLineInput = {
+  productId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+};
+
+export type CheckoutQuote = {
+  __typename?: 'CheckoutQuote';
+  addressId: Scalars['ID']['output'];
+  discount: Scalars['Int']['output'];
+  items: Array<CheckoutLine>;
+  shipping: Scalars['Int']['output'];
+  subtotal: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type CreateOrderInput = {
+  addressId: Scalars['ID']['input'];
+  discountCode: Scalars['String']['input'];
+  expectedTotal: Scalars['Int']['input'];
+  items: Array<CheckoutLineInput>;
+  requestId: Scalars['ID']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createOrder: OrderReceipt;
+  deleteAddress: Scalars['Boolean']['output'];
   logout: Scalars['Boolean']['output'];
   refreshToken: AuthSession;
   requestOtp: OtpChallenge;
+  saveAddress: Address;
   verifyOtp: AuthSession;
+};
+
+
+export type MutationCreateOrderArgs = {
+  input: CreateOrderInput;
+};
+
+
+export type MutationDeleteAddressArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -75,8 +156,26 @@ export type MutationRequestOtpArgs = {
 };
 
 
+export type MutationSaveAddressArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  input: AddressInput;
+};
+
+
 export type MutationVerifyOtpArgs = {
   input: VerifyOtpInput;
+};
+
+export type OrderReceipt = {
+  __typename?: 'OrderReceipt';
+  createdAt: Scalars['String']['output'];
+  discount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['Int']['output'];
+  shipping: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+  subtotal: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
 };
 
 export type OtpChallenge = {
@@ -123,16 +222,36 @@ export type Query = {
   __typename?: 'Query';
   catalog: CatalogPage;
   categories: Array<Category>;
+  checkoutQuote: CheckoutQuote;
   health: Scalars['String']['output'];
   me?: Maybe<AuthUser>;
+  myAddresses: Array<Address>;
+  orderByRequestId?: Maybe<OrderReceipt>;
+  orderReceipt: OrderReceipt;
   product?: Maybe<Product>;
   products: Array<Product>;
   productsByIds: Array<Product>;
+  reverseLocation?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type QueryCatalogArgs = {
   input: CatalogInput;
+};
+
+
+export type QueryCheckoutQuoteArgs = {
+  input: CheckoutInput;
+};
+
+
+export type QueryOrderByRequestIdArgs = {
+  requestId: Scalars['ID']['input'];
+};
+
+
+export type QueryOrderReceiptArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -149,6 +268,12 @@ export type QueryProductsArgs = {
 
 export type QueryProductsByIdsArgs = {
   ids: Array<Scalars['ID']['input']>;
+};
+
+
+export type QueryReverseLocationArgs = {
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
 };
 
 export type RequestOtpInput = {
@@ -234,15 +359,24 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Address: ResolverTypeWrapper<Address>;
+  AddressInput: AddressInput;
   AuthSession: ResolverTypeWrapper<AuthSession>;
   AuthUser: ResolverTypeWrapper<AuthUser>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CatalogInput: CatalogInput;
   CatalogPage: ResolverTypeWrapper<CatalogPage>;
   Category: ResolverTypeWrapper<Category>;
+  CheckoutInput: CheckoutInput;
+  CheckoutLine: ResolverTypeWrapper<CheckoutLine>;
+  CheckoutLineInput: CheckoutLineInput;
+  CheckoutQuote: ResolverTypeWrapper<CheckoutQuote>;
+  CreateOrderInput: CreateOrderInput;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  OrderReceipt: ResolverTypeWrapper<OrderReceipt>;
   OtpChallenge: ResolverTypeWrapper<OtpChallenge>;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
@@ -255,15 +389,24 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Address: Address;
+  AddressInput: AddressInput;
   AuthSession: AuthSession;
   AuthUser: AuthUser;
   Boolean: Scalars['Boolean']['output'];
   CatalogInput: CatalogInput;
   CatalogPage: CatalogPage;
   Category: Category;
+  CheckoutInput: CheckoutInput;
+  CheckoutLine: CheckoutLine;
+  CheckoutLineInput: CheckoutLineInput;
+  CheckoutQuote: CheckoutQuote;
+  CreateOrderInput: CreateOrderInput;
+  Float: Scalars['Float']['output'];
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: Record<PropertyKey, never>;
+  OrderReceipt: OrderReceipt;
   OtpChallenge: OtpChallenge;
   Product: Product;
   ProductImage: ProductImage;
@@ -271,6 +414,20 @@ export type ResolversParentTypes = {
   RequestOtpInput: RequestOtpInput;
   String: Scalars['String']['output'];
   VerifyOtpInput: VerifyOtpInput;
+};
+
+export type AddressResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = {
+  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isDefault?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  latitude?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  longitude?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  postalAddress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  postalCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  province?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  recipientName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  recipientPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type AuthSessionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AuthSession'] = ResolversParentTypes['AuthSession']> = {
@@ -302,11 +459,44 @@ export type CategoryResolvers<ContextType = AuthContext, ParentType extends Reso
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
+export type CheckoutLineResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CheckoutLine'] = ResolversParentTypes['CheckoutLine']> = {
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lineTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  unitPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  weight?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type CheckoutQuoteResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CheckoutQuote'] = ResolversParentTypes['CheckoutQuote']> = {
+  addressId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['CheckoutLine']>, ParentType, ContextType>;
+  shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createOrder?: Resolver<ResolversTypes['OrderReceipt'], ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'input'>>;
+  deleteAddress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAddressArgs, 'id'>>;
   logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   refreshToken?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType>;
   requestOtp?: Resolver<ResolversTypes['OtpChallenge'], ParentType, ContextType, RequireFields<MutationRequestOtpArgs, 'input'>>;
+  saveAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationSaveAddressArgs, 'input'>>;
   verifyOtp?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType, RequireFields<MutationVerifyOtpArgs, 'input'>>;
+};
+
+export type OrderReceiptResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OrderReceipt'] = ResolversParentTypes['OrderReceipt']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type OtpChallengeResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OtpChallenge'] = ResolversParentTypes['OtpChallenge']> = {
@@ -341,19 +531,28 @@ export type ProductImageResolvers<ContextType = AuthContext, ParentType extends 
 export type QueryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   catalog?: Resolver<ResolversTypes['CatalogPage'], ParentType, ContextType, RequireFields<QueryCatalogArgs, 'input'>>;
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  checkoutQuote?: Resolver<ResolversTypes['CheckoutQuote'], ParentType, ContextType, RequireFields<QueryCheckoutQuoteArgs, 'input'>>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['AuthUser']>, ParentType, ContextType>;
+  myAddresses?: Resolver<Array<ResolversTypes['Address']>, ParentType, ContextType>;
+  orderByRequestId?: Resolver<Maybe<ResolversTypes['OrderReceipt']>, ParentType, ContextType, RequireFields<QueryOrderByRequestIdArgs, 'requestId'>>;
+  orderReceipt?: Resolver<ResolversTypes['OrderReceipt'], ParentType, ContextType, RequireFields<QueryOrderReceiptArgs, 'id'>>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'slug'>>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, Partial<QueryProductsArgs>>;
   productsByIds?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductsByIdsArgs, 'ids'>>;
+  reverseLocation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryReverseLocationArgs, 'latitude' | 'longitude'>>;
 };
 
 export type Resolvers<ContextType = AuthContext> = {
+  Address?: AddressResolvers<ContextType>;
   AuthSession?: AuthSessionResolvers<ContextType>;
   AuthUser?: AuthUserResolvers<ContextType>;
   CatalogPage?: CatalogPageResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  CheckoutLine?: CheckoutLineResolvers<ContextType>;
+  CheckoutQuote?: CheckoutQuoteResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  OrderReceipt?: OrderReceiptResolvers<ContextType>;
   OtpChallenge?: OtpChallengeResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductImage?: ProductImageResolvers<ContextType>;

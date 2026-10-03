@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     return Response.json({ errors: [{ message: 'درخواست معتبر نیست.' }] }, { status: 415 });
   try {
     const body = await request.text();
-    if (Buffer.byteLength(body) > 4096)
+    if (Buffer.byteLength(body) > 32000)
       return Response.json(
         { errors: [{ message: 'درخواست بیش از حد بزرگ است.' }] },
         { status: 413 },

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '@fontsource-variable/vazirmatn';
 import './globals.css';
+import 'leaflet/dist/leaflet.css';
 import { BRAND_NAME } from '@behjati/shared';
 import AuthProvider from '@/components/auth/AuthProvider';
 import ClientRuntime from '@/components/layout/ClientRuntime';

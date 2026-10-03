@@ -114,3 +114,56 @@ export const safeReturnPath = (value: string | null | undefined) => {
 };
 export const USER_ACCESS_COOKIE = 'behjati_user_access';
 export const USER_REFRESH_COOKIE = 'behjati_user_refresh';
+
+const boundedText = (min: number, max: number) => z.string().trim().min(min).max(max);
+export const coordinatesSchema = z
+  .object({
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+  })
+  .strict();
+export type Coordinates = z.infer<typeof coordinatesSchema>;
+export const addressInputSchema = z
+  .object({
+    title: boundedText(2, 80),
+    recipientName: boundedText(2, 100),
+    recipientPhone: phoneSchema,
+    province: boundedText(2, 80),
+    city: boundedText(2, 80),
+    postalAddress: boundedText(10, 1000),
+    postalCode: z
+      .string()
+      .max(20)
+      .transform((value) => normalizeDigits(value.trim()))
+      .pipe(z.string().regex(/^\d{10}$/, 'کد پستی ده‌رقمی وارد کنید.')),
+    latitude: coordinatesSchema.shape.latitude.nullish(),
+    longitude: coordinatesSchema.shape.longitude.nullish(),
+    isDefault: z.boolean().default(false),
+  })
+  .strict()
+  .refine((value) => (value.latitude == null) === (value.longitude == null), {
+    message: 'هر دو مختصات موقعیت را مشخص کنید.',
+  });
+export const checkoutInputSchema = z
+  .object({
+    addressId: boundedText(1, 100),
+    items: z
+      .array(cartLineSchema.extend({ productId: boundedText(1, 100) }).strict())
+      .min(1)
+      .max(MAX_CART_LINES),
+    discountCode: z
+      .string()
+      .trim()
+      .max(50)
+      .transform((value) => value.toUpperCase())
+      .default(''),
+  })
+  .strict()
+  .refine(
+    (value) => new Set(value.items.map((item) => item.productId)).size === value.items.length,
+    { message: 'محصول تکراری در سبد مجاز نیست.' },
+  );
+export const createOrderInputSchema = checkoutInputSchema.safeExtend({
+  requestId: z.string().uuid(),
+  expectedTotal: z.number().int().min(0).max(2147483647),
+});

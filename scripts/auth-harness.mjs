@@ -11,6 +11,7 @@ export const otpSecret = randomBytes(48).toString('hex');
 const proxySecret = randomBytes(48).toString('hex');
 export const codes = new Map();
 export const phones = [];
+const startedAt = new Date();
 const base = Date.now() % 100000000;
 export function phone() {
   const value = `090${String((base + phones.length) % 100000000).padStart(8, '0')}`;
@@ -148,9 +149,18 @@ export function errorCode(result, code) {
 }
 export async function cleanup() {
   for (const process of processes) process.kill('SIGTERM');
-  await db.otpCode.deleteMany({ where: { phone: { in: phones } } });
-  await db.user.deleteMany({ where: { phone: { in: phones } } });
+  const users = await db.user.findMany({
+    where: { phone: { in: phones }, createdAt: { gte: startedAt } },
+    select: { id: true },
+  });
+  const userIds = users.map((user) => user.id);
+  await db.orderItem.deleteMany({ where: { order: { userId: { in: userIds } } } });
+  await db.order.deleteMany({ where: { userId: { in: userIds } } });
+  await db.otpCode.deleteMany({ where: { phone: { in: phones }, createdAt: { gte: startedAt } } });
+  await db.user.deleteMany({ where: { id: { in: userIds } } });
   const throttleKeys = phones.flatMap((mobile) => [`otp-resend:${mobile}`, `otp-phone:${mobile}`]);
+  for (const id of userIds)
+    throttleKeys.push(`address:${id}`, `quote:${id}`, `order:${id}`, `location:${id}`);
   for (const ip of [
     '127.0.0.1',
     '::ffff:127.0.0.1',

@@ -84,7 +84,20 @@ export async function authRequest<TResult, TVariables extends Record<string, unk
     try {
       if (protectedOperation && (!accessToken || accessExpiresAt <= Date.now() + 15000))
         await send(RefreshUserSessionDocument, {});
-      let data = await send(document, variables);
+      let data;
+      try {
+        data = await send(document, variables);
+      } catch (error) {
+        if (
+          !protectedOperation ||
+          !(error instanceof AuthRequestError) ||
+          error.code !== 'UNAUTHENTICATED'
+        )
+          throw error;
+        clearAccessToken();
+        await send(RefreshUserSessionDocument, {});
+        data = await send(document, variables);
+      }
       if (name === 'CurrentUser' && !(data as { me?: unknown }).me) {
         clearAccessToken();
         await send(RefreshUserSessionDocument, {});
@@ -94,6 +107,7 @@ export async function authRequest<TResult, TVariables extends Record<string, unk
     } catch (error) {
       if (error instanceof AuthRequestError && error.code === 'UNAUTHENTICATED') {
         clearAccessToken();
+        window.dispatchEvent(new Event('behjati-session-expired'));
         if (name === 'CurrentUser') return { me: null } as TResult;
       }
       throw error;

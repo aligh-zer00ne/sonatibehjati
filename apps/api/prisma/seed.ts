@@ -31,6 +31,40 @@ async function seed() {
       },
     });
   }
+  // Mirror the reference storefront fixtures for development checkout; production uses API catalog.
+  for (const [id, slug, title, categorySlug, price, weight, image] of [
+    ['halva-500', 'traditional-halva-500', 'حلواارده سنتی', 'halva', 245000, '۵۰۰ گرم', 'halva'],
+    ['tahini-350', 'sesame-tahini-350', 'ارده کنجدی', 'tahini', 185000, '۳۵۰ گرم', 'tahini'],
+    ['oil-250', 'sesame-oil-250', 'روغن ارده', 'oil', 220000, '۲۵۰ میلی‌لیتر', 'oil'],
+    [
+      'chocolate-500',
+      'chocolate-halva-500',
+      'حلواارده شکلاتی',
+      'halva',
+      275000,
+      '۵۰۰ گرم',
+      'chocolate',
+    ],
+    ['date-500', 'date-tahini-500', 'ارده با شیره خرما', 'tahini', 245000, '۵۰۰ گرم', 'date'],
+    ['premium-1000', 'premium-tahini-1000', 'ارده ممتاز', 'tahini', 480000, '۱ کیلوگرم', 'premium'],
+  ] as const) {
+    const category = await db.category.findUniqueOrThrow({ where: { slug: categorySlug } });
+    await db.product.upsert({
+      where: { id },
+      update: {},
+      create: {
+        id,
+        slug,
+        title,
+        categoryId: category.id,
+        price,
+        weight,
+        shortDescription: 'محصول نمونه برای توسعه',
+        description: 'اطلاعات و قیمت نمونه؛ پیش از انتشار جایگزین شود.',
+        images: { create: { url: `/images/${image}.webp`, alt: title } },
+      },
+    });
+  }
   const user = await db.user.upsert({
     where: { phone: '09000000000' },
     update: {},

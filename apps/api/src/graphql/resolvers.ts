@@ -1,4 +1,5 @@
 import { authResolvers } from '../modules/auth/resolvers.js';
+import { checkoutResolvers } from '../modules/checkout/resolvers.js';
 import type { Resolvers } from '../generated/resolvers.js';
 import { productRepository } from '../modules/products/repository.js';
 import { catalogRepository } from '../modules/products/catalog.js';
@@ -8,9 +9,10 @@ const serialize = <T extends { createdAt: Date; updatedAt: Date }>(value: T) => 
   updatedAt: value.updatedAt.toISOString(),
 });
 export const resolvers: Resolvers = {
-  Mutation: authResolvers.Mutation,
+  Mutation: { ...authResolvers.Mutation, ...checkoutResolvers.Mutation },
   Query: {
     ...authResolvers.Query,
+    ...checkoutResolvers.Query,
     health: () => 'ok',
     products: async (_parent, args) =>
       (await productRepository.list(args.category, args.search)).map(serialize),

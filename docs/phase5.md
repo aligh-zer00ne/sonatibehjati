@@ -39,7 +39,7 @@ Schema اصلی GraphQL دارای `me` و mutationهای `requestOtp`, `verifyO
 
 ## توکن و کوکی
 
-Access پانزده دقیقه و refresh با پایان مطلق سی روز هستند. JWTهای HS256 با `jose` امضا می‌شوند؛ issuer، audience، kind، typ، زمان و شناسهٔ خانواده اعتبارسنجی می‌شوند. اسرار access، refresh، OTP و اسرار مدیر مستقل‌اند. فقط هش refresh در دیتابیس ذخیره می‌شود. فقط refresh در کوکی `behjati_user_refresh`، host-only، `HttpOnly`، `SameSite=Lax` و `Path=/` نگهداری می‌شود. Access در حافظه است و با `Authorization: Bearer` ارسال می‌شود. کوکی access نسخهٔ قبلی پاک می‌شود و API آن را برای احراز هویت قبول نمی‌کند؛ در production نیز `Secure` دارند و HTTPS الزامی است.
+Access پانزده دقیقه و refresh با پایان مطلق سی روز هستند. JWTهای HS256 با `jose` امضا می‌شوند؛ issuer، audience، kind، typ، زمان و شناسهٔ خانواده اعتبارسنجی می‌شوند. اسرار access، refresh، OTP و اسرار مدیر مستقل‌اند. فقط هش refresh در دیتابیس ذخیره می‌شود. فقط refresh در کوکی `behjati_user_refresh`، host-only، `HttpOnly`، `SameSite=Lax` و `Path=/` نگهداری می‌شود. Access در حافظه است و با `Authorization: Bearer` ارسال می‌شود. کوکی access نسخهٔ قبلی پاک می‌شود و API آن را برای احراز هویت قبول نمی‌کند؛ کوکی refresh در production ویژگی `Secure` دارد و HTTPS الزامی است.
 
 هر refresh یک توکن جدید و ابطال توکن قبلی می‌سازد و پایان سی‌روزه را تمدید نمی‌کند. بازپخش refresh مصرف‌شده تمام خانواده را باطل می‌کند. رکورد `UserSession` در rotation و logout قفل می‌شود تا خروج هم‌زمان نشست را دوباره فعال نکند. `me` علاوه بر امضا و انقضای access، فعال‌بودن خانواده در دیتابیس را بررسی می‌کند؛ بنابراین logout و تشخیص replay دسترسی را بلافاصله قطع می‌کنند.
 

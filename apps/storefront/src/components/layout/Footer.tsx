@@ -42,8 +42,8 @@ export default function Footer() {
         <div>
           <h3 className="mb-2.5 text-[15px] font-[750]">پیش از سفارش</h3>
           <p className="max-w-[340px] text-xs leading-6 text-muted-foreground">
-            این نسخه در مرحلهٔ توسعه است. محصولات و قیمت‌ها نمونه‌اند و امکان ثبت سفارش هنوز فعال
-            نیست.
+            این نسخه در مرحلهٔ توسعه است و محصولات و قیمت‌ها نمونه‌اند. سفارش در انتظار پرداخت ثبت
+            می‌شود؛ پرداخت آنلاین هنوز فعال نیست.
           </p>
           <Link
             className="flex min-h-11 items-center gap-2 text-xs text-earth"

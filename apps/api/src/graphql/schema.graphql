@@ -25,6 +25,11 @@ type Product {
   updatedAt: String!
 }
 type Query {
+  reverseLocation(latitude: Float!, longitude: Float!): String
+  myAddresses: [Address!]!
+  checkoutQuote(input: CheckoutInput!): CheckoutQuote!
+  orderReceipt(id: ID!): OrderReceipt!
+  orderByRequestId(requestId: ID!): OrderReceipt
   me: AuthUser
   health: String!
   products(category: String, search: String): [Product!]!
@@ -85,8 +90,80 @@ input VerifyOtpInput {
   code: String!
 }
 type Mutation {
+  saveAddress(id: ID, input: AddressInput!): Address!
+  deleteAddress(id: ID!): Boolean!
+  createOrder(input: CreateOrderInput!): OrderReceipt!
   requestOtp(input: RequestOtpInput!): OtpChallenge!
   verifyOtp(input: VerifyOtpInput!): AuthSession!
   refreshToken: AuthSession!
   logout: Boolean!
+}
+
+type Address {
+  id: ID!
+  title: String!
+  recipientName: String!
+  recipientPhone: String!
+  province: String!
+  city: String!
+  postalAddress: String!
+  postalCode: String!
+  latitude: Float
+  longitude: Float
+  isDefault: Boolean!
+}
+input AddressInput {
+  title: String!
+  recipientName: String!
+  recipientPhone: String!
+  province: String!
+  city: String!
+  postalAddress: String!
+  postalCode: String!
+  latitude: Float
+  longitude: Float
+  isDefault: Boolean!
+}
+input CheckoutLineInput {
+  productId: ID!
+  quantity: Int!
+}
+input CheckoutInput {
+  addressId: ID!
+  items: [CheckoutLineInput!]!
+  discountCode: String!
+}
+input CreateOrderInput {
+  addressId: ID!
+  items: [CheckoutLineInput!]!
+  discountCode: String!
+  requestId: ID!
+  expectedTotal: Int!
+}
+type CheckoutLine {
+  productId: ID!
+  title: String!
+  weight: String!
+  imageUrl: String
+  quantity: Int!
+  unitPrice: Int!
+  lineTotal: Int!
+}
+type CheckoutQuote {
+  addressId: ID!
+  items: [CheckoutLine!]!
+  subtotal: Int!
+  discount: Int!
+  shipping: Int!
+  total: Int!
+}
+type OrderReceipt {
+  id: ID!
+  number: Int!
+  status: String!
+  subtotal: Int!
+  discount: Int!
+  shipping: Int!
+  total: Int!
+  createdAt: String!
 }

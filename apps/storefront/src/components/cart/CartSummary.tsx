@@ -1,4 +1,5 @@
 import { ShoppingCart } from 'lucide-react';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatPrice } from '@behjati/shared';
@@ -30,13 +31,21 @@ export default function CartSummary({
           <dd className="font-extrabold text-primary">{formatPrice(subtotal)}</dd>
         </div>
       </dl>
-      <Button className="mt-6 w-full" disabled aria-describedby="checkout-status">
-        <ShoppingCart size={18} />
-        ادامهٔ ثبت سفارش
-      </Button>
+      {unavailable ? (
+        <Button className="mt-6 w-full" disabled>
+          ادامهٔ ثبت سفارش
+        </Button>
+      ) : (
+        <Button className="mt-6 w-full" asChild aria-describedby="checkout-status">
+          <Link href="/checkout">
+            <ShoppingCart size={18} />
+            ادامهٔ ثبت سفارش
+          </Link>
+        </Button>
+      )}
       <p id="checkout-status" className="mt-3 text-xs leading-7 text-muted-foreground">
-        {unavailable ? 'ابتدا محصولات ناموجود را از سبد حذف کنید. ' : ''}تکمیل سفارش به‌زودی فعال
-        می‌شود. مبلغ نهایی با هزینهٔ ارسال و تخفیف، پیش از پرداخت نمایش داده خواهد شد.
+        {unavailable ? 'ابتدا محصولات ناموجود را از سبد حذف کنید. ' : ''}مبلغ نهایی با هزینهٔ ارسال
+        و تخفیف، پیش از ثبت سفارش نمایش داده می‌شود.
       </p>
     </Card>
   );

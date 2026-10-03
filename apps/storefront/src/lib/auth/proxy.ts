@@ -4,6 +4,10 @@ import { z } from 'zod';
 import {
   otpRequestSchema,
   otpVerifySchema,
+  addressInputSchema,
+  checkoutInputSchema,
+  createOrderInputSchema,
+  coordinatesSchema,
   USER_ACCESS_COOKIE,
   USER_REFRESH_COOKIE,
 } from '@behjati/shared';
@@ -13,6 +17,14 @@ import {
   VerifyOtpDocument,
   RefreshUserSessionDocument,
   LogoutUserDocument,
+  MyAddressesDocument,
+  ReverseCheckoutLocationDocument,
+  SaveCheckoutAddressDocument,
+  DeleteCheckoutAddressDocument,
+  CheckoutQuoteDocument,
+  CreateCheckoutOrderDocument,
+  CheckoutOrderReceiptDocument,
+  RecoverCheckoutOrderDocument,
 } from '@/generated/graphql';
 const empty = z.object({}).strict();
 const operations = {
@@ -24,6 +36,34 @@ const operations = {
   VerifyOtp: { document: VerifyOtpDocument, schema: z.object({ input: otpVerifySchema }).strict() },
   RefreshUserSession: { document: RefreshUserSessionDocument, schema: empty },
   LogoutUser: { document: LogoutUserDocument, schema: empty },
+  MyAddresses: { document: MyAddressesDocument, schema: empty },
+  RecoverCheckoutOrder: {
+    document: RecoverCheckoutOrderDocument,
+    schema: z.object({ requestId: z.string().uuid() }).strict(),
+  },
+  ReverseCheckoutLocation: { document: ReverseCheckoutLocationDocument, schema: coordinatesSchema },
+  SaveCheckoutAddress: {
+    document: SaveCheckoutAddressDocument,
+    schema: z
+      .object({ id: z.string().min(1).max(100).nullish(), input: addressInputSchema })
+      .strict(),
+  },
+  DeleteCheckoutAddress: {
+    document: DeleteCheckoutAddressDocument,
+    schema: z.object({ id: z.string().min(1).max(100) }).strict(),
+  },
+  CheckoutQuote: {
+    document: CheckoutQuoteDocument,
+    schema: z.object({ input: checkoutInputSchema }).strict(),
+  },
+  CreateCheckoutOrder: {
+    document: CreateCheckoutOrderDocument,
+    schema: z.object({ input: createOrderInputSchema }).strict(),
+  },
+  CheckoutOrderReceipt: {
+    document: CheckoutOrderReceiptDocument,
+    schema: z.object({ id: z.string().min(1).max(100) }).strict(),
+  },
 };
 export const proxyInputSchema = z
   .object({
@@ -33,6 +73,14 @@ export const proxyInputSchema = z
       'VerifyOtp',
       'RefreshUserSession',
       'LogoutUser',
+      'MyAddresses',
+      'ReverseCheckoutLocation',
+      'SaveCheckoutAddress',
+      'DeleteCheckoutAddress',
+      'CheckoutQuote',
+      'CreateCheckoutOrder',
+      'CheckoutOrderReceipt',
+      'RecoverCheckoutOrder',
     ]),
     variables: z.unknown(),
   })
@@ -92,6 +140,13 @@ export async function proxyAuth(request: Request, input: ProxyInput) {
       'SMS_UNAVAILABLE',
       'UNAUTHENTICATED',
       'FORBIDDEN',
+      'NOT_FOUND',
+      'ADDRESS_IN_USE',
+      'INVALID_DISCOUNT',
+      'PRODUCT_UNAVAILABLE',
+      'REQUEST_CONFLICT',
+      'PRICE_CHANGED',
+      'LOCATION_UNAVAILABLE',
     ];
     if (result.body.errors)
       result.body = {
