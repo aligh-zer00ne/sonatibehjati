@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     description: 'طعم اصیل اردکان، از دل کنجد',
     locale: 'fa_IR',
     type: 'website',
-    images: [{ url: '/images/hero.webp', width: 252, height: 191 }],
+    images: [{ url: '/images/hero/sesame-tahini.webp', width: 1536, height: 1024 }],
   },
   twitter: { card: 'summary', title: BRAND_NAME },
 };

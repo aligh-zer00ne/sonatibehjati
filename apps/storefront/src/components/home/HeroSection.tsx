@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import HeroCarousel from './HeroCarousel';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 export default function HeroSection() {
@@ -37,26 +37,7 @@ export default function HeroSection() {
           </Link>
         </div>
       </div>
-      <div className="relative order-2 -mx-5 h-[290px] w-[calc(100%+40px)] shrink-0 min-[480px]:h-[340px] md:absolute md:bottom-0 md:left-0 md:m-0 md:h-full md:w-[55%] xl:w-[57%]">
-        <Image
-          className="object-cover mix-blend-multiply [mask-image:linear-gradient(to_bottom,transparent,#000_14%,#000_88%,transparent)] md:[mask-image:linear-gradient(to_right,#000_70%,transparent)]"
-          src="/images/hero.webp"
-          alt="ارده و حلواارده در کنار دانه‌های کنجد و بادگیرهای اردکان"
-          fill
-          priority
-          sizes="(max-width: 767px) 100vw, 650px"
-        />
-      </div>
-      <div
-        dir="ltr"
-        className="absolute bottom-3.5 left-1/2 flex -translate-x-1/2 gap-1.5 md:bottom-[22px] md:left-[27%]"
-        aria-hidden="true"
-      >
-        <i className="size-[7px] rounded-full bg-primary" />
-        <i className="size-[7px] rounded-full bg-[#b59d7b]" />
-        <i className="size-[7px] rounded-full bg-[#b59d7b]" />
-        <i className="size-[7px] rounded-full bg-[#b59d7b]" />
-      </div>
+      <HeroCarousel />
     </section>
   );
 }
