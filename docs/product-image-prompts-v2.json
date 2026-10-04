@@ -1,0 +1,218 @@
+{
+  "tool": "built-in image_gen.imagegen (edit)",
+  "home": [
+    {
+      "output": "apps/storefront/public/images/home/hero-tahini-scene.webp",
+      "references": ["apps/storefront/public/images/home/tahini-family.webp"],
+      "prompt": "Use case: compositing. Asset type: premium Persian sesame storefront hero photo, landscape 3:2. Input 1 is the exact four real tahini packages to preserve. Place all four original packages, complete and uncropped with 12% safe margins, together on a warm honed sandstone counter. Build a beautiful coordinated backdrop: tactile honey plaster walls, softly blurred Persian adobe arch, cream linen at one edge, a restrained scattering of sesame and a small ceramic tahini bowl. Soft warm window light from upper left, realistic grounded contact shadows, coherent reflections and color grading, subtle sunlit arch shadow on the wall, elegant high-end editorial food photography. Product family occupies middle 65% width and lower middle 65% height; architectural background above, room to breathe on all sides. Preserve package count, original shapes, labels, Persian brand spelling, caps and relative sizes; never invent packages or label design, don't turn wrappers brown. No added typography, watermark or graphic border. Background opaque warm cream #efddc0. NOT a cutout sitting on a gradient; physically integrated still life.",
+      "transparent_background": false
+    },
+    {
+      "output": "apps/storefront/public/images/home/hero-oil-scene.webp",
+      "references": ["apps/storefront/public/images/home/oil-family.webp"],
+      "prompt": "Use case: compositing. Asset type: premium Persian sesame storefront hero photo, landscape 3:2. Input 1 is the exact four real sesame oil bottles to preserve. Place all four complete original bottles, with 12% safe margins, together on a warm honed sandstone counter. Backdrop tactile honey plaster walls and softly blurred Persian adobe arch. A folded cream linen corner, a small earthenware sesame dish and sparse sesame seeds. Warm diffuse window light upper left illuminates golden oil naturally with coherent reflections, realistic contact shadows and a subtle sunlit arch shadow on the wall. Elegant high-end editorial food photograph, same ivory sandstone and amber palette as Persian sesame marketplace. Bottles occupy middle 65% width and lower middle 65% height with architecture and breathing room above and around. Preserve original count, shapes, labels, Persian brand spelling, caps, handles and relative sizes exactly; no invented bottles, no new labels. No added text, watermark, graphic border or floating product halo. Opaque warm cream #efddc0 backdrop, physical integrated still life.",
+      "transparent_background": false
+    },
+    {
+      "output": "apps/storefront/public/images/home/hero-flavored-scene.webp",
+      "references": ["apps/storefront/public/images/home/flavored-family.webp"],
+      "prompt": "Use case: compositing. Asset type: premium Persian sesame storefront hero photo, landscape 3:2. Input 1 is the exact three real chocolate tahini, tahini cream and hazelnut tahini jars to preserve. Place all three complete original jars with 12% margins on warm honed sandstone counter. Backdrop tactile honey plaster walls and soft-focus Persian adobe arch. Cream linen corner, restrained sesame seeds and two hazelnuts with small chocolate pieces at the edges. Warm diffuse window light from upper left, realistic grounded contact shadows, coherent reflections, subtle sunlit arch shadow on wall. Elegant high-end editorial food photography. Group occupies middle 65% width and lower middle 60% height, room above and on all sides. Preserve original three shapes, relative sizes, brown/yellow caps, original blue-white labels and Persian spelling; no invented packaging or label redesign. No extra lettering or watermarks. Opaque warm cream #efddc0 backdrop; realistic integrated still life rather than cutout.",
+      "transparent_background": false
+    },
+    {
+      "output": "apps/storefront/public/images/home/ardakan-products-scene.webp",
+      "references": [
+        "apps/storefront/public/images/home/ardakan-courtyard.webp",
+        "apps/storefront/public/images/home/tahini-family.webp"
+      ],
+      "prompt": "Use case: compositing. Input 1 is edit target: retain this beautiful adobe courtyard, windcatcher, arches and warm light almost unchanged. Input 2 is supporting insert: the exact four tahini packages. Place the complete group on the FOREGROUND stone ledge, in its middle, physically grounded and scaled as a real still life in front of the courtyard. Packages occupy lower 45% height and middle 65% width, leaving windcatcher and arch clearly visible above. Match the courtyard golden-hour side lighting, warm bounce light, perspective and soft contact shadows on the ledge; camera depth of field and color response cohesive. Preserve package count, shapes, caps, original blue labels and Persian typography without redesign. No cutout glow, no floating jars, no exaggerated saturation, no pasted graphic look. Entire scene is one cohesive editorial photograph, landscape 3:2, no text overlay or watermark.",
+      "transparent_background": false
+    },
+    {
+      "output": "apps/storefront/public/images/home/story-tahini-scene.webp",
+      "references": [
+        "apps/storefront/public/images/home/tahini-pour.webp",
+        "apps/storefront/public/images/home/flavored-family.webp"
+      ],
+      "prompt": "Use case: compositing. Asset type: evocative premium sesame brand-story photograph, portrait 4:5. Input 1 is edit target/foreground: exact dark blue ceramic bowl, creamy falling tahini stream and silver spoon. Input 2 supporting insert: exact three flavored tahini jars. Integrate into a warm artisan Persian kitchen still life: bowl prominent lower foreground on tactile honey sandstone table, spoon and entire flowing stream clearly visible above; three original small jars naturally grouped in background right on same table without obstructing stream. Soft-focus sunlit adobe arch and atmospheric warm plaster wall behind, cream linen folded at table corner, sesame scattered tastefully. Dramatic yet soft directional afternoon window light, arch-shaped light and shadow across wall, coherent contact shadows under bowl and jars, restrained amber highlights and blue ceramic contrast, shallow depth of field. Keep exact original bowl, spoon, contents, jar geometry, caps, packaging colors and labels; do not add hands, invent product designs or text. Full spoon and bowl with safe margins, single cohesive photograph. No typography or watermark. Rich photographic background rather than blank gradient.",
+      "transparent_background": false
+    }
+  ],
+  "gallery": [
+    {
+      "output": "apps/storefront/public/images/products/gallery/premium-tahini-3.webp",
+      "source": "ارده/DSC00383.JPG",
+      "description": "نمای بسته‌بندی با در بسته",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/premium-tahini-4.webp",
+      "source": "ارده/DSC00414.JPG",
+      "description": "بافت ارده در کاسه و قاشق",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/halva-classic-3.webp",
+      "source": "حلواارده/DSC00376.JPG",
+      "description": "نمای پشت بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/halva-classic-4.webp",
+      "source": "حلواارده/DSC00375.JPG",
+      "description": "نمای درِ بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/hazelnut-tahini-3.webp",
+      "source": "ارده فندقی/DSC00338.JPG",
+      "description": "نمای بالاتر بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/hazelnut-tahini-4.webp",
+      "source": "ارده فندقی/DSC00339.JPG",
+      "description": "نمای درِ بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/pistachio-halva-3.webp",
+      "source": "حلواارده پسته ای/DSC00412.JPG",
+      "description": "نمای کناری بافت و بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/pistachio-halva-4.webp",
+      "source": "حلواارده پسته ای/DSC00399.JPG",
+      "description": "جزئیات بافت حلواارده پسته‌ای در قاشق",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. Keep the spoon and halva bite ONLY; remove hand entirely.",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-sweets-3.webp",
+      "source": "شیرینی ارده ای/DSC00342.JPG",
+      "description": "نمای کناری بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-sweets-4.webp",
+      "source": "شیرینی ارده ای/DSC00343.JPG",
+      "description": "نمای روبه‌روی شیرینی‌ها",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-seeds-3.webp",
+      "source": "کنجد بسته بندی/DSC00352.JPG",
+      "description": "نمای دیگر بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-seeds-4.webp",
+      "source": "کنجد بسته بندی/DSC00355.JPG",
+      "description": "نمای بالا و درِ بسته‌بندی",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-oil-glass-3.webp",
+      "source": "روغن کنجد/DSC00359.JPG",
+      "description": "نمای دیگر بطری شیشه‌ای",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-oil-glass-4.webp",
+      "source": "روغن کنجد/DSC00361.JPG",
+      "description": "نمای بالا و درِ بطری",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-oil-one-liter-3.webp",
+      "source": "روغن کنجد/DSC00364.JPG",
+      "description": "نمای پشت بطری",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-oil-one-liter-4.webp",
+      "source": "روغن کنجد/DSC00362.JPG",
+      "description": "نمای روبه‌روی بطری",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-oil-family-3.webp",
+      "source": "روغن کنجد/DSC00348.JPG",
+      "description": "جزئیات بطری و برچسب",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. This is intentionally a close-up cropped reference. Preserve that genuine photographed close-up, do not extrapolate a complete bottle.",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/sesame-oil-family-4.webp",
+      "source": "روغن کنجد/DSC00350.JPG",
+      "description": "نمای کامل بطری",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-blue-4.webp",
+      "source": "ارده/DSC00414.JPG",
+      "description": "بافت ارده در کاسه و قاشق",
+      "prompt": "Use case: background-extraction. Asset type: additional real product gallery photograph. Remove only room, table, cast shadows, hand if present and unrelated background products. Keep the EXACT photographed foreground product or food/spoon, original angle, geometry, caps, packaging, contents, colors and all label print unchanged. Do not redraw or invent packaging, rotate subject, create unseen product surfaces, alter shape, add objects or text. Center subject on square genuinely transparent RGBA canvas with 10% safe margins. Natural clean antialiased edges; remove background also inside handle holes. No glow, external shadows or watermark. ",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-blue-3.webp",
+      "source": "cutout tahini-blue",
+      "description": "نمای نزدیک جزئیات بسته‌بندی",
+      "prompt": "Use case: precise-object-edit. Asset type: square ecommerce detail photograph. Make a tighter genuine close-up of the EXISTING supplied product front, showing original lid, shoulder and front label enlarged, lower edge deliberately out of frame. This is a close crop of the same photograph, NOT a new angle. Keep existing pixels, geometry, label text, colors and cap unchanged. Do not invent unseen sides or redraw text. Truly transparent background, no added glow, shadows, text or props.",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/chocolate-tahini-3.webp",
+      "source": "cutout chocolate-tahini",
+      "description": "نمای نزدیک جزئیات بسته‌بندی",
+      "prompt": "Use case: precise-object-edit. Asset type: square ecommerce detail photograph. Make a tighter genuine close-up of the EXISTING supplied product front, showing original lid, shoulder and front label enlarged, lower edge deliberately out of frame. This is a close crop of the same photograph, NOT a new angle. Keep existing pixels, geometry, label text, colors and cap unchanged. Do not invent unseen sides or redraw text. Truly transparent background, no added glow, shadows, text or props.",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/chocolate-tahini-4.webp",
+      "source": "cutout chocolate-tahini",
+      "description": "چیدمان محصول روی سطح سنگی",
+      "prompt": "Use case: compositing. Asset type: square product gallery editorial still life. Place the exact ONE existing jar from supplied image onto a warm honed sandstone counter. Preserve exact jar camera angle, cap, original shapes, colors, front label and all printed text unchanged; do not open jar, invent unseen surfaces or relabel. Soft honey plaster backdrop, diffuse natural side light, realistic contact shadow, tasteful sparse sesame seeds at one side, product fully visible centered filling 70% of frame, 12% safe margins. No extra packages, text or watermark. Photographic warm cream palette, coherent reflections and grounded product, no pasted halo.",
+      "transparent_background": false
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-cream.webp",
+      "source": "cutout tahini-cream",
+      "description": "نمای نزدیک جزئیات بسته‌بندی",
+      "prompt": "Use case: precise-object-edit. Asset type: square ecommerce detail photograph. Make a tighter genuine close-up of the EXISTING supplied product front, showing original lid, shoulder and front label enlarged, lower edge deliberately out of frame. This is a close crop of the same photograph, NOT a new angle. Keep existing pixels, geometry, label text, colors and cap unchanged. Do not invent unseen sides or redraw text. Truly transparent background, no added glow, shadows, text or props.",
+      "transparent_background": true
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-cream-3.webp",
+      "source": "cutout tahini-cream",
+      "description": "چیدمان محصول روی سطح سنگی",
+      "prompt": "Use case: compositing. Asset type: square product gallery editorial still life. Place the exact ONE existing jar from supplied image onto a warm honed sandstone counter. Preserve exact jar camera angle, cap, original shapes, colors, front label and all printed text unchanged; do not open jar, invent unseen surfaces or relabel. Soft honey plaster backdrop, diffuse natural side light, realistic contact shadow, tasteful sparse sesame seeds at one side, product fully visible centered filling 70% of frame, 12% safe margins. No extra packages, text or watermark. Photographic warm cream palette, coherent reflections and grounded product, no pasted halo.",
+      "transparent_background": false
+    },
+    {
+      "output": "apps/storefront/public/images/products/gallery/tahini-cream-4.webp",
+      "source": "cutout tahini-cream",
+      "description": "چیدمان محصول روی پارچهٔ کتانی",
+      "prompt": "Use case: compositing. Asset type: square product gallery editorial still life. Place the exact ONE existing jar from supplied image onto folded natural cream linen on a light wood table. Preserve exact jar camera angle, cap, original shapes, colors, front label and all printed text unchanged; do not open jar, invent unseen surfaces or relabel. Soft honey plaster backdrop, diffuse natural side light, realistic contact shadow, tasteful sparse sesame seeds at one side, product fully visible centered filling 70% of frame, 12% safe margins. No extra packages, text or watermark. Photographic warm cream palette, coherent reflections and grounded product, no pasted halo.",
+      "transparent_background": false
+    }
+  ]
+}

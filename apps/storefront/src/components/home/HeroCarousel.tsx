@@ -5,20 +5,19 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { formatNumber } from '@behjati/shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { SesamePattern } from '@/components/decoration/sesame-pattern';
 const slides = [
   {
-    src: '/images/home/tahini-family.webp',
+    src: '/images/home/hero-tahini-scene.webp',
     alt: 'بسته‌بندی‌های واقعی ارده ممتاز سنتی بهجتی با درهای زرد، قرمز و آبی',
     label: 'ارده ممتاز',
   },
   {
-    src: '/images/home/oil-family.webp',
+    src: '/images/home/hero-oil-scene.webp',
     alt: 'چهار بسته‌بندی واقعی روغن کنجد سنتی بهجتی',
     label: 'روغن کنجد',
   },
   {
-    src: '/images/home/flavored-family.webp',
+    src: '/images/home/hero-flavored-scene.webp',
     alt: 'ارده شکلاتی، کرم ارده و ارده فندقی سنتی بهجتی با بسته‌بندی واقعی',
     label: 'ارده‌های طعم‌دار',
   },
@@ -63,7 +62,7 @@ export default function HeroCarousel() {
       aria-roledescription="اسلایدر"
       aria-label="تصاویر محصولات کنجدی"
       tabIndex={0}
-      className="relative order-2 -mx-5 h-[290px] w-[calc(100%+40px)] shrink-0 touch-pan-y min-[480px]:h-[340px] md:absolute md:bottom-0 md:left-0 md:m-0 md:h-full md:w-[55%] xl:w-[57%]"
+      className="relative order-2 -mx-5 h-[300px] w-[calc(100%+40px)] shrink-0 touch-pan-y min-[480px]:h-[360px] md:absolute md:bottom-0 md:left-0 md:m-0 md:h-full md:w-[55%] xl:w-[57%]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
@@ -91,14 +90,9 @@ export default function HeroCarousel() {
         gesture.current = null;
       }}
     >
-      <SesamePattern motif="tahini" className="text-clay opacity-25" />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-8 bottom-12 h-5 rounded-[100%] bg-earth/15 blur-lg md:inset-x-12 md:bottom-20"
-      />
       <div
         id={id}
-        className="absolute inset-x-0 top-0 bottom-14 overflow-hidden md:top-4 md:bottom-16"
+        className="absolute inset-0 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_12%,#000_88%,transparent)] md:[mask-image:linear-gradient(to_right,#000_90%,transparent)]"
       >
         {slides.map((slide, index) => (
           <div
@@ -114,15 +108,15 @@ export default function HeroCarousel() {
           >
             <Image
               className={cn(
-                'object-contain px-5 drop-shadow-[0_18px_16px_rgba(98,69,47,0.16)] transition-transform duration-[6500ms] ease-out motion-reduce:transform-none motion-reduce:transition-none md:px-6',
-                index === current ? 'scale-100' : 'scale-[1.04]',
+                'object-cover transition-transform duration-[6500ms] ease-out motion-reduce:transform-none motion-reduce:transition-none',
+                index === current ? 'scale-100' : 'scale-[1.025]',
               )}
               src={slide.src}
               alt={slide.alt}
               fill
               priority={index === 0}
               quality={85}
-              sizes="(max-width: 767px) 100vw, 650px"
+              sizes="(max-width: 767px) 100vw, (max-width: 1199px) 55vw, 700px"
             />
           </div>
         ))}

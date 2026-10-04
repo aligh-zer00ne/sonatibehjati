@@ -2,42 +2,27 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SesamePattern } from '@/components/decoration/sesame-pattern';
 export default function BrandStory() {
   return (
     <section
-      className="group/story my-8 md:my-12 xl:my-14 overflow-hidden rounded-3xl bg-[linear-gradient(140deg,#f2e2cb,#faf5ec)] md:grid md:grid-cols-2"
+      className="group/story my-8 md:my-12 xl:my-14 overflow-hidden rounded-3xl bg-[linear-gradient(140deg,#f2e2cb,#faf5ec)] md:grid md:grid-cols-[0.85fr_1.15fr]"
       id="story"
     >
-      <div className="relative isolate h-[340px] overflow-hidden bg-[radial-gradient(ellipse_at_center,#fff8ec,#ead5b4)] md:h-full md:min-h-[440px]">
-        <SesamePattern motif="tahini" className="text-clay opacity-30" />
+      <div className="relative isolate aspect-[4/5] overflow-hidden bg-[#dac09c]">
         <Image
-          className="object-contain px-12 pt-5 pb-28 drop-shadow-[0_15px_20px_rgba(98,69,47,0.18)] transition-transform duration-1000 ease-out motion-safe:group-hover/story:scale-105 motion-reduce:transition-none md:px-16 md:pb-36"
-          src="/images/home/tahini-pour.webp"
-          alt="بافت واقعی ارده سنتی بهجتی؛ ریزش ارده از قاشق در کاسهٔ آبی"
+          className="object-cover transition-transform duration-1000 ease-out motion-safe:group-hover/story:scale-[1.025] motion-reduce:transition-none"
+          src="/images/home/story-tahini-scene.webp"
+          alt="کاسهٔ آبی و ریزش ارده سنتی بهجتی همراه با محصولات طعم‌دار، در فضایی گرم با نور پنجره و سطح سنگی"
           fill
           quality={85}
-          sizes="(max-width: 767px) 100vw, 520px"
+          sizes="(max-width: 767px) 100vw, 600px"
         />
-        <div className="absolute right-4 bottom-3 left-4 flex h-24 items-center justify-center gap-3 rounded-2xl border border-earth/10 bg-background/90 p-2 shadow-sm md:right-8 md:bottom-5 md:left-8 md:h-28 md:gap-5">
-          {[
-            ['chocolate-tahini', 'ارده شکلاتی'],
-            ['tahini-cream', 'کرم ارده'],
-            ['hazelnut-tahini', 'ارده فندقی'],
-          ].map(([photo, title]) => (
-            <Image
-              key={photo}
-              src={`/images/products/${photo}.webp`}
-              alt={`${title} سنتی بهجتی`}
-              width={96}
-              height={96}
-              sizes="96px"
-              className="size-20 object-contain drop-shadow-sm md:size-24"
-            />
-          ))}
-        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#f2e2cb] to-transparent md:hidden"
+        />
       </div>
-      <div className="px-[22px] py-[26px] md:p-[35px] lg:p-12 xl:p-[55px]">
+      <div className="px-[22px] py-[26px] md:self-center md:p-[35px] lg:p-12 xl:p-[55px]">
         <span className="mb-2.5 text-xs font-[650] text-primary lg:text-[13px]">
           داستانی از کنجد، اردکان و طعم
         </span>

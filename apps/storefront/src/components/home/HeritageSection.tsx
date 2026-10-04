@@ -7,24 +7,15 @@ export default function HeritageSection() {
       id="ardakan"
       aria-labelledby="heritage-title"
     >
-      <div className="relative isolate h-[340px] overflow-hidden md:col-start-2 md:row-start-1 md:h-full md:min-h-[400px]">
+      <div className="relative isolate h-[360px] overflow-hidden md:col-start-2 md:row-start-1 md:h-full md:min-h-[440px]">
         <Image
-          className="object-cover transition-transform duration-1000 ease-out motion-safe:group-hover/heritage:scale-105 motion-reduce:transition-none [mask-image:linear-gradient(to_bottom,#000_70%,transparent)] md:[mask-image:linear-gradient(to_right,#000_75%,transparent)]"
-          src="/images/home/ardakan-courtyard.webp"
-          alt="فضاسازی معماری خشتی و بادگیر، با الهام از اردکان"
+          className="object-cover transition-transform duration-1000 ease-out motion-safe:group-hover/heritage:scale-105 motion-reduce:transition-none [mask-image:linear-gradient(to_bottom,#000_90%,transparent)] md:[mask-image:linear-gradient(to_right,#000_88%,transparent)]"
+          src="/images/home/ardakan-products-scene.webp"
+          alt="محصولات سنتی بهجتی روی سکوی سنگی، در فضاسازی هماهنگ با معماری و بادگیرهای اردکان"
           fill
           quality={85}
           sizes="(max-width: 767px) 100vw, 600px"
         />
-        <div className="absolute inset-x-7 bottom-1 h-[60%] md:inset-x-10 md:bottom-2">
-          <Image
-            src="/images/home/tahini-family.webp"
-            alt="محصولات واقعی ارده سنتی بهجتی در کنار فضاسازی اردکان"
-            fill
-            sizes="(max-width: 767px) 85vw, 500px"
-            className="object-contain object-bottom drop-shadow-[0_12px_12px_rgba(72,40,24,0.28)] transition-transform duration-1000 motion-safe:group-hover/heritage:scale-105 motion-reduce:transition-none"
-          />
-        </div>
       </div>
       <div className="px-[22px] pt-1 pb-[26px] text-right md:col-start-1 md:row-start-1 md:self-center md:p-10">
         <span className="mb-2.5 text-xs font-[650] text-primary lg:text-[13px]">

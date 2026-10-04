@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button';
 export default function HeroSection() {
   return (
     <section
-      className="relative isolate flex min-h-[620px] flex-col overflow-hidden rounded-[25px] bg-[linear-gradient(125deg,#f4dfbf,#efcf9e)] px-5 pt-[25px] pb-[33px] text-center animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out motion-reduce:animate-none before:pointer-events-none before:absolute before:inset-0 before:z-[3] before:rounded-[inherit] before:border before:border-earth/8 before:content-[''] min-[480px]:min-h-[680px] md:grid md:min-h-[430px] md:grid-cols-[1fr_1.15fr] md:items-center md:gap-2.5 md:px-10 md:py-[50px] md:text-right lg:min-h-[470px] lg:p-[60px] xl:min-h-[500px]"
+      className="relative isolate flex min-h-[620px] flex-col overflow-hidden rounded-[25px] bg-[radial-gradient(ellipse_at_top_right,#fcf2df_0%,#efddc0_55%,#e9cdab_100%)] px-5 pt-[25px] pb-[33px] text-center animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out motion-reduce:animate-none before:pointer-events-none before:absolute before:inset-0 before:z-[3] before:rounded-[inherit] before:border before:border-earth/8 before:content-[''] min-[480px]:min-h-[680px] md:grid md:min-h-[430px] md:grid-cols-[1fr_1.15fr] md:items-center md:gap-2.5 md:px-10 md:py-[50px] md:text-right lg:min-h-[470px] lg:p-[60px] xl:min-h-[500px]"
       aria-labelledby="hero-title"
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-24 -right-16 h-[480px] w-[340px] rounded-t-full border-[28px] border-white/15 shadow-[0_25px_65px_rgba(121,75,34,0.08)] md:-top-20 md:-right-8"
+      />
       <div className="contents md:relative md:z-[2] md:block">
         <p className="mb-2.5 text-xs font-[650] text-primary lg:text-[13px]">
           حلواارده سنتی بهجتی اردکان

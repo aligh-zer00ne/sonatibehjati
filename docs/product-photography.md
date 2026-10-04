@@ -80,3 +80,23 @@ Use case: background-extraction. Asset type: transparent photographic cutout for
 ```text
 Use case: photorealistic-natural. Asset type: high-resolution decorative architecture photograph for a traditional Persian sesame product storefront heritage section. Landscape 3:2, at least 1536x1024. A beautiful sunlit ochre mud-brick courtyard evoking Ardakan, Iran: understated traditional rectangular Persian windcatcher above softly weathered adobe walls, simple arched passage, natural desert sky, warm late afternoon honey light, authentic local materials without fantasy ornament. Composition architecture concentrated upper half and edges; foreground is an empty broad warm sandy stone ledge in the lower third, reserved for real product cutouts added later in HTML. No product packages, no people, no signs, no text, no logos, no watermark. Refined architectural editorial photography, realistic believable proportions, crisp detail, warm cream and clay palette. This is decorative imagery evoking Ardakan, not documentation of a named historical monument.
 ```
+
+## گالری چهارعکسی و نورپردازی هماهنگ — نسخهٔ دوم
+
+برای هر یک از ۱۲ محصول، دقیقاً چهار فایل مستقل در کاتالوگ تعریف شده است (۴۸ تصویر). ۲۵ تصویر تکمیلی اضافه شد؛ عکس اصلی و نماهای دوم قبلی حفظ شده‌اند. نماهای جدید در `apps/storefront/public/images/products/gallery/` هستند؛ پسوندهای `-3.webp` و `-4.webp` عکس‌های سوم و چهارم‌اند. نمای دوم کرم ارده نیز در `tahini-cream.webp` همین پوشه قرار دارد.
+
+عکس‌های تکمیلی دارای نمای واقعی پشت/بالا/در/بافت از فایل‌های دوربین‌اند. برای اردهٔ کنجدی و اردهٔ ممتاز، عکس مشترک کاسه و قاشق بافت ارده را نشان می‌دهد و نمای بسته‌بندی تازه‌ای نیست. کرم ارده فقط یک عکس اصلی، و اردهٔ شکلاتی فقط دو عکس اصلی دارند؛ تصاویر اضافی آن‌ها از نمای نزدیک همان عکس و چیدمان ویرایش‌شدهٔ همان ظرف روی سنگ یا پارچه ساخته شده‌اند؛ زاویهٔ پشت یا جزئیات ندیدهٔ بسته‌بندی جعل نشده است. برش‌های نزدیک تعمداً کل ظرف را نشان نمی‌دهند. در چاپ ریز، محدودیت ویرایش مولد همچنان برقرار است و عکس دوربین مرجع مشخصات است.
+
+پنج صحنهٔ مستقل، با ابزار داخلی imagegen در حالت ویرایش و خروجی زمینه‌دار، ساخته شدند:
+
+- `apps/storefront/public/images/home/hero-tahini-scene.webp`
+- `apps/storefront/public/images/home/hero-oil-scene.webp`
+- `apps/storefront/public/images/home/hero-flavored-scene.webp`
+- `apps/storefront/public/images/home/ardakan-products-scene.webp`
+- `apps/storefront/public/images/home/story-tahini-scene.webp`
+
+محصولات، سطح سنگی، نور پنجره، زمینهٔ خشتی و سایهٔ تماس در یک تصویر هماهنگ‌اند. عکس اردکان همچنان فضاسازی الهام‌گرفته از معماری منطقه است، نه مستند تصویری یک بنای مشخص. بخش داستان نیز فضاسازی تبلیغاتی است، نه عکس مستند کارگاه برند. فایل‌های قبلی برای امکان بازگشت حفظ شده‌اند. همهٔ خروجی‌ها در ریپو به WebP با کیفیت ۹۲ تبدیل شده‌اند؛ alpha در برش‌های شفاف حفظ شده است.
+
+منبع دقیق هر نمای تکمیلی، مسیر نهایی همهٔ فایل‌ها و متن کامل پرامپت هر ۳۰ ویرایش در [product-image-prompts-v2.json](./product-image-prompts-v2.json) ثبت است. CLI یا کلید API جداگانه استفاده نشده است.
+
+ورود دوبارهٔ `npm run photos:import` در محیط توسعه گالری‌های قبلیِ مدیریت‌شده را فقط با عکس‌های جاافتاده گسترش می‌دهد؛ شناسهٔ تصاویر قبلی، alt ویرایش‌شده، قیمت و وزن حفظ می‌شوند. گالری حاوی عکس سفارشی ادمین بازنویسی نمی‌شود. اجرای دوباره مورد تکراری ایجاد نمی‌کند و پیش از تغییر، نسخهٔ پشتیبان خصوصی ذخیره می‌شود.
