@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "photos:import": "tsx scripts/import-product-photos.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

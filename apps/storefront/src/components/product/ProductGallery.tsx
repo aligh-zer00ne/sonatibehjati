@@ -33,7 +33,7 @@ export default function ProductGallery({
           alt={image.alt || title}
           fill
           priority
-          className="animate-in fade-in object-contain p-4 mix-blend-multiply duration-400 transition-transform ease-out motion-safe:group-hover/gallery:scale-105 motion-reduce:animate-none motion-reduce:transition-none"
+          className="animate-in fade-in object-contain p-4 duration-400 transition-transform ease-out motion-safe:group-hover/gallery:scale-105 motion-reduce:animate-none motion-reduce:transition-none"
           sizes="(max-width: 767px) 100vw, 580px"
         />
         <Button
@@ -88,7 +88,7 @@ export default function ProductGallery({
                 alt=""
                 width={60}
                 height={60}
-                className="object-contain mix-blend-multiply"
+                className="object-contain"
               />
             </Button>
           ))}

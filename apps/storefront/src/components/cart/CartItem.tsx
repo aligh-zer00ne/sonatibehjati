@@ -27,7 +27,7 @@ export default function CartItem({ product }: { product: CatalogProductFragment 
             unoptimized={image.url.startsWith('https://')}
             alt={product.title}
             fill
-            className="object-contain p-1 mix-blend-multiply"
+            className="object-contain p-1"
             sizes="112px"
           />
         ) : (

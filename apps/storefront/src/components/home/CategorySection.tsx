@@ -11,18 +11,18 @@ export default function CategorySection({
   return (
     <section id="categories" className="my-8 md:my-12 xl:my-14">
       <SectionHeading title="دسته‌بندی محصولات" href="/shop#categories" />
-      <div className="grid grid-cols-3 gap-3 md:gap-5">
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-5 md:gap-4">
         {categories.map((category) => (
           <Button
             variant="outline"
             key={category.id}
             asChild
-            className="group/category flex-col gap-0 text-foreground whitespace-normal md:flex-row rounded-[18px] border border-border bg-[linear-gradient(145deg,#fcf9f3,#f3e9da)] px-1.5 py-3 text-center hover:border-clay/40 hover:shadow-[0_12px_24px_rgba(98,69,47,0.14)] motion-safe:hover:-translate-y-1.5 md:flex md:items-center md:justify-center md:gap-[15px] md:p-5 lg:p-6"
+            className="group/category flex-col gap-0 text-foreground whitespace-normal rounded-[18px] border border-border bg-[linear-gradient(145deg,#fcf9f3,#f3e9da)] px-1.5 py-3 text-center hover:border-clay/40 hover:shadow-[0_12px_24px_rgba(98,69,47,0.14)] motion-safe:hover:-translate-y-1.5 md:p-4 lg:p-5"
           >
             <Link href={`/category/${category.slug}`} aria-label={category.title}>
               <div className="flex h-[100px] items-center justify-center min-[480px]:h-[140px] md:h-[110px] md:w-[110px]">
                 <Image
-                  className="h-full w-full rounded-[14px] object-contain mix-blend-multiply transition-transform duration-500 ease-out motion-safe:group-hover/category:scale-[1.08] motion-safe:group-hover/category:-rotate-3 motion-reduce:transition-none"
+                  className="h-full w-full rounded-[14px] object-contain drop-shadow-sm transition-transform duration-500 ease-out motion-safe:group-hover/category:scale-[1.08] motion-safe:group-hover/category:-rotate-3 motion-reduce:transition-none"
                   src={category.image}
                   alt={category.title}
                   width={140}

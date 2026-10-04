@@ -1,59 +1,28 @@
 import type { HomepageCatalogQuery } from '@/generated/graphql';
-const categories = [
-  { id: 'tahini', slug: 'tahini', title: 'ارده', image: '/images/sesame-bowl.webp' },
-  { id: 'halva', slug: 'halva', title: 'حلواارده', image: '/images/halva-category.webp' },
-  { id: 'oil', slug: 'oil', title: 'روغن ارده', image: '/images/oil.webp' },
-];
-const items = [
-  [
-    'halva-500',
-    'traditional-halva-500',
-    'حلواارده سنتی',
-    'halva',
-    245000,
-    '۵۰۰ گرم',
-    'halva',
-    'پرفروش',
-  ],
-  ['tahini-350', 'sesame-tahini-350', 'ارده کنجدی', 'tahini', 185000, '۳۵۰ گرم', 'tahini', null],
-  ['oil-250', 'sesame-oil-250', 'روغن ارده', 'oil', 220000, '۲۵۰ میلی‌لیتر', 'oil', null],
-  [
-    'chocolate-500',
-    'chocolate-halva-500',
-    'حلواارده شکلاتی',
-    'halva',
-    275000,
-    '۵۰۰ گرم',
-    'chocolate',
-    null,
-  ],
-  ['date-500', 'date-tahini-500', 'ارده با شیره خرما', 'tahini', 245000, '۵۰۰ گرم', 'date', null],
-  [
-    'premium-1000',
-    'premium-tahini-1000',
-    'ارده ممتاز',
-    'tahini',
-    480000,
-    '۱ کیلوگرم',
-    'premium',
-    null,
-  ],
-] as const;
+import {
+  photoCategories,
+  photoProducts,
+  photoGallery,
+  temporaryPhotoDescription,
+} from '@behjati/shared/photo-catalog';
+const categories = photoCategories.map((category) => ({ ...category, id: category.slug }));
 export const mockCatalog: HomepageCatalogQuery = {
   categories,
-  products: items.map(([id, slug, title, category, price, weight, image, badge]) => ({
-    id,
-    slug,
-    title,
-    category: categories.find((item) => item.id === category)!,
-    price,
-    weight,
-    badge,
+  products: photoProducts.map((product) => ({
+    id: product.id,
+    slug: product.slug,
+    title: product.title,
+    category: categories.find((category) => category.slug === product.category)!,
+    price: product.price,
+    weight: product.weight,
+    badge: product.badge,
     isActive: true,
-    shortDescription: 'نمونه‌ای از فرآورده‌های کنجدی سنتی بهجتی',
-    description:
-      'اطلاعات و قیمت این محصول نمونه است و پیش از انتشار با اطلاعات تأییدشده جایگزین خواهد شد.',
-    images: [{ id: `image-${id}`, url: `/images/${image}.webp`, alt: title }],
+    shortDescription: 'فرآوردهٔ کنجدی سنتی بهجتی',
+    description: temporaryPhotoDescription,
+    images: photoGallery(product).map((image, index) => ({
+      ...image,
+      id: 'photo-' + product.id + '-' + index,
+    })),
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z',
   })),

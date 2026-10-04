@@ -15,7 +15,7 @@ export default function CategoryChips({
     <nav
       id="categories"
       aria-label="دسته‌های محصولات"
-      className="mb-6 grid grid-cols-4 gap-2 rounded-2xl border border-border bg-background/65 p-2 md:gap-4 md:p-4"
+      className="mb-6 grid grid-cols-3 gap-2 rounded-2xl border border-border bg-background/65 p-2 md:grid-cols-6 md:gap-4 md:p-4"
     >
       {links.map((category) => (
         <Link
@@ -32,7 +32,7 @@ export default function CategoryChips({
               <Image
                 src={category.image}
                 alt=""
-                className="rounded-full object-contain mix-blend-multiply"
+                className="rounded-full object-contain"
                 width={58}
                 height={58}
               />
