@@ -2,7 +2,7 @@ import { GraphQLError } from 'graphql';
 import { catalogFilterSchema, selectionSchema, type CatalogFilter } from '@behjati/shared';
 import type { Prisma } from '@prisma/client';
 import { db } from '../../database/client.js';
-const include = { category: true, images: { orderBy: { id: 'asc' as const } } };
+import { productRelations as include } from './repository.js';
 export function catalogWhere(filter: CatalogFilter): Prisma.ProductWhereInput {
   return {
     isActive: true,

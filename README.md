@@ -1,11 +1,11 @@
 # حلواارده سنتی بهجتی اردکان
 
-فازهای ۱ و ۲، صفحهٔ اصلی فاز ۳ و فازهای ۴ تا ۷ پیاده‌سازی شده‌اند. فروشگاه، محصول، سبد مهمان، ورود پیامکی، نشانی و نقشه، تخفیف و ثبت سفارش آماده‌اند؛ پروفایل، نشانی‌ها و سابقهٔ سفارش در حساب فعال‌اند؛ مدیریت عملیاتی در فاز بعد ساخته می‌شود.
+فازهای ۱ و ۲، صفحهٔ اصلی فاز ۳ و فازهای ۴ تا ۸ پیاده‌سازی شده‌اند. فروشگاه، محصول، سبد مهمان، ورود پیامکی، نشانی و نقشه، تخفیف و ثبت سفارش آماده‌اند؛ پروفایل، نشانی‌ها و سابقهٔ سفارش در حساب فعال‌اند؛ پنل مستقل مدیریت با داشبورد، محصول، سفارش، کاربران، نقشه، گزارش و فاکتور A5 آماده است.
 
 ## معماری
 
 - `apps/storefront`: Next.js App Router، RSC، TypeScript، Tailwind 4، primitiveهای shadcn/Radix، Vazirmatn محلی، Zustand برای سبد مهمان.
-- `apps/admin`: React / Vite / Ant Design، مستقل از رابط فروشگاه؛ فعلاً پوستهٔ پنل، بدون API مدیریتی عمومی.
+- `apps/admin`: React / Vite / Ant Design، مستقل از رابط فروشگاه؛ پنل حفاظت‌شده با نمودارهای Recharts و نقشه Leaflet.
 - `apps/api`: Express / GraphQL Yoga / Prisma / MySQL؛ کاتالوگ خواندنی و ورود پیامکی با نشست‌های کاربر.
 - `packages/shared`, `graphql`, `types`, `config`: اعتبارسنجی، ابزارهای مشترک، کلاینت تایپ‌شده و قراردادها.
 - منبع قرارداد API: `apps/api/src/graphql/schema.graphql`. تایپ‌های GraphQL با Codegen ساخته می‌شوند.
@@ -41,7 +41,7 @@ npm مدیر اصلی نصب و `package-lock.json` فایل قفل مرجع ا�
 | `ADMIN_ACCESS_TOKEN_SECRET`, `ADMIN_REFRESH_TOKEN_SECRET` | اسرار مستقل مدیر، متفاوت از اسرار کاربر                                       |
 | `DEV_ADMIN_EMAIL`, `DEV_ADMIN_PASSWORD`                   | ایجاد اختیاری مدیر توسعه در seed؛ رمز حداقل ۱۲ کاراکتر                        |
 
-فروشگاه به‌صورت پیش‌فرض کاتالوگ نمونه دارد. تنظیم `CATALOG_SOURCE=api` باید هنگام build نیز انجام شود. ورود کاربر، توکن‌ها و rotation در فاز ۵ فعال‌اند؛ احراز هویت مدیر در فاز ۸ اجرا می‌شود و اسرار آن مستقل‌اند.
+فروشگاه به‌صورت پیش‌فرض کاتالوگ نمونه دارد. تنظیم `CATALOG_SOURCE=api` باید هنگام build نیز انجام شود. ورود کاربر، توکن‌ها و rotation در فاز ۵ فعال‌اند؛ احراز هویت مستقل مدیر در فاز ۸ فعال است؛ جزئیات در [docs/phase8.md](docs/phase8.md).
 
 پس از آماده‌شدن دیتابیس، `npm run setup:auth` اسرار تصادفی توسعه را در فایل‌های خصوصی و gitignored ایجاد می‌کند و کلید پراکسی API و Next را هماهنگ می‌کند. مقادیر موجود حفظ می‌شوند؛ تعیین صریح `DATABASE_URL` هنگام اجرای این فرمان اتصال محلی را عوض می‌کند. این فرمان برای production نیست. گزینهٔ موقت `DEV_OTP_CODE=123456` ورود توسعه با کد ثابت را فعال می‌کند؛ مقدار خالی کد تصادفی توسعه را برمی‌گرداند. در development/test هیچ پیامک واقعی ارسال نمی‌شود، حتی اگر provider واقعی تنظیم شده باشد. در production این گزینه نادیده گرفته می‌شود و کد تصادفی با سرویس واقعی ارسال و اعتبارسنجی می‌شود. برای production، `SMS_PROVIDER=melipayamak`، `MELI_PAYAMAK_API_KEY` و `MELI_PAYAMAK_OTP_BODY_ID` را در محیط API تنظیم کنید؛ راهنمای کامل در [docs/phase5.md](docs/phase5.md) است.
 
@@ -92,6 +92,9 @@ npm run verify:checkout
 npm run verify:checkout-ui
 npm run verify:account
 npm run verify:account-ui
+npm run verify:admin-auth
+npm run verify:admin
+npm run verify:admin-ui
 ```
 
 برای تولید: `npm run start -w @behjati/storefront` و `npm run start -w @behjati/api`؛ پنل admin خروجی static در `apps/admin/dist` دارد. build و typecheck دیتابیس زنده لازم ندارند.
@@ -108,9 +111,11 @@ npm run verify:account-ui
 
 جزئیات کاتالوگ و سبد در [docs/phase4.md](docs/phase4.md) و ورود، پیامک، نشست‌ها و آزمون‌های احراز هویت در [docs/phase5.md](docs/phase5.md) ثبت شده است. مسیرهای جدید `/login`، `/verify` و `/account` هستند. حساب شامل نمای کلی، ویرایش پروفایل، مدیریت نشانی‌ها، فهرست صفحه‌بندی‌شده و فیلتر وضعیت سفارش‌ها و جزئیات snapshot سفارش است. شمارهٔ ورود در پروفایل فقط خواندنی است و ایمیل اختیاری تأییدشده محسوب نمی‌شود. مسیرها و آزمون‌ها در [docs/phase7.md](docs/phase7.md) ثبت شده‌اند. مرور و سبد همچنان برای مهمان قابل استفاده‌اند.
 
+پنل مدیریت در `/admin` برنامهٔ مستقل `localhost:3001` اجرا می‌شود. پس از migration، `npm run setup:admin` مدیر توسعه را می‌سازد؛ مشخصات ورود در فایل خصوصی `apps/api/.env` با کلیدهای `DEV_ADMIN_EMAIL` و `DEV_ADMIN_PASSWORD` قرار می‌گیرند. برای اتصال تغییرات محصولات پنل به فروشگاه، آن را با `CATALOG_SOURCE=api` بسازید. راهنمای امنیت، پروکسی production، گزارش و چاپ در [docs/phase8.md](docs/phase8.md) است.
+
 ## فازهای بعد
 
-۸: مدیریت؛ ۹: SEO/GEO. هیچ پرداخت موفق ساختگی یا درگاه فعالی در این پروژه وجود ندارد.
+۹: SEO/GEO. هیچ پرداخت موفق ساختگی یا درگاه فعالی در این پروژه وجود ندارد.
 
 ## روند Git
 

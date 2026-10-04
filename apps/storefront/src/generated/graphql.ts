@@ -67,6 +67,199 @@ export type AddressInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminDailyMetric = {
+  __typename?: 'AdminDailyMetric';
+  date: Scalars['String']['output'];
+  orderValue: Scalars['Float']['output'];
+  ordersCount: Scalars['Int']['output'];
+  revenue: Scalars['Float']['output'];
+};
+
+export type AdminDashboard = {
+  __typename?: 'AdminDashboard';
+  averageOrderValue: Scalars['Float']['output'];
+  orderValue: Scalars['Float']['output'];
+  ordersCount: Scalars['Int']['output'];
+  ordersThisMonth: Scalars['Int']['output'];
+  ordersToday: Scalars['Int']['output'];
+  recentOrders: Array<AdminOrderSummary>;
+  report: AdminReport;
+  revenue: Scalars['Float']['output'];
+};
+
+export type AdminIdentity = {
+  __typename?: 'AdminIdentity';
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
+export type AdminLoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type AdminOrder = {
+  __typename?: 'AdminOrder';
+  address: OrderAddressSnapshot;
+  createdAt: Scalars['String']['output'];
+  discount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  items: Array<OrderItemSnapshot>;
+  number: Scalars['Int']['output'];
+  shipping: Scalars['Int']['output'];
+  status: OrderStatus;
+  statusEvents: Array<OrderStatusEvent>;
+  subtotal: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  updatedAt: Scalars['String']['output'];
+  user: AuthUser;
+};
+
+export type AdminOrderSort =
+  | 'NEWEST'
+  | 'OLDEST'
+  | 'TOTAL_ASC'
+  | 'TOTAL_DESC';
+
+export type AdminOrderStatusInput = {
+  expectedStatus: OrderStatus;
+  id: Scalars['ID']['input'];
+  status: OrderStatus;
+};
+
+export type AdminOrderSummary = {
+  __typename?: 'AdminOrderSummary';
+  address: OrderAddressSnapshot;
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['Int']['output'];
+  status: OrderStatus;
+  total: Scalars['Int']['output'];
+  user: AuthUser;
+};
+
+export type AdminOrdersInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  from?: InputMaybe<Scalars['String']['input']>;
+  number?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<AdminOrderSort>;
+  status?: InputMaybe<OrderStatus>;
+  to?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type AdminOrdersPage = {
+  __typename?: 'AdminOrdersPage';
+  items: Array<AdminOrderSummary>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type AdminProductDeletion = {
+  __typename?: 'AdminProductDeletion';
+  deleted: Scalars['Boolean']['output'];
+  product?: Maybe<Product>;
+};
+
+export type AdminProductImageInput = {
+  alt: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
+export type AdminProductInput = {
+  badge?: InputMaybe<Scalars['String']['input']>;
+  categoryId: Scalars['ID']['input'];
+  description: Scalars['String']['input'];
+  images: Array<AdminProductImageInput>;
+  isActive: Scalars['Boolean']['input'];
+  price: Scalars['Int']['input'];
+  shortDescription: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  weight: Scalars['String']['input'];
+};
+
+export type AdminProductsInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<ProductSort>;
+};
+
+export type AdminProductsPage = {
+  __typename?: 'AdminProductsPage';
+  items: Array<Product>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type AdminReport = {
+  __typename?: 'AdminReport';
+  averageOrderValue: Scalars['Float']['output'];
+  daily: Array<AdminDailyMetric>;
+  from: Scalars['String']['output'];
+  orderValue: Scalars['Float']['output'];
+  ordersCount: Scalars['Int']['output'];
+  revenue: Scalars['Float']['output'];
+  statuses: Array<AdminStatusMetric>;
+  to: Scalars['String']['output'];
+};
+
+export type AdminReportInput = {
+  from: Scalars['String']['input'];
+  status?: InputMaybe<OrderStatus>;
+  to: Scalars['String']['input'];
+};
+
+export type AdminSessionPayload = {
+  __typename?: 'AdminSessionPayload';
+  accessExpiresAt: Scalars['String']['output'];
+  accessToken: Scalars['String']['output'];
+  admin: AdminIdentity;
+};
+
+export type AdminStatusMetric = {
+  __typename?: 'AdminStatusMetric';
+  count: Scalars['Int']['output'];
+  status: OrderStatus;
+};
+
+export type AdminUser = {
+  __typename?: 'AdminUser';
+  createdAt: Scalars['String']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  ordersCount: Scalars['Int']['output'];
+  phone: Scalars['String']['output'];
+  totalOrdersValue: Scalars['Float']['output'];
+};
+
+export type AdminUsersInput = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdminUsersPage = {
+  __typename?: 'AdminUsersPage';
+  items: Array<AdminUser>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type AuthSession = {
   __typename?: 'AuthSession';
   accessExpiresAt: Scalars['String']['output'];
@@ -153,14 +346,26 @@ export type CreateOrderInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  adminLogin: AdminSessionPayload;
+  adminLogout: Scalars['Boolean']['output'];
+  adminRefresh: AdminSessionPayload;
   createOrder: OrderReceipt;
   deleteAddress: Scalars['Boolean']['output'];
+  deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
   refreshToken: AuthSession;
   requestOtp: OtpChallenge;
   saveAddress: Address;
+  saveAdminProduct: Product;
+  setAdminProductActive: Product;
+  updateAdminOrderStatus: AdminOrder;
   updateProfile: AuthUser;
   verifyOtp: AuthSession;
+};
+
+
+export type MutationAdminLoginArgs = {
+  input: AdminLoginInput;
 };
 
 
@@ -174,6 +379,12 @@ export type MutationDeleteAddressArgs = {
 };
 
 
+export type MutationDeleteAdminProductArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationRequestOtpArgs = {
   input: RequestOtpInput;
 };
@@ -182,6 +393,25 @@ export type MutationRequestOtpArgs = {
 export type MutationSaveAddressArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
   input: AddressInput;
+};
+
+
+export type MutationSaveAdminProductArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  input: AdminProductInput;
+};
+
+
+export type MutationSetAdminProductActiveArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  isActive: Scalars['Boolean']['input'];
+};
+
+
+export type MutationUpdateAdminOrderStatusArgs = {
+  input: AdminOrderStatusInput;
 };
 
 
@@ -253,6 +483,15 @@ export type OrderStatus =
   | 'PROCESSING'
   | 'SHIPPED';
 
+export type OrderStatusEvent = {
+  __typename?: 'OrderStatusEvent';
+  admin: AdminIdentity;
+  createdAt: Scalars['String']['output'];
+  fromStatus: OrderStatus;
+  id: Scalars['ID']['output'];
+  toStatus: OrderStatus;
+};
+
 export type OtpChallenge = {
   __typename?: 'OtpChallenge';
   challengeId: Scalars['ID']['output'];
@@ -300,6 +539,14 @@ export type ProfileInput = {
 
 export type Query = {
   __typename?: 'Query';
+  adminDashboard: AdminDashboard;
+  adminMe?: Maybe<AdminIdentity>;
+  adminOrder: AdminOrder;
+  adminOrders: AdminOrdersPage;
+  adminProducts: AdminProductsPage;
+  adminReport: AdminReport;
+  adminUser: AdminUser;
+  adminUsers: AdminUsersPage;
   catalog: CatalogPage;
   categories: Array<Category>;
   checkoutQuote: CheckoutQuote;
@@ -314,6 +561,36 @@ export type Query = {
   products: Array<Product>;
   productsByIds: Array<Product>;
   reverseLocation?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type QueryAdminOrderArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdminOrdersArgs = {
+  input: AdminOrdersInput;
+};
+
+
+export type QueryAdminProductsArgs = {
+  input: AdminProductsInput;
+};
+
+
+export type QueryAdminReportArgs = {
+  input: AdminReportInput;
+};
+
+
+export type QueryAdminUserArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdminUsersArgs = {
+  input: AdminUsersInput;
 };
 
 

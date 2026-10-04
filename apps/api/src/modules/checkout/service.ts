@@ -57,7 +57,7 @@ async function calculate(tx: Prisma.TransactionClient, userId: string, input: Ch
   );
   const products = await tx.product.findMany({
     where: { id: { in: ids }, isActive: true },
-    include: { images: true },
+    include: { images: { orderBy: [{ position: 'asc' }, { id: 'asc' }] } },
   });
   if (products.length !== ids.length)
     throw authError(

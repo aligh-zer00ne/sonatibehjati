@@ -6,6 +6,7 @@ const require = createRequire(new URL('../apps/api/package.json', import.meta.ur
 const { PrismaClient } = require('@prisma/client');
 export const db = new PrismaClient();
 export const origin = 'http://localhost:3004';
+export const adminOrigin = 'http://localhost:3005';
 export const apiURL = 'http://localhost:4003';
 export const otpSecret = randomBytes(48).toString('hex');
 const proxySecret = randomBytes(48).toString('hex');
@@ -49,6 +50,9 @@ export async function startAPI({ environment = 'test', developmentCode = '' } = 
       NODE_ENV: environment,
       DEV_OTP_CODE: developmentCode,
       PORT: '4003',
+      ADMIN_ORIGIN: adminOrigin,
+      ADMIN_ACCESS_TOKEN_SECRET: randomBytes(48).toString('hex'),
+      ADMIN_REFRESH_TOKEN_SECRET: randomBytes(48).toString('hex'),
       STOREFRONT_ORIGIN: origin,
       SMS_PROVIDER: 'mock',
       USER_ACCESS_TOKEN_SECRET: randomBytes(48).toString('hex'),
@@ -118,7 +122,11 @@ export async function gql(
     .getSetCookie()
     .map((value) => value.split(';')[0])
     .join('; ');
-  const session = body.data?.verifyOtp ?? body.data?.refreshToken;
+  const session =
+    body.data?.verifyOtp ??
+    body.data?.refreshToken ??
+    body.data?.adminLogin ??
+    body.data?.adminRefresh;
   if (session?.accessToken) accessTokens.set(cookies, session.accessToken);
   return {
     response,

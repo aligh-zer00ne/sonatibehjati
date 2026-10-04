@@ -53,6 +53,8 @@ model Admin {
  passwordHash String
  createdAt DateTime @default(now())
  refreshTokens AdminRefreshToken[]
+ sessions AdminSession[]
+ statusEvents OrderStatusEvent[]
 }
 model Category {
  id String @id @default(cuid())
@@ -85,7 +87,9 @@ model ProductImage {
  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
  url String
  alt String
+ position Int @default(0)
  @@index([productId])
+ @@index([productId,position])
 }
 model DiscountCode {
  id String @id @default(cuid())
@@ -119,6 +123,7 @@ model Order {
  discountCodeId String?
  discountCode DiscountCode? @relation(fields:[discountCodeId],references:[id],onDelete:Restrict)
  items OrderItem[]
+ statusEvents OrderStatusEvent[]
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
  @@index([userId,createdAt])
@@ -193,4 +198,26 @@ model UserSession {
  refreshTokens RefreshToken[]
  @@index([userId])
  @@index([expiresAt])
+}
+
+model AdminSession {
+ id String @id
+ adminId String
+ admin Admin @relation(fields:[adminId],references:[id],onDelete:Cascade)
+ expiresAt DateTime
+ revokedAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([adminId])
+ @@index([expiresAt])
+}
+model OrderStatusEvent {
+ id String @id @default(cuid())
+ orderId String
+ order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+ adminId String
+ admin Admin @relation(fields:[adminId],references:[id],onDelete:Restrict)
+ fromStatus OrderStatus
+ toStatus OrderStatus
+ createdAt DateTime @default(now())
+ @@index([orderId,createdAt])
 }

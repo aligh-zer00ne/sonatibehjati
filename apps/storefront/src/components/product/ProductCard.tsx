@@ -38,6 +38,7 @@ export default function ProductCard({
               <Image
                 className="object-contain p-1.5 mix-blend-multiply transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover/product:scale-[1.08] motion-safe:group-focus-within/product:scale-[1.04] motion-reduce:transition-none"
                 src={image.url}
+                unoptimized={image.url.startsWith('https://')}
                 alt={image.alt || product.title}
                 fill
                 sizes="(max-width: 480px) 45vw, (max-width: 1023px) 30vw, 270px"

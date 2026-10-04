@@ -29,6 +29,7 @@ export default function ProductGallery({
         <Image
           key={image.id}
           src={image.url}
+          unoptimized={image.url.startsWith('https://')}
           alt={image.alt || title}
           fill
           priority
@@ -83,6 +84,7 @@ export default function ProductGallery({
             >
               <Image
                 src={item.url}
+                unoptimized={item.url.startsWith('https://')}
                 alt=""
                 width={60}
                 height={60}
@@ -96,6 +98,7 @@ export default function ProductGallery({
         <div className="relative aspect-square">
           <Image
             src={image.url}
+            unoptimized={image.url.startsWith('https://')}
             alt={image.alt || title}
             fill
             className="object-contain"

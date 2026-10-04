@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import { randomBytes, scryptSync } from 'node:crypto';
+import { hashAdminPassword } from '../src/modules/admin/passwords.js';
 import { env } from '../src/config/env.js';
 const db = new PrismaClient();
 async function seed() {
@@ -135,12 +135,11 @@ async function seed() {
   if (process.env.DEV_ADMIN_EMAIL && process.env.DEV_ADMIN_PASSWORD) {
     if (process.env.DEV_ADMIN_PASSWORD.length < 12)
       throw new Error('Development admin password must have at least 12 characters.');
-    const salt = randomBytes(16).toString('hex');
-    const passwordHash = `scrypt:${salt}:${scryptSync(process.env.DEV_ADMIN_PASSWORD, salt, 64).toString('hex')}`;
+    const passwordHash = await hashAdminPassword(process.env.DEV_ADMIN_PASSWORD);
     await db.admin.upsert({
-      where: { email: process.env.DEV_ADMIN_EMAIL },
+      where: { email: process.env.DEV_ADMIN_EMAIL.trim().toLowerCase() },
       update: {},
-      create: { email: process.env.DEV_ADMIN_EMAIL, passwordHash },
+      create: { email: process.env.DEV_ADMIN_EMAIL.trim().toLowerCase(), passwordHash },
     });
   }
 }

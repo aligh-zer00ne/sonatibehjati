@@ -1,8 +1,0 @@
-query AdminCatalog {
-  products {
-    id
-    title
-    price
-    isActive
-  }
-}

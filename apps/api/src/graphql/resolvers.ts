@@ -1,3 +1,4 @@
+import { adminResolvers } from '../modules/admin/resolvers.js';
 import { accountResolvers } from '../modules/account/resolvers.js';
 import { authResolvers } from '../modules/auth/resolvers.js';
 import { checkoutResolvers } from '../modules/checkout/resolvers.js';
@@ -12,11 +13,13 @@ const serialize = <T extends { createdAt: Date; updatedAt: Date }>(value: T) => 
 export const resolvers: Resolvers = {
   Mutation: {
     ...authResolvers.Mutation,
+    ...adminResolvers.Mutation,
     ...checkoutResolvers.Mutation,
     ...accountResolvers.Mutation,
   },
   Query: {
     ...authResolvers.Query,
+    ...adminResolvers.Query,
     ...accountResolvers.Query,
     ...checkoutResolvers.Query,
     health: () => 'ok',

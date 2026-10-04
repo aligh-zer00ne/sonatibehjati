@@ -10,6 +10,8 @@ const schema = z.object({
   DATABASE_URL: z.string().startsWith('mysql://'),
   STOREFRONT_ORIGIN: z.string().url().default('http://localhost:3000'),
   ADMIN_ORIGIN: z.string().url().default('http://localhost:3001'),
+  ADMIN_ACCESS_TOKEN_SECRET: optionalSecret,
+  ADMIN_REFRESH_TOKEN_SECRET: optionalSecret,
   USER_ACCESS_TOKEN_SECRET: optionalSecret,
   USER_REFRESH_TOKEN_SECRET: optionalSecret,
   OTP_HASH_SECRET: optionalSecret,
@@ -47,6 +49,8 @@ if (env.NODE_ENV === 'production') {
     'ADMIN_REFRESH_TOKEN_SECRET',
     'OTP_HASH_SECRET',
   ] as const;
+  if (new URL(env.ADMIN_ORIGIN).protocol !== 'https:')
+    throw new Error('Production admin must use HTTPS.');
   if (new URL(env.STOREFRONT_ORIGIN).protocol !== 'https:')
     throw new Error('Production storefront must use HTTPS.');
   if (env.SMS_PROVIDER === 'mock') throw new Error('Production requires a real SMS provider.');
@@ -55,3 +59,12 @@ if (env.NODE_ENV === 'production') {
   if (new Set(secrets).size !== keys.length)
     throw new Error('Authentication secrets must be independent.');
 }
+
+const configuredTokenSecrets = [
+  env.USER_ACCESS_TOKEN_SECRET,
+  env.USER_REFRESH_TOKEN_SECRET,
+  env.ADMIN_ACCESS_TOKEN_SECRET,
+  env.ADMIN_REFRESH_TOKEN_SECRET,
+].filter(Boolean);
+if (new Set(configuredTokenSecrets).size !== configuredTokenSecrets.length)
+  throw new Error('Token secrets must be independent across roles and kinds.');

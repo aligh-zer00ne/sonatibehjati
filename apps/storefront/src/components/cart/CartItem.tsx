@@ -24,6 +24,7 @@ export default function CartItem({ product }: { product: CatalogProductFragment 
         {image ? (
           <Image
             src={image.url}
+            unoptimized={image.url.startsWith('https://')}
             alt={product.title}
             fill
             className="object-contain p-1 mix-blend-multiply"

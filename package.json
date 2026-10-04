@@ -28,7 +28,12 @@
     "verify:checkout-ui": "node scripts/verify-checkout-ui.mjs",
     "setup:auth": "node scripts/setup-auth-env.mjs",
     "verify:account": "node scripts/verify-account.mjs",
-    "verify:account-ui": "node scripts/verify-account-ui.mjs"
+    "verify:account-ui": "node scripts/verify-account-ui.mjs",
+    "setup:admin": "node scripts/setup-admin-env.mjs",
+    "admin:create": "node scripts/create-admin.mjs",
+    "verify:admin-auth": "node scripts/verify-admin-auth.mjs",
+    "verify:admin": "node scripts/verify-admin-commerce.mjs",
+    "verify:admin-ui": "node scripts/verify-admin-ui.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

@@ -1,0 +1,242 @@
+fragment AdminIdentityFields on AdminIdentity {
+  id
+  email
+}
+mutation AdminLogin($input: AdminLoginInput!) {
+  adminLogin(input: $input) {
+    admin {
+      ...AdminIdentityFields
+    }
+    accessToken
+    accessExpiresAt
+  }
+}
+mutation AdminRefresh {
+  adminRefresh {
+    admin {
+      ...AdminIdentityFields
+    }
+    accessToken
+    accessExpiresAt
+  }
+}
+mutation AdminLogout {
+  adminLogout
+}
+query AdminMe {
+  adminMe {
+    ...AdminIdentityFields
+  }
+}
+fragment AdminProductFields on Product {
+  id
+  slug
+  title
+  shortDescription
+  description
+  price
+  weight
+  isActive
+  badge
+  createdAt
+  updatedAt
+  category {
+    id
+    title
+  }
+  images {
+    id
+    url
+    alt
+  }
+}
+query AdminProducts($input: AdminProductsInput!) {
+  adminProducts(input: $input) {
+    items {
+      ...AdminProductFields
+    }
+    total
+    page
+    pageSize
+    totalPages
+  }
+  categories {
+    id
+    title
+  }
+}
+mutation SaveAdminProduct($id: ID, $expectedUpdatedAt: String, $input: AdminProductInput!) {
+  saveAdminProduct(id: $id, expectedUpdatedAt: $expectedUpdatedAt, input: $input) {
+    ...AdminProductFields
+  }
+}
+mutation SetAdminProductActive($id: ID!, $isActive: Boolean!, $expectedUpdatedAt: String!) {
+  setAdminProductActive(id: $id, isActive: $isActive, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...AdminProductFields
+  }
+}
+mutation DeleteAdminProduct($id: ID!, $expectedUpdatedAt: String!) {
+  deleteAdminProduct(id: $id, expectedUpdatedAt: $expectedUpdatedAt) {
+    deleted
+    product {
+      ...AdminProductFields
+    }
+  }
+}
+fragment AdminOrderAddressFields on OrderAddressSnapshot {
+  title
+  recipientName
+  recipientPhone
+  province
+  city
+  postalAddress
+  postalCode
+  latitude
+  longitude
+}
+fragment AdminCustomerFields on AuthUser {
+  id
+  phone
+  firstName
+  lastName
+  email
+}
+fragment AdminOrderSummaryFields on AdminOrderSummary {
+  id
+  number
+  status
+  total
+  createdAt
+  user {
+    ...AdminCustomerFields
+  }
+  address {
+    ...AdminOrderAddressFields
+  }
+}
+fragment AdminOrderFields on AdminOrder {
+  id
+  number
+  status
+  createdAt
+  updatedAt
+  subtotal
+  discount
+  shipping
+  total
+  user {
+    ...AdminCustomerFields
+  }
+  address {
+    ...AdminOrderAddressFields
+  }
+  items {
+    id
+    productId
+    productTitle
+    productWeight
+    unitPrice
+    quantity
+    lineTotal
+  }
+  statusEvents {
+    id
+    fromStatus
+    toStatus
+    createdAt
+    admin {
+      ...AdminIdentityFields
+    }
+  }
+}
+query AdminOrders($input: AdminOrdersInput!) {
+  adminOrders(input: $input) {
+    items {
+      ...AdminOrderSummaryFields
+    }
+    total
+    page
+    pageSize
+    totalPages
+  }
+}
+query AdminOrder($id: ID!) {
+  adminOrder(id: $id) {
+    ...AdminOrderFields
+  }
+}
+mutation UpdateAdminOrderStatus($input: AdminOrderStatusInput!) {
+  updateAdminOrderStatus(input: $input) {
+    ...AdminOrderFields
+  }
+}
+query AdminUsers($input: AdminUsersInput!) {
+  adminUsers(input: $input) {
+    items {
+      id
+      phone
+      firstName
+      lastName
+      email
+      createdAt
+      ordersCount
+      totalOrdersValue
+    }
+    total
+    page
+    pageSize
+    totalPages
+  }
+}
+fragment AdminReportFields on AdminReport {
+  from
+  to
+  ordersCount
+  orderValue
+  averageOrderValue
+  revenue
+  daily {
+    date
+    ordersCount
+    orderValue
+    revenue
+  }
+  statuses {
+    status
+    count
+  }
+}
+query AdminDashboard {
+  adminDashboard {
+    ordersCount
+    ordersToday
+    ordersThisMonth
+    orderValue
+    revenue
+    averageOrderValue
+    recentOrders {
+      ...AdminOrderSummaryFields
+    }
+    report {
+      ...AdminReportFields
+    }
+  }
+}
+query AdminReport($input: AdminReportInput!) {
+  adminReport(input: $input) {
+    ...AdminReportFields
+  }
+}
+
+query AdminSelectedUser($id: ID!) {
+  adminUser(id: $id) {
+    id
+    phone
+    firstName
+    lastName
+    email
+    createdAt
+    ordersCount
+    totalOrdersValue
+  }
+}
