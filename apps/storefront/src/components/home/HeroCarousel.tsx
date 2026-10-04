@@ -5,21 +5,22 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { formatNumber } from '@behjati/shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { SesamePattern } from '@/components/decoration/sesame-pattern';
 const slides = [
   {
-    src: '/images/hero/sesame-tahini.webp',
-    alt: 'فضاسازی ارده و حلواارده در کنار کنجد و معماری گرم اردکان',
-    label: 'ارده و حلواارده',
+    src: '/images/home/tahini-family.webp',
+    alt: 'بسته‌بندی‌های واقعی ارده ممتاز سنتی بهجتی با درهای زرد، قرمز و آبی',
+    label: 'ارده ممتاز',
   },
   {
-    src: '/images/hero/sesame-oil.webp',
-    alt: 'فضاسازی روغن طلایی کنجد در کنار دانه و شاخه‌های کنجد',
+    src: '/images/home/oil-family.webp',
+    alt: 'چهار بسته‌بندی واقعی روغن کنجد سنتی بهجتی',
     label: 'روغن کنجد',
   },
   {
-    src: '/images/hero/halva-date.webp',
-    alt: 'فضاسازی حلواارده ساده و شکلاتی، ارده و خرما روی سفره‌ای گرم',
-    label: 'طعم‌های کنجدی',
+    src: '/images/home/flavored-family.webp',
+    alt: 'ارده شکلاتی، کرم ارده و ارده فندقی سنتی بهجتی با بسته‌بندی واقعی',
+    label: 'ارده‌های طعم‌دار',
   },
 ];
 export default function HeroCarousel() {
@@ -90,7 +91,15 @@ export default function HeroCarousel() {
         gesture.current = null;
       }}
     >
-      <div id={id} className="absolute inset-0 overflow-hidden">
+      <SesamePattern motif="tahini" className="text-clay opacity-25" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-8 bottom-12 h-5 rounded-[100%] bg-earth/15 blur-lg md:inset-x-12 md:bottom-20"
+      />
+      <div
+        id={id}
+        className="absolute inset-x-0 top-0 bottom-14 overflow-hidden md:top-4 md:bottom-16"
+      >
         {slides.map((slide, index) => (
           <div
             key={slide.src}
@@ -105,7 +114,7 @@ export default function HeroCarousel() {
           >
             <Image
               className={cn(
-                'object-cover [mask-image:linear-gradient(to_bottom,transparent,#000_10%,#000_85%,transparent)] transition-transform duration-[6500ms] ease-out motion-reduce:transform-none motion-reduce:transition-none md:[mask-image:linear-gradient(to_right,#000_70%,transparent)]',
+                'object-contain px-5 drop-shadow-[0_18px_16px_rgba(98,69,47,0.16)] transition-transform duration-[6500ms] ease-out motion-reduce:transform-none motion-reduce:transition-none md:px-6',
                 index === current ? 'scale-100' : 'scale-[1.04]',
               )}
               src={slide.src}

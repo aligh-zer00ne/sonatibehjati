@@ -14,6 +14,23 @@ import { getHomepageCatalog } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
 export default async function Home() {
   const { products, categories } = await getHomepageCatalog();
+  const featuredSlugs = [
+    'traditional-halva-500',
+    'sesame-tahini-350',
+    'pistachio-halva-500',
+    'chocolate-tahini-350',
+  ];
+  const featured = [...products]
+    .sort((a, b) => {
+      const rank = (product: (typeof products)[number]) =>
+        product.badge
+          ? -1
+          : featuredSlugs.includes(product.slug)
+            ? featuredSlugs.indexOf(product.slug)
+            : featuredSlugs.length;
+      return rank(a) - rank(b);
+    })
+    .slice(0, 4);
   return (
     <>
       <AnnouncementBar />
@@ -25,17 +42,19 @@ export default async function Home() {
           <CategorySection categories={categories} />
         </Reveal>
         <Reveal>
-          <ProductSection
-            title="پرفروش‌های سنتی بهجتی"
-            id="products"
-            products={products.slice(0, 4)}
-          />
+          <ProductSection title="پرفروش‌های سنتی بهجتی" id="products" products={featured} />
         </Reveal>
         <Reveal>
           <HeritageSection />
         </Reveal>
         <Reveal>
-          <ProductSection title="محصولات کنجدی" id="all-products" products={products.slice(2)} />
+          <ProductSection
+            title="محصولات کنجدی"
+            id="all-products"
+            products={products.filter(
+              (product) => !featured.some((item) => item.id === product.id),
+            )}
+          />
         </Reveal>
         <Reveal>
           <BrandStory />

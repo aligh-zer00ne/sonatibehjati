@@ -36,7 +36,7 @@ export default function MobileMenu() {
         ))}
       </nav>
       <div
-        className="mt-6 mb-[15px] h-40 rounded-[18px] bg-[url('/images/heritage.webp')] bg-cover bg-center [mask-image:linear-gradient(to_bottom,transparent,#000)]"
+        className="mt-6 mb-[15px] h-40 rounded-[18px] bg-[url('/images/home/ardakan-courtyard.webp')] bg-cover bg-center [mask-image:linear-gradient(to_bottom,transparent,#000)]"
         aria-hidden="true"
       />
       <p className="text-center text-xs text-earth">{BRAND_NAME}</p>
