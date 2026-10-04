@@ -133,17 +133,35 @@ export const photoProducts = [
 export const temporaryPhotoDescription =
   'تصویر واقعی محصول سنتی بهجتی. وزن و قیمت این نسخه موقت‌اند و توسط مدیر فروشگاه اصلاح خواهند شد.';
 
+const galleryDetails: Record<(typeof photoProducts)[number]['photo'], readonly [string, string]> = {
+  'halva-classic': ['نمای پشت بسته‌بندی', 'نمای درِ بسته‌بندی'],
+  'tahini-blue': ['نمای نزدیک جزئیات بسته‌بندی', 'بافت ارده در کاسه و قاشق'],
+  'sesame-oil-glass': ['نمای دیگر بطری شیشه‌ای', 'نمای بالا و درِ بطری'],
+  'premium-tahini': ['نمای بسته‌بندی با در بسته', 'بافت ارده در کاسه و قاشق'],
+  'chocolate-tahini': ['نمای نزدیک جزئیات بسته‌بندی', 'چیدمان محصول روی سطح سنگی'],
+  'hazelnut-tahini': ['نمای بالاتر بسته‌بندی', 'نمای درِ بسته‌بندی'],
+  'tahini-cream': ['چیدمان محصول روی سطح سنگی', 'چیدمان محصول روی پارچهٔ کتانی'],
+  'pistachio-halva': ['نمای کناری بافت و بسته‌بندی', 'جزئیات بافت حلواارده پسته‌ای در قاشق'],
+  'tahini-sweets': ['نمای کناری بسته‌بندی', 'نمای روبه‌روی شیرینی‌ها'],
+  'sesame-seeds': ['نمای دیگر بسته‌بندی', 'نمای بالا و درِ بسته‌بندی'],
+  'sesame-oil-one-liter': ['نمای پشت بطری', 'نمای روبه‌روی بطری'],
+  'sesame-oil-family': ['جزئیات بطری و برچسب', 'نمای کامل بطری'],
+};
+
 export function photoGallery(product: (typeof photoProducts)[number]) {
-  const images = [
+  const details = galleryDetails[product.photo];
+  return [
     {
       url: `/images/products/${product.photo}.webp`,
       alt: `${product.title} سنتی بهجتی؛ نمای اصلی بسته‌بندی`,
     },
-  ];
-  if (product.photo !== 'tahini-cream')
-    images.push({
+    {
       url: `/images/products/gallery/${product.photo}.webp`,
-      alt: `${product.title} سنتی بهجتی؛ نمای دیگر محصول`,
-    });
-  return images;
+      alt: `${product.title} سنتی بهجتی؛ ${product.photo === 'tahini-cream' ? 'نمای نزدیک جزئیات بسته‌بندی' : 'نمای دیگر محصول'}`,
+    },
+    ...details.map((detail, index) => ({
+      url: `/images/products/gallery/${product.photo}-${index + 3}.webp`,
+      alt: `${product.title} سنتی بهجتی؛ ${detail}`,
+    })),
+  ];
 }

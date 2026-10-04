@@ -73,6 +73,18 @@ try {
         await tx.productImage.createMany({
           data: images.map((image) => ({ ...image, productId: existing.id })),
         });
+      } else if (
+        existing.images.every((image) => images.some((photo) => photo.url === image.url))
+      ) {
+        // Extend our previous photo set in place. Never replace administrator-uploaded galleries.
+        // Existing image IDs and alt text remain stable; reruns only add missing photographs.
+        const missing = images.filter(
+          (image) => !existing.images.some((previousImage) => previousImage.url === image.url),
+        );
+        if (missing.length)
+          await tx.productImage.createMany({
+            data: missing.map((image) => ({ ...image, productId: existing.id })),
+          });
       }
     }
     // Retire only untouched development fixtures that have no matching photograph.
@@ -107,7 +119,7 @@ try {
     });
   });
   console.log(
-    'Photo catalog imported: 12 product definitions, 5 categories; existing prices, weights and administrator edits preserved. Backup saved privately in apps/api/.photo-import-backups/.',
+    'Photo catalog imported: 12 product definitions, 5 categories, 4 photographs per managed gallery; existing prices, weights and administrator edits preserved. Backup saved privately in apps/api/.photo-import-backups/.',
   );
 } finally {
   await db.$disconnect();

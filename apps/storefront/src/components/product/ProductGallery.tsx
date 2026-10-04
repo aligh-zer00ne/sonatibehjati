@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import type { CatalogProductFragment } from '@/generated/graphql';
+import { formatNumber } from '@behjati/shared';
 export default function ProductGallery({
   title,
   images,
@@ -69,16 +70,16 @@ export default function ProductGallery({
         )}
       </div>
       {sources.length > 1 && (
-        <div className="mt-3 flex justify-center gap-2">
+        <div className="mx-auto mt-3 grid max-w-xs grid-cols-4 justify-items-center gap-2">
           {sources.map((item, index) => (
             <Button
               key={item.id}
               variant="outline"
               className={cn(
-                'size-16 overflow-hidden rounded-xl p-1',
+                'aspect-square h-auto w-full max-w-16 overflow-hidden rounded-xl p-1',
                 index === selected && 'border-primary ring-1 ring-primary',
               )}
-              aria-label={`نمایش تصویر ${index + 1}`}
+              aria-label={`نمایش تصویر ${formatNumber(index + 1)}`}
               aria-pressed={index === selected}
               onClick={() => setSelected(index)}
             >
