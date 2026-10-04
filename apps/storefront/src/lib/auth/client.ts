@@ -42,10 +42,15 @@ async function send<TResult, TVariables extends Record<string, unknown>>(
   } catch {
     throw new AuthRequestError('ارتباط برقرار نشد. دوباره تلاش کنید.');
   }
-  const result = (await response.json()) as {
+  let result: {
     data?: TResult;
     errors?: { message: string; extensions?: { code?: string; retryAfter?: number } }[];
   };
+  try {
+    result = await response.json();
+  } catch {
+    throw new AuthRequestError('سرویس موقتاً در دسترس نیست. دوباره تلاش کنید.');
+  }
   if (!response.ok || result.errors?.length || !result.data) {
     const error = result.errors?.[0];
     throw new AuthRequestError(

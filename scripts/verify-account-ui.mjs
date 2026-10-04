@@ -45,10 +45,12 @@ try {
   await page.getByLabel('نام', { exact: true }).fill('علی');
   await page.getByLabel('نام خانوادگی', { exact: true }).fill('غفوری');
   await page.getByLabel('ایمیل (اختیاری)', { exact: true }).fill('User@Example.COM');
-  let profileFailure = true;
+  let profileFailure = 2;
   const profileRoute = async (route) => {
     if (profileFailure && route.request().postDataJSON().operation === 'UpdateAccountProfile') {
-      profileFailure = false;
+      profileFailure--;
+      if (profileFailure === 0)
+        return route.fulfill({ status: 502, contentType: 'text/plain', body: 'Bad gateway' });
       return route.fulfill({
         status: 503,
         contentType: 'application/json',
@@ -64,6 +66,8 @@ try {
   await page.route('**/api/auth', profileRoute);
   await page.getByRole('button', { name: 'ذخیره پروفایل' }).click();
   await expect(page.locator('main [role="alert"]')).toContainText('سرویس موقتاً');
+  await page.getByRole('button', { name: 'ذخیره پروفایل' }).click();
+  await expect(page.locator('main [role="alert"]')).toContainText('سرویس موقتاً در دسترس نیست');
   await page.getByRole('button', { name: 'ذخیره پروفایل' }).click();
   await expect(page.getByText('پروفایل ذخیره شد.', { exact: true })).toBeVisible();
   await page.unroute('**/api/auth', profileRoute);
