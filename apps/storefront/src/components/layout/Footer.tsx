@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { BRAND_NAME } from '@behjati/shared';
 import { ArrowLeft } from 'lucide-react';
-import EnamadPlaceholder from './EnamadPlaceholder';
+import EnamadBadge from './EnamadBadge';
 const links = [
   ['/shop', 'محصولات'],
   ['/shop#categories', 'دسته‌بندی محصولات'],
@@ -58,7 +58,7 @@ export default function Footer() {
           </Link>
         </div>
         <div className="sm:col-span-2 md:col-span-1">
-          <EnamadPlaceholder />
+          <EnamadBadge />
         </div>
       </div>
       <div className="mx-auto mt-8 flex w-full max-w-[1200px] flex-col items-center gap-2 border-t border-border px-4 pt-5 text-[10px] leading-6 text-muted-foreground min-[480px]:px-6 md:flex-row md:justify-between xl:px-0">
