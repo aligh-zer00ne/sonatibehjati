@@ -28,58 +28,60 @@ export default function ProductPurchase({
           type="button"
           variant="outline"
           aria-pressed="true"
-          className="rounded-xl border-earth bg-surface/60 px-4 text-foreground"
+          className="min-w-28 rounded-xl border-primary/50 bg-primary/5 px-4 font-bold text-primary"
         >
           {weight}
         </Button>
         <p className="mt-1 text-[11px] text-muted-foreground">وزن ثبت‌شده برای این محصول</p>
       </fieldset>
-      <div className="flex items-center justify-between rounded-xl border border-border bg-background/60">
+      <div className="flex flex-wrap items-stretch gap-3">
+        <div className="flex h-12 w-32 shrink-0 items-center justify-between rounded-xl border border-border bg-background/80">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setQuantity((value) => value + 1);
+              setAdded(false);
+            }}
+            disabled={quantity >= MAX_CART_QUANTITY}
+            aria-label="افزایش تعداد انتخابی"
+          >
+            <Plus size={19} />
+          </Button>
+          <output
+            key={quantity}
+            className="animate-in fade-in text-sm duration-200 motion-reduce:animate-none"
+            aria-label="تعداد انتخابی"
+            aria-live="polite"
+          >
+            {formatNumber(quantity)}
+          </output>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setQuantity((value) => value - 1);
+              setAdded(false);
+            }}
+            disabled={quantity <= 1}
+            aria-label="کاهش تعداد انتخابی"
+          >
+            <Minus size={19} />
+          </Button>
+        </div>
         <Button
-          variant="ghost"
-          size="icon"
+          className="h-12 min-w-44 flex-1 rounded-xl text-sm font-bold"
+          disabled={limited}
+          aria-label={`افزودن ${title} به سبد خرید`}
           onClick={() => {
-            setQuantity((value) => value + 1);
-            setAdded(false);
+            add(id, quantity);
+            setAdded(true);
           }}
-          disabled={quantity >= MAX_CART_QUANTITY}
-          aria-label="افزایش تعداد انتخابی"
         >
-          <Plus size={19} />
-        </Button>
-        <output
-          key={quantity}
-          className="animate-in fade-in text-sm duration-200 motion-reduce:animate-none"
-          aria-label="تعداد انتخابی"
-          aria-live="polite"
-        >
-          {formatNumber(quantity)}
-        </output>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            setQuantity((value) => value - 1);
-            setAdded(false);
-          }}
-          disabled={quantity <= 1}
-          aria-label="کاهش تعداد انتخابی"
-        >
-          <Minus size={19} />
+          <ShoppingCart size={20} />
+          افزودن به سبد خرید
         </Button>
       </div>
-      <Button
-        className="w-full"
-        disabled={limited}
-        aria-label={`افزودن ${title} به سبد خرید`}
-        onClick={() => {
-          add(id, quantity);
-          setAdded(true);
-        }}
-      >
-        <ShoppingCart size={20} />
-        افزودن به سبد خرید
-      </Button>
       <p role="status" className="min-h-5 text-center text-xs text-earth">
         {full && !cartQuantity ? (
           'سبد به حداکثر تعداد محصولات رسیده است. برای افزودن، یک محصول را حذف کنید.'

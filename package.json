@@ -23,6 +23,7 @@
     "verify:home": "node scripts/verify-home.mjs",
     "verify:api": "node scripts/verify-api.mjs",
     "verify:commerce": "node scripts/verify-commerce.mjs",
+    "verify:product-design": "node scripts/verify-product-design.mjs",
     "verify:auth": "node scripts/verify-auth.mjs",
     "verify:auth-ui": "node scripts/verify-auth-ui.mjs",
     "verify:checkout": "node scripts/verify-checkout.mjs",

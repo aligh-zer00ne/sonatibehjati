@@ -1,6 +1,7 @@
 'use client';
 import { useId, useRef, useState } from 'react';
 import type { CatalogProductFragment } from '@/generated/graphql';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 const tabs = ['توضیحات', 'مشخصات', 'نظرات'];
@@ -9,8 +10,8 @@ export default function ProductTabs({ product }: { product: CatalogProductFragme
   const id = useId();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   return (
-    <section className="mt-8">
-      <div role="tablist" aria-label="اطلاعات محصول" className="flex border-b border-border">
+    <Card className="mt-8 rounded-3xl border-earth/10 bg-card/85 p-4 sm:p-6">
+      <div role="tablist" aria-label="اطلاعات محصول" className="flex gap-1 border-b border-border">
         {tabs.map((title, index) => (
           <Button
             ref={(element) => {
@@ -25,7 +26,7 @@ export default function ProductTabs({ product }: { product: CatalogProductFragme
             variant="ghost"
             className={cn(
               'rounded-none border-b-2 border-transparent px-4 text-sm text-muted-foreground',
-              selected === index && 'border-primary font-bold text-foreground',
+              selected === index && 'border-primary bg-primary/5 font-bold text-primary',
             )}
             onClick={() => setSelected(index)}
             onKeyDown={(event) => {
@@ -58,7 +59,7 @@ export default function ProductTabs({ product }: { product: CatalogProductFragme
           {index === 0 ? (
             <p className="whitespace-pre-line">{product.description}</p>
           ) : index === 1 ? (
-            <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2">
+            <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-3 rounded-xl bg-surface/60 p-4">
               <dt>نام محصول</dt>
               <dd>{product.title}</dd>
               <dt>دسته‌بندی</dt>
@@ -71,6 +72,6 @@ export default function ProductTabs({ product }: { product: CatalogProductFragme
           )}
         </div>
       ))}
-    </section>
+    </Card>
   );
 }
