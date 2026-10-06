@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="bowl" x1="25" y1="53" x2="100" y2="97" gradientUnits="userSpaceOnUse"><stop stop-color="#e8b879"/><stop offset="1" stop-color="#b77941"/></linearGradient>
+    <linearGradient id="cream" x1="38" y1="46" x2="85" y2="72" gradientUnits="userSpaceOnUse"><stop stop-color="#fff0cf"/><stop offset="1" stop-color="#d6a564"/></linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="52" fill="#f8eddc"/>
+  <ellipse cx="64" cy="103" rx="37" ry="5" fill="#9b6134" opacity=".12"/>
+  <g stroke="#925931" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m87 46 17-23c3-4 9 0 6 4L91 52" fill="#d9a06b"/>
+    <path d="M24 60c3 25 18 38 40 38s38-14 41-38" fill="url(#bowl)"/>
+    <ellipse cx="64" cy="59" rx="41" ry="16" fill="url(#cream)"/>
+    <path d="M41 57c0-11 45-11 45 0s-35 12-35 2c0-6 25-7 25-1s-13 6-14 2" stroke="#ba8348"/>
+    <path d="M38 77c4 6 8 10 13 12" stroke="#ffe0af"/>
+    <path d="M47 99h34"/>
+  </g>
+  <g fill="#ddbf91"><ellipse cx="24" cy="32" rx="3" ry="6" transform="rotate(-32 24 32)"/><ellipse cx="37" cy="25" rx="3" ry="6" transform="rotate(24 37 25)"/><ellipse cx="99" cy="91" rx="3" ry="6" transform="rotate(52 99 91)"/></g>
+</svg>

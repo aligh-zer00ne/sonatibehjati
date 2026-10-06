@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs><linearGradient id="oil" x1="39" y1="45" x2="82" y2="99" gradientUnits="userSpaceOnUse"><stop stop-color="#f9d777"/><stop offset="1" stop-color="#d6982c"/></linearGradient></defs>
+  <circle cx="64" cy="64" r="52" fill="#f8eddc"/>
+  <ellipse cx="60" cy="108" rx="27" ry="5" fill="#9b6134" opacity=".12"/>
+  <g stroke="#925931" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M48 21h24v12H48Z" fill="#b77b42"/><path d="M54 33v13c0 7-17 8-17 20v30c0 5 4 9 9 9h28c5 0 9-4 9-9V66c0-12-17-13-17-20V33" fill="url(#oil)"/>
+    <path d="M44 66v26" stroke="#fff0c4" stroke-width="4"/>
+    <path d="M52 64h17v29H52Z" fill="#fbefce"/>
+    <path d="M60 69c-2 4-6 7-6 10a6 6 0 0 0 12 0c0-3-4-6-6-10Z" fill="#dea937" stroke-width="1.8"/>
+    <path d="M98 38c-3 6-9 11-9 16a9 9 0 0 0 18 0c0-5-6-10-9-16Z" fill="#f2c65e"/>
+    <path d="M90 94c6-13 14-18 23-15-2 10-9 16-23 15Z" fill="#a0a866" stroke="#727b47"/><path d="m91 93 13-9" stroke="#727b47"/>
+  </g>
+</svg>

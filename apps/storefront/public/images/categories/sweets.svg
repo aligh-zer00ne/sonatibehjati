@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs><linearGradient id="cookie" x1="28" y1="45" x2="95" y2="86" gradientUnits="userSpaceOnUse"><stop stop-color="#f7d9a7"/><stop offset="1" stop-color="#d49b57"/></linearGradient></defs>
+  <circle cx="64" cy="64" r="52" fill="#f8eddc"/>
+  <ellipse cx="64" cy="103" rx="42" ry="5" fill="#9b6134" opacity=".12"/>
+  <g stroke="#925931" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="65" cy="90" rx="43" ry="12" fill="#f4dfbb"/>
+    <rect x="23" y="60" width="34" height="28" rx="10" transform="rotate(-12 23 60)" fill="url(#cookie)"/>
+    <rect x="66" y="62" width="34" height="28" rx="10" transform="rotate(12 66 62)" fill="url(#cookie)"/>
+    <rect x="48" y="35" width="33" height="35" rx="11" fill="url(#cookie)"/>
+    <path d="m37 68 1 3m5-8 1 3m5 10 1 2m-17 2 2 1m46-6 1 2m5-5 2 2m6 4-1 3m-35-35 1 3m10-3-1 3m-5 8 1 2m8-4-1 2" stroke="#a57540" stroke-width="3"/>
+  </g>
+  <g fill="#d8b477"><ellipse cx="30" cy="37" rx="3" ry="6" transform="rotate(-30 30 37)"/><ellipse cx="99" cy="39" rx="3" ry="6" transform="rotate(34 99 39)"/></g>
+</svg>
