@@ -1,0 +1,465 @@
+{
+  "mode": "built-in imagegen",
+  "styleReference": "عکس اصلی محصول.jpg (user supplied)",
+  "referenceLayout": "دیزاین صفحه محصول.jpg (user supplied)",
+  "jobs": [
+    {
+      "photo": "halva-classic",
+      "title": "حلواارده سنتی",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/halva-classic.webp",
+      "target": "apps/storefront/public/images/products/halva-classic.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده سنتی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a few pale sesame halva cubes on a small cream plate, loose sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-1b6eb8ba-754a-4f18-9803-fa2f79fe8430.png"
+    },
+    {
+      "photo": "halva-classic",
+      "title": "حلواارده سنتی",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/halva-classic.webp",
+      "target": "apps/storefront/public/images/products/gallery/halva-classic.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده سنتی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-b1c904f5-f6f0-41c9-a7ce-9b2e46140349.png"
+    },
+    {
+      "photo": "halva-classic",
+      "title": "حلواارده سنتی",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/halva-classic-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/halva-classic-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده سنتی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-9c87032c-47c1-4c69-8847-e41c4861b9ef.png"
+    },
+    {
+      "photo": "halva-classic",
+      "title": "حلواارده سنتی",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/halva-classic-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/halva-classic-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده سنتی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-a2c263f9-fefd-4cbf-8501-23ac4ec78a59.png"
+    },
+    {
+      "photo": "tahini-blue",
+      "title": "ارده کنجدی",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-blue.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-blue.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده کنجدی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-42519cdd-96b9-43ba-9937-ceb53d8c48a1.png"
+    },
+    {
+      "photo": "tahini-blue",
+      "title": "ارده کنجدی",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-blue-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-blue-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده کنجدی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-86f0cb05-d597-47bb-90ef-1d97113ae758.png"
+    },
+    {
+      "photo": "tahini-blue",
+      "title": "ارده کنجدی",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-blue-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-blue-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده کنجدی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-4715b26f-1354-47b0-a7f9-07b2908dee52.png",
+      "rejectedAttempt": {
+        "generatedFile": "exec-2c7dd9ec-f808-4e1b-8a49-2175adc37da6.png",
+        "reason": "Style-reference packaging was incorrectly added to the bowl-only detail; not adopted."
+      },
+      "correctedPrompt": "Use case: compositing. Edit target: the supplied real photograph of a BLUE CERAMIC BOWL with plain pale tahini and one ornate SILVER SPOON. Preserve exactly this bowl, its blue glaze, pale contents, original overhead angle, spoon and intentional source framing. Add only a fully opaque warm cream/sand linen tabletop in the transparent surroundings, a few tiny sesame seeds beside the bowl, soft golden window lighting and believable contact shadow. Quiet premium ecommerce macro/detail photograph, square 1024x1024. ONLY FOOD BOWL AND SPOON. Absolutely NO product packaging, NO jars, NO bottles, NO containers besides the one original bowl, NO chocolate, NO text or labels, NO added utensils. Do not invent any different product, do not change bowl or spoon geometry, keep all existing parts and safe edges visible. Background must be photographic warm beige, not white or transparent."
+    },
+    {
+      "photo": "sesame-oil-glass",
+      "title": "روغن کنجد",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/sesame-oil-glass.webp",
+      "target": "apps/storefront/public/images/products/sesame-oil-glass.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small dish of golden sesame oil and a few sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-44320788-516b-43c0-a43e-176bdfe75206.png"
+    },
+    {
+      "photo": "sesame-oil-glass",
+      "title": "روغن کنجد",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-glass.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-glass.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-f7d504fa-4cc9-49e7-a5dd-3137efdf6814.png"
+    },
+    {
+      "photo": "sesame-oil-glass",
+      "title": "روغن کنجد",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-glass-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-glass-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-e173f938-d63a-412f-a9ac-8044152638c6.png"
+    },
+    {
+      "photo": "sesame-oil-glass",
+      "title": "روغن کنجد",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-glass-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-glass-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-402200ac-123f-475a-8592-e8932035f3ed.png"
+    },
+    {
+      "photo": "premium-tahini",
+      "title": "ارده ممتاز",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/premium-tahini.webp",
+      "target": "apps/storefront/public/images/products/premium-tahini.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده ممتاز Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small creamy tahini bowl, a teaspoon and sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-8b1fc790-34ce-4aa1-8893-1bdd7d67be8b.png"
+    },
+    {
+      "photo": "premium-tahini",
+      "title": "ارده ممتاز",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/premium-tahini.webp",
+      "target": "apps/storefront/public/images/products/gallery/premium-tahini.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده ممتاز Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-811f5f4a-4236-4e0c-9e5d-c94d1d24102f.png"
+    },
+    {
+      "photo": "premium-tahini",
+      "title": "ارده ممتاز",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/premium-tahini-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/premium-tahini-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده ممتاز Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-0fe2f67a-9207-414c-b00c-d38e9f6ab895.png"
+    },
+    {
+      "photo": "premium-tahini",
+      "title": "ارده ممتاز",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/premium-tahini-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/premium-tahini-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده ممتاز Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-17751e52-b5d3-479c-b1d3-65ee11eecbb9.png"
+    },
+    {
+      "photo": "chocolate-tahini",
+      "title": "ارده شکلاتی",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/chocolate-tahini.webp",
+      "target": "apps/storefront/public/images/products/gallery/chocolate-tahini.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده شکلاتی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-7e14f14f-a324-4118-bc7d-6c186fff2e36.png"
+    },
+    {
+      "photo": "chocolate-tahini",
+      "title": "ارده شکلاتی",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/chocolate-tahini-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/chocolate-tahini-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده شکلاتی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-cf24b84a-a1a5-47c7-9c46-cd94a259e923.png"
+    },
+    {
+      "photo": "hazelnut-tahini",
+      "title": "ارده فندقی",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/hazelnut-tahini.webp",
+      "target": "apps/storefront/public/images/products/hazelnut-tahini.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده فندقی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a few whole hazelnuts and a small spoon of dark hazelnut tahini, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-d21388f5-05fd-4eab-a5d8-d191b5aa3cd5.png"
+    },
+    {
+      "photo": "hazelnut-tahini",
+      "title": "ارده فندقی",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/hazelnut-tahini.webp",
+      "target": "apps/storefront/public/images/products/gallery/hazelnut-tahini.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده فندقی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-d5c44132-7a30-447b-ba3a-ab57dc0347da.png"
+    },
+    {
+      "photo": "hazelnut-tahini",
+      "title": "ارده فندقی",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/hazelnut-tahini-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/hazelnut-tahini-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده فندقی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-542bf41f-09ea-4ad2-bbfa-dffd3a80c183.png"
+    },
+    {
+      "photo": "hazelnut-tahini",
+      "title": "ارده فندقی",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/hazelnut-tahini-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/hazelnut-tahini-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed ارده فندقی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-d52bd597-0f1a-417a-b32d-85be82f75402.png"
+    },
+    {
+      "photo": "tahini-cream",
+      "title": "کرم ارده",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/tahini-cream.webp",
+      "target": "apps/storefront/public/images/products/tahini-cream.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed کرم ارده Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small spoon of pale tahini cream and sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-1f56fd41-792b-4986-9ee4-c1349dc09f7d.png"
+    },
+    {
+      "photo": "tahini-cream",
+      "title": "کرم ارده",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-cream.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-cream.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed کرم ارده Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-b5ee3d68-f6c2-454c-93df-9f74342608bc.png"
+    },
+    {
+      "photo": "pistachio-halva",
+      "title": "حلواارده پسته‌ای",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/pistachio-halva.webp",
+      "target": "apps/storefront/public/images/products/pistachio-halva.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده پسته‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small piece of pistachio sesame halva and a few pistachios, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-0df1b69f-b1db-46e2-85ea-c30baa80547c.png"
+    },
+    {
+      "photo": "pistachio-halva",
+      "title": "حلواارده پسته‌ای",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/pistachio-halva.webp",
+      "target": "apps/storefront/public/images/products/gallery/pistachio-halva.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده پسته‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-bf6ab584-ede9-4e9b-a3b8-cd0d21d079ac.png"
+    },
+    {
+      "photo": "pistachio-halva",
+      "title": "حلواارده پسته‌ای",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/pistachio-halva-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/pistachio-halva-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده پسته‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-cc13cd79-ba7b-4569-b5ae-a834be86f572.png"
+    },
+    {
+      "photo": "pistachio-halva",
+      "title": "حلواارده پسته‌ای",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/pistachio-halva-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/pistachio-halva-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed حلواارده پسته‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-ae60673c-368a-4159-9b00-698ccddc9bfe.png"
+    },
+    {
+      "photo": "tahini-sweets",
+      "title": "شیرینی ارده‌ای",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/tahini-sweets.webp",
+      "target": "apps/storefront/public/images/products/tahini-sweets.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed شیرینی ارده‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small plate of sesame-coated tahini cookies and sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-22ad6487-364a-4b8e-aa52-ed1964b8c6ce.png"
+    },
+    {
+      "photo": "tahini-sweets",
+      "title": "شیرینی ارده‌ای",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-sweets.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-sweets.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed شیرینی ارده‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-1f8c9238-cf1e-4718-b54f-09b8a75a02dc.png"
+    },
+    {
+      "photo": "tahini-sweets",
+      "title": "شیرینی ارده‌ای",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-sweets-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-sweets-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed شیرینی ارده‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-5ebb2e86-f683-4c36-a4ee-050d70381d0f.png"
+    },
+    {
+      "photo": "tahini-sweets",
+      "title": "شیرینی ارده‌ای",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/tahini-sweets-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/tahini-sweets-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed شیرینی ارده‌ای Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-fede4e34-9934-41b5-b2ce-20cea6a4f846.png"
+    },
+    {
+      "photo": "sesame-seeds",
+      "title": "کنجد بسته‌بندی",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/sesame-seeds.webp",
+      "target": "apps/storefront/public/images/products/sesame-seeds.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed کنجد بسته‌بندی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a wooden teaspoon and a small pile of sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-6ad55feb-b105-4957-ad27-9fb94246e155.png"
+    },
+    {
+      "photo": "sesame-seeds",
+      "title": "کنجد بسته‌بندی",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-seeds.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-seeds.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed کنجد بسته‌بندی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-f7e7ac5c-38f5-4fbf-9250-f51462f7260f.png"
+    },
+    {
+      "photo": "sesame-seeds",
+      "title": "کنجد بسته‌بندی",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-seeds-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-seeds-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed کنجد بسته‌بندی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-af3950cb-5fa0-4c39-8d24-16b65774f669.png"
+    },
+    {
+      "photo": "sesame-seeds",
+      "title": "کنجد بسته‌بندی",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-seeds-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-seeds-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed کنجد بسته‌بندی Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-e06ae4c4-4a43-4886-b682-5385ff4e31da.png"
+    },
+    {
+      "photo": "sesame-oil-one-liter",
+      "title": "روغن کنجد یک لیتری",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/sesame-oil-one-liter.webp",
+      "target": "apps/storefront/public/images/products/sesame-oil-one-liter.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد یک لیتری Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small dish of golden sesame oil and sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-3f1b07f1-53cc-4c06-96dd-f19c03883c49.png"
+    },
+    {
+      "photo": "sesame-oil-one-liter",
+      "title": "روغن کنجد یک لیتری",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-one-liter.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-one-liter.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد یک لیتری Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-9ff52215-2f68-4d53-9360-8f9fba1388f5.png"
+    },
+    {
+      "photo": "sesame-oil-one-liter",
+      "title": "روغن کنجد یک لیتری",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-one-liter-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-one-liter-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد یک لیتری Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-fa929db9-6d6f-4abd-9efa-0d2754993f37.png"
+    },
+    {
+      "photo": "sesame-oil-one-liter",
+      "title": "روغن کنجد یک لیتری",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-one-liter-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-one-liter-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد یک لیتری Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-d99598b0-b895-47cb-9c5f-85d89ca9e7a3.png"
+    },
+    {
+      "photo": "sesame-oil-family",
+      "title": "روغن کنجد خانواده",
+      "index": 1,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/sesame-oil-family.webp",
+      "target": "apps/storefront/public/images/products/sesame-oil-family.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product hero photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد خانواده Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a premium appetizing still-life matching the reference: warm golden window light, cream and honey sandy stone surface, softly blurred copper vessels and understated traditional Persian carved-panel room far behind. Beside the product include only a small dish of golden sesame oil and sesame seeds, subordinate to the package. A very subtle arabesque engraved into the bottom stone surface. Original product centered filling 62-70 percent canvas height and surrounded by at least 8 percent safe margin. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-016fea88-388a-47e5-8b97-ec1388a25bad.png"
+    },
+    {
+      "photo": "sesame-oil-family",
+      "title": "روغن کنجد خانواده",
+      "index": 2,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-family.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-family.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد خانواده Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a matte cream stone tabletop, soft warm window light and distant blurred copper vessel. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-d6845ea3-003b-4a18-8579-c00db08ea917.png"
+    },
+    {
+      "photo": "sesame-oil-family",
+      "title": "روغن کنجد خانواده",
+      "index": 3,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-family-3.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-family-3.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد خانواده Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a smooth sandy stone tabletop, soft afternoon side light and distant out-of-focus warm plaster wall. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-f3e22035-0347-4e23-b743-5ca18647fdac.png"
+    },
+    {
+      "photo": "sesame-oil-family",
+      "title": "روغن کنجد خانواده",
+      "index": 4,
+      "source": "apps/storefront/public/images/products/reference/cutouts-v2/gallery/sesame-oil-family-4.webp",
+      "target": "apps/storefront/public/images/products/gallery/sesame-oil-family-4.webp",
+      "prompt": "Use case: compositing. Asset type: fully opaque square ecommerce product gallery detail photography, 1024x1024. Input image 1 is the EDIT TARGET: the actual photographed روغن کنجد خانواده Sonati Behjati product. Input image 2 is STYLE REFERENCE ONLY, not a product to insert. Create a refined warm cream/sand product-detail photograph: a natural beige linen tabletop, soft window light and out-of-focus cream/copper background. Preserve the source framing, close-up, spoon, bowl, loose food, label-back or overhead angle EXACTLY as supplied. Do not invent a different view or reconstruct unseen portions of the package. Only a few tiny sesame seeds outside the subject are permitted; no additional package. Place existing product/bowl/spoon realistically on this surface with believable contact shadow. Minimal quiet detail-scene; all originally visible label details stay readable. Match the warm gold/cream lighting and editorial photographic quality of the reference, with muted sand/cream #f4ecdf edges suited to the product card. Preserve EXACT original physical product, geometry, original angle, cap, contents, Persian/English printed text, label colors, barcodes and logo. Do not redraw, redesign or repaint product labels. Keep every originally visible edge and part; preserve intentional source close-ups. Change only backdrop, staging around product and realistic matched lighting/contact shadow. No duplicate product, no chocolate jar from style reference, no added writing or watermark. Fully opaque photographic scene, no alpha transparency, no empty white background, no flat color fill.",
+      "status": "adopted",
+      "generatedFile": "exec-77df8aa5-0690-484b-9bb6-006a64b566e3.png"
+    }
+  ],
+  "retainedOpaque": [
+    "gallery/chocolate-tahini-4.webp",
+    "gallery/tahini-cream-3.webp",
+    "gallery/tahini-cream-4.webp"
+  ],
+  "providedHero": "chocolate-tahini.webp",
+  "firstGeneratedHero": "tahini-blue.webp",
+  "firstGeneratedBlue": {
+    "prompt": "Use case: compositing. Asset type: premium product photography for a Persian sesame marketplace, square 1024x1024, fully opaque photographic background. Input image 1 is the EDIT TARGET: the real blue cylindrical jar of Sonati Behjati tahini. Input image 2 is STYLE REFERENCE ONLY: the warm golden product photograph supplied by the user. Preserve the exact jar, its geometry, blue cap, clear sleeve, original camera angle, all Persian/English printed label and logos verbatim; do not redesign, substitute or repaint the product. Add a beautiful realistic warm sand/cream and honey traditional Persian still-life around the SAME jar: a matte sandy stone surface, a small cream tahini bowl with swirl and a few sesame seeds and teaspoon beside it. Soft softly blurred copper vessels and understated traditional carved panel in the back, cozy window light, realistic contact shadow, restrained depth of field, beautiful premium food editorial photo. Composition one original product centered filling 62 percent height with at least 8 percent breathing space on all sides and foreground props subordinate, original label sharp and readable. A delicate muted Persian arabesque along the bottom surface, understated. Match the reference lighting and photographic atmosphere, but outer background edges cream/sand #f4ecdf to blend with product card. Do not include the reference chocolate jar or chocolate/cocoa/pistachio props, no invented products, no new typography, no watermark. Background must be fully opaque, not transparent, not a flat color fill.",
+    "generatedFile": "exec-16b87f1b-9b34-46d7-bc84-beeba51fc122.png",
+    "status": "adopted",
+    "source": "apps/storefront/public/images/products/reference/cutouts-v2/main/tahini-blue.webp",
+    "target": "apps/storefront/public/images/products/tahini-blue.webp"
+  },
+  "validation": {
+    "adoptedGeneratedPhotos": 44,
+    "retainedOpaquePhotos": 3,
+    "providedReferenceHero": 1,
+    "format": "opaque RGB WebP",
+    "quality": 92,
+    "maximumDimension": 1200,
+    "sourceCutoutsPreserved": true
+  }
+}

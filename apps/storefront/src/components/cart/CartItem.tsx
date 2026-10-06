@@ -1,4 +1,5 @@
 'use client';
+import { productPhotoUrl } from '@/lib/product-photo';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Trash2, ImageOff } from 'lucide-react';
@@ -23,7 +24,7 @@ export default function CartItem({ product }: { product: CatalogProductFragment 
       >
         {image ? (
           <Image
-            src={image.url}
+            src={productPhotoUrl(image.url)}
             unoptimized={image.url.startsWith('https://')}
             alt={product.title}
             fill

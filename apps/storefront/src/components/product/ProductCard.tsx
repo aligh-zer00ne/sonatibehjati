@@ -1,4 +1,5 @@
 'use client';
+import { productPhotoUrl } from '@/lib/product-photo';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -36,8 +37,8 @@ export default function ProductCard({
           >
             {image ? (
               <Image
-                className="object-contain p-1.5 drop-shadow-[0_10px_10px_rgba(98,69,47,0.12)] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover/product:scale-[1.08] motion-safe:group-focus-within/product:scale-[1.04] motion-reduce:transition-none"
-                src={image.url}
+                className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover/product:scale-[1.08] motion-safe:group-focus-within/product:scale-[1.04] motion-reduce:transition-none"
+                src={productPhotoUrl(image.url)}
                 unoptimized={image.url.startsWith('https://')}
                 alt={image.alt || product.title}
                 fill
