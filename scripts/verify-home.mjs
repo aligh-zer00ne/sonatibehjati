@@ -30,16 +30,38 @@ async function scrollAll(page) {
     }
     scrollTo({ top: 0, behavior: 'instant' });
   });
-  await page.waitForLoadState('networkidle');
   await page.evaluate(async () => {
-    for (const image of document.images) image.loading = 'eager';
-    await Promise.all(Array.from(document.images, (image) => image.decode()));
-    await Promise.all(
-      document
-        .getAnimations()
-        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
-        .map((animation) => animation.finished.catch(() => {})),
-    );
+    const visibleImages = Array.from(document.images).filter((image) => !image.closest('[inert]'));
+    for (const image of visibleImages) image.loading = 'eager';
+    await Promise.race([
+      Promise.all(visibleImages.map((image) => image.decode())),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                'Image decode timed out: ' +
+                  Array.from(document.images)
+                    .filter((image) => !image.complete)
+                    .map((image) => image.currentSrc || image.src)
+                    .join(', '),
+              ),
+            ),
+          20000,
+        ),
+      ),
+    ]);
+    await Promise.race([
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+          .map((animation) => animation.finished.catch(() => {})),
+      ),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Animations did not settle')), 15000),
+      ),
+    ]);
   });
 }
 async function closePanel(page) {
@@ -55,18 +77,18 @@ try {
   await page.route('https://trustseal.enamad.ir/**', (route) => route.abort());
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(baseURL, { waitUntil: 'networkidle' });
+  await page.goto(baseURL, { waitUntil: 'load' });
   const hero = page.getByRole('region', { name: 'تصاویر محصولات کنجدی' });
   await expect(hero.getByRole('heading', { level: 1 })).toHaveText('سنتی بهجتی');
   await hero.getByRole('button', { name: 'اسلاید بعدی', exact: true }).click();
   await expect(hero.getByRole('heading', { level: 1 })).toHaveText('طلای کنجد');
-  await expect(hero.getByRole('link', { name: 'مشاهده روغن‌های کنجد' })).toHaveAttribute(
+  await expect(hero.getByRole('link', { name: 'دیدن روغن‌ها' })).toHaveAttribute(
     'href',
     '/category/oil',
   );
   await hero.getByRole('button', { name: 'اسلاید بعدی', exact: true }).click();
   await expect(hero.getByRole('heading', { level: 1 })).toHaveText('طعم‌های تازه');
-  await expect(hero.getByRole('link', { name: 'کشف ارده‌های طعم‌دار' })).toHaveAttribute(
+  await expect(hero.getByRole('link', { name: 'کشف طعم‌ها' })).toHaveAttribute(
     'href',
     '/category/tahini',
   );
@@ -98,7 +120,7 @@ try {
   );
   await page.getByRole('button', { name: 'افزودن حلواارده سنتی به سبد خرید' }).first().click();
   await page.getByRole('button', { name: 'افزایش تعداد حلواارده سنتی' }).first().click();
-  await page.reload({ waitUntil: 'networkidle' });
+  await page.reload({ waitUntil: 'load' });
   assert.equal(
     await page.locator('[data-product-slug="traditional-halva-500"] output').textContent(),
     '۲',
@@ -123,13 +145,13 @@ try {
     oilSlugs.every((slug) => slug.startsWith('sesame-oil-')),
     'Oil category must only show oil products',
   );
-  await page.goto(baseURL, { waitUntil: 'networkidle' });
+  await page.goto(baseURL, { waitUntil: 'load' });
   await page.getByRole('button', { name: 'باز کردن فهرست' }).click();
   await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی' }).click();
   await page.locator('[data-slot="dialog-content"]').waitFor({ state: 'hidden' });
   assert.equal(await page.getByRole('dialog').count(), 0);
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto(baseURL, { waitUntil: 'networkidle' });
+  await page.goto(baseURL, { waitUntil: 'load' });
   await scrollAll(page);
   await page.screenshot({ path: '/tmp/behjati-current-desktop.png', fullPage: true });
   await expect(hero.locator('picture img').first()).toHaveJSProperty('complete', true);
@@ -139,7 +161,7 @@ try {
         .locator('picture img')
         .first()
         .evaluate((image) => image.currentSrc)
-    ).includes('hero-tahini-wide-v4.webp'),
+    ).includes('hero-tahini-wide-v5.webp'),
     'Desktop must use the panoramic image instead of cropping the mobile photograph',
   );
   assert.equal(await page.getByRole('navigation', { name: 'ناوبری موبایل' }).isVisible(), false);
@@ -185,7 +207,7 @@ try {
       headingSize.height <= headingSize.lineHeight + 1,
       `Brand heading wraps at ${width}px`,
     );
-    const expectedImage = width >= 1024 ? 'hero-tahini-wide-v4.webp' : 'hero-tahini-scene.webp';
+    const expectedImage = width >= 768 ? 'hero-tahini-wide-v5.webp' : 'hero-tahini-mobile-v5.webp';
     assert.ok(
       (
         await hero
@@ -195,25 +217,67 @@ try {
       ).includes(expectedImage),
       `Incorrect art direction at ${width}px`,
     );
-    await hero.screenshot({ path: `/tmp/behjati-hero-v4-${width}.png` });
-    await page.locator('#story').screenshot({ path: `/tmp/behjati-story-v4-${width}.png` });
+    await hero.screenshot({ path: `/tmp/behjati-hero-v5-${width}.png` });
+    await page.locator('#story').screenshot({ path: `/tmp/behjati-story-v5-${width}.png` });
     const banner = page.locator('#shopping-banner');
     await banner.locator('img').evaluate((image) => image.decode());
     await banner.screenshot({ path: `/tmp/behjati-shopping-v4-${width}.png` });
-    await hero
-      .getByRole('button', { name: 'نمایش اسلاید ۳: ارده‌های طعم‌دار', exact: true })
-      .click();
-    const copyBox = await hero.locator('[data-slot="hero-copy"]').boundingBox();
-    const controlsBox = await hero.locator('[aria-label="کنترل اسلایدر"]').boundingBox();
+    const storyImage = await page.locator('[data-slot="story-image"]').boundingBox();
+    const storyCopy = await page.locator('[data-slot="story-copy"]').boundingBox();
     assert.ok(
-      copyBox.y + copyBox.height <= controlsBox.y + 1,
-      `Hero copy overlaps controls at ${width}px`,
+      storyImage.x + storyImage.width <= storyCopy.x + 1 &&
+        Math.max(storyImage.y, storyCopy.y) <
+          Math.min(storyImage.y + storyImage.height, storyCopy.y + storyCopy.height),
+      `Story image and copy must stay side by side at ${width}px`,
     );
+    assert.ok(
+      (
+        await page.locator('#story').evaluate((node) => getComputedStyle(node).backgroundImage)
+      ).includes('linear-gradient'),
+      'The story must have a warm gradient background',
+    );
+    for (const [index, label] of ['ارده ممتاز', 'روغن کنجد', 'ارده‌های طعم‌دار'].entries()) {
+      await hero
+        .getByRole('button', {
+          name: `نمایش اسلاید ${['۱', '۲', '۳'][index]}: ${label}`,
+          exact: true,
+        })
+        .click();
+      const copy = hero.locator('[data-slot="hero-copy"]');
+      const copyBox = await copy.boundingBox();
+      const imageBox = await hero.locator('picture img').nth(index).boundingBox();
+      const controlsBox = await hero.locator('[aria-label="کنترل اسلایدر"]').boundingBox();
+      assert.ok(
+        copyBox.y >= imageBox.y && copyBox.y + copyBox.height <= imageBox.y + imageBox.height,
+        `Hero copy must stay over the photograph at ${width}px, slide ${index + 1}`,
+      );
+      assert.ok(
+        copyBox.y + copyBox.height <= controlsBox.y + 1,
+        `Hero copy overlaps controls at ${width}px, slide ${index + 1}`,
+      );
+      assert.ok(
+        await copy.evaluate((node) => node.scrollWidth <= node.clientWidth),
+        `Hero copy clips horizontally at ${width}px, slide ${index + 1}`,
+      );
+      assert.ok(
+        (await copy.evaluate((node) => getComputedStyle(node).backgroundImage)).includes(
+          'linear-gradient',
+        ),
+        'Hero copy must have a warm gradient background',
+      );
+      if (width === 320 || width === 1440) {
+        await hero
+          .locator('picture img')
+          .nth(index)
+          .evaluate((image) => image.decode());
+        await hero.screenshot({ path: `/tmp/behjati-hero-v5-${width}-slide-${index + 1}.png` });
+      }
+    }
   }
   const noJS = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
   await noJS.route('https://trustseal.enamad.ir/**', (route) => route.abort());
   const staticPage = await noJS.newPage();
-  await staticPage.goto(baseURL, { waitUntil: 'networkidle' });
+  await staticPage.goto(baseURL, { waitUntil: 'load' });
   await expect(staticPage.getByRole('heading', { level: 1 })).toBeVisible();
   for (const reveal of await staticPage.locator('[data-slot="reveal"]').all()) {
     await expect(reveal).toHaveCSS('opacity', '1');
@@ -221,7 +285,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, desktop art direction, unified story anchors and section order, shopping banner, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive portrait/panoramic art direction, overlay copy and side-by-side story at every width, warm gradients, unified story anchors and section order, shopping banner, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

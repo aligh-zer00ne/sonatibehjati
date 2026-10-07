@@ -10,9 +10,9 @@ import { cn } from '@/lib/utils';
 
 const slides = [
   {
-    src: '/images/home/hero-tahini-wide-v4.webp',
-    mobileSrc: '/images/home/hero-tahini-scene.webp',
-    alt: 'ارده‌های ممتاز سنتی بهجتی روی سکوی سنگی در حیاطی با نور گرم اردکان',
+    src: '/images/home/hero-tahini-wide-v5.webp',
+    mobileSrc: '/images/home/hero-tahini-mobile-v5.webp',
+    alt: 'اردهٔ روان سنتی بهجتی در کاسه، کنار بسته‌بندی‌های واقعی روی میز چوبی و پارچهٔ ترمه',
     label: 'ارده ممتاز',
     eyebrow: 'فرآورده‌های کنجدی اردکان',
     title: 'سنتی بهجتی',
@@ -20,10 +20,12 @@ const slides = [
     description: 'ارده، حلواارده و طعم‌های کنجدی؛ همراه صبحانه و سفرهٔ هر روز شما.',
     href: '/shop',
     action: 'مشاهده محصولات',
+    mobileAction: 'دیدن محصولات',
+    mobileDescription: 'طعم‌های کنجدی، همراه صبحانهٔ هر روز شما.',
   },
   {
-    src: '/images/home/hero-oil-wide-v4.webp',
-    mobileSrc: '/images/home/hero-oil-scene.webp',
+    src: '/images/home/hero-oil-wide-v5.webp',
+    mobileSrc: '/images/home/hero-oil-mobile-v5.webp',
     alt: 'بسته‌بندی‌های واقعی روغن کنجد سنتی بهجتی با رنگ طلایی و نور طبیعی',
     label: 'روغن کنجد',
     eyebrow: 'روغن کنجد سنتی بهجتی',
@@ -32,10 +34,12 @@ const slides = [
     description: 'روغن‌های کنجد را ببینید و بسته‌بندی مناسب آشپزخانهٔ خود را انتخاب کنید.',
     href: '/category/oil',
     action: 'مشاهده روغن‌های کنجد',
+    mobileAction: 'دیدن روغن‌ها',
+    mobileDescription: 'عطر و رنگ کنجد، همراه پخت‌وپز شما.',
   },
   {
-    src: '/images/home/hero-flavored-wide-v4.webp',
-    mobileSrc: '/images/home/hero-flavored-scene.webp',
+    src: '/images/home/hero-flavored-wide-v5.webp',
+    mobileSrc: '/images/home/hero-flavored-mobile-v5.webp',
     alt: 'ارده شکلاتی، کرم ارده و ارده فندقی سنتی بهجتی در فضایی گرم و سنتی',
     label: 'ارده‌های طعم‌دار',
     eyebrow: 'طعم‌های تازهٔ سنتی بهجتی',
@@ -44,6 +48,8 @@ const slides = [
     description: 'از میان طعم‌های مختلف ارده، همراه تازهٔ صبحانه‌تان را پیدا کنید.',
     href: '/category/tahini',
     action: 'کشف ارده‌های طعم‌دار',
+    mobileAction: 'کشف طعم‌ها',
+    mobileDescription: 'طعم دلخواهتان را برای صبحانه پیدا کنید.',
   },
 ];
 
@@ -92,7 +98,7 @@ export default function HeroCarousel() {
       aria-roledescription="اسلایدر"
       aria-label="تصاویر محصولات کنجدی"
       tabIndex={0}
-      className="relative isolate overflow-hidden rounded-[26px] border border-earth/10 bg-[#eee0cb] pb-[76px] shadow-[0_16px_50px_-35px_rgba(72,40,24,0.45)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary lg:min-h-[540px] lg:pb-0"
+      className="relative isolate min-h-[350px] overflow-hidden rounded-[26px] border border-earth/10 bg-[#6d422c] pb-[76px] shadow-[0_16px_50px_-35px_rgba(72,40,24,0.45)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary min-[480px]:min-h-[390px] md:min-h-[420px] lg:min-h-[540px]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
@@ -121,24 +127,21 @@ export default function HeroCarousel() {
         gesture.current = null;
       }}
     >
-      <div
-        id={id}
-        className="relative aspect-[3/2] touch-pan-y overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
-      >
+      <div id={id} className="absolute inset-0 touch-pan-y overflow-hidden">
         {slides.map((item, index) => {
           const { props: desktop } = getImageProps({
             src: item.src,
             alt: item.alt,
-            width: 2400,
-            height: 1000,
+            width: 1942,
+            height: 809,
             quality: 85,
             sizes: '(min-width: 1200px) 1200px, 100vw',
           });
           const { props: mobile } = getImageProps({
             src: item.mobileSrc,
             alt: item.alt,
-            width: 1536,
-            height: 1024,
+            width: 1122,
+            height: 1402,
             quality: 85,
             sizes: '100vw',
           });
@@ -156,13 +159,13 @@ export default function HeroCarousel() {
               )}
             >
               <picture>
-                <source media="(min-width: 1024px)" srcSet={desktop.srcSet} sizes={desktop.sizes} />
+                <source media="(min-width: 768px)" srcSet={desktop.srcSet} sizes={desktop.sizes} />
                 <img
                   {...mobile}
                   loading={index === 0 ? 'eager' : 'lazy'}
                   fetchPriority={index === 0 ? 'high' : 'auto'}
                   className={cn(
-                    'absolute inset-0 h-full w-full object-cover transition-transform duration-[7000ms] ease-out motion-reduce:transform-none motion-reduce:transition-none',
+                    'absolute inset-0 h-full w-full object-cover transition-transform duration-[7000ms] ease-out motion-reduce:transform-none motion-reduce:transition-none md:object-left xl:object-center',
                     index === current ? 'scale-100' : 'scale-[1.035]',
                   )}
                 />
@@ -174,35 +177,43 @@ export default function HeroCarousel() {
 
       <div
         data-slot="hero-copy"
-        className="relative z-[1] mx-4 -mt-5 rounded-[22px] border border-white/70 bg-[#fffaf2]/95 p-6 text-right shadow-[0_16px_45px_-20px_rgba(72,40,24,0.3)] backdrop-blur-md min-[480px]:mx-6 min-[480px]:p-8 md:mx-auto md:w-[calc(100%-48px)] md:max-w-[620px] lg:my-12 lg:mr-[3%] lg:ml-auto lg:w-[40%] lg:max-w-[440px] lg:p-10"
+        className="relative z-[1] my-6 mr-[3%] ml-auto w-[54%] rounded-[18px] border border-[#efc68c]/75 bg-[linear-gradient(145deg,rgba(250,220,165,0.96),rgba(230,174,108,0.94)_58%,rgba(196,126,68,0.95))] p-3 text-right shadow-[0_16px_45px_-20px_rgba(48,23,12,0.6)] backdrop-blur-md min-[375px]:p-4 min-[480px]:my-8 min-[480px]:w-[49%] min-[480px]:p-6 md:w-[44%] md:p-7 lg:my-12 lg:w-[40%] lg:max-w-[440px] lg:rounded-[22px] lg:p-10"
       >
         <div
           key={current}
           className="animate-in fade-in slide-in-from-right-3 duration-500 motion-reduce:animate-none"
         >
-          <p className="text-xs font-semibold text-primary/85 lg:text-[13px]">{slide.eyebrow}</p>
+          <p className="text-[9px] leading-5 font-semibold text-primary/85 min-[375px]:text-[10px] min-[480px]:text-xs lg:text-[13px]">
+            {slide.eyebrow}
+          </p>
           <h1
             id="hero-title"
-            className="mt-3 text-[34px] leading-[1.5] font-[900] tracking-[-1px] text-primary min-[375px]:text-[40px] min-[480px]:text-[52px] lg:text-[58px]"
+            className="mt-2 text-[22px] leading-[1.5] font-[900] tracking-[-0.5px] text-primary min-[375px]:text-[26px] min-[480px]:text-[32px] md:text-[40px] lg:mt-3 lg:text-[58px]"
           >
             {slide.title}
           </h1>
-          <p className="mt-1 text-lg leading-8 font-bold text-[#482818] lg:text-[21px]">
+          <p className="mt-1 text-[12px] leading-5 font-bold text-[#482818] min-[375px]:text-[13px] min-[480px]:text-base min-[480px]:leading-7 lg:text-[21px] lg:leading-8">
             {slide.subtitle}
           </p>
-          <p className="mt-3 min-h-14 text-[13px] leading-7 text-earth lg:text-sm">
-            {slide.description}
+          <p className="mt-2 min-h-10 text-[11px] leading-5 text-[#593b25] min-[480px]:mt-3 min-[480px]:min-h-14 min-[480px]:text-[13px] min-[480px]:leading-7 lg:text-sm">
+            <span className="sm:hidden">{slide.mobileDescription}</span>
+            <span className="hidden sm:inline">{slide.description}</span>
           </p>
-          <Button asChild className="mt-5 w-full gap-2 text-xs min-[480px]:w-auto lg:text-sm">
+          <Button
+            asChild
+            className="mt-3 w-full gap-1 px-2 text-[10px] min-[375px]:text-[11px] min-[480px]:mt-5 min-[480px]:w-auto min-[480px]:gap-2 min-[480px]:px-4 min-[480px]:text-xs lg:text-sm"
+          >
             <Link href={slide.href}>
-              {slide.action} <ArrowLeft size={17} aria-hidden="true" />
+              <span className="sm:hidden">{slide.mobileAction}</span>
+              <span className="hidden sm:inline">{slide.action}</span>
+              <ArrowLeft className="size-3 shrink-0 min-[480px]:size-4" aria-hidden="true" />
             </Link>
           </Button>
         </div>
       </div>
 
       <div
-        className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/65 bg-[#fffaf2]/95 px-1 shadow-sm backdrop-blur-md md:bottom-5"
+        className="absolute bottom-4 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 rounded-full border border-[#efc68c]/70 bg-[linear-gradient(135deg,#f4d5a5,#dca367)] px-1 shadow-sm backdrop-blur-md md:bottom-5"
         aria-label="کنترل اسلایدر"
       >
         <Button
