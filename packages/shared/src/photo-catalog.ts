@@ -3,7 +3,7 @@ export const photoCategories = [
   { slug: 'tahini', title: 'ارده', image: '/images/categories/tahini.svg' },
   { slug: 'halva', title: 'حلواارده', image: '/images/categories/halva.svg' },
   { slug: 'oil', title: 'روغن کنجد', image: '/images/categories/oil.svg' },
-  { slug: 'sweets', title: 'شیرینی ارده‌ای', image: '/images/categories/sweets.svg' },
+  { slug: 'sweets', title: 'حلواارده شکری', image: '/images/categories/sweets.svg' },
   { slug: 'sesame', title: 'کنجد', image: '/images/categories/sesame.svg' },
 ] as const;
 
@@ -91,7 +91,7 @@ export const photoProducts = [
   {
     id: 'tahini-sweets-500',
     slug: 'tahini-sweets-500',
-    title: 'شیرینی ارده‌ای',
+    title: 'حلواارده شکری',
     category: 'sweets',
     price: 280000,
     weight: '۵۰۰ گرم',
@@ -142,7 +142,7 @@ const galleryDetails: Record<(typeof photoProducts)[number]['photo'], readonly [
   'hazelnut-tahini': ['نمای بالاتر بسته‌بندی', 'نمای درِ بسته‌بندی'],
   'tahini-cream': ['چیدمان محصول روی سطح سنگی', 'چیدمان محصول روی پارچهٔ کتانی'],
   'pistachio-halva': ['نمای کناری بافت و بسته‌بندی', 'جزئیات بافت حلواارده پسته‌ای در قاشق'],
-  'tahini-sweets': ['نمای کناری بسته‌بندی', 'نمای روبه‌روی شیرینی‌ها'],
+  'tahini-sweets': ['نمای کناری بسته‌بندی', 'نمای روبه‌روی حلواارده شکری'],
   'sesame-seeds': ['نمای دیگر بسته‌بندی', 'نمای بالا و درِ بسته‌بندی'],
   'sesame-oil-one-liter': ['نمای پشت بطری', 'نمای روبه‌روی بطری'],
   'sesame-oil-family': ['جزئیات بطری و برچسب', 'نمای کامل بطری'],
