@@ -365,3 +365,37 @@ sudo -iu sonatibehjati bash -lc 'source ~/.nvm/nvm.sh && cd /var/www/sonatibehja
 ```
 
 این build و restart فقط برای اصلاح نمایش اینماد است؛ تغییر کانفیگ Nginx به‌تنهایی به build نیاز ندارد.
+
+## به‌روزرسانی‌های بعدی با Git و Bun
+
+پس از راه‌اندازی اولیه، برای هر تغییر جدید نیازی به اجرای `npm ci` نیست. اسکریپت
+`deploy/update-production.sh` وضعیت lockfile و نسخهٔ Node را نگه می‌دارد؛ فقط وقتی `bun.lock` یا
+`.nvmrc` تغییر کرده باشد، `bun install --frozen-lockfile` را با کش Bun اجرا می‌کند. تغییر وابستگی‌ها
+باید مثل همیشه همراه با `bun.lock` کامیت شود.
+سپس تولید Prisma و GraphQL، lint، typecheck، build، migrationهای معوق، restart دو پردازش همین پروژه و
+health check را انجام می‌دهد.
+
+Bun را فقط یک بار با کاربر پروژه نصب کنید:
+
+```bash
+sudo -iu sonatibehjati
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+bun --version
+```
+
+برای هر انتشار بعدی، ابتدا کد را با Git دریافت کنید و سپس اسکریپت را اجرا کنید:
+
+```bash
+sudo -iu sonatibehjati
+source ~/.nvm/nvm.sh
+cd /var/www/sonatibehjati
+git switch dev
+git pull --ff-only origin dev
+npm run deploy:production
+```
+
+اسکریپت باید با کاربر `sonatibehjati` و روی worktree تمیز اجرا شود. فایل‌های خصوصی env که در Git
+نیستند حفظ می‌شوند. اجرای نخست اسکریپت یک بار Bun install را انجام می‌دهد تا وضعیت وابستگی ثبت شود؛
+در انتشارهای بدون تغییر وابستگی، مرحلهٔ نصب کاملاً رد می‌شود. برای این روند از `pm2 restart all`،
+`npm ci`، seed یا import تصاویر استفاده نکنید.
