@@ -7,8 +7,8 @@ import HomePanels from '@/components/layout/HomePanels';
 import HeroSection from '@/components/home/HeroSection';
 import CategorySection from '@/components/home/CategorySection';
 import ProductSection from '@/components/home/ProductSection';
-import HeritageSection from '@/components/home/HeritageSection';
 import BrandStory from '@/components/home/BrandStory';
+import ShoppingBanner from '@/components/home/ShoppingBanner';
 import BenefitsSection from '@/components/home/BenefitsSection';
 import { getHomepageCatalog } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
@@ -45,7 +45,7 @@ export default async function Home() {
           <ProductSection title="پرفروش‌های سنتی بهجتی" id="products" products={featured} />
         </Reveal>
         <Reveal>
-          <HeritageSection />
+          <BrandStory />
         </Reveal>
         <Reveal>
           <ProductSection
@@ -57,7 +57,7 @@ export default async function Home() {
           />
         </Reveal>
         <Reveal>
-          <BrandStory />
+          <ShoppingBanner />
         </Reveal>
         <Reveal>
           <BenefitsSection />
