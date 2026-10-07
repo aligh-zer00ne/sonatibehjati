@@ -3,7 +3,6 @@ export const photoCategories = [
   { slug: 'tahini', title: 'ارده', image: '/images/categories/tahini.svg' },
   { slug: 'halva', title: 'حلواارده', image: '/images/categories/halva.svg' },
   { slug: 'oil', title: 'روغن کنجد', image: '/images/categories/oil.svg' },
-  { slug: 'sweets', title: 'حلواارده شکری', image: '/images/categories/sweets.svg' },
   { slug: 'sesame', title: 'کنجد', image: '/images/categories/sesame.svg' },
 ] as const;
 
@@ -92,7 +91,7 @@ export const photoProducts = [
     id: 'tahini-sweets-500',
     slug: 'tahini-sweets-500',
     title: 'حلواارده شکری',
-    category: 'sweets',
+    category: 'halva',
     price: 280000,
     weight: '۵۰۰ گرم',
     photo: 'tahini-sweets',

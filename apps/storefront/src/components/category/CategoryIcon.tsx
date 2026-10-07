@@ -5,7 +5,6 @@ const symbols: Record<string, string> = {
   tahini: 'tahini',
   halva: 'halva',
   oil: 'oil',
-  sweets: 'sweets',
   sesame: 'sesame',
 };
 
