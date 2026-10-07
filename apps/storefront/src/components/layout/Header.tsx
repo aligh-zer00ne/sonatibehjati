@@ -65,10 +65,7 @@ export default function Header() {
           دسته‌بندی‌ها
         </Link>
         <Link className="py-3" href="/#story">
-          داستان سنتی بهجتی
-        </Link>
-        <Link className="py-3" href="/#ardakan">
-          اردکان
+          داستان سنتی بهجتی و اردکان
         </Link>
       </nav>
       <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex">

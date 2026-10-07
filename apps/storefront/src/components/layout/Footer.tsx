@@ -6,8 +6,7 @@ import EnamadBadge from './EnamadBadge';
 const links = [
   ['/shop', 'محصولات'],
   ['/shop#categories', 'دسته‌بندی محصولات'],
-  ['/#story', 'داستان سنتی بهجتی'],
-  ['/#ardakan', 'درباره اردکان'],
+  ['/#story', 'داستان سنتی بهجتی و اردکان'],
 ] as const;
 export default function Footer() {
   return (

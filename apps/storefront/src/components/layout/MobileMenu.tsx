@@ -1,15 +1,14 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { House, Store, LayoutGrid, BookOpen, MapPin } from 'lucide-react';
+import { House, Store, LayoutGrid, BookOpen } from 'lucide-react';
 import { useUI } from '@/stores/ui';
 import { BRAND_NAME } from '@behjati/shared';
 const links = [
   { href: '/', label: 'خانه', icon: House },
   { href: '/shop', label: 'محصولات', icon: Store },
   { href: '/shop#categories', label: 'دسته‌بندی محصولات', icon: LayoutGrid },
-  { href: '/#story', label: 'داستان سنتی بهجتی', icon: BookOpen },
-  { href: '/#ardakan', label: 'اردکان', icon: MapPin },
+  { href: '/#story', label: 'داستان سنتی بهجتی و اردکان', icon: BookOpen },
 ];
 export default function MobileMenu() {
   const close = useUI((state) => state.setPanel);
