@@ -1,6 +1,8 @@
 import { chromium, expect } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
+import sharp from 'sharp';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const baseURL = 'http://localhost:3002';
@@ -147,7 +149,9 @@ try {
   );
   await page.goto(baseURL, { waitUntil: 'load' });
   await page.getByRole('button', { name: 'باز کردن فهرست' }).click();
-  await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی' }).click();
+  assert.equal(await page.getByRole('dialog').locator('a[href="/#ardakan"]').count(), 0);
+  assert.equal(await page.getByRole('dialog').locator('a[href="/#story"]').count(), 1);
+  await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی و اردکان' }).click();
   await page.locator('[data-slot="dialog-content"]').waitFor({ state: 'hidden' });
   assert.equal(await page.getByRole('dialog').count(), 0);
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -161,8 +165,8 @@ try {
         .locator('picture img')
         .first()
         .evaluate((image) => image.currentSrc)
-    ).includes('hero-tahini-wide-v5.webp'),
-    'Desktop must use the panoramic image instead of cropping the mobile photograph',
+    ).includes('hero-tahini-desktop-v6'),
+    'Desktop must use its dedicated composition instead of cropping the mobile photograph',
   );
   assert.equal(await page.getByRole('navigation', { name: 'ناوبری موبایل' }).isVisible(), false);
   assert.ok(
@@ -188,7 +192,7 @@ try {
   await expect(page.getByRole('dialog')).toHaveCSS('animation-name', 'none');
   await expect(page.locator('[data-slot="dialog-overlay"]')).toHaveCSS('animation-name', 'none');
   await closePanel(page);
-  for (const width of [320, 375, 480, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 480, 600, 640, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await hero.getByRole('button', { name: 'نمایش اسلاید ۱: ارده ممتاز', exact: true }).click();
     await hero
@@ -207,7 +211,7 @@ try {
       headingSize.height <= headingSize.lineHeight + 1,
       `Brand heading wraps at ${width}px`,
     );
-    const expectedImage = width >= 768 ? 'hero-tahini-wide-v5.webp' : 'hero-tahini-mobile-v5.webp';
+    const expectedImage = width >= 640 ? 'hero-tahini-desktop-v6' : 'hero-tahini-mobile-v6';
     assert.ok(
       (
         await hero
@@ -217,24 +221,27 @@ try {
       ).includes(expectedImage),
       `Incorrect art direction at ${width}px`,
     );
-    await hero.screenshot({ path: `/tmp/behjati-hero-v5-${width}.png` });
-    await page.locator('#story').screenshot({ path: `/tmp/behjati-story-v5-${width}.png` });
+    await hero.screenshot({ path: `/tmp/behjati-hero-v6-${width}.png` });
+    await page.locator('#story').screenshot({ path: `/tmp/behjati-story-v6-${width}.png` });
     const banner = page.locator('#shopping-banner');
     await banner.locator('img').evaluate((image) => image.decode());
     await banner.screenshot({ path: `/tmp/behjati-shopping-v4-${width}.png` });
-    const storyImage = await page.locator('[data-slot="story-image"]').boundingBox();
+    const storyBox = await page.locator('#story').boundingBox();
     const storyCopy = await page.locator('[data-slot="story-copy"]').boundingBox();
     assert.ok(
-      storyImage.x + storyImage.width <= storyCopy.x + 1 &&
-        Math.max(storyImage.y, storyCopy.y) <
-          Math.min(storyImage.y + storyImage.height, storyCopy.y + storyCopy.height),
-      `Story image and copy must stay side by side at ${width}px`,
+      storyCopy.y >= storyBox.y && storyCopy.y + storyCopy.height < storyBox.y + storyBox.height,
+      `Story copy must stay on the image at ${width}px`,
     );
-    assert.ok(
-      (
-        await page.locator('#story').evaluate((node) => getComputedStyle(node).backgroundImage)
-      ).includes('linear-gradient'),
-      'The story must have a warm gradient background',
+    await expect(page.locator('[data-slot="story-copy"]')).toHaveCSS(
+      'background-color',
+      'rgba(0, 0, 0, 0)',
+    );
+    const storySource = await page.locator('#story img').evaluate((image) => image.currentSrc);
+    assert.ok(storySource.includes(width >= 640 ? 'story-desktop-v6' : 'story-mobile-v6'));
+    assert.equal(
+      await page.locator('a[href="/#ardakan"]').count(),
+      0,
+      'The old separate Ardakan menu entry must be removed',
     );
     for (const [index, label] of ['ارده ممتاز', 'روغن کنجد', 'ارده‌های طعم‌دار'].entries()) {
       await hero
@@ -245,7 +252,7 @@ try {
         .click();
       const copy = hero.locator('[data-slot="hero-copy"]');
       const copyBox = await copy.boundingBox();
-      const imageBox = await hero.locator('picture img').nth(index).boundingBox();
+      const imageBox = await hero.boundingBox();
       const controlsBox = await hero.locator('[aria-label="کنترل اسلایدر"]').boundingBox();
       assert.ok(
         copyBox.y >= imageBox.y && copyBox.y + copyBox.height <= imageBox.y + imageBox.height,
@@ -259,21 +266,79 @@ try {
         await copy.evaluate((node) => node.scrollWidth <= node.clientWidth),
         `Hero copy clips horizontally at ${width}px, slide ${index + 1}`,
       );
-      assert.ok(
-        (await copy.evaluate((node) => getComputedStyle(node).backgroundImage)).includes(
-          'linear-gradient',
-        ),
-        'Hero copy must have a warm gradient background',
-      );
-      if (width === 320 || width === 1440) {
+      await expect(copy).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(copy).toHaveCSS('border-top-width', '0px');
+      if (width < 640) {
+        assert.ok(
+          copyBox.y + copyBox.height < imageBox.y + imageBox.height * 0.3,
+          `Mobile copy must leave the large product group unobstructed at ${width}px`,
+        );
+      }
+      if ([320, 390, 480, 768, 1440].includes(width)) {
         await hero
           .locator('picture img')
           .nth(index)
           .evaluate((image) => image.decode());
-        await hero.screenshot({ path: `/tmp/behjati-hero-v5-${width}-slide-${index + 1}.png` });
+        await hero.screenshot({ path: `/tmp/behjati-hero-v6-${width}-slide-${index + 1}.png` });
       }
     }
   }
+  const qualityReport = [];
+  for (const [viewportWidth, dpr] of [
+    [390, 3],
+    [768, 2],
+    [1440, 2],
+  ]) {
+    const retina = await browser.newContext({
+      viewport: { width: viewportWidth, height: 1000 },
+      deviceScaleFactor: dpr,
+      reducedMotion: 'reduce',
+    });
+    await retina.route('https://trustseal.enamad.ir/**', (route) => route.abort());
+    const qualityPage = await retina.newPage();
+    await qualityPage.goto(baseURL, { waitUntil: 'load' });
+    for (const selector of ['[aria-label="تصاویر محصولات کنجدی"] picture img', '#story img']) {
+      const image = qualityPage.locator(selector).first();
+      await image.scrollIntoViewIfNeeded();
+      await image.evaluate((node) => node.decode());
+      const info = await image.evaluate((node) => ({
+        src: node.currentSrc,
+        width: node.clientWidth,
+        height: node.clientHeight,
+      }));
+      const pathname = new URL(info.src).pathname;
+      assert.ok(
+        pathname.startsWith('/images/home/'),
+        'Editorial artwork must avoid a second lossy optimization pass',
+      );
+      const response = await qualityPage.request.get(info.src);
+      const bytes = await response.body();
+      assert.deepEqual(
+        bytes,
+        await readFile(`apps/storefront/public${pathname}`),
+        'The browser must receive the exact prepared WebP',
+      );
+      const metadata = await sharp(bytes).metadata();
+      const coverWidth = Math.max(info.width, (info.height * metadata.width) / metadata.height);
+      const effectiveDpr = metadata.width / coverWidth;
+      assert.ok(
+        effectiveDpr >= dpr * 0.94,
+        `Insufficient native image detail: ${selector} at ${viewportWidth}px/${dpr}x (${effectiveDpr.toFixed(2)}x available)`,
+      );
+      qualityReport.push({
+        viewportWidth,
+        dpr,
+        selector,
+        ...info,
+        decodedWidth: metadata.width,
+        decodedHeight: metadata.height,
+        requiredWidth: Math.ceil(coverWidth * dpr),
+        effectiveDpr: Number(effectiveDpr.toFixed(2)),
+      });
+    }
+    await retina.close();
+  }
+  await writeFile('/tmp/behjati-quality-after-v6.json', JSON.stringify(qualityReport, null, 2));
   const noJS = await browser.newContext({ javaScriptEnabled: false, reducedMotion: 'reduce' });
   await noJS.route('https://trustseal.enamad.ir/**', (route) => route.abort());
   const staticPage = await noJS.newPage();
@@ -285,7 +350,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive portrait/panoramic art direction, overlay copy and side-by-side story at every width, warm gradients, unified story anchors and section order, shopping banner, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, shopping banner, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

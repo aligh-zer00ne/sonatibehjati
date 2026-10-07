@@ -1,0 +1,157 @@
+{
+  "method": "Chromium at 390px/3x, 768px/2x and 1440px/2x; decode the received file, account for object-cover scaling, compare response bytes to the prepared public WebP. Effective DPR is source width divided by the image width needed to cover its box. No artificial enlargement.",
+  "before": [
+    {
+      "viewportWidth": 390,
+      "width": 356,
+      "dpr": 3,
+      "selector": "[aria-label=\"تصاویر محصولات کنجدی\"] picture img",
+      "height": 357,
+      "objectFit": "cover",
+      "decodedWidth": 1122,
+      "decodedHeight": 1402,
+      "requiredWidth": 1068,
+      "effectiveDpr": 3.15,
+      "src": "/_next/image?url=%2Fimages%2Fhome%2Fhero-tahini-mobile-v5.webp&w=1200&q=85"
+    },
+    {
+      "viewportWidth": 390,
+      "width": 164,
+      "dpr": 3,
+      "selector": "#story img",
+      "height": 258,
+      "objectFit": "cover",
+      "decodedWidth": 640,
+      "decodedHeight": 427,
+      "requiredWidth": 1161,
+      "effectiveDpr": 1.66,
+      "src": "/_next/image?url=%2Fimages%2Fhome%2Fardakan-courtyard.webp&w=640&q=85"
+    },
+    {
+      "viewportWidth": 768,
+      "width": 718,
+      "dpr": 2,
+      "selector": "[aria-label=\"تصاویر محصولات کنجدی\"] picture img",
+      "height": 454,
+      "objectFit": "cover",
+      "decodedWidth": 1920,
+      "decodedHeight": 800,
+      "requiredWidth": 2180,
+      "effectiveDpr": 1.76,
+      "src": "/_next/image?url=%2Fimages%2Fhome%2Fhero-tahini-wide-v5.webp&w=1920&q=85"
+    },
+    {
+      "viewportWidth": 768,
+      "width": 309,
+      "dpr": 2,
+      "selector": "#story img",
+      "height": 442,
+      "objectFit": "cover",
+      "decodedWidth": 828,
+      "decodedHeight": 552,
+      "requiredWidth": 1326,
+      "effectiveDpr": 1.25,
+      "src": "/_next/image?url=%2Fimages%2Fhome%2Fardakan-courtyard.webp&w=828&q=85"
+    },
+    {
+      "viewportWidth": 1440,
+      "width": 1198,
+      "dpr": 2,
+      "selector": "[aria-label=\"تصاویر محصولات کنجدی\"] picture img",
+      "height": 545,
+      "objectFit": "cover",
+      "decodedWidth": 1942,
+      "decodedHeight": 809,
+      "requiredWidth": 2617,
+      "effectiveDpr": 1.48,
+      "src": "/_next/image?url=%2Fimages%2Fhome%2Fhero-tahini-wide-v5.webp&w=3840&q=85"
+    },
+    {
+      "viewportWidth": 1440,
+      "width": 533,
+      "dpr": 2,
+      "selector": "#story img",
+      "height": 418,
+      "objectFit": "cover",
+      "decodedWidth": 1200,
+      "decodedHeight": 800,
+      "requiredWidth": 1254,
+      "effectiveDpr": 1.91,
+      "src": "/_next/image?url=%2Fimages%2Fhome%2Fardakan-courtyard.webp&w=1200&q=85"
+    }
+  ],
+  "after": [
+    {
+      "viewportWidth": 390,
+      "dpr": 3,
+      "selector": "[aria-label=\"تصاویر محصولات کنجدی\"] picture img",
+      "width": 356,
+      "height": 498,
+      "decodedWidth": 1024,
+      "decodedHeight": 1536,
+      "requiredWidth": 1068,
+      "effectiveDpr": 2.88,
+      "src": "/images/home/hero-tahini-mobile-v6.webp"
+    },
+    {
+      "viewportWidth": 390,
+      "dpr": 3,
+      "selector": "#story img",
+      "width": 356,
+      "height": 458,
+      "decodedWidth": 1024,
+      "decodedHeight": 1536,
+      "requiredWidth": 1068,
+      "effectiveDpr": 2.88,
+      "src": "/images/home/story-mobile-v6.webp"
+    },
+    {
+      "viewportWidth": 768,
+      "dpr": 2,
+      "selector": "[aria-label=\"تصاویر محصولات کنجدی\"] picture img",
+      "width": 560,
+      "height": 428,
+      "decodedWidth": 1536,
+      "decodedHeight": 1024,
+      "requiredWidth": 1284,
+      "effectiveDpr": 2.39,
+      "src": "/images/home/hero-tahini-desktop-v6.webp"
+    },
+    {
+      "viewportWidth": 768,
+      "dpr": 2,
+      "selector": "#story img",
+      "width": 560,
+      "height": 428,
+      "decodedWidth": 1536,
+      "decodedHeight": 1024,
+      "requiredWidth": 1284,
+      "effectiveDpr": 2.39,
+      "src": "/images/home/story-desktop-v6.webp"
+    },
+    {
+      "viewportWidth": 1440,
+      "dpr": 2,
+      "selector": "[aria-label=\"تصاویر محصولات کنجدی\"] picture img",
+      "width": 719,
+      "height": 478,
+      "decodedWidth": 1536,
+      "decodedHeight": 1024,
+      "requiredWidth": 1438,
+      "effectiveDpr": 2.14,
+      "src": "/images/home/hero-tahini-desktop-v6.webp"
+    },
+    {
+      "viewportWidth": 1440,
+      "dpr": 2,
+      "selector": "#story img",
+      "width": 719,
+      "height": 478,
+      "decodedWidth": 1536,
+      "decodedHeight": 1024,
+      "requiredWidth": 1438,
+      "effectiveDpr": 2.14,
+      "src": "/images/home/story-desktop-v6.webp"
+    }
+  ]
+}

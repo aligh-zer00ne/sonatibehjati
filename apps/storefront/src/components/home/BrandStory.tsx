@@ -1,80 +1,81 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowLeft, MapPin, Wheat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SesameMotif } from '@/components/decoration/sesame-motif';
 
 export default function BrandStory() {
   return (
     <section
       id="story"
       aria-labelledby="story-title"
-      className="group/story relative my-8 grid grid-cols-2 scroll-mt-8 overflow-hidden rounded-[24px] border border-clay/30 bg-[linear-gradient(125deg,#edbf83,#f5d8a7_45%,#dba16a)] md:my-12 md:rounded-[28px] xl:my-14"
+      className="group/story relative isolate my-8 h-[430px] scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:h-[460px] min-[480px]:h-[500px] sm:h-[400px] md:my-12 md:h-[430px] lg:h-[480px] lg:rounded-[28px] xl:my-14"
     >
       <span id="ardakan" aria-hidden="true" className="absolute top-0 scroll-mt-8" />
       <div
         data-slot="story-image"
-        className="relative order-2 my-3 mr-0 ml-3 min-h-[260px] overflow-hidden rounded-[12px_45px_12px_12px] border border-clay/20 min-[480px]:my-5 min-[480px]:ml-5 sm:min-h-[360px] md:m-6 md:min-h-[420px] md:rounded-[20px_90px_20px_20px] lg:m-8 lg:rounded-[24px_130px_24px_24px]"
+        className="absolute inset-0 min-[480px]:right-auto min-[480px]:w-[334px] min-[480px]:[mask-image:linear-gradient(to_right,#000_87%,transparent)] sm:w-[78%] sm:[mask-image:linear-gradient(to_right,#000_78%,transparent)] lg:w-[60%]"
       >
-        <Image
-          src="/images/home/ardakan-courtyard.webp"
-          alt="حیاط خشتی، طاق‌ها و بادگیرهای اردکان در نور گرم کویر"
-          fill
-          quality={85}
-          sizes="(max-width: 1199px) 50vw, 600px"
-          className="object-cover object-[60%_center] transition-transform duration-1000 ease-out motion-safe:group-hover/story:scale-[1.035] motion-reduce:transition-none"
-        />
-        <div className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-[#482818]/85 to-transparent px-5 pt-16 pb-5 text-white sm:block">
-          <p className="flex items-center gap-2 text-sm font-semibold">
-            <MapPin size={17} aria-hidden="true" /> اردکان، شهر بادگیرها
-          </p>
-          <p className="mt-1 text-xs text-white/85">روایتی از خاک، آفتاب و کنجد</p>
-        </div>
+        <picture>
+          <source
+            media="(min-width: 640px)"
+            srcSet="/images/home/story-desktop-v6-768.webp 768w, /images/home/story-desktop-v6.webp 1536w"
+            sizes="(min-width: 1024px) 720px, (min-width: 875px) calc(78vw - 37.44px), (min-width: 768px) 645px, 600px"
+          />
+          <img
+            src="/images/home/story-mobile-v6.webp"
+            srcSet="/images/home/story-mobile-v6-512.webp 512w, /images/home/story-mobile-v6-768.webp 768w, /images/home/story-mobile-v6.webp 1024w"
+            sizes="(min-width: 480px) 334px, calc(100vw - 32px)"
+            alt="بادگیر و بام‌های خشتی اردکان در نور عصر، با سفره‌ای از ارده و کنجد در پیش‌زمینه"
+            width={1024}
+            height={1536}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover sm:object-left lg:object-center"
+          />
+        </picture>
       </div>
       <div
+        data-slot="story-shade"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(270deg,rgba(38,20,13,0.65),transparent_80%),linear-gradient(180deg,rgba(38,20,13,0.2),transparent_65%,rgba(38,20,13,0.2))] sm:bg-[linear-gradient(270deg,#3c2319_0%,rgba(60,35,25,0.98)_28%,rgba(60,35,25,0.55)_48%,transparent_69%)]"
+      />
+      <div
         data-slot="story-copy"
-        className="relative order-1 min-w-0 self-center py-5 pr-3 pl-2 min-[375px]:pr-4 min-[480px]:py-7 min-[480px]:pr-6 min-[480px]:pl-3 md:py-10 md:pr-8 lg:pr-12 lg:pl-5"
+        className="absolute top-6 right-5 z-[1] w-[55%] text-right min-[375px]:top-7 min-[480px]:right-7 min-[480px]:w-[61%] sm:top-10 sm:right-[5%] sm:w-[43%] lg:top-12 lg:right-[6%]"
       >
-        <SesameMotif
-          kind="seeds"
-          aria-hidden="true"
-          className="pointer-events-none absolute top-4 left-3 size-12 rotate-12 text-clay/20 md:left-5 md:size-20"
-        />
-        <p className="mb-2 flex items-center gap-1 text-[10px] font-semibold text-primary min-[480px]:mb-3 min-[480px]:gap-2 min-[480px]:text-xs">
-          <Wheat className="size-3 shrink-0 min-[480px]:size-4" aria-hidden="true" /> داستان سنتی
-          بهجتی
+        <p className="mb-2 flex items-center gap-1.5 text-[10px] leading-5 font-medium text-[#f4d69f] sm:text-[11px] lg:text-xs">
+          <Wheat className="size-3.5 shrink-0" aria-hidden="true" />
+          <span className="sm:hidden">سنتی بهجتی و اردکان</span>
+          <span className="hidden sm:inline">داستان سنتی بهجتی و اردکان</span>
         </p>
         <h2
           id="story-title"
-          className="max-w-[440px] text-[17px] leading-[1.7] font-extrabold text-[#482818] min-[375px]:text-xl min-[480px]:text-[24px] md:text-[27px] lg:text-[35px]"
+          className="text-[23px] leading-[1.65] font-extrabold text-[#fff0d6] min-[375px]:text-[26px] min-[480px]:text-[30px] sm:text-[27px] md:text-[31px] lg:text-[39px]"
         >
-          <span className="hidden sm:inline">سنتی بهجتی؛ </span>از دل اردکان
-          <span className="block text-primary">تا سفرهٔ شما</span>
+          از دل اردکان
+          <span className="block text-[#f4d69f]">تا سفرهٔ شما</span>
         </h2>
-        <p className="mt-2 text-[11px] leading-[21px] text-[#593b25] min-[480px]:mt-4 min-[480px]:text-[13px] min-[480px]:leading-7 sm:leading-8 lg:text-sm">
-          <span className="sm:hidden">
-            از شهر بادگیرها، ارده و فرآورده‌های کنجدی سنتی بهجتی را به سفرهٔ شما می‌آوریم.
-          </span>
-          <span className="hidden sm:inline">
+        <p className="mt-3 text-[12px] leading-6 text-[#f5e6ce] md:text-[13px] md:leading-7 lg:mt-4 lg:max-w-[390px] lg:text-sm lg:leading-8">
+          <span className="md:hidden">قصهٔ کنجد و اصالت؛ از شهر بادگیرها تا سفرهٔ هر روز شما.</span>
+          <span className="hidden md:inline">
             میان کوچه‌های خشتی و بادگیرهای اردکان، کنجد بخشی از قصهٔ طعم‌هاست. سنتی بهجتی این پیوند
-            را با ارده، حلواارده و فرآورده‌های کنجدی به سفرهٔ هر روز شما می‌آورد.
+            را با ارده، حلواارده و فرآورده‌های کنجدی به سفرهٔ شما می‌آورد.
           </span>
-        </p>
-        <p className="mt-3 hidden text-[13px] leading-8 text-[#593b25] sm:block lg:text-sm">
-          از اردهٔ ساده تا طعم‌های شکلاتی و فندقی، هر انتخاب فرصتی است برای آشنایی با دنیای کنجد و
-          پیدا کردن طعمی که دوست دارید.
         </p>
         <Button
           asChild
-          className="mt-4 max-w-full gap-1 px-2 text-[10px] min-[375px]:text-[11px] min-[480px]:mt-6 min-[480px]:gap-2 min-[480px]:px-4 min-[480px]:text-xs lg:text-sm"
+          variant="outline"
+          className="mt-4 max-w-full gap-2 border-[#e4c18d]/60 bg-[#3c2319]/20 px-3 text-[11px] text-[#fff0d6] hover:border-[#f4d69f] hover:bg-[#f4d69f]/15 hover:text-[#fff0d6] lg:mt-6 lg:px-5 lg:text-sm"
         >
           <Link href="/shop">
-            <span className="sm:hidden">محصولات ما</span>
-            <span className="hidden sm:inline">آشنایی با محصولات</span>{' '}
-            <ArrowLeft className="size-3 shrink-0 min-[480px]:size-4" aria-hidden="true" />
+            <span className="md:hidden">محصولات ما</span>
+            <span className="hidden md:inline">آشنایی با محصولات</span>
+            <ArrowLeft className="size-3.5 shrink-0 lg:size-4" aria-hidden="true" />
           </Link>
         </Button>
       </div>
+      <p className="absolute bottom-5 left-5 z-[1] flex items-center gap-1.5 text-[10px] font-medium text-[#fff0d6] sm:text-xs lg:bottom-7 lg:left-7">
+        <MapPin className="size-3.5" aria-hidden="true" /> اردکان، شهر بادگیرها
+      </p>
     </section>
   );
 }

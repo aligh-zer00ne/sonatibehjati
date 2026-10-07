@@ -1,0 +1,193 @@
+{
+  "tool": "Built-in image_gen (imagegen skill)",
+  "assets": [
+    {
+      "key": "tahini-desktop",
+      "refs": [
+        "/home/zer00ne/Downloads/تصاویر محصولات/ارده/DSC00406.JPG",
+        "/home/zer00ne/Downloads/تصاویر محصولات/عکس گروهی ارده ها/DSC00394.JPG"
+      ],
+      "prompt": "Use case: premium food editorial compositing for real Persian sesame brand سنتی بهجتی. Reference camera photos are exact product/food identity sources. Preserve package geometry, true original cap colors, brand label art and Persian lettering faithfully. Rich natural photographic texture, sharp labels and delicious food in focus, warm window light, beautiful coherent contact shadows. Traditional Iranian walnut tabletop, restrained crimson termeh cloth, copper and blue pottery; elegantly styled, realistic, not excessive clutter. Render at highest available native resolution, crisp professional advertising detail. No titles, no slogans, no UI cards, no borders, no watermark, no fake packaging. No beige stone shelf or plaster arch.\nHero subject: the exact blue-rim tahini bowl with a generous delicious glossy swirl; a silver spoon from upper left pours a fine ribbon into it, with one real yellow-cap tahini jar and one smaller blue package behind. The food bowl must be large and appetizing. Soft burgundy and walnut backdrop.\nComposition: LANDSCAPE 3:2, ideally 3072x2048 pixels, full frame devoted to products, NOT a wide panorama with half the frame empty. Package group and bowl occupy x=12%-82%, y=15%-88%, centered-left, fully intact with breathing room. Rightmost 15% fades naturally into plain dark burgundy/walnut shadow so the website can blend the photograph into its background. All main food and packages in the LEFT/central part, not behind this right edge. Products large, with fine detailed labels. Do not reserve half the image for text.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-b62a8cef-0ff9-442e-ae5a-1550c570bfd2.png",
+      "output": "apps/storefront/public/images/home/hero-tahini-desktop-v6.webp",
+      "nativeWidth": 1536,
+      "nativeHeight": 1024,
+      "bytes": 1653928,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/hero-tahini-desktop-v6-768.webp",
+          "width": 768,
+          "height": 512,
+          "bytes": 506024
+        }
+      ]
+    },
+    {
+      "key": "tahini-mobile",
+      "refs": [
+        "/home/zer00ne/Downloads/تصاویر محصولات/ارده/DSC00406.JPG",
+        "/home/zer00ne/Downloads/تصاویر محصولات/عکس گروهی ارده ها/DSC00394.JPG"
+      ],
+      "prompt": "Use case: premium food editorial compositing for real Persian sesame brand سنتی بهجتی. Reference camera photos are exact product/food identity sources. Preserve package geometry, true original cap colors, brand label art and Persian lettering faithfully. Rich natural photographic texture, sharp labels and delicious food in focus, warm window light, beautiful coherent contact shadows. Traditional Iranian walnut tabletop, restrained crimson termeh cloth, copper and blue pottery; elegantly styled, realistic, not excessive clutter. Render at highest available native resolution, crisp professional advertising detail. No titles, no slogans, no UI cards, no borders, no watermark, no fake packaging. No beige stone shelf or plaster arch.\nHero subject: the exact blue-rim tahini bowl with a generous delicious glossy swirl; a silver spoon from upper left pours a fine ribbon into it, with one real yellow-cap tahini jar and one smaller blue package behind. The food bowl must be large and appetizing. Soft burgundy and walnut backdrop.\nComposition: PORTRAIT exactly 2:3 aspect ratio, ideally 2048x3072 pixels. This is a full-bleed mobile campaign poster WITHOUT any baked-in text. Crucial: the large complete product group and bowl occupy the LOWER HALF, x=8%-90%, y=47%-87%, with package caps starting BELOW y=43%. Main products span most of the width, NOT a tiny narrow group at the left. All bottles/jars intact, lids and bases inside frame. Leave the UPPER HALF especially upper-right (x=35%-94%, y=5%-41%) as continuous softly lit DARK BURGUNDY/WALNUT negative space where the website places a short white title and small button. No large prop, hand or spoon in upper-right text area. Spoon can enter from far left mid-frame, just above the bowl. Leave bottom 10% as attractive tablecloth/table breathing space for slider dots. The product group must be visually dominant, large, not miniatures, with sharp labels.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-a6f5a340-c755-45a6-8673-52a8bb634fe7.png",
+      "output": "apps/storefront/public/images/home/hero-tahini-mobile-v6.webp",
+      "nativeWidth": 1024,
+      "nativeHeight": 1536,
+      "bytes": 1597030,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/hero-tahini-mobile-v6-512.webp",
+          "width": 512,
+          "height": 768,
+          "bytes": 485584
+        },
+        {
+          "output": "apps/storefront/public/images/home/hero-tahini-mobile-v6-768.webp",
+          "width": 768,
+          "height": 1152,
+          "bytes": 998938
+        }
+      ]
+    },
+    {
+      "key": "oil-desktop",
+      "refs": ["/home/zer00ne/Downloads/تصاویر محصولات/عکس گروهی روغن ها/DSC00370.JPG"],
+      "prompt": "Use case: premium food editorial compositing for real Persian sesame brand سنتی بهجتی. Reference camera photos are exact product/food identity sources. Preserve package geometry, true original cap colors, brand label art and Persian lettering faithfully. Rich natural photographic texture, sharp labels and delicious food in focus, warm window light, beautiful coherent contact shadows. Traditional Iranian walnut tabletop, restrained crimson termeh cloth, copper and blue pottery; elegantly styled, realistic, not excessive clutter. Render at highest available native resolution, crisp professional advertising detail. No titles, no slogans, no UI cards, no borders, no watermark, no fake packaging. No beige stone shelf or plaster arch.\nHero subject: all four actual golden sesame oil bottles from reference, different sizes and real caps/handles preserved, grouped coherently with a shallow brass dish of golden oil and a little sesame. Make the bottles large, crisp, luminous; softly blurred copper kettle in the distance. Restrained burgundy and dark walnut backdrop.\nComposition: LANDSCAPE 3:2, ideally 3072x2048 pixels, full frame devoted to products, NOT a wide panorama with half the frame empty. Package group and bowl occupy x=12%-82%, y=15%-88%, centered-left, fully intact with breathing room. Rightmost 15% fades naturally into plain dark burgundy/walnut shadow so the website can blend the photograph into its background. All main food and packages in the LEFT/central part, not behind this right edge. Products large, with fine detailed labels. Do not reserve half the image for text.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-33b7cfd6-b057-4bfb-93db-f1a31faa2d32.png",
+      "output": "apps/storefront/public/images/home/hero-oil-desktop-v6.webp",
+      "nativeWidth": 1536,
+      "nativeHeight": 1024,
+      "bytes": 1843256,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/hero-oil-desktop-v6-768.webp",
+          "width": 768,
+          "height": 512,
+          "bytes": 553554
+        }
+      ]
+    },
+    {
+      "key": "oil-mobile",
+      "refs": ["/home/zer00ne/Downloads/تصاویر محصولات/عکس گروهی روغن ها/DSC00370.JPG"],
+      "prompt": "Use case: premium food editorial compositing for real Persian sesame brand سنتی بهجتی. Reference camera photos are exact product/food identity sources. Preserve package geometry, true original cap colors, brand label art and Persian lettering faithfully. Rich natural photographic texture, sharp labels and delicious food in focus, warm window light, beautiful coherent contact shadows. Traditional Iranian walnut tabletop, restrained crimson termeh cloth, copper and blue pottery; elegantly styled, realistic, not excessive clutter. Render at highest available native resolution, crisp professional advertising detail. No titles, no slogans, no UI cards, no borders, no watermark, no fake packaging. No beige stone shelf or plaster arch.\nHero subject: all four actual golden sesame oil bottles from reference, different sizes and real caps/handles preserved, grouped coherently with a shallow brass dish of golden oil and a little sesame. Make the bottles large, crisp, luminous; softly blurred copper kettle in the distance. Restrained burgundy and dark walnut backdrop.\nComposition: PORTRAIT exactly 2:3 aspect ratio, ideally 2048x3072 pixels. This is a full-bleed mobile campaign poster WITHOUT any baked-in text. Crucial: the large complete product group and bowl occupy the LOWER HALF, x=8%-90%, y=47%-87%, with package caps starting BELOW y=43%. Main products span most of the width, NOT a tiny narrow group at the left. All bottles/jars intact, lids and bases inside frame. Leave the UPPER HALF especially upper-right (x=35%-94%, y=5%-41%) as continuous softly lit DARK BURGUNDY/WALNUT negative space where the website places a short white title and small button. No large prop, hand or spoon in upper-right text area. Spoon can enter from far left mid-frame, just above the bowl. Leave bottom 10% as attractive tablecloth/table breathing space for slider dots. The product group must be visually dominant, large, not miniatures, with sharp labels.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-cad2ef36-b8b9-40b8-9927-039e43d04ec9.png",
+      "output": "apps/storefront/public/images/home/hero-oil-mobile-v6.webp",
+      "nativeWidth": 1024,
+      "nativeHeight": 1536,
+      "bytes": 1751630,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/hero-oil-mobile-v6-512.webp",
+          "width": 512,
+          "height": 768,
+          "bytes": 532532
+        },
+        {
+          "output": "apps/storefront/public/images/home/hero-oil-mobile-v6-768.webp",
+          "width": 768,
+          "height": 1152,
+          "bytes": 1081106
+        }
+      ]
+    },
+    {
+      "key": "flavored-desktop",
+      "refs": ["/home/zer00ne/Downloads/تصاویر محصولات/عکس گروهی ارده های طعم دار/DSC00393.JPG"],
+      "prompt": "Use case: premium food editorial compositing for real Persian sesame brand سنتی بهجتی. Reference camera photos are exact product/food identity sources. Preserve package geometry, true original cap colors, brand label art and Persian lettering faithfully. Rich natural photographic texture, sharp labels and delicious food in focus, warm window light, beautiful coherent contact shadows. Traditional Iranian walnut tabletop, restrained crimson termeh cloth, copper and blue pottery; elegantly styled, realistic, not excessive clutter. Render at highest available native resolution, crisp professional advertising detail. No titles, no slogans, no UI cards, no borders, no watermark, no fake packaging. No beige stone shelf or plaster arch.\nHero subject: the three real chocolate, cream and hazelnut tahini jars from reference. Chocolate jar is open with its original brown lid beside it and a glossy swirl of chocolate tahini in a small copper bowl in front; cream and hazelnut keep original lids. A few hazelnuts and sesame. Large clear product labels, elegant dark walnut and burgundy textile backdrop.\nComposition: LANDSCAPE 3:2, ideally 3072x2048 pixels, full frame devoted to products, NOT a wide panorama with half the frame empty. Package group and bowl occupy x=12%-82%, y=15%-88%, centered-left, fully intact with breathing room. Rightmost 15% fades naturally into plain dark burgundy/walnut shadow so the website can blend the photograph into its background. All main food and packages in the LEFT/central part, not behind this right edge. Products large, with fine detailed labels. Do not reserve half the image for text.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-b70d8861-e0f2-4b06-b3d3-a8cdf242bc29.png",
+      "output": "apps/storefront/public/images/home/hero-flavored-desktop-v6.webp",
+      "nativeWidth": 1536,
+      "nativeHeight": 1024,
+      "bytes": 1881758,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/hero-flavored-desktop-v6-768.webp",
+          "width": 768,
+          "height": 512,
+          "bytes": 552594
+        }
+      ]
+    },
+    {
+      "key": "flavored-mobile",
+      "refs": ["/home/zer00ne/Downloads/تصاویر محصولات/عکس گروهی ارده های طعم دار/DSC00393.JPG"],
+      "prompt": "Use case: premium food editorial compositing for real Persian sesame brand سنتی بهجتی. Reference camera photos are exact product/food identity sources. Preserve package geometry, true original cap colors, brand label art and Persian lettering faithfully. Rich natural photographic texture, sharp labels and delicious food in focus, warm window light, beautiful coherent contact shadows. Traditional Iranian walnut tabletop, restrained crimson termeh cloth, copper and blue pottery; elegantly styled, realistic, not excessive clutter. Render at highest available native resolution, crisp professional advertising detail. No titles, no slogans, no UI cards, no borders, no watermark, no fake packaging. No beige stone shelf or plaster arch.\nHero subject: the three real chocolate, cream and hazelnut tahini jars from reference. Chocolate jar is open with its original brown lid beside it and a glossy swirl of chocolate tahini in a small copper bowl in front; cream and hazelnut keep original lids. A few hazelnuts and sesame. Large clear product labels, elegant dark walnut and burgundy textile backdrop.\nComposition: PORTRAIT exactly 2:3 aspect ratio, ideally 2048x3072 pixels. This is a full-bleed mobile campaign poster WITHOUT any baked-in text. Crucial: the large complete product group and bowl occupy the LOWER HALF, x=8%-90%, y=47%-87%, with package caps starting BELOW y=43%. Main products span most of the width, NOT a tiny narrow group at the left. All bottles/jars intact, lids and bases inside frame. Leave the UPPER HALF especially upper-right (x=35%-94%, y=5%-41%) as continuous softly lit DARK BURGUNDY/WALNUT negative space where the website places a short white title and small button. No large prop, hand or spoon in upper-right text area. Spoon can enter from far left mid-frame, just above the bowl. Leave bottom 10% as attractive tablecloth/table breathing space for slider dots. The product group must be visually dominant, large, not miniatures, with sharp labels.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-b752599e-0cc7-47ed-accc-f7dbcce4488e.png",
+      "output": "apps/storefront/public/images/home/hero-flavored-mobile-v6.webp",
+      "nativeWidth": 1024,
+      "nativeHeight": 1536,
+      "bytes": 1627788,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/hero-flavored-mobile-v6-512.webp",
+          "width": 512,
+          "height": 768,
+          "bytes": 496916
+        },
+        {
+          "output": "apps/storefront/public/images/home/hero-flavored-mobile-v6-768.webp",
+          "width": 768,
+          "height": 1152,
+          "bytes": 1012636
+        }
+      ]
+    },
+    {
+      "key": "story-desktop",
+      "refs": [
+        "/home/zer00ne/Desktop/sonatibehjati/sonatibehjati/apps/storefront/public/images/home/ardakan-courtyard.webp",
+        "/home/zer00ne/Downloads/تصاویر محصولات/ارده/DSC00406.JPG"
+      ],
+      "prompt": "Use case: editorial architectural / food brand story photograph. Reference 1 is the architectural identity and mood of Ardakan, Iran: authentic earthen windcatcher, ochre rooftops and desert sky. Reference 2 supplies real sesame tahini bowl and flowing paste; it is a food styling reference, no packaging needed. Create a refined evocative traditional Ardakan rooftop at late afternoon, a tall authentic adobe windcatcher on the LEFT, sunlit ochre roofline and distant palms; in lower-left foreground a modest dark walnut breakfast tray with the exact blue-rim tahini bowl, sesame and a small folded indigo/crimson termeh cloth. Architecture is the main subject, food a quiet bridge to the brand. Warm golden sunlight, crisp tactile adobe texture, detailed graceful architecture, natural subtle shadows, luxury travel/editorial food photography. No invented landmark signage, no labels, no text, no UI, no watermark. High native resolution, not blurry or painterly. Deep warm brown shade towards the right edge for website typography.\nLANDSCAPE 3:2, ideally 3072x2048. Compose windcatcher in LEFT 40%, roofline visible with breathing room, breakfast tray below in LEFT half; entire top and base of tower visible within y=10%-75%. No empty foreground dominating. Rightmost 15% naturally dark earthen shaded wall to blend into the site's burgundy background. No spoon or hand.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-4a35b7c0-e1b2-4ae7-8a71-131ed16135cb.png",
+      "output": "apps/storefront/public/images/home/story-desktop-v6.webp",
+      "nativeWidth": 1536,
+      "nativeHeight": 1024,
+      "bytes": 1795596,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/story-desktop-v6-768.webp",
+          "width": 768,
+          "height": 512,
+          "bytes": 497348
+        }
+      ]
+    },
+    {
+      "key": "story-mobile",
+      "refs": [
+        "/home/zer00ne/Desktop/sonatibehjati/sonatibehjati/apps/storefront/public/images/home/ardakan-courtyard.webp",
+        "/home/zer00ne/Downloads/تصاویر محصولات/ارده/DSC00406.JPG"
+      ],
+      "prompt": "Use case: editorial architectural / food brand story photograph. Reference 1 is the architectural identity and mood of Ardakan, Iran: authentic earthen windcatcher, ochre rooftops and desert sky. Reference 2 supplies real sesame tahini bowl and flowing paste; it is a food styling reference, no packaging needed. Create a refined evocative traditional Ardakan rooftop at late afternoon, a tall authentic adobe windcatcher on the LEFT, sunlit ochre roofline and distant palms; in lower-left foreground a modest dark walnut breakfast tray with the exact blue-rim tahini bowl, sesame and a small folded indigo/crimson termeh cloth. Architecture is the main subject, food a quiet bridge to the brand. Warm golden sunlight, crisp tactile adobe texture, detailed graceful architecture, natural subtle shadows, luxury travel/editorial food photography. No invented landmark signage, no labels, no text, no UI, no watermark. High native resolution, not blurry or painterly. Deep warm brown shade towards the right edge for website typography.\nPORTRAIT 2:3, ideally 2048x3072. Compose a magnificent full windcatcher in the LEFT 38% from y=26%-73%, with roofline across lower middle and a modest breakfast tray at bottom-left y=73%-89%. Entire windcatcher TOP and roof/base clearly visible and not cropped. UPPER RIGHT x=42%-95%, y=5%-51% is a quiet deep warm-brown shaded earthen wall / soft shadow for website text; no tower or plant behind the future text. Architectural perspective believable, no pasted collage; upper-left can show a small patch of dusky blue sky. Do not make a narrow crop of a landscape: fully recompose for a mobile portrait, no giant empty courtyard.",
+      "generated": "/home/zer00ne/.codex/generated_images/01a0f872-e297-7580-ac53-20a2aeb43770/exec-6966baa4-48f0-4612-96cf-e5f055988950.png",
+      "output": "apps/storefront/public/images/home/story-mobile-v6.webp",
+      "nativeWidth": 1024,
+      "nativeHeight": 1536,
+      "bytes": 1829824,
+      "encoding": "Lossless WebP; no resize; decoded RGB pixels match generated PNG exactly",
+      "responsive": [
+        {
+          "output": "apps/storefront/public/images/home/story-mobile-v6-512.webp",
+          "width": 512,
+          "height": 768,
+          "bytes": 509162
+        },
+        {
+          "output": "apps/storefront/public/images/home/story-mobile-v6-768.webp",
+          "width": 768,
+          "height": 1152,
+          "bytes": 1092830
+        }
+      ]
+    }
+  ]
+}
