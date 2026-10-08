@@ -5,9 +5,11 @@ import { cn } from '@/lib/utils';
 export default function ProductGrid({
   products,
   compact = false,
+  carouselOnMobile = false,
 }: {
   products: HomepageCatalogQuery['products'];
   compact?: boolean;
+  carouselOnMobile?: boolean;
 }) {
   if (!products.length)
     return (
@@ -20,12 +22,14 @@ export default function ProductGrid({
     <div
       data-slot="product-grid"
       className={cn(
-        'grid grid-cols-2 gap-x-3 gap-y-4 min-[480px]:gap-5',
+        carouselOnMobile
+          ? '-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden min-[480px]:mx-0 min-[480px]:px-0 md:grid md:overflow-visible md:pb-0'
+          : 'grid grid-cols-2 gap-x-3 gap-y-4 min-[480px]:gap-5',
         compact ? 'md:grid-cols-2' : 'md:grid-cols-3 lg:grid-cols-4 lg:gap-6',
       )}
     >
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} compactOnMobile={carouselOnMobile} />
       ))}
     </div>
   );

@@ -39,10 +39,13 @@ export default async function Home() {
       <main id="main" className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0">
         <HeroSection />
         <Reveal>
+          <BenefitsSection />
+        </Reveal>
+        <Reveal>
           <CategorySection categories={categories} />
         </Reveal>
         <Reveal>
-          <ProductSection title="پرفروش‌های سنتی بهجتی" id="products" products={featured} />
+          <ProductSection title="پرفروش‌های سنتی بهجتی" id="products" products={featured} carouselOnMobile />
         </Reveal>
         <Reveal>
           <BrandStory />
@@ -58,9 +61,6 @@ export default async function Home() {
         </Reveal>
         <Reveal>
           <ShoppingBanner />
-        </Reveal>
-        <Reveal>
-          <BenefitsSection />
         </Reveal>
         <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
           محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
