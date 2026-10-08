@@ -11,7 +11,7 @@ export default function EnamadBadge() {
   return (
     <div
       data-enamad-badge
-      className="flex h-[70px] w-[76px] flex-col items-center justify-center rounded-lg border border-white/20 bg-white/95 p-1 text-center"
+      className="flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center"
       role="region"
       aria-labelledby="enamad-title"
     >

@@ -18,35 +18,82 @@ const socialMarks = [
 
 export default function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden border-t border-[#d9ad69]/50 bg-[linear-gradient(115deg,#680a12,#8f111b_55%,#5c0b15)] pb-[calc(82px+env(safe-area-inset-bottom))] text-[#fff4df] md:pb-5">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-between gap-y-3 px-4 py-3 min-[480px]:px-6 md:gap-5 md:py-4 xl:px-0">
-        <Link href="/" aria-label={BRAND_NAME} className="shrink-0 rounded-lg bg-[#fff7ea] px-1.5 py-1">
-          <Image src="/images/logo-brand.png" alt={BRAND_NAME} width={58} height={76} className="h-[50px] w-[40px] object-contain mix-blend-multiply md:h-[70px] md:w-[54px]" />
-        </Link>
-        <div className="flex flex-col items-center gap-2 md:items-start">
-          <nav aria-label="لینک‌های فوتر" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-medium md:justify-start md:gap-x-5 md:text-xs">
-            {links.map(([href, label]) => (
-              <Link key={href} href={href} className="min-h-9 content-center transition-colors hover:text-[#f6d48e]">{label}</Link>
-            ))}
-          </nav>
-          <p className="hidden text-center text-[10px] text-[#f6e4cf]/75 md:block md:text-right">ارده، حلواارده و طعم اصیل اردکان با سنتی بهجتی</p>
+    <footer className="relative isolate overflow-hidden border-t border-[#d1b184]/60 bg-[#f0e4d1]/85 pb-[calc(82px+env(safe-area-inset-bottom))] text-earth md:pb-5">
+      <div className="mx-auto grid w-full max-w-[1200px] grid-cols-[1fr_auto] items-center gap-x-4 gap-y-4 px-4 py-5 min-[480px]:px-6 md:grid-cols-[1fr_auto] md:gap-x-8 md:gap-y-6 md:py-7 lg:grid-cols-[1.25fr_1fr_auto_auto] lg:gap-6 lg:py-8 xl:px-0">
+        <div className="col-span-2 flex items-center justify-center gap-3 text-right md:col-span-1 md:justify-start">
+          <Link href="/" aria-label={BRAND_NAME} className="shrink-0 rounded-lg">
+            <Image
+              src="/images/logo-brand.png"
+              alt={BRAND_NAME}
+              width={58}
+              height={76}
+              className="h-[66px] w-[50px] object-contain mix-blend-multiply md:h-[82px] md:w-[63px]"
+            />
+          </Link>
+          <div>
+            <h2 className="text-[13px] font-bold min-[375px]:text-[15px] md:text-base">
+              {BRAND_NAME}
+            </h2>
+            <p className="mt-1 text-[10px] leading-5 text-earth/75 md:text-[11px]">
+              ارده، حلواارده و طعم اصیل اردکان
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-1 md:gap-2" aria-label="شبکه‌های اجتماعی سنتی بهجتی">
+        <nav
+          aria-label="لینک‌های فوتر"
+          className="col-span-2 grid grid-cols-3 rounded-xl border border-earth/10 bg-white/30 p-1 text-center text-xs font-medium md:col-span-1 lg:border-0 lg:bg-transparent lg:p-0"
+        >
+          {links.map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex min-h-10 items-center justify-center rounded-lg px-2 transition-colors duration-300 hover:bg-white/45 hover:text-primary motion-reduce:transition-none"
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <div
+          className="grid grid-cols-2 justify-self-center gap-2 md:flex md:justify-self-start"
+          aria-label="شبکه‌های اجتماعی سنتی بهجتی"
+        >
           {socialMarks.map(({ name, image }) => (
-            <span key={name} title={`${name}؛ نشانی رسمی به‌زودی افزوده می‌شود`} aria-label={name} className="grid size-8 place-items-center rounded-full border border-white/25 md:size-9">
-              <Image src={image} alt="" width={18} height={18} className="size-[18px] brightness-0 invert" />
+            <span
+              key={name}
+              title={`${name}؛ نشانی رسمی به‌زودی افزوده می‌شود`}
+              aria-label={name}
+              className="grid size-9 place-items-center rounded-full border border-earth/15 bg-white/30"
+            >
+              <Image
+                src={image}
+                alt=""
+                width={18}
+                height={18}
+                className="size-[18px] opacity-65 mix-blend-multiply"
+              />
             </span>
           ))}
         </div>
-        <div className="flex shrink-0 items-center gap-1 md:gap-2">
-          <div className="flex h-[70px] w-[100px] flex-col items-center justify-center rounded-lg border border-white/20 bg-white/95 p-1 text-center text-[8px] leading-3 text-[#263f61] md:w-[110px]">
-            <Image src="/images/sep-logo.png" alt="لوگوی پرداخت الکترونیک سامان کیش" width={78} height={49} className="h-9 w-auto object-contain" />
+        <div
+          className="flex items-center justify-self-end gap-2"
+          aria-label="نشان‌های اعتماد و پرداخت"
+        >
+          <div className="flex h-[80px] w-[100px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center text-[8px] leading-3 text-[#263f61] md:w-[110px]">
+            <Image
+              src="/images/sep-logo.png"
+              alt="لوگوی پرداخت الکترونیک سامان کیش"
+              width={78}
+              height={49}
+              className="h-10 w-auto object-contain"
+            />
             <span>پرداخت الکترونیک سامان کیش</span>
           </div>
           <EnamadBadge />
         </div>
       </div>
-      <p className="mx-auto w-full max-w-[1200px] border-t border-white/15 px-4 py-2 text-center text-[10px] text-[#f6e4cf]/65 min-[480px]:px-6 md:text-right xl:px-0">تمامی حقوق مادی و معنوی این وب‌سایت متعلق به {BRAND_NAME} است.</p>
+      <p className="mx-auto w-full max-w-[1200px] border-t border-earth/10 px-6 py-3 text-center text-[10px] leading-5 text-earth/70 md:px-6 lg:text-right xl:px-0">
+        تمامی حقوق مادی و معنوی این وب‌سایت متعلق به {BRAND_NAME} است.
+      </p>
     </footer>
   );
 }
