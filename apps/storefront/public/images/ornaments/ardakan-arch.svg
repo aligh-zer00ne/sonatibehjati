@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 420" fill="none">
+  <g stroke="#a97b40" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M35 391V160C35 93 73 45 120 22C167 45 205 93 205 160V391" stroke-width="1.8"/>
+    <path d="M52 391V165C52 109 82 69 120 46C158 69 188 109 188 165V391" stroke-width=".9"/>
+    <path d="M70 391V180C70 131 91 94 120 72C149 94 170 131 170 180V391" stroke-width="1.4"/>
+    <path d="M88 391V199C88 162 101 132 120 112C139 132 152 162 152 199V391" fill="#cfad74" fill-opacity=".07" stroke-width="1"/>
+    <path d="M19 391H221M30 405H210" stroke-width="1.2"/>
+    <path d="M35 187H70M170 187H205M35 277H70M170 277H205M52 230H70M170 230H188M52 322H70M170 322H188" stroke-width=".8"/>
+    <path d="M43 171L61 157L70 171M170 171L179 157L197 171M60 391V350H70M170 350H180V391" stroke-width="1"/>
+    <path d="M101 248C111 237 129 237 139 248C130 258 110 258 101 248ZM102 293C112 282 128 282 138 293C129 303 111 303 102 293ZM103 338C113 327 127 327 137 338C128 348 112 348 103 338Z" fill="#c99f62" fill-opacity=".13" stroke-width=".9"/>
+    <path d="M120 115V80M111 95H129" stroke-width=".8"/>
+    <path d="M22 113C45 105 53 88 50 68C70 77 78 96 67 113M218 113C195 105 187 88 190 68C170 77 162 96 173 113" fill="#cfad74" fill-opacity=".1" stroke-width="1"/>
+    <path d="M26 107L62 111M214 107L178 111" stroke-width=".7"/>
+    <circle cx="120" cy="205" r="13" stroke-width=".8"/>
+    <path d="M120 192V218M107 205H133M111 196L129 214M129 196L111 214" stroke-width=".6"/>
+  </g>
+</svg>
