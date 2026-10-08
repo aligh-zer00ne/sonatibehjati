@@ -90,8 +90,8 @@ export default function ShoppingBanner() {
         </div>
         <div className="relative mx-auto mt-4 h-[190px] w-[240px] min-[480px]:h-[220px] min-[480px]:w-[270px] md:-ml-6 md:h-[245px] md:w-[calc(100%+24px)] lg:h-[270px]">
           <Image
-            src="/images/home/shopping-mascot-v4.webp"
-            alt="شخصیت کارتونی خندان با لباس قرمز و جعبهٔ محصولات"
+            src="/images/home/shopping-mascot-branded.png"
+            alt="شخصیت کارتونی خندان با جعبه‌ای که لوگوی سنتی بهجتی روی آن چاپ شده است"
             fill
             quality={85}
             sizes="(max-width: 767px) 270px, 320px"
