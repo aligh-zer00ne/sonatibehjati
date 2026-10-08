@@ -1,4 +1,5 @@
 'use client';
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { House, Store, LayoutGrid, ShoppingCart, UserRound } from 'lucide-react';
@@ -11,10 +12,34 @@ const links = [
   { href: '/shop#categories', label: 'دسته‌بندی', icon: LayoutGrid },
   { href: '/cart', label: 'سبد خرید', icon: ShoppingCart },
 ];
+function subscribeToHash(onChange: () => void) {
+  const pushState = window.history.pushState;
+  const replaceState = window.history.replaceState;
+  const notifyAfterPush: History['pushState'] = function (this: History, ...args) {
+    pushState.apply(this, args);
+    queueMicrotask(onChange);
+  };
+  const notifyAfterReplace: History['replaceState'] = function (this: History, ...args) {
+    replaceState.apply(this, args);
+    queueMicrotask(onChange);
+  };
+  window.history.pushState = notifyAfterPush;
+  window.history.replaceState = notifyAfterReplace;
+  window.addEventListener('hashchange', onChange);
+  window.addEventListener('popstate', onChange);
+  return () => {
+    if (window.history.pushState === notifyAfterPush) window.history.pushState = pushState;
+    if (window.history.replaceState === notifyAfterReplace)
+      window.history.replaceState = replaceState;
+    window.removeEventListener('hashchange', onChange);
+    window.removeEventListener('popstate', onChange);
+  };
+}
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const hash = useSyncExternalStore(subscribeToHash, () => window.location.hash, () => '');
   const count = useCart((state) => Object.values(state.items).reduce((a, b) => a + b, 0));
-  const active = pathname.startsWith('/category/')
+  const active = pathname.startsWith('/category/') || (pathname === '/shop' && hash === '#categories')
     ? '/shop#categories'
     : pathname === '/' || pathname === '/cart'
       ? pathname
@@ -25,7 +50,7 @@ export default function MobileBottomNav() {
         : '/shop';
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-[#fcf7ed] px-[5px] pt-[7px] pb-[calc(7px+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(70,44,25,0.04)] md:hidden [&_a]:transition-[color,scale] [&_a]:duration-300 [&_a:hover]:text-primary motion-safe:[&_a:active]:scale-95 motion-safe:[&_a_svg]:transition-transform motion-safe:[&_a_svg]:duration-300 motion-safe:[&_a:hover_svg]:-translate-y-1 motion-reduce:[&_a]:transition-none"
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-[#fcf7ed] px-[5px] pt-[7px] pb-[calc(7px+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(70,44,25,0.04)] md:hidden [&_a]:transition-[color,scale] [&_a]:duration-300 motion-safe:[&_a:active]:scale-95 motion-safe:[&_a_svg]:transition-transform motion-safe:[&_a_svg]:duration-300 motion-safe:[&_a:hover_svg]:-translate-y-1 motion-reduce:[&_a]:transition-none"
       aria-label="ناوبری موبایل"
     >
       {links.map(({ href, label, icon: Icon }) => (
