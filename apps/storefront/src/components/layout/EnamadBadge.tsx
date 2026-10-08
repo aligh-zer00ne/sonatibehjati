@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
-import { Card } from '@/components/ui/card';
 
 const sealCode = 'LhcPkkTt16DfQeGGnaGyvZEhRrXuuVuY';
 const sealQuery = `id=7974460&Code=${sealCode}`;
@@ -10,9 +9,9 @@ const sealQuery = `id=7974460&Code=${sealCode}`;
 export default function EnamadBadge() {
   const [imageFailed, setImageFailed] = useState(false);
   return (
-    <Card
+    <div
       data-enamad-badge
-      className="mx-auto flex w-full max-w-[220px] flex-col items-center gap-3 border-earth/15 bg-background/70 p-5 text-center shadow-none md:mx-0"
+      className="flex h-[70px] w-[76px] flex-col items-center justify-center rounded-lg border border-white/20 bg-white/95 p-1 text-center"
       role="region"
       aria-labelledby="enamad-title"
     >
@@ -22,34 +21,31 @@ export default function EnamadBadge() {
         rel="noopener"
         referrerPolicy="origin"
         aria-label="مشاهده اعتبار نماد اعتماد الکترونیکی سنتی بهجتی در تب جدید"
-        className="inline-flex min-h-32 min-w-32 cursor-pointer items-center justify-center rounded-xl transition-transform duration-300 motion-safe:hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none"
+        className="inline-flex size-[46px] cursor-pointer items-center justify-center rounded-lg transition-transform duration-300 motion-safe:hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none"
       >
         {imageFailed ? (
-          <span className="flex min-h-32 max-w-40 flex-col items-center gap-3 px-2 py-3 text-center">
-            <ExternalLink className="size-7 text-primary" aria-hidden="true" />
-            <span className="text-sm font-bold text-primary">مشاهده اعتبار نماد</span>
-            <span className="text-xs leading-6 text-muted-foreground">
-              تصویر نماد موقتاً در دسترس نیست.
-            </span>
+          <span className="flex flex-col items-center text-center">
+            <ExternalLink className="size-5 text-primary" aria-hidden="true" />
+            <span className="text-[9px] leading-3 font-bold text-primary">استعلام نماد</span>
           </span>
         ) : (
           <img
             src={`https://trustseal.enamad.ir/logo.aspx?${sealQuery}`}
             referrerPolicy="origin"
             alt="نماد اعتماد الکترونیکی سنتی بهجتی"
-            width={128}
-            height={128}
+            width={46}
+            height={46}
             loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
-            className="h-32 w-32 cursor-pointer object-contain"
+            className="size-[46px] cursor-pointer object-contain"
             {...{ code: sealCode }}
           />
         )}
       </a>
-      <h3 id="enamad-title" className="text-sm font-bold text-earth">
-        نماد اعتماد الکترونیکی
+      <h3 id="enamad-title" className="text-[8px] leading-3 font-bold text-earth">
+        نماد اعتماد
       </h3>
-    </Card>
+    </div>
   );
 }
