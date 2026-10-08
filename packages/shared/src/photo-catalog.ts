@@ -2,8 +2,9 @@
 export const photoCategories = [
   { slug: 'tahini', title: 'ارده', image: '/images/categories/tahini.svg' },
   { slug: 'halva', title: 'حلواارده', image: '/images/categories/halva.svg' },
-  { slug: 'oil', title: 'روغن کنجد', image: '/images/categories/oil.svg' },
-  { slug: 'sesame', title: 'کنجد', image: '/images/categories/sesame.svg' },
+  { slug: 'oil', title: 'روغن‌های خوراکی', image: '/images/categories/oil.svg' },
+  { slug: 'traditional-sweets', title: 'شیرینی و محصولات سنتی', image: '/images/categories/sweets.svg' },
+  { slug: 'sesame', title: 'سایر محصولات', image: '/images/categories/sesame.svg' },
 ] as const;
 
 export const photoProducts = [

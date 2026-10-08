@@ -9,11 +9,11 @@ async function seed() {
   for (const [slug, title, image] of [
     ['tahini', 'ارده', 'tahini'],
     ['halva', 'حلواارده', 'halva'],
-    ['oil', 'روغن ارده', 'oil'],
+    ['oil', 'روغن‌های خوراکی', 'oil'],
   ]) {
     const category = await db.category.upsert({
       where: { slug },
-      update: {},
+      update: { title: title! },
       create: { slug: slug!, title: title!, image: `/images/${image}.webp` },
     });
     await db.product.upsert({
@@ -29,6 +29,16 @@ async function seed() {
         categoryId: category.id,
         images: { create: { url: `/images/${image}.webp`, alt: title! } },
       },
+    });
+  }
+  for (const [slug, title, image] of [
+    ['traditional-sweets', 'شیرینی و محصولات سنتی', 'sweets'],
+    ['sesame', 'سایر محصولات', 'sesame'],
+  ]) {
+    await db.category.upsert({
+      where: { slug },
+      update: { title: title! },
+      create: { slug: slug!, title: title!, image: `/images/categories/${image}.svg` },
     });
   }
   // Mirror the reference storefront fixtures for development checkout; production uses API catalog.
