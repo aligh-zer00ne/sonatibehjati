@@ -2,28 +2,40 @@ import Image from 'next/image';
 
 const ornaments = [
   {
-    name: 'sesame-rosette',
-    position: 'top-28 -left-[44px] md:top-36 md:-left-[72px] xl:-left-[94px]',
+    name: 'arabesque-palmette',
+    width: 205,
+    height: 205,
+    position: 'top-32 left-1 md:top-44 xl:left-2',
   },
   {
-    name: 'ardakan-windcatcher',
-    position: 'top-32 -right-[50px] md:top-44 md:-right-[76px] xl:-right-[92px]',
+    name: 'arabesque-foliage',
+    width: 205,
+    height: 200,
+    position: 'top-36 right-1 md:top-52 xl:right-2',
   },
   {
-    name: 'sesame-branch',
-    position: 'top-[39%] -left-[48px] md:-left-[76px] xl:-left-[96px]',
+    name: 'arabesque-vine',
+    width: 205,
+    height: 105,
+    position: 'top-[39%] left-1 -rotate-90 xl:left-2',
   },
   {
-    name: 'tahini-bowl',
-    position: 'top-[52%] -right-[50px] md:-right-[78px] xl:-right-[98px]',
+    name: 'arabesque-lotus',
+    width: 205,
+    height: 205,
+    position: 'top-[52%] right-1 xl:right-2',
   },
   {
-    name: 'ardakan-arch',
-    position: 'bottom-72 -left-[48px] md:bottom-48 md:-left-[76px] xl:-left-[96px]',
+    name: 'arabesque-scrolls',
+    width: 200,
+    height: 190,
+    position: 'bottom-80 left-1 md:bottom-72 xl:left-2',
   },
   {
-    name: 'halva-mosaic',
-    position: 'bottom-80 -right-[48px] md:bottom-56 md:-right-[78px] xl:-right-[98px]',
+    name: 'arabesque-knot',
+    width: 130,
+    height: 205,
+    position: 'bottom-96 right-1 md:bottom-80 xl:right-2',
   },
 ] as const;
 
@@ -34,15 +46,15 @@ export default function StorefrontBackdrop() {
       data-slot="storefront-backdrop"
       className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[radial-gradient(ellipse_at_top_right,#efd8b8_0%,transparent_45%),radial-gradient(ellipse_at_center_left,#f2e2c9_0%,transparent_55%),linear-gradient(180deg,#fbf4e7,#f6ecdb_60%,#f9f1e4)]"
     >
-      {ornaments.map(({ name, position }) => (
+      {ornaments.map(({ name, width, height, position }) => (
         <Image
           key={name}
           data-ornament={name}
           src={`/images/ornaments/${name}.svg`}
           alt=""
-          width={240}
-          height={420}
-          className={`absolute h-auto w-[92px] opacity-40 md:w-[150px] md:opacity-50 xl:w-[190px] ${position}`}
+          width={width}
+          height={height}
+          className={`absolute h-auto w-[clamp(52px,8vw,176px)] opacity-25 md:opacity-35 ${position}`}
         />
       ))}
     </div>
