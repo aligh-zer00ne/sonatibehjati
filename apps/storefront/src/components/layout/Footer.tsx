@@ -62,7 +62,7 @@ export default function Footer() {
               key={name}
               title={`${name}؛ نشانی رسمی به‌زودی افزوده می‌شود`}
               aria-label={name}
-              className="grid size-9 place-items-center rounded-full border border-earth/15 bg-white/30"
+              className="grid size-9 place-items-center"
             >
               <Image
                 src={image}
