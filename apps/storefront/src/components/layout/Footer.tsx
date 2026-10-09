@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { BRAND_NAME } from '@behjati/shared';
+import ArdakanOutline from '@/components/decoration/ardakan-outline';
 import EnamadBadge from './EnamadBadge';
 
 const links = [
@@ -18,43 +18,25 @@ const socialMarks = [
 
 export default function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden border-t border-[#d1b184]/60 bg-[#f0e4d1]/85 pb-[calc(82px+env(safe-area-inset-bottom))] text-earth md:pb-5">
-      <div className="mx-auto grid w-full max-w-[1200px] grid-cols-[1fr_auto] items-center gap-x-4 gap-y-4 px-4 py-5 min-[480px]:px-6 md:grid-cols-[1fr_auto] md:gap-x-8 md:gap-y-6 md:py-7 lg:grid-cols-[1.25fr_1fr_auto_auto] lg:gap-6 lg:py-8 xl:px-0">
-        <div className="col-span-2 flex items-center justify-center gap-3 text-right md:col-span-1 md:justify-start">
-          <Link href="/" aria-label={BRAND_NAME} className="shrink-0 rounded-lg">
-            <Image
-              src="/images/logo-brand.png"
-              alt={BRAND_NAME}
-              width={58}
-              height={76}
-              className="h-[66px] w-[50px] object-contain mix-blend-multiply md:h-[82px] md:w-[63px]"
-            />
-          </Link>
-          <div>
-            <h2 className="text-[13px] font-bold min-[375px]:text-[15px] md:text-base">
-              {BRAND_NAME}
-            </h2>
-            <p className="mt-1 text-[10px] leading-5 text-earth/75 md:text-[11px]">
-              ارده، حلواارده و طعم اصیل اردکان
-            </p>
-          </div>
-        </div>
+    <footer className="relative isolate overflow-hidden border-t border-[#d6a457]/50 bg-[radial-gradient(ellipse_at_bottom_left,#bc3034_0%,#981c29_45%,#6d1022_100%)] pb-[calc(82px+env(safe-area-inset-bottom))] text-[#fff5e3] md:pb-0">
+      <ArdakanOutline />
+      <div className="relative mx-auto grid w-full max-w-[1200px] grid-cols-[minmax(0,1fr)_104px] items-center gap-x-2 gap-y-3 px-4 pt-5 pb-4 min-[375px]:grid-cols-[minmax(0,1fr)_138px] min-[480px]:grid-cols-[minmax(0,1fr)_170px] min-[480px]:px-6 md:min-h-[240px] md:grid-cols-[200px_1fr_220px] md:gap-x-6 md:gap-y-2 md:py-6 xl:px-0">
         <nav
           aria-label="لینک‌های فوتر"
-          className="col-span-2 grid grid-cols-3 rounded-xl border border-earth/10 bg-white/30 p-1 text-center text-xs font-medium md:col-span-1 lg:border-0 lg:bg-transparent lg:p-0"
+          className="col-span-2 row-start-1 flex items-center justify-center gap-6 border-b border-[#f4d493]/25 pb-3 text-[13px] font-semibold md:col-span-1 md:col-start-2 md:self-end md:gap-8 md:border-0 md:pb-0 md:text-sm"
         >
           {links.map(([href, label]) => (
             <Link
               key={href}
               href={href}
-              className="flex min-h-10 items-center justify-center rounded-lg px-2 transition-colors duration-300 hover:bg-white/45 hover:text-primary motion-reduce:transition-none"
+              className="inline-flex min-h-11 items-center rounded-sm transition-colors duration-300 hover:text-[#f5d59c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f5d59c] motion-reduce:transition-none"
             >
               {label}
             </Link>
           ))}
         </nav>
         <div
-          className="grid grid-cols-2 justify-self-center gap-2 md:flex md:justify-self-start"
+          className="col-start-1 row-start-2 flex items-center justify-center gap-2 md:col-start-2 md:self-start md:gap-3"
           aria-label="شبکه‌های اجتماعی سنتی بهجتی"
         >
           {socialMarks.map(({ name, image }) => (
@@ -67,18 +49,18 @@ export default function Footer() {
               <Image
                 src={image}
                 alt=""
-                width={18}
-                height={18}
-                className="size-[18px] opacity-65 mix-blend-multiply"
+                width={22}
+                height={22}
+                className="size-[22px] opacity-85 brightness-0 invert"
               />
             </span>
           ))}
         </div>
         <div
-          className="flex items-center justify-self-end gap-2"
+          className="col-start-1 row-start-3 flex items-center justify-center gap-2 md:row-span-2 md:row-start-1"
           aria-label="نشان‌های اعتماد و پرداخت"
         >
-          <div className="flex h-[80px] w-[100px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center text-[8px] leading-3 text-[#263f61] md:w-[110px]">
+          <div className="flex h-[80px] w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-[#f4d493]/30 bg-[#fff8ed] p-1 text-center text-[8px] leading-3 text-[#263f61] min-[375px]:w-[100px]">
             <Image
               src="/images/sep-logo.png"
               alt="لوگوی پرداخت الکترونیک سامان کیش"
@@ -90,10 +72,18 @@ export default function Footer() {
           </div>
           <EnamadBadge />
         </div>
+        <div className="relative col-start-2 row-span-2 row-start-2 h-[152px] w-full self-end min-[375px]:h-[174px] min-[480px]:h-[195px] md:col-start-3 md:row-start-1 md:h-[220px]">
+          <Image
+            data-footer-mascot
+            src="/images/home/shopping-mascot-branded.png"
+            alt="پسر بچه با جعبهٔ محصولات سنتی بهجتی"
+            fill
+            quality={85}
+            sizes="(max-width: 374px) 104px, (max-width: 479px) 138px, (max-width: 767px) 170px, 220px"
+            className="object-contain object-bottom drop-shadow-[0_8px_14px_rgba(35,0,5,0.2)]"
+          />
+        </div>
       </div>
-      <p className="mx-auto w-full max-w-[1200px] border-t border-earth/10 px-6 py-3 text-center text-[10px] leading-5 text-earth/70 md:px-6 lg:text-right xl:px-0">
-        تمامی حقوق مادی و معنوی این وب‌سایت متعلق به {BRAND_NAME} است.
-      </p>
     </footer>
   );
 }

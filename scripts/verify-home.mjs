@@ -104,11 +104,12 @@ try {
   );
   assert.deepEqual(
     await page.locator('main section[id]').evaluateAll((sections) => sections.map(({ id }) => id)),
-    ['categories', 'products', 'story', 'all-products', 'shopping-banner'],
-    'The merged story must follow bestsellers and the shopping banner must follow the catalog',
+    ['categories', 'products', 'story', 'all-products'],
+    'The merged story must follow bestsellers; the promotional banner is now the footer',
   );
-  await expect(page.locator('#shopping-banner').getByRole('link')).toHaveAttribute('href', '/shop');
-  const icon = await page.locator('link[rel="icon"][href^="/favicon.ico"]').getAttribute('href');
+  await expect(page.locator('footer nav a')).toHaveText(['خانه', 'محصولات', 'درباره ما']);
+  await expect(page.locator('footer [data-footer-mascot]')).toHaveCount(1);
+  const icon = await page.locator('link[rel="icon"][href^="/icon.png"]').getAttribute('href');
   assert.ok(icon, 'Branded favicon link is missing');
   const iconResponse = await page.request.get(`${baseURL}${icon}`);
   assert.equal(iconResponse.status(), 200);
@@ -223,9 +224,23 @@ try {
     );
     await hero.screenshot({ path: `/tmp/behjati-hero-v6-${width}.png` });
     await page.locator('#story').screenshot({ path: `/tmp/behjati-story-v6-${width}.png` });
-    const banner = page.locator('#shopping-banner');
-    await banner.locator('img').evaluate((image) => image.decode());
-    await banner.screenshot({ path: `/tmp/behjati-shopping-v4-${width}.png` });
+    const footer = page.locator('footer');
+    await footer.locator('[data-footer-mascot]').evaluate((image) => image.decode());
+    await footer.screenshot({ path: `/tmp/behjati-footer-${width}.png` });
+    const footerBox = await footer.boundingBox();
+    const outlineBox = await footer.locator('[data-slot="footer-ardakan"]').boundingBox();
+    assert.ok(outlineBox.x <= footerBox.x + 1, `Footer windcatcher must align left at ${width}px`);
+    if (width < 768) {
+      const mascotBox = await footer.locator('[data-footer-mascot]').boundingBox();
+      assert.ok(
+        outlineBox.y + outlineBox.height <= mascotBox.y + mascotBox.height + 20,
+        `Footer outline must stay above mobile navigation at ${width}px`,
+      );
+    }
+    for (const social of await footer
+      .locator('[aria-label="شبکه‌های اجتماعی سنتی بهجتی"] > span')
+      .all())
+      await expect(social).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     const storyBox = await page.locator('#story').boundingBox();
     const storyCopy = await page.locator('[data-slot="story-copy"]').boundingBox();
     assert.ok(
@@ -350,7 +365,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, shopping banner, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, integrated red footer with branded mascot and left-aligned outline, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

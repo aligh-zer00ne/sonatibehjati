@@ -8,7 +8,6 @@ import HeroSection from '@/components/home/HeroSection';
 import CategorySection from '@/components/home/CategorySection';
 import ProductSection from '@/components/home/ProductSection';
 import BrandStory from '@/components/home/BrandStory';
-import ShoppingBanner from '@/components/home/ShoppingBanner';
 import BenefitsSection from '@/components/home/BenefitsSection';
 import { getHomepageCatalog } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
@@ -45,7 +44,12 @@ export default async function Home() {
           <CategorySection categories={categories} />
         </Reveal>
         <Reveal>
-          <ProductSection title="پرفروش‌های سنتی بهجتی" id="products" products={featured} carouselOnMobile />
+          <ProductSection
+            title="پرفروش‌های سنتی بهجتی"
+            id="products"
+            products={featured}
+            carouselOnMobile
+          />
         </Reveal>
         <Reveal>
           <BrandStory />
@@ -58,9 +62,6 @@ export default async function Home() {
               (product) => !featured.some((item) => item.id === product.id),
             )}
           />
-        </Reveal>
-        <Reveal>
-          <ShoppingBanner />
         </Reveal>
         <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
           محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
