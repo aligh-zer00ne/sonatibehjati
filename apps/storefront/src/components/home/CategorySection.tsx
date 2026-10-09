@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import CategoryIcon from '@/components/category/CategoryIcon';
+import CategoryPhoto from '@/components/category/CategoryPhoto';
 import { Button } from '@/components/ui/button';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import SectionHeading from './SectionHeading';
@@ -9,9 +9,10 @@ export default function CategorySection({
   categories: HomepageCatalogQuery['categories'];
 }) {
   const order = ['tahini', 'halva', 'oil', 'traditional-sweets', 'sesame'];
-  const sortedCategories = [...categories].sort((a, b) =>
-    (order.indexOf(a.slug) < 0 ? order.length : order.indexOf(a.slug)) -
-    (order.indexOf(b.slug) < 0 ? order.length : order.indexOf(b.slug)),
+  const sortedCategories = [...categories].sort(
+    (a, b) =>
+      (order.indexOf(a.slug) < 0 ? order.length : order.indexOf(a.slug)) -
+      (order.indexOf(b.slug) < 0 ? order.length : order.indexOf(b.slug)),
   );
   return (
     <section id="categories" className="my-8 md:my-12 xl:my-14">
@@ -25,13 +26,16 @@ export default function CategorySection({
             className="group/category w-[126px] shrink-0 snap-start flex-col gap-0 text-foreground whitespace-normal rounded-[18px] border border-border bg-[linear-gradient(145deg,#fcf9f3,#f3e9da)] px-1.5 py-3 text-center hover:border-clay/40 hover:shadow-[0_12px_24px_rgba(98,69,47,0.14)] motion-safe:hover:-translate-y-1.5 min-[480px]:w-[150px] md:w-auto md:p-4 lg:p-5"
           >
             <Link href={`/category/${category.slug}`} aria-label={category.title}>
-              <div className="flex h-[82px] items-center justify-center min-[480px]:h-[100px] md:h-[110px] md:w-[110px]">
-                <CategoryIcon
-                  className="h-full w-full rounded-[14px] object-contain drop-shadow-sm transition-transform duration-500 ease-out motion-safe:group-hover/category:scale-[1.08] motion-safe:group-hover/category:-rotate-3 motion-reduce:transition-none"
+              <div className="h-[88px] w-full overflow-hidden rounded-[12px] min-[480px]:h-[100px] md:h-[110px] lg:h-[130px]">
+                <CategoryPhoto
+                  className="transition-transform duration-500 ease-out motion-safe:group-hover/category:scale-[1.06] motion-reduce:transition-none"
                   slug={category.slug}
+                  image={category.image}
                 />
               </div>
-              <h3 className="mt-[5px] text-xs leading-5 font-[650] md:text-base lg:text-lg">{category.title}</h3>
+              <h3 className="mt-[5px] text-xs leading-5 font-[650] md:text-base lg:text-lg">
+                {category.title}
+              </h3>
             </Link>
           </Button>
         ))}

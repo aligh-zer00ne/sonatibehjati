@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import CategoryIcon from '@/components/category/CategoryIcon';
+import CategoryPhoto from '@/components/category/CategoryPhoto';
 import { LayoutGrid } from 'lucide-react';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,8 @@ export default function CategoryChips({
   const links = [
     { slug: '', title: 'همه', image: '' },
     ...[...categories].sort(
-      (a, b) => (order.indexOf(a.slug) < 0 ? order.length : order.indexOf(a.slug)) -
+      (a, b) =>
+        (order.indexOf(a.slug) < 0 ? order.length : order.indexOf(a.slug)) -
         (order.indexOf(b.slug) < 0 ? order.length : order.indexOf(b.slug)),
     ),
   ];
@@ -34,9 +35,9 @@ export default function CategoryChips({
             current === category.slug && 'bg-sesame/50 font-bold text-primary',
           )}
         >
-          <span className="grid size-[52px] place-items-center rounded-full bg-surface md:size-16">
+          <span className="grid size-[52px] shrink-0 place-items-center overflow-hidden rounded-xl bg-surface md:size-16">
             {category.slug ? (
-              <CategoryIcon slug={category.slug} className="rounded-full" />
+              <CategoryPhoto slug={category.slug} image={category.image} />
             ) : (
               <LayoutGrid size={25} />
             )}
