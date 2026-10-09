@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import CategoryPhoto from '@/components/category/CategoryPhoto';
+import CategoryIcon from '@/components/category/CategoryIcon';
 import { LayoutGrid } from 'lucide-react';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import { cn } from '@/lib/utils';
@@ -36,11 +36,7 @@ export default function CategoryChips({
           )}
         >
           <span className="grid size-[52px] shrink-0 place-items-center overflow-hidden rounded-xl bg-surface md:size-16">
-            {category.slug ? (
-              <CategoryPhoto slug={category.slug} image={category.image} />
-            ) : (
-              <LayoutGrid size={25} />
-            )}
+            {category.slug ? <CategoryIcon slug={category.slug} /> : <LayoutGrid size={25} />}
           </span>
           {category.title}
         </Link>

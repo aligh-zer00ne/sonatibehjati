@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><defs>
+    <linearGradient id="brass" x1="28" y1="62" x2="164" y2="164" gradientUnits="userSpaceOnUse"><stop stop-color="#f1d299"/><stop offset=".42" stop-color="#c89952"/><stop offset="1" stop-color="#95612e"/></linearGradient>
+    <linearGradient id="cream" x1="64" y1="51" x2="130" y2="133" gradientUnits="userSpaceOnUse"><stop stop-color="#fff2d1"/><stop offset="1" stop-color="#d6af74"/></linearGradient>
+    <linearGradient id="glass" x1="68" y1="61" x2="130" y2="169" gradientUnits="userSpaceOnUse"><stop stop-color="#fff3c3"/><stop offset=".42" stop-color="#e9b844"/><stop offset="1" stop-color="#b97b1c"/></linearGradient>
+    <linearGradient id="ceramic" x1="36" y1="102" x2="158" y2="155" gradientUnits="userSpaceOnUse"><stop stop-color="#fff8eb"/><stop offset="1" stop-color="#e5cfad"/></linearGradient>
+    <radialGradient id="shadow"><stop stop-color="#6b4024" stop-opacity=".18"/><stop offset="1" stop-color="#6b4024" stop-opacity="0"/></radialGradient>
+    </defs><ellipse cx="100" cy="174" rx="76" ry="12" fill="url(#shadow)"/>
+  <g stroke="#795632" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M123 80l32-45q5-6 10-1t-1 10l-33 41" fill="url(#brass)"/>
+    <path d="M32 105c5 41 26 63 68 63s63-22 68-63" fill="url(#brass)"/>
+    <ellipse cx="100" cy="104" rx="68" ry="25" fill="#f4dfb4"/>
+    <ellipse cx="100" cy="104" rx="60" ry="19" fill="url(#cream)" stroke="#bb8f55"/>
+    <path d="M64 105c-3-18 76-24 79-2 2 16-64 24-66 5-1-12 50-18 52-6 2 9-36 16-38 6-1-6 22-10 23-4" stroke="#b98c54" stroke-width="2.8"/>
+    <path d="M39 126q61 31 122 0M49 147q51 20 102 0" stroke="#f4d8a3"/>
+    <path d="M78 168v6h44v-6" fill="#ac773f"/>
+    <path d="M100 142c-12 0-18-13-10-16 6-3 13 10 10 16zm0 0c12 0 18-13 10-16-6-3-13 10-10 16zm0 0c-2 10-17 8-17 3 0-6 12-7 17-3zm0 0c2 10 17 8 17 3 0-6-12-7-17-3z" stroke="#744a26" stroke-width="1.2"/>
+  </g>
+  <g fill="#ddb97c" stroke="#b38950" stroke-width=".6"><ellipse cx="43" cy="68" rx="3.3" ry="6" transform="rotate(-32 43 68)"/><ellipse cx="53" cy="56" rx="3" ry="5.7" transform="rotate(23 53 56)"/><ellipse cx="34" cy="57" rx="2.8" ry="5.4" transform="rotate(-53 34 57)"/><ellipse cx="158" cy="162" rx="3" ry="5.7" transform="rotate(58 158 162)"/></g>
+  <path d="M47 39c-3-13 6-22 19-23-1 13-7 23-19 23Z" fill="#7d8851"/><path d="M47 39l13-16" stroke="#f4e8bb" stroke-width="1"/>
+</svg>

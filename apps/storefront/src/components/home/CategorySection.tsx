@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import CategoryPhoto from '@/components/category/CategoryPhoto';
+import CategoryIcon from '@/components/category/CategoryIcon';
 import { Button } from '@/components/ui/button';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import SectionHeading from './SectionHeading';
@@ -27,10 +27,9 @@ export default function CategorySection({
           >
             <Link href={`/category/${category.slug}`} aria-label={category.title}>
               <div className="h-[88px] w-full overflow-hidden rounded-[12px] min-[480px]:h-[100px] md:h-[110px] lg:h-[130px]">
-                <CategoryPhoto
+                <CategoryIcon
                   className="transition-transform duration-500 ease-out motion-safe:group-hover/category:scale-[1.06] motion-reduce:transition-none"
                   slug={category.slug}
-                  image={category.image}
                 />
               </div>
               <h3 className="mt-[5px] text-xs leading-5 font-[650] md:text-base lg:text-lg">

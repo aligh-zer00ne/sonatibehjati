@@ -9,7 +9,7 @@ async function seed() {
   for (const [slug, title, image] of [
     ['tahini', 'ارده', 'tahini'],
     ['halva', 'حلواارده', 'halva'],
-    ['oil', 'روغن‌های خوراکی', 'oil'],
+    ['oil', 'روغن خوراکی', 'oil'],
   ]) {
     const category = await db.category.upsert({
       where: { slug },

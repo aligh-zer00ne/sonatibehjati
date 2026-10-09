@@ -98,18 +98,25 @@ try {
       );
     });
   await goto('/');
-  await expect(page.locator('#categories [data-category-photo]')).toHaveCount(5);
-  for (const image of await page.locator('[data-category-photo]').all()) {
+  await expect(page.locator('#categories h3')).toHaveText([
+    'ارده',
+    'حلواارده',
+    'روغن خوراکی',
+    'شیرینی و محصولات سنتی',
+    'سایر محصولات',
+  ]);
+  await expect(page.locator('#categories [data-category-symbol]')).toHaveCount(5);
+  for (const image of await page.locator('[data-category-symbol]').all()) {
     const source = new URL(await image.getAttribute('src'), base);
     assert.match(
       source.searchParams.get('url') ?? source.pathname,
-      /^\/images\/(home|products)\/[\w-]+\.webp$/,
+      /^\/images\/categories\/(tahini|halva|oil|sweets|sesame)-emblem\.svg$/,
     );
   }
   await goto('/shop');
   await expect(page.locator('main article[data-product-slug]')).toHaveCount(12);
   await expect(page.locator('article[data-product-slug] [data-decoration]')).toHaveCount(0);
-  await expect(page.locator('[data-category-photo]')).toHaveCount(5);
+  await expect(page.locator('[data-category-symbol]')).toHaveCount(5);
   await loadImages();
   await page.screenshot({ path: '/tmp/behjati-product-v3-shop-desktop.png', fullPage: true });
   for (const product of mockCatalog.products) {
@@ -203,7 +210,7 @@ try {
   await staticContext.close();
   assert.deepEqual(errors, []);
   console.log(
-    'Product design verified: 5 photographic categories, plain product cards, 12 products × 4 gallery states, wraparound, zoom/focus, keyboard tabs, cart/favorites persistence, desktop RTL placement, responsive 320–1440 and SSR. Isolated fixture; authentication unchanged.',
+    'Product design verified: the same 5 categories with custom vector emblems, plain product cards, 12 products × 4 gallery states, wraparound, zoom/focus, keyboard tabs, cart/favorites persistence, desktop RTL placement, responsive 320–1440 and SSR. Isolated fixture; authentication unchanged.',
   );
 } finally {
   await browser?.close();
