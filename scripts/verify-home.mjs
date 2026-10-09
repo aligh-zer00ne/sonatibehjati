@@ -227,23 +227,53 @@ try {
     const footer = page.locator('footer');
     await footer.locator('[data-footer-mascot]').evaluate((image) => image.decode());
     await footer.screenshot({ path: `/tmp/behjati-footer-${width}.png` });
-    const footerBox = await footer.boundingBox();
+    const footerBox = await footer.locator('[data-slot="footer-banner-background"]').boundingBox();
     const outlineBox = await footer.locator('[data-slot="footer-ardakan"]').boundingBox();
-    assert.ok(outlineBox.x <= footerBox.x + 1, `Footer windcatcher must align left at ${width}px`);
+    assert.ok(
+      Math.abs(outlineBox.x - footerBox.x - 1) < 1,
+      `Footer skyline must start at the left edge at ${width}px`,
+    );
+    assert.ok(
+      Math.abs(outlineBox.width - footerBox.width + 2) < 1,
+      `Footer skyline must fill the panel width at ${width}px`,
+    );
     await expect(footer.locator('[data-slot="footer-banner-background"]')).toHaveCSS(
       'background-image',
       /^radial-gradient\(at (?:0px 100%|left bottom), rgb\(188, 48, 52\) 0(?:px|%), rgb\(152, 28, 41\) 45%, rgb\(109, 16, 34\) 100%\)$/,
     );
-    if (width < 768) {
-      const mascotBox = await footer.locator('[data-footer-mascot]').boundingBox();
+    const mascotBox = await footer.locator('[data-footer-mascot]').locator('..').boundingBox();
+    const badgeBox = await footer.locator('[aria-label="نشان‌های اعتماد و پرداخت"]').boundingBox();
+    const navBox = await footer.locator('nav').boundingBox();
+    const socialBox = await footer
+      .locator('[aria-label="شبکه‌های اجتماعی سنتی بهجتی"]')
+      .boundingBox();
+    const center = footerBox.x + footerBox.width / 2;
+    assert.ok(Math.abs(mascotBox.x - footerBox.x - 1) < 1, `Boy must align left at ${width}px`);
+    assert.ok(
+      Math.abs(mascotBox.y + mascotBox.height - footerBox.y - footerBox.height + 1) < 1,
+      `Boy must align with the panel bottom at ${width}px`,
+    );
+    assert.ok(
+      Math.abs(badgeBox.x + badgeBox.width / 2 - center) < 1,
+      `Payment and trust badges must be centered at ${width}px`,
+    );
+    assert.ok(
+      navBox.x + navBox.width / 2 > center && socialBox.x + socialBox.width / 2 > center,
+      `Navigation and social icons must sit to the right at ${width}px`,
+    );
+    if (width < 768)
       assert.ok(
-        outlineBox.y + outlineBox.height <= mascotBox.y + mascotBox.height + 20,
-        `Footer outline must stay above mobile navigation at ${width}px`,
+        badgeBox.y + badgeBox.height <= mascotBox.y,
+        `Mobile badges must not overlap the boy at ${width}px`,
       );
-      assert.ok(
-        outlineBox.x + outlineBox.width < mascotBox.x,
-        `Footer windcatcher must not overlap the boy at ${width}px`,
-      );
+    if (width === 1440) {
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await footer.locator('nav a').first().hover();
+      await expect(footer.locator('[data-footer-mascot]')).toHaveCSS('translate', '0px -4px');
+      await expect(footer.locator('[data-footer-mascot]')).toHaveCSS('rotate', '-2deg');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await expect(footer.locator('[data-footer-mascot]')).toHaveCSS('translate', 'none');
+      await expect(footer.locator('[data-footer-mascot]')).toHaveCSS('rotate', 'none');
     }
     for (const social of await footer
       .locator('[aria-label="شبکه‌های اجتماعی سنتی بهجتی"] > span')
@@ -373,7 +403,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, integrated red footer with branded mascot and left-aligned outline, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, centered badges, right-side links and social icons, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();
