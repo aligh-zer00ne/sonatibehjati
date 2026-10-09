@@ -230,11 +230,19 @@ try {
     const footerBox = await footer.boundingBox();
     const outlineBox = await footer.locator('[data-slot="footer-ardakan"]').boundingBox();
     assert.ok(outlineBox.x <= footerBox.x + 1, `Footer windcatcher must align left at ${width}px`);
+    await expect(footer.locator('[data-slot="footer-banner-background"]')).toHaveCSS(
+      'background-image',
+      /^radial-gradient\(at (?:0px 100%|left bottom), rgb\(188, 48, 52\) 0(?:px|%), rgb\(152, 28, 41\) 45%, rgb\(109, 16, 34\) 100%\)$/,
+    );
     if (width < 768) {
       const mascotBox = await footer.locator('[data-footer-mascot]').boundingBox();
       assert.ok(
         outlineBox.y + outlineBox.height <= mascotBox.y + mascotBox.height + 20,
         `Footer outline must stay above mobile navigation at ${width}px`,
+      );
+      assert.ok(
+        outlineBox.x + outlineBox.width < mascotBox.x,
+        `Footer windcatcher must not overlap the boy at ${width}px`,
       );
     }
     for (const social of await footer

@@ -18,9 +18,15 @@ const socialMarks = [
 
 export default function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden border-t border-[#d6a457]/50 bg-[radial-gradient(ellipse_at_bottom_left,#bc3034_0%,#981c29_45%,#6d1022_100%)] pb-[calc(82px+env(safe-area-inset-bottom))] text-[#fff5e3] md:pb-0">
+    <footer className="relative isolate overflow-hidden border-t border-[#d6a457]/50 bg-[#6d1022] pb-[calc(82px+env(safe-area-inset-bottom))] text-[#fff5e3] md:pb-0">
+      {/* Preserve the original banner gradient across the visible footer, above mobile navigation. */}
+      <div
+        aria-hidden="true"
+        data-slot="footer-banner-background"
+        className="pointer-events-none absolute inset-x-0 top-0 bottom-[calc(82px+env(safe-area-inset-bottom))] bg-[radial-gradient(ellipse_at_bottom_left,#bc3034_0%,#981c29_45%,#6d1022_100%)] md:bottom-0"
+      />
       <ArdakanOutline />
-      <div className="relative mx-auto grid w-full max-w-[1200px] grid-cols-[minmax(0,1fr)_104px] items-center gap-x-2 gap-y-3 px-4 pt-5 pb-4 min-[375px]:grid-cols-[minmax(0,1fr)_138px] min-[480px]:grid-cols-[minmax(0,1fr)_170px] min-[480px]:px-6 md:min-h-[240px] md:grid-cols-[200px_1fr_220px] md:gap-x-6 md:gap-y-2 md:py-6 xl:px-0">
+      <div className="relative mx-auto grid w-full max-w-[1200px] grid-cols-[104px_minmax(0,1fr)] items-center gap-x-2 gap-y-3 px-4 pt-5 pb-4 min-[375px]:grid-cols-[138px_minmax(0,1fr)] min-[480px]:grid-cols-[170px_minmax(0,1fr)] min-[480px]:px-6 md:min-h-[240px] md:grid-cols-[220px_1fr_200px] md:gap-x-6 md:gap-y-2 md:py-6 xl:px-0">
         <nav
           aria-label="لینک‌های فوتر"
           className="col-span-2 row-start-1 flex items-center justify-center gap-6 border-b border-[#f4d493]/25 pb-3 text-[13px] font-semibold md:col-span-1 md:col-start-2 md:self-end md:gap-8 md:border-0 md:pb-0 md:text-sm"
@@ -36,7 +42,7 @@ export default function Footer() {
           ))}
         </nav>
         <div
-          className="col-start-1 row-start-2 flex items-center justify-center gap-2 md:col-start-2 md:self-start md:gap-3"
+          className="col-start-2 row-start-2 flex items-center justify-center gap-2 md:self-start md:gap-3"
           aria-label="شبکه‌های اجتماعی سنتی بهجتی"
         >
           {socialMarks.map(({ name, image }) => (
@@ -57,7 +63,7 @@ export default function Footer() {
           ))}
         </div>
         <div
-          className="col-start-1 row-start-3 flex items-center justify-center gap-2 md:row-span-2 md:row-start-1"
+          className="col-start-2 row-start-3 flex items-center justify-center gap-2 md:col-start-3 md:row-span-2 md:row-start-1"
           aria-label="نشان‌های اعتماد و پرداخت"
         >
           <div className="flex h-[80px] w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-[#f4d493]/30 bg-[#fff8ed] p-1 text-center text-[8px] leading-3 text-[#263f61] min-[375px]:w-[100px]">
@@ -72,7 +78,7 @@ export default function Footer() {
           </div>
           <EnamadBadge />
         </div>
-        <div className="relative col-start-2 row-span-2 row-start-2 h-[152px] w-full self-end min-[375px]:h-[174px] min-[480px]:h-[195px] md:col-start-3 md:row-start-1 md:h-[220px]">
+        <div className="relative col-start-1 row-span-3 row-start-2 h-[210px] w-full self-end min-[375px]:h-[230px] min-[480px]:h-[250px] md:row-span-2 md:row-start-1 md:h-[220px]">
           <Image
             data-footer-mascot
             src="/images/home/shopping-mascot-branded.png"
@@ -83,6 +89,7 @@ export default function Footer() {
             className="object-contain object-bottom drop-shadow-[0_8px_14px_rgba(35,0,5,0.2)]"
           />
         </div>
+        <div aria-hidden="true" className="col-start-2 row-start-4 h-[70px] md:hidden" />
       </div>
     </footer>
   );

@@ -4,12 +4,13 @@ export default function ArdakanOutline() {
       aria-hidden="true"
       data-slot="footer-ardakan"
       viewBox="0 0 520 250"
+      preserveAspectRatio="xMinYMax meet"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="pointer-events-none absolute bottom-[calc(82px+env(safe-area-inset-bottom))] left-0 h-[155px] w-[320px] max-w-full -translate-x-1/3 text-[#edc57d]/30 md:bottom-0 md:h-[220px] md:w-[460px] md:translate-x-0"
+      className="pointer-events-none absolute bottom-[calc(98px+env(safe-area-inset-bottom))] left-0 h-[70px] w-[calc(100%-136px)] text-[#edc57d]/40 min-[375px]:w-[calc(100%-170px)] min-[480px]:w-[calc(100%-226px)] md:bottom-0 md:h-[220px] md:w-[460px]"
     >
       <path d="M6 238H518M20 238V179H89V238M28 179V164H80V179M37 164V143H71V164M34 143H74M29 139H79M40 150V160M50 150V160M60 150V160M26 194H83M41 238V214Q54 192 67 214V238M95 238V160H186V238M104 160V146H177V160M111 146Q140 94 170 146M140 116V106M119 238V200Q140 173 161 200V238M122 162H158M127 169H153M193 238V190H248V238M201 190V176H241V190M211 238V218Q221 203 231 218V238M375 238V172H458V238M383 172Q416 122 450 172M416 145V135M392 238V203Q416 174 441 203V238M471 238V189H506V238M479 198H498M479 207H498" />
       {[
