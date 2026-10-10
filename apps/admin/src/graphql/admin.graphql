@@ -119,6 +119,9 @@ fragment AdminOrderSummaryFields on AdminOrderSummary {
   }
 }
 fragment AdminOrderFields on AdminOrder {
+  shippingLabel {
+    ...AdminShippingLabelFields
+  }
   id
   number
   status
@@ -212,6 +215,25 @@ fragment AdminReportFields on AdminReport {
 }
 query AdminDashboard {
   adminDashboard {
+    activeProductsCount
+    customersCount
+    recentUsers {
+      id
+      phone
+      firstName
+      lastName
+      email
+      createdAt
+      ordersCount
+      totalOrdersValue
+    }
+    topProducts {
+      id
+      title
+      image
+      quantity
+      orderValue
+    }
     ordersCount
     ordersToday
     ordersThisMonth
@@ -225,6 +247,36 @@ query AdminDashboard {
       ...AdminReportFields
     }
   }
+}
+
+fragment AdminShippingLabelFields on AdminShippingLabel {
+  senderName
+  senderPhone
+  senderAddress
+  senderPostalCode
+  recipientName
+  recipientPhone
+  recipientAddress
+  recipientPostalCode
+  carrier
+  trackingNumber
+  packageWeight
+  packageContent
+  note
+  paperSize
+  updatedAt
+}
+mutation SaveAdminShippingLabel(
+  $orderId: ID!
+  $input: AdminShippingLabelInput!
+  $expectedUpdatedAt: String
+) {
+  saveAdminShippingLabel(orderId: $orderId, input: $input, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...AdminShippingLabelFields
+  }
+}
+mutation ChangeAdminPassword($input: AdminPasswordChangeInput!) {
+  changeAdminPassword(input: $input)
 }
 query AdminReport($input: AdminReportInput!) {
   adminReport(input: $input) {

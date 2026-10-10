@@ -14,6 +14,8 @@ const OrdersMap = lazy(() => import('./pages/OrdersMap'));
 const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Invoice = lazy(() => import('./pages/Invoice'));
+const Settings = lazy(() => import('./pages/Settings'));
+const ShippingLabel = lazy(() => import('./pages/ShippingLabel'));
 export default function App() {
   return (
     <ConfigProvider
@@ -22,9 +24,20 @@ export default function App() {
       theme={{
         token: {
           fontFamily: 'Vazirmatn Variable, sans-serif',
-          colorPrimary: '#96140d',
-          borderRadius: 8,
+          colorPrimary: '#930d25',
+          colorText: '#34251e',
+          colorTextSecondary: '#7d746a',
+          colorBgLayout: '#f6f1e9',
+          colorBgContainer: '#fffdf9',
+          colorBorder: '#e8ded1',
+          colorBorderSecondary: '#eee5d9',
+          borderRadius: 10,
           controlHeight: 44,
+        },
+        components: {
+          Card: { headerFontSize: 14, headerHeight: 52, bodyPadding: 18 },
+          Table: { headerBg: '#f7f1e8', rowHoverBg: '#fff4e6', cellPaddingBlock: 14 },
+          Button: { primaryShadow: '0 4px 10px rgba(147,13,37,0.12)' },
         },
       }}
     >
@@ -45,12 +58,15 @@ export default function App() {
                   <Route path="/admin" element={<AdminFrame />}>
                     <Route index element={<Dashboard />} />
                     <Route path="products" element={<Products />} />
+                    <Route path="promotions" element={<Products promotionsOnly />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
                     <Route path="orders/:id/invoice" element={<Invoice />} />
+                    <Route path="orders/:id/label" element={<ShippingLabel />} />
                     <Route path="users" element={<Users />} />
                     <Route path="reports" element={<Reports />} />
+                    <Route path="settings" element={<Settings />} />
                   </Route>
                 </Route>
                 <Route

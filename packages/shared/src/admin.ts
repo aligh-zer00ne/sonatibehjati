@@ -1,6 +1,46 @@
 import { z } from 'zod';
 import { orderStatuses, normalizeDigits, catalogSorts } from '@behjati/shared';
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
+export const adminPasswordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1).max(128),
+    newPassword: z.string().min(12).max(128),
+  })
+  .strict()
+  .refine((value) => value.currentPassword !== value.newPassword, {
+    message: 'رمز جدید باید با رمز فعلی متفاوت باشد.',
+    path: ['newPassword'],
+  });
+const labelPhone = z
+  .string()
+  .trim()
+  .max(30)
+  .transform(normalizeDigits)
+  .refine((value) => !value || /^\+?[0-9 ()-]{7,30}$/.test(value), 'شماره تماس معتبر وارد کنید.');
+const labelPostalCode = z
+  .string()
+  .trim()
+  .transform(normalizeDigits)
+  .refine((value) => !value || /^\d{10}$/.test(value), 'کد پستی باید ده رقم باشد.');
+export const shippingLabelSchema = z
+  .object({
+    senderName: text(1, 120),
+    senderPhone: labelPhone,
+    senderAddress: text(0, 600),
+    senderPostalCode: labelPostalCode,
+    recipientName: text(1, 120),
+    recipientPhone: labelPhone,
+    recipientAddress: text(1, 600),
+    recipientPostalCode: labelPostalCode,
+    carrier: text(0, 80),
+    trackingNumber: text(0, 100),
+    packageWeight: text(0, 80),
+    packageContent: text(0, 300),
+    note: text(0, 200),
+    paperSize: z.enum(['THERMAL', 'A5']),
+  })
+  .strict();
+export type ShippingLabelValues = z.infer<typeof shippingLabelSchema>;
 export const adminLoginSchema = z
   .object({
     email: z.string().trim().toLowerCase().max(254).pipe(z.email()),

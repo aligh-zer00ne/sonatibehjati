@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
-import { adminLoginSchema } from '@behjati/shared/admin';
+import { adminLoginSchema, adminPasswordChangeSchema } from '@behjati/shared/admin';
 import { env } from '../../config/env.js';
 import { db } from '../../database/client.js';
 import type { AuthContext } from '../../graphql/context.js';
@@ -88,6 +88,10 @@ export async function loginAdmin(context: AuthContext, raw: unknown) {
   );
   if (!admin || !valid) throw authError('ایمیل یا رمز ورود نادرست است.', 'INVALID_CREDENTIALS');
   const pair = await db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM Admin WHERE id = ${admin.id} FOR UPDATE`;
+    const latest = await tx.admin.findUnique({ where: { id: admin.id } });
+    if (latest?.passwordHash !== admin.passwordHash)
+      throw authError('رمز ورود تغییر کرده است؛ دوباره وارد شوید.', 'INVALID_CREDENTIALS');
     const pair = await adminTokens.issue(admin.id);
     await tx.adminSession.create({
       data: { id: pair.familyId, adminId: admin.id, expiresAt: pair.expiresAt },
@@ -191,6 +195,39 @@ export async function logoutAdmin(context: AuthContext) {
         data: { revokedAt: new Date() },
       });
     });
+  cookie(context);
+  return true;
+}
+
+export async function changeAdminPassword(context: AuthContext, raw: unknown) {
+  requireAdminOrigin(context);
+  const identity = await requireAdmin(context);
+  const parsed = adminPasswordChangeSchema.safeParse(raw);
+  if (!parsed.success)
+    throw authError('رمز جدید باید ۱۲ تا ۱۲۸ نویسه و متفاوت از رمز فعلی باشد.', 'BAD_USER_INPUT');
+  await consumeAuthLimit(`admin-password:${identity.id}`, 5, 900);
+  const admin = await db.admin.findUniqueOrThrow({ where: { id: identity.id } });
+  if (!(await verifyAdminPassword(parsed.data.currentPassword, admin.passwordHash)))
+    throw authError('رمز فعلی نادرست است.', 'INVALID_CREDENTIALS');
+  const passwordHash = await hashAdminPassword(parsed.data.newPassword);
+  await db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM Admin WHERE id = ${admin.id} FOR UPDATE`;
+    const changed = await tx.admin.updateMany({
+      where: { id: admin.id, passwordHash: admin.passwordHash },
+      data: { passwordHash },
+    });
+    if (!changed.count)
+      throw authError('رمز قبلاً تغییر کرده است؛ دوباره وارد شوید.', 'REQUEST_CONFLICT');
+    const revokedAt = new Date();
+    await tx.adminSession.updateMany({
+      where: { adminId: admin.id, revokedAt: null },
+      data: { revokedAt },
+    });
+    await tx.adminRefreshToken.updateMany({
+      where: { adminId: admin.id, revokedAt: null },
+      data: { revokedAt },
+    });
+  });
   cookie(context);
   return true;
 }

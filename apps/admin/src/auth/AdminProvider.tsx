@@ -20,6 +20,7 @@ interface State {
   refresh: () => Promise<void>;
   loggedIn: (admin: AdminIdentityFieldsFragment) => void;
   logout: () => Promise<void>;
+  passwordChanged: () => void;
 }
 const Context = createContext<State | null>(null);
 export function useAdmin() {
@@ -86,8 +87,15 @@ export default function AdminProvider({ children }: { children: ReactNode }) {
     setError('');
     channel.current?.postMessage('changed');
   }
+  function passwordChanged() {
+    clearAdminAccess();
+    setAdmin(null);
+    setError('');
+    setLoading(false);
+    channel.current?.postMessage('changed');
+  }
   return (
-    <Context.Provider value={{ admin, loading, error, refresh, loggedIn, logout }}>
+    <Context.Provider value={{ admin, loading, error, refresh, loggedIn, logout, passwordChanged }}>
       {children}
     </Context.Provider>
   );

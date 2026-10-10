@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, Input, Select, Button, Table, Tag, Space, Popconfirm, App, Typography } from 'antd';
 import { formatPrice, formatNumber } from '@behjati/shared';
 import {
@@ -13,13 +14,16 @@ import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 import PromotionEditor from '../components/PromotionEditor';
 import ProductEditor from '../components/ProductEditor';
-export default function Products() {
+export default function Products({ promotionsOnly = false }: { promotionsOnly?: boolean }) {
+  const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const search = (params.get('search') ?? '').slice(0, 100);
   const [active, setActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [categoryId, setCategoryId] = useState('');
   const [sort, setSort] = useState<ProductSort>('NEWEST');
-  const [editing, setEditing] = useState<AdminProductFieldsFragment | 'new' | null>(null);
+  const [editing, setEditing] = useState<AdminProductFieldsFragment | 'new' | null>(
+    params.get('new') === '1' ? 'new' : null,
+  );
   const [selected, setSelected] = useState<AdminProductFieldsFragment[]>([]);
   const [promotionOpen, setPromotionOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -66,11 +70,19 @@ export default function Products() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Typography.Title level={2}>محصولات</Typography.Title>
+        <Typography.Title level={2}>
+          {promotionsOnly ? 'تخفیف‌ها و جشنواره‌ها' : 'محصولات'}
+        </Typography.Title>
         <Button type="primary" onClick={() => setEditing('new')} disabled={!query.data || pending}>
           محصول جدید
         </Button>
       </div>
+      {promotionsOnly && (
+        <p className="text-sm text-[#7d746a]">
+          محصولات را انتخاب کنید و «تخفیف / جشنواره» را بزنید. برای تخفیف یک محصول نیز می‌توانید از
+          ویرایش آن استفاده کنید.
+        </p>
+      )}
       <Card>
         <Button
           className="mb-3"
@@ -86,7 +98,7 @@ export default function Products() {
             maxLength={100}
             allowClear
             onSearch={(value) => {
-              setSearch(value);
+              setParams(value ? { search: value } : {});
               setPage(1);
               setSelected([]);
             }}

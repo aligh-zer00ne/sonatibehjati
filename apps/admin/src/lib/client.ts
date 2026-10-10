@@ -95,7 +95,7 @@ export async function adminRequest<T, V extends Record<string, unknown>>(
         await send(AdminRefreshDocument, {});
         data = await send(document, variables);
       }
-      if (name === 'AdminLogout') clearAdminAccess();
+      if (name === 'AdminLogout' || name === 'ChangeAdminPassword') clearAdminAccess();
       return data;
     } catch (error) {
       if (error instanceof AdminRequestError && error.code === 'UNAUTHENTICATED') {

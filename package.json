@@ -38,6 +38,7 @@
     "verify:admin-auth": "node scripts/verify-admin-auth.mjs",
     "verify:admin": "node scripts/verify-admin-commerce.mjs",
     "verify:admin-ui": "node scripts/verify-admin-ui.mjs",
+    "verify:admin-upgrade": "bun scripts/verify-admin-upgrade.mjs",
     "deploy:production": "bash deploy/update-production.sh"
   },
   "devDependencies": {

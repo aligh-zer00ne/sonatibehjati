@@ -9,6 +9,7 @@ import { db } from '../../database/client.js';
 import { authError } from '../auth/errors.js';
 import { validate, omitNulls, serializeDates } from './validation.js';
 import { dayStart, dayAfter } from './time.js';
+import { presentShippingLabel } from './shipping-labels.js';
 export const customerSelect = {
   id: true,
   phone: true,
@@ -87,6 +88,7 @@ export async function adminOrder(id: string) {
   const order = await db.order.findUnique({
     where: { id },
     include: {
+      shippingLabel: true,
       user: { select: customerSelect },
       items: { orderBy: { id: 'asc' } },
       statusEvents: {
@@ -99,6 +101,7 @@ export async function adminOrder(id: string) {
   return {
     ...serializeDates(order),
     address: orderAddress(order.addressSnapshot),
+    shippingLabel: presentShippingLabel(order.shippingLabel),
     statusEvents: order.statusEvents.map((event) => ({
       ...event,
       createdAt: event.createdAt.toISOString(),

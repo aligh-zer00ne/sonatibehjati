@@ -6,6 +6,7 @@ import {
   loginAdmin,
   refreshAdmin,
   logoutAdmin,
+  changeAdminPassword,
 } from './auth.js';
 import {
   adminProducts,
@@ -17,6 +18,7 @@ import {
 import { adminOrders, adminOrder, changeOrderStatus } from './orders.js';
 import { adminUsers, adminUser } from './users.js';
 import { adminReport, adminDashboard } from './reports.js';
+import { saveShippingLabel } from './shipping-labels.js';
 import { serializeProduct as serializeDates } from '../products/presentation.js';
 export const adminResolvers: Resolvers = {
   Query: {
@@ -52,6 +54,12 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    changeAdminPassword: (_parent, { input }, context) => changeAdminPassword(context, input),
+    saveAdminShippingLabel: async (_parent, { orderId, input, expectedUpdatedAt }, context) => {
+      requireAdminOrigin(context);
+      await requireAdmin(context);
+      return saveShippingLabel(orderId, input, expectedUpdatedAt);
+    },
     setAdminPromotion: async (_parent, { input, products }, context) => {
       requireAdminOrigin(context);
       await requireAdmin(context);

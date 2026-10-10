@@ -22,7 +22,7 @@ export default function Login() {
       </div>
     );
   return (
-    <main className="grid min-h-dvh place-items-center bg-slate-100 p-5">
+    <main className="grid min-h-dvh place-items-center bg-[radial-gradient(ellipse_at_top_right,#fff5e1,#f6f1e9_60%)] p-5">
       <Card className="w-full max-w-md shadow-sm">
         <img src="/images/logo-brand.png" alt={BRAND_NAME} className="mx-auto mb-5 h-24 w-auto" />
         <Typography.Title level={2}>ورود مدیر</Typography.Title>

@@ -38,9 +38,14 @@ export default function OrderDetails() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Typography.Title level={2}>سفارش {formatNumber(order.number)}</Typography.Title>
-        <Link to={`/admin/orders/${id}/invoice`}>
-          <Button type="primary">چاپ فاکتور / PDF</Button>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link to={`/admin/orders/${id}/label`}>
+            <Button type="primary">لیبل پستی / چاپ</Button>
+          </Link>
+          <Link to={`/admin/orders/${id}/invoice`}>
+            <Button>چاپ فاکتور / PDF</Button>
+          </Link>
+        </div>
       </div>
       <Card>
         <Descriptions

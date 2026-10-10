@@ -78,14 +78,18 @@ export type AdminDailyMetric = {
 
 export type AdminDashboard = {
   __typename?: 'AdminDashboard';
+  activeProductsCount: Scalars['Int']['output'];
   averageOrderValue: Scalars['Float']['output'];
+  customersCount: Scalars['Int']['output'];
   orderValue: Scalars['Float']['output'];
   ordersCount: Scalars['Int']['output'];
   ordersThisMonth: Scalars['Int']['output'];
   ordersToday: Scalars['Int']['output'];
   recentOrders: Array<AdminOrderSummary>;
+  recentUsers: Array<AdminUser>;
   report: AdminReport;
   revenue: Scalars['Float']['output'];
+  topProducts: Array<AdminTopProduct>;
 };
 
 export type AdminIdentity = {
@@ -108,6 +112,7 @@ export type AdminOrder = {
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
   shipping: Scalars['Int']['output'];
+  shippingLabel?: Maybe<AdminShippingLabel>;
   status: OrderStatus;
   statusEvents: Array<OrderStatusEvent>;
   subtotal: Scalars['Int']['output'];
@@ -159,6 +164,11 @@ export type AdminOrdersPage = {
   pageSize: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
   totalPages: Scalars['Int']['output'];
+};
+
+export type AdminPasswordChangeInput = {
+  currentPassword: Scalars['String']['input'];
+  newPassword: Scalars['String']['input'];
 };
 
 export type AdminProductDeletion = {
@@ -244,10 +254,55 @@ export type AdminSessionPayload = {
   admin: AdminIdentity;
 };
 
+export type AdminShippingLabel = {
+  __typename?: 'AdminShippingLabel';
+  carrier: Scalars['String']['output'];
+  note: Scalars['String']['output'];
+  packageContent: Scalars['String']['output'];
+  packageWeight: Scalars['String']['output'];
+  paperSize: LabelPaperSize;
+  recipientAddress: Scalars['String']['output'];
+  recipientName: Scalars['String']['output'];
+  recipientPhone: Scalars['String']['output'];
+  recipientPostalCode: Scalars['String']['output'];
+  senderAddress: Scalars['String']['output'];
+  senderName: Scalars['String']['output'];
+  senderPhone: Scalars['String']['output'];
+  senderPostalCode: Scalars['String']['output'];
+  trackingNumber: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
+export type AdminShippingLabelInput = {
+  carrier: Scalars['String']['input'];
+  note: Scalars['String']['input'];
+  packageContent: Scalars['String']['input'];
+  packageWeight: Scalars['String']['input'];
+  paperSize: LabelPaperSize;
+  recipientAddress: Scalars['String']['input'];
+  recipientName: Scalars['String']['input'];
+  recipientPhone: Scalars['String']['input'];
+  recipientPostalCode: Scalars['String']['input'];
+  senderAddress: Scalars['String']['input'];
+  senderName: Scalars['String']['input'];
+  senderPhone: Scalars['String']['input'];
+  senderPostalCode: Scalars['String']['input'];
+  trackingNumber: Scalars['String']['input'];
+};
+
 export type AdminStatusMetric = {
   __typename?: 'AdminStatusMetric';
   count: Scalars['Int']['output'];
   status: OrderStatus;
+};
+
+export type AdminTopProduct = {
+  __typename?: 'AdminTopProduct';
+  id: Scalars['ID']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  orderValue: Scalars['Float']['output'];
+  quantity: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
 };
 
 export type AdminUser = {
@@ -361,11 +416,16 @@ export type CreateOrderInput = {
   requestId: Scalars['ID']['input'];
 };
 
+export type LabelPaperSize =
+  | 'A5'
+  | 'THERMAL';
+
 export type Mutation = {
   __typename?: 'Mutation';
   adminLogin: AdminSessionPayload;
   adminLogout: Scalars['Boolean']['output'];
   adminRefresh: AdminSessionPayload;
+  changeAdminPassword: Scalars['Boolean']['output'];
   createOrder: OrderReceipt;
   deleteAddress: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
@@ -374,6 +434,7 @@ export type Mutation = {
   requestOtp: OtpChallenge;
   saveAddress: Address;
   saveAdminProduct: Product;
+  saveAdminShippingLabel: AdminShippingLabel;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
   updateAdminOrderStatus: AdminOrder;
@@ -384,6 +445,11 @@ export type Mutation = {
 
 export type MutationAdminLoginArgs = {
   input: AdminLoginInput;
+};
+
+
+export type MutationChangeAdminPasswordArgs = {
+  input: AdminPasswordChangeInput;
 };
 
 
@@ -418,6 +484,13 @@ export type MutationSaveAdminProductArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   input: AdminProductInput;
+};
+
+
+export type MutationSaveAdminShippingLabelArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  input: AdminShippingLabelInput;
+  orderId: Scalars['ID']['input'];
 };
 
 
@@ -783,6 +856,7 @@ export type ResolversTypes = {
   AdminOrderSummary: ResolverTypeWrapper<AdminOrderSummary>;
   AdminOrdersInput: AdminOrdersInput;
   AdminOrdersPage: ResolverTypeWrapper<AdminOrdersPage>;
+  AdminPasswordChangeInput: AdminPasswordChangeInput;
   AdminProductDeletion: ResolverTypeWrapper<AdminProductDeletion>;
   AdminProductImageInput: AdminProductImageInput;
   AdminProductInput: AdminProductInput;
@@ -793,7 +867,10 @@ export type ResolversTypes = {
   AdminReport: ResolverTypeWrapper<AdminReport>;
   AdminReportInput: AdminReportInput;
   AdminSessionPayload: ResolverTypeWrapper<AdminSessionPayload>;
+  AdminShippingLabel: ResolverTypeWrapper<AdminShippingLabel>;
+  AdminShippingLabelInput: AdminShippingLabelInput;
   AdminStatusMetric: ResolverTypeWrapper<AdminStatusMetric>;
+  AdminTopProduct: ResolverTypeWrapper<AdminTopProduct>;
   AdminUser: ResolverTypeWrapper<AdminUser>;
   AdminUsersInput: AdminUsersInput;
   AdminUsersPage: ResolverTypeWrapper<AdminUsersPage>;
@@ -811,6 +888,7 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  LabelPaperSize: LabelPaperSize;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   MyOrdersInput: MyOrdersInput;
   MyOrdersPage: ResolverTypeWrapper<MyOrdersPage>;
@@ -846,6 +924,7 @@ export type ResolversParentTypes = {
   AdminOrderSummary: AdminOrderSummary;
   AdminOrdersInput: AdminOrdersInput;
   AdminOrdersPage: AdminOrdersPage;
+  AdminPasswordChangeInput: AdminPasswordChangeInput;
   AdminProductDeletion: AdminProductDeletion;
   AdminProductImageInput: AdminProductImageInput;
   AdminProductInput: AdminProductInput;
@@ -856,7 +935,10 @@ export type ResolversParentTypes = {
   AdminReport: AdminReport;
   AdminReportInput: AdminReportInput;
   AdminSessionPayload: AdminSessionPayload;
+  AdminShippingLabel: AdminShippingLabel;
+  AdminShippingLabelInput: AdminShippingLabelInput;
   AdminStatusMetric: AdminStatusMetric;
+  AdminTopProduct: AdminTopProduct;
   AdminUser: AdminUser;
   AdminUsersInput: AdminUsersInput;
   AdminUsersPage: AdminUsersPage;
@@ -935,14 +1017,18 @@ export type AdminDailyMetricResolvers<ContextType = AuthContext, ParentType exte
 };
 
 export type AdminDashboardResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminDashboard'] = ResolversParentTypes['AdminDashboard']> = {
+  activeProductsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   averageOrderValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  customersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   orderValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   ordersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   ordersThisMonth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   ordersToday?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   recentOrders?: Resolver<Array<ResolversTypes['AdminOrderSummary']>, ParentType, ContextType>;
+  recentUsers?: Resolver<Array<ResolversTypes['AdminUser']>, ParentType, ContextType>;
   report?: Resolver<ResolversTypes['AdminReport'], ParentType, ContextType>;
   revenue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  topProducts?: Resolver<Array<ResolversTypes['AdminTopProduct']>, ParentType, ContextType>;
 };
 
 export type AdminIdentityResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminIdentity'] = ResolversParentTypes['AdminIdentity']> = {
@@ -958,6 +1044,7 @@ export type AdminOrderResolvers<ContextType = AuthContext, ParentType extends Re
   items?: Resolver<Array<ResolversTypes['OrderItemSnapshot']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingLabel?: Resolver<Maybe<ResolversTypes['AdminShippingLabel']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   statusEvents?: Resolver<Array<ResolversTypes['OrderStatusEvent']>, ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1014,9 +1101,35 @@ export type AdminSessionPayloadResolvers<ContextType = AuthContext, ParentType e
   admin?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType>;
 };
 
+export type AdminShippingLabelResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminShippingLabel'] = ResolversParentTypes['AdminShippingLabel']> = {
+  carrier?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  note?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  packageContent?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  packageWeight?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  paperSize?: Resolver<ResolversTypes['LabelPaperSize'], ParentType, ContextType>;
+  recipientAddress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  recipientName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  recipientPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  recipientPostalCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  senderAddress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  senderPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  senderPostalCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  trackingNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
 export type AdminStatusMetricResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminStatusMetric'] = ResolversParentTypes['AdminStatusMetric']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
+};
+
+export type AdminTopProductResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminTopProduct'] = ResolversParentTypes['AdminTopProduct']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  orderValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type AdminUserResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminUser'] = ResolversParentTypes['AdminUser']> = {
@@ -1090,6 +1203,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   adminLogin?: Resolver<ResolversTypes['AdminSessionPayload'], ParentType, ContextType, RequireFields<MutationAdminLoginArgs, 'input'>>;
   adminLogout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   adminRefresh?: Resolver<ResolversTypes['AdminSessionPayload'], ParentType, ContextType>;
+  changeAdminPassword?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeAdminPasswordArgs, 'input'>>;
   createOrder?: Resolver<ResolversTypes['OrderReceipt'], ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'input'>>;
   deleteAddress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAddressArgs, 'id'>>;
   deleteAdminProduct?: Resolver<ResolversTypes['AdminProductDeletion'], ParentType, ContextType, RequireFields<MutationDeleteAdminProductArgs, 'expectedUpdatedAt' | 'id'>>;
@@ -1098,6 +1212,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   requestOtp?: Resolver<ResolversTypes['OtpChallenge'], ParentType, ContextType, RequireFields<MutationRequestOtpArgs, 'input'>>;
   saveAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationSaveAddressArgs, 'input'>>;
   saveAdminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSaveAdminProductArgs, 'input'>>;
+  saveAdminShippingLabel?: Resolver<ResolversTypes['AdminShippingLabel'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingLabelArgs, 'input' | 'orderId'>>;
   setAdminProductActive?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSetAdminProductActiveArgs, 'expectedUpdatedAt' | 'id' | 'isActive'>>;
   setAdminPromotion?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationSetAdminPromotionArgs, 'input' | 'products'>>;
   updateAdminOrderStatus?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationUpdateAdminOrderStatusArgs, 'input'>>;
@@ -1238,7 +1353,9 @@ export type Resolvers<ContextType = AuthContext> = {
   AdminProductsPage?: AdminProductsPageResolvers<ContextType>;
   AdminReport?: AdminReportResolvers<ContextType>;
   AdminSessionPayload?: AdminSessionPayloadResolvers<ContextType>;
+  AdminShippingLabel?: AdminShippingLabelResolvers<ContextType>;
   AdminStatusMetric?: AdminStatusMetricResolvers<ContextType>;
+  AdminTopProduct?: AdminTopProductResolvers<ContextType>;
   AdminUser?: AdminUserResolvers<ContextType>;
   AdminUsersPage?: AdminUsersPageResolvers<ContextType>;
   AuthSession?: AuthSessionResolvers<ContextType>;

@@ -5,8 +5,8 @@
 @layer base {
   html {
     font-family: var(--font-sans);
-    background: #f5f6f8;
-    color: #1e293b;
+    background: #f6f1e9;
+    color: #34251e;
   }
   body {
     margin: 0;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Typography, Card, Input, Table, Button } from 'antd';
 import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
 import { AdminUsersDocument, type AdminUsersQuery } from '../generated/graphql';
@@ -7,8 +7,9 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import { customerName, persianDigits } from '../lib/format';
 import DataState from '../components/DataState';
 export default function Users() {
+  const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const search = (params.get('search') ?? '').slice(0, 100);
   const query = useAdminQuery(AdminUsersDocument, { input: { page, pageSize: 20, search } });
   return (
     <>
@@ -20,7 +21,7 @@ export default function Users() {
           maxLength={100}
           allowClear
           onSearch={(value) => {
-            setSearch(value);
+            setParams(value ? { search: value } : {});
             setPage(1);
           }}
         />

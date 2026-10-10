@@ -122,6 +122,12 @@ type Mutation {
   adminLogin(input: AdminLoginInput!): AdminSessionPayload!
   adminRefresh: AdminSessionPayload!
   adminLogout: Boolean!
+  changeAdminPassword(input: AdminPasswordChangeInput!): Boolean!
+  saveAdminShippingLabel(
+    orderId: ID!
+    input: AdminShippingLabelInput!
+    expectedUpdatedAt: String
+  ): AdminShippingLabel!
   saveAdminProduct(id: ID, expectedUpdatedAt: String, input: AdminProductInput!): Product!
   setAdminProductActive(id: ID!, isActive: Boolean!, expectedUpdatedAt: String!): Product!
   deleteAdminProduct(id: ID!, expectedUpdatedAt: String!): AdminProductDeletion!
@@ -278,6 +284,47 @@ input AdminLoginInput {
   email: String!
   password: String!
 }
+input AdminPasswordChangeInput {
+  currentPassword: String!
+  newPassword: String!
+}
+enum LabelPaperSize {
+  THERMAL
+  A5
+}
+input AdminShippingLabelInput {
+  senderName: String!
+  senderPhone: String!
+  senderAddress: String!
+  senderPostalCode: String!
+  recipientName: String!
+  recipientPhone: String!
+  recipientAddress: String!
+  recipientPostalCode: String!
+  carrier: String!
+  trackingNumber: String!
+  packageWeight: String!
+  packageContent: String!
+  note: String!
+  paperSize: LabelPaperSize!
+}
+type AdminShippingLabel {
+  senderName: String!
+  senderPhone: String!
+  senderAddress: String!
+  senderPostalCode: String!
+  recipientName: String!
+  recipientPhone: String!
+  recipientAddress: String!
+  recipientPostalCode: String!
+  carrier: String!
+  trackingNumber: String!
+  packageWeight: String!
+  packageContent: String!
+  note: String!
+  paperSize: LabelPaperSize!
+  updatedAt: String!
+}
 type AdminSessionPayload {
   admin: AdminIdentity!
   accessToken: String!
@@ -358,6 +405,7 @@ type AdminOrderSummary {
   address: OrderAddressSnapshot!
 }
 type AdminOrder {
+  shippingLabel: AdminShippingLabel
   id: ID!
   number: Int!
   status: OrderStatus!
@@ -432,6 +480,10 @@ type AdminReport {
   statuses: [AdminStatusMetric!]!
 }
 type AdminDashboard {
+  activeProductsCount: Int!
+  customersCount: Int!
+  recentUsers: [AdminUser!]!
+  topProducts: [AdminTopProduct!]!
   ordersCount: Int!
   ordersToday: Int!
   ordersThisMonth: Int!
@@ -440,6 +492,13 @@ type AdminDashboard {
   averageOrderValue: Float!
   recentOrders: [AdminOrderSummary!]!
   report: AdminReport!
+}
+type AdminTopProduct {
+  id: ID!
+  title: String!
+  image: String
+  quantity: Int!
+  orderValue: Float!
 }
 
 input AdminPromotionInput {

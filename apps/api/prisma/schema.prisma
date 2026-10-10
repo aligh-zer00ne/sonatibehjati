@@ -130,9 +130,16 @@ model Order {
  statusEvents OrderStatusEvent[]
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
+ shippingLabel OrderShippingLabel?
  @@index([userId,createdAt])
  @@index([status,createdAt])
  @@unique([userId,clientRequestId])
+}
+model OrderShippingLabel {
+ orderId String @id
+ order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+ data Json
+ updatedAt DateTime @updatedAt
 }
 model OrderItem {
  id String @id @default(cuid())

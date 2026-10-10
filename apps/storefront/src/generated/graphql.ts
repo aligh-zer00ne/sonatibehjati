@@ -77,14 +77,18 @@ export type AdminDailyMetric = {
 
 export type AdminDashboard = {
   __typename?: 'AdminDashboard';
+  activeProductsCount: Scalars['Int']['output'];
   averageOrderValue: Scalars['Float']['output'];
+  customersCount: Scalars['Int']['output'];
   orderValue: Scalars['Float']['output'];
   ordersCount: Scalars['Int']['output'];
   ordersThisMonth: Scalars['Int']['output'];
   ordersToday: Scalars['Int']['output'];
   recentOrders: Array<AdminOrderSummary>;
+  recentUsers: Array<AdminUser>;
   report: AdminReport;
   revenue: Scalars['Float']['output'];
+  topProducts: Array<AdminTopProduct>;
 };
 
 export type AdminIdentity = {
@@ -107,6 +111,7 @@ export type AdminOrder = {
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
   shipping: Scalars['Int']['output'];
+  shippingLabel?: Maybe<AdminShippingLabel>;
   status: OrderStatus;
   statusEvents: Array<OrderStatusEvent>;
   subtotal: Scalars['Int']['output'];
@@ -158,6 +163,11 @@ export type AdminOrdersPage = {
   pageSize: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
   totalPages: Scalars['Int']['output'];
+};
+
+export type AdminPasswordChangeInput = {
+  currentPassword: Scalars['String']['input'];
+  newPassword: Scalars['String']['input'];
 };
 
 export type AdminProductDeletion = {
@@ -243,10 +253,55 @@ export type AdminSessionPayload = {
   admin: AdminIdentity;
 };
 
+export type AdminShippingLabel = {
+  __typename?: 'AdminShippingLabel';
+  carrier: Scalars['String']['output'];
+  note: Scalars['String']['output'];
+  packageContent: Scalars['String']['output'];
+  packageWeight: Scalars['String']['output'];
+  paperSize: LabelPaperSize;
+  recipientAddress: Scalars['String']['output'];
+  recipientName: Scalars['String']['output'];
+  recipientPhone: Scalars['String']['output'];
+  recipientPostalCode: Scalars['String']['output'];
+  senderAddress: Scalars['String']['output'];
+  senderName: Scalars['String']['output'];
+  senderPhone: Scalars['String']['output'];
+  senderPostalCode: Scalars['String']['output'];
+  trackingNumber: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
+export type AdminShippingLabelInput = {
+  carrier: Scalars['String']['input'];
+  note: Scalars['String']['input'];
+  packageContent: Scalars['String']['input'];
+  packageWeight: Scalars['String']['input'];
+  paperSize: LabelPaperSize;
+  recipientAddress: Scalars['String']['input'];
+  recipientName: Scalars['String']['input'];
+  recipientPhone: Scalars['String']['input'];
+  recipientPostalCode: Scalars['String']['input'];
+  senderAddress: Scalars['String']['input'];
+  senderName: Scalars['String']['input'];
+  senderPhone: Scalars['String']['input'];
+  senderPostalCode: Scalars['String']['input'];
+  trackingNumber: Scalars['String']['input'];
+};
+
 export type AdminStatusMetric = {
   __typename?: 'AdminStatusMetric';
   count: Scalars['Int']['output'];
   status: OrderStatus;
+};
+
+export type AdminTopProduct = {
+  __typename?: 'AdminTopProduct';
+  id: Scalars['ID']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  orderValue: Scalars['Float']['output'];
+  quantity: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
 };
 
 export type AdminUser = {
@@ -360,11 +415,16 @@ export type CreateOrderInput = {
   requestId: Scalars['ID']['input'];
 };
 
+export type LabelPaperSize =
+  | 'A5'
+  | 'THERMAL';
+
 export type Mutation = {
   __typename?: 'Mutation';
   adminLogin: AdminSessionPayload;
   adminLogout: Scalars['Boolean']['output'];
   adminRefresh: AdminSessionPayload;
+  changeAdminPassword: Scalars['Boolean']['output'];
   createOrder: OrderReceipt;
   deleteAddress: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
@@ -373,6 +433,7 @@ export type Mutation = {
   requestOtp: OtpChallenge;
   saveAddress: Address;
   saveAdminProduct: Product;
+  saveAdminShippingLabel: AdminShippingLabel;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
   updateAdminOrderStatus: AdminOrder;
@@ -383,6 +444,11 @@ export type Mutation = {
 
 export type MutationAdminLoginArgs = {
   input: AdminLoginInput;
+};
+
+
+export type MutationChangeAdminPasswordArgs = {
+  input: AdminPasswordChangeInput;
 };
 
 
@@ -417,6 +483,13 @@ export type MutationSaveAdminProductArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   input: AdminProductInput;
+};
+
+
+export type MutationSaveAdminShippingLabelArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  input: AdminShippingLabelInput;
+  orderId: Scalars['ID']['input'];
 };
 
 

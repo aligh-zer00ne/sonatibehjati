@@ -10,18 +10,21 @@ export default function OrdersTable({
   total,
   pageSize = 20,
   onPage,
+  compact = false,
 }: {
   items: AdminOrderSummaryFieldsFragment[];
   page?: number;
   total?: number;
   pageSize?: number;
   onPage?: (page: number) => void;
+  compact?: boolean;
 }) {
   return (
     <Table<AdminOrderSummaryFieldsFragment>
       rowKey="id"
       dataSource={items}
-      scroll={{ x: 850 }}
+      scroll={{ x: compact ? 560 : 850 }}
+      size={compact ? 'small' : 'middle'}
       pagination={
         onPage
           ? { current: page, pageSize, total, showSizeChanger: false, onChange: onPage }
@@ -40,7 +43,15 @@ export default function OrdersTable({
             </div>
           ),
         },
-        { title: 'شهر', render: (_, order) => order.address.city || 'ثبت نشده' },
+        ...(!compact
+          ? [
+              {
+                title: 'شهر',
+                render: (_: unknown, order: AdminOrderSummaryFieldsFragment) =>
+                  order.address.city || 'ثبت نشده',
+              },
+            ]
+          : []),
         { title: 'وضعیت', render: (_, order) => <OrderStatus status={order.status} /> },
         { title: 'مبلغ', render: (_, order) => formatPrice(order.total) },
         { title: 'تاریخ', render: (_, order) => formatDate(order.createdAt) },

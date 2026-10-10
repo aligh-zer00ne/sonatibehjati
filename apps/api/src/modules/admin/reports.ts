@@ -5,6 +5,7 @@ import { db } from '../../database/client.js';
 import { validate, omitNulls } from './validation.js';
 import { calendarBounds, dayStart, dayAfter, dateDays } from './time.js';
 import { adminOrders } from './orders.js';
+import { adminUsers } from './users.js';
 export async function adminReport(raw: Record<string, unknown>) {
   const input = validate(adminReportFilterSchema, omitNulls(raw));
   const where = {
@@ -50,7 +51,17 @@ export async function adminReport(raw: Record<string, unknown>) {
 }
 export async function adminDashboard() {
   const { today, month, from } = calendarBounds();
-  const [ordersCount, ordersToday, ordersThisMonth, values, recent, report] = await Promise.all([
+  const [
+    ordersCount,
+    ordersToday,
+    ordersThisMonth,
+    values,
+    recent,
+    report,
+    activeProductsCount,
+    users,
+    orderedProducts,
+  ] = await Promise.all([
     db.order.count(),
     db.order.count({ where: { createdAt: { gte: dayStart(today), lt: dayAfter(today) } } }),
     db.order.count({ where: { createdAt: { gte: dayStart(month), lt: dayAfter(today) } } }),
@@ -61,8 +72,38 @@ export async function adminDashboard() {
     }),
     adminOrders({ page: 1, pageSize: 5 }),
     adminReport({ from, to: today }),
+    db.product.count({ where: { isActive: true } }),
+    adminUsers({ page: 1, pageSize: 5 }),
+    db.orderItem.groupBy({
+      by: ['productId'],
+      where: { order: { status: { not: 'CANCELED' } } },
+      _sum: { quantity: true, lineTotal: true },
+      orderBy: { _sum: { quantity: 'desc' } },
+      take: 5,
+    }),
   ]);
+  const products = await db.product.findMany({
+    where: { id: { in: orderedProducts.map((item) => item.productId) } },
+    include: { images: { orderBy: { position: 'asc' }, take: 1 } },
+  });
   return {
+    activeProductsCount,
+    customersCount: users.total,
+    recentUsers: users.items,
+    topProducts: orderedProducts.flatMap((item) => {
+      const product = products.find((product) => product.id === item.productId);
+      return product
+        ? [
+            {
+              id: product.id,
+              title: product.title,
+              image: product.images[0]?.url ?? null,
+              quantity: item._sum.quantity ?? 0,
+              orderValue: item._sum.lineTotal ?? 0,
+            },
+          ]
+        : [];
+    }),
     ordersCount,
     ordersToday,
     ordersThisMonth,

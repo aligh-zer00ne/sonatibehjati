@@ -152,7 +152,10 @@ export async function cleanupAdmin() {
   await cleanup();
   await db.admin.deleteMany({ where: { id: { in: admins.map((admin) => admin.id) } } });
   await db.product.deleteMany({ where: { id: { in: [...products] } } });
-  const rateKeys = admins.map((admin) => `admin-login-email:${admin.email}`);
+  const rateKeys = admins.flatMap((admin) => [
+    `admin-login-email:${admin.email}`,
+    `admin-password:${admin.id}`,
+  ]);
   for (const ip of [
     '127.0.0.1',
     '::ffff:127.0.0.1',
