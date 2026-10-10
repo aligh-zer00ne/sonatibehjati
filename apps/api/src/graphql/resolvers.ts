@@ -5,11 +5,7 @@ import { checkoutResolvers } from '../modules/checkout/resolvers.js';
 import type { Resolvers } from '../generated/resolvers.js';
 import { productRepository } from '../modules/products/repository.js';
 import { catalogRepository } from '../modules/products/catalog.js';
-const serialize = <T extends { createdAt: Date; updatedAt: Date }>(value: T) => ({
-  ...value,
-  createdAt: value.createdAt.toISOString(),
-  updatedAt: value.updatedAt.toISOString(),
-});
+import { serializeProduct as serialize } from '../modules/products/presentation.js';
 export const resolvers: Resolvers = {
   Mutation: {
     ...authResolvers.Mutation,
@@ -23,6 +19,7 @@ export const resolvers: Resolvers = {
     ...accountResolvers.Query,
     ...checkoutResolvers.Query,
     health: () => 'ok',
+    promotionalProducts: async () => (await productRepository.promotional()).map(serialize),
     products: async (_parent, args) =>
       (await productRepository.list(args.category, args.search)).map(serialize),
     product: async (_parent, args) => {

@@ -40,8 +40,38 @@ export const assetUrlSchema = z
       return false;
     }
   }, 'مسیر فایل محلی یا نشانی HTTPS معتبر وارد کنید.');
+const promotionFields = {
+  discountPercent: z.number().int().min(1).max(99).nullish(),
+  discountTitle: text(0, 80).nullish(),
+  discountStartsAt: z.iso.datetime().nullish(),
+  discountEndsAt: z.iso.datetime().nullish(),
+};
+const validPromotion = (value: {
+  discountPercent?: number | null;
+  discountStartsAt?: string | null;
+  discountEndsAt?: string | null;
+}) =>
+  value.discountPercent == null ||
+  Boolean(
+    value.discountStartsAt &&
+    value.discountEndsAt &&
+    Date.parse(value.discountStartsAt) < Date.parse(value.discountEndsAt),
+  );
+export const adminPromotionInputSchema = z
+  .object(promotionFields)
+  .strict()
+  .refine(validPromotion, {
+    message: 'برای تخفیف، زمان شروع و پایان معتبر وارد کنید.',
+    path: ['discountEndsAt'],
+  });
+export const adminPromotionTargetsSchema = z
+  .array(z.object({ id: text(1, 100), expectedUpdatedAt: z.iso.datetime() }).strict())
+  .min(1)
+  .max(50)
+  .refine((items) => new Set(items.map((item) => item.id)).size === items.length);
 export const adminProductInputSchema = z
   .object({
+    ...promotionFields,
     title: text(2, 150),
     slug: text(1, 150).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     price: z.number().int().min(0).max(2147483647),
@@ -56,7 +86,11 @@ export const adminProductInputSchema = z
       .min(1)
       .max(8),
   })
-  .strict();
+  .strict()
+  .refine(validPromotion, {
+    message: 'برای تخفیف، زمان شروع و پایان معتبر وارد کنید.',
+    path: ['discountEndsAt'],
+  });
 export const adminOrdersFilterSchema = z
   .object({
     ...page,

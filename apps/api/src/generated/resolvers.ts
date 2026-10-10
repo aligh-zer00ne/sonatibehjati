@@ -176,6 +176,10 @@ export type AdminProductInput = {
   badge?: InputMaybe<Scalars['String']['input']>;
   categoryId: Scalars['ID']['input'];
   description: Scalars['String']['input'];
+  discountEndsAt?: InputMaybe<Scalars['String']['input']>;
+  discountPercent?: InputMaybe<Scalars['Int']['input']>;
+  discountStartsAt?: InputMaybe<Scalars['String']['input']>;
+  discountTitle?: InputMaybe<Scalars['String']['input']>;
   images: Array<AdminProductImageInput>;
   isActive: Scalars['Boolean']['input'];
   price: Scalars['Int']['input'];
@@ -201,6 +205,18 @@ export type AdminProductsPage = {
   pageSize: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
   totalPages: Scalars['Int']['output'];
+};
+
+export type AdminPromotionInput = {
+  discountEndsAt?: InputMaybe<Scalars['String']['input']>;
+  discountPercent?: InputMaybe<Scalars['Int']['input']>;
+  discountStartsAt?: InputMaybe<Scalars['String']['input']>;
+  discountTitle?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdminPromotionTargetInput = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
 };
 
 export type AdminReport = {
@@ -359,6 +375,7 @@ export type Mutation = {
   saveAddress: Address;
   saveAdminProduct: Product;
   setAdminProductActive: Product;
+  setAdminPromotion: Array<Product>;
   updateAdminOrderStatus: AdminOrder;
   updateProfile: AuthUser;
   verifyOtp: AuthSession;
@@ -408,6 +425,12 @@ export type MutationSetAdminProductActiveArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
   isActive: Scalars['Boolean']['input'];
+};
+
+
+export type MutationSetAdminPromotionArgs = {
+  input: AdminPromotionInput;
+  products: Array<AdminPromotionTargetInput>;
 };
 
 
@@ -507,10 +530,15 @@ export type Product = {
   category: Category;
   createdAt: Scalars['String']['output'];
   description: Scalars['String']['output'];
+  discountEndsAt?: Maybe<Scalars['String']['output']>;
+  discountPercent?: Maybe<Scalars['Int']['output']>;
+  discountStartsAt?: Maybe<Scalars['String']['output']>;
+  discountTitle?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   images: Array<ProductImage>;
   isActive: Scalars['Boolean']['output'];
   price: Scalars['Int']['output'];
+  promotion?: Maybe<ProductPromotion>;
   shortDescription: Scalars['String']['output'];
   slug: Scalars['String']['output'];
   title: Scalars['String']['output'];
@@ -523,6 +551,17 @@ export type ProductImage = {
   alt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   url: Scalars['String']['output'];
+};
+
+export type ProductPromotion = {
+  __typename?: 'ProductPromotion';
+  amount: Scalars['Int']['output'];
+  endsAt: Scalars['String']['output'];
+  originalPrice: Scalars['Int']['output'];
+  percent: Scalars['Int']['output'];
+  price: Scalars['Int']['output'];
+  startsAt: Scalars['String']['output'];
+  title: Scalars['String']['output'];
 };
 
 export type ProductSort =
@@ -561,6 +600,7 @@ export type Query = {
   product?: Maybe<Product>;
   products: Array<Product>;
   productsByIds: Array<Product>;
+  promotionalProducts: Array<Product>;
   reverseLocation?: Maybe<Scalars['String']['output']>;
 };
 
@@ -748,6 +788,8 @@ export type ResolversTypes = {
   AdminProductInput: AdminProductInput;
   AdminProductsInput: AdminProductsInput;
   AdminProductsPage: ResolverTypeWrapper<AdminProductsPage>;
+  AdminPromotionInput: AdminPromotionInput;
+  AdminPromotionTargetInput: AdminPromotionTargetInput;
   AdminReport: ResolverTypeWrapper<AdminReport>;
   AdminReportInput: AdminReportInput;
   AdminSessionPayload: ResolverTypeWrapper<AdminSessionPayload>;
@@ -780,6 +822,7 @@ export type ResolversTypes = {
   OtpChallenge: ResolverTypeWrapper<OtpChallenge>;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
+  ProductPromotion: ResolverTypeWrapper<ProductPromotion>;
   ProductSort: ProductSort;
   ProfileInput: ProfileInput;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
@@ -808,6 +851,8 @@ export type ResolversParentTypes = {
   AdminProductInput: AdminProductInput;
   AdminProductsInput: AdminProductsInput;
   AdminProductsPage: AdminProductsPage;
+  AdminPromotionInput: AdminPromotionInput;
+  AdminPromotionTargetInput: AdminPromotionTargetInput;
   AdminReport: AdminReport;
   AdminReportInput: AdminReportInput;
   AdminSessionPayload: AdminSessionPayload;
@@ -839,6 +884,7 @@ export type ResolversParentTypes = {
   OtpChallenge: OtpChallenge;
   Product: Product;
   ProductImage: ProductImage;
+  ProductPromotion: ProductPromotion;
   ProfileInput: ProfileInput;
   Query: Record<PropertyKey, never>;
   RequestOtpInput: RequestOtpInput;
@@ -1053,6 +1099,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   saveAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationSaveAddressArgs, 'input'>>;
   saveAdminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSaveAdminProductArgs, 'input'>>;
   setAdminProductActive?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSetAdminProductActiveArgs, 'expectedUpdatedAt' | 'id' | 'isActive'>>;
+  setAdminPromotion?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationSetAdminPromotionArgs, 'input' | 'products'>>;
   updateAdminOrderStatus?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationUpdateAdminOrderStatusArgs, 'input'>>;
   updateProfile?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   verifyOtp?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType, RequireFields<MutationVerifyOtpArgs, 'input'>>;
@@ -1119,10 +1166,15 @@ export type ProductResolvers<ContextType = AuthContext, ParentType extends Resol
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discountEndsAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  discountPercent?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  discountStartsAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  discountTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   images?: Resolver<Array<ResolversTypes['ProductImage']>, ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  promotion?: Resolver<Maybe<ResolversTypes['ProductPromotion']>, ParentType, ContextType>;
   shortDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1134,6 +1186,16 @@ export type ProductImageResolvers<ContextType = AuthContext, ParentType extends 
   alt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type ProductPromotionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['ProductPromotion'] = ResolversParentTypes['ProductPromotion']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  endsAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  originalPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  percent?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  startsAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -1158,6 +1220,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'slug'>>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, Partial<QueryProductsArgs>>;
   productsByIds?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductsByIdsArgs, 'ids'>>;
+  promotionalProducts?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
   reverseLocation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryReverseLocationArgs, 'latitude' | 'longitude'>>;
 };
 
@@ -1193,6 +1256,7 @@ export type Resolvers<ContextType = AuthContext> = {
   OtpChallenge?: OtpChallengeResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductImage?: ProductImageResolvers<ContextType>;
+  ProductPromotion?: ProductPromotionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
 

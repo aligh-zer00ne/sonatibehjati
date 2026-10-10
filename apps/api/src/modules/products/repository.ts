@@ -15,6 +15,21 @@ export const productRepository = {
       orderBy: { createdAt: 'desc' },
       take: 100,
     }),
+  promotional: () => {
+    const now = new Date();
+    return db.product.findMany({
+      where: {
+        isActive: true,
+        price: { gt: 0 },
+        discountPercent: { gt: 0 },
+        discountStartsAt: { lte: now },
+        discountEndsAt: { gt: now },
+      },
+      include: productRelations,
+      orderBy: [{ discountEndsAt: 'asc' }, { id: 'asc' }],
+      take: 100,
+    });
+  },
   bySlug: (slug: string) =>
     db.product.findFirst({
       where: { slug, isActive: true },

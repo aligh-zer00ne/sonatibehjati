@@ -73,6 +73,10 @@ model Product {
  category Category @relation(fields:[categoryId],references:[id],onDelete:Restrict)
  price Int
  weight String
+ discountPercent Int?
+ discountTitle String?
+ discountStartsAt DateTime?
+ discountEndsAt DateTime?
  images ProductImage[]
  isActive Boolean @default(true)
  badge String?

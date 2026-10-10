@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, Input, Select, Button, Table, Tag, Space, Popconfirm, App, Typography } from 'antd';
-import { formatPrice } from '@behjati/shared';
+import { formatPrice, formatNumber } from '@behjati/shared';
 import {
   AdminProductsDocument,
   SetAdminProductActiveDocument,
@@ -11,6 +11,7 @@ import {
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
+import PromotionEditor from '../components/PromotionEditor';
 import ProductEditor from '../components/ProductEditor';
 export default function Products() {
   const [page, setPage] = useState(1);
@@ -19,6 +20,8 @@ export default function Products() {
   const [categoryId, setCategoryId] = useState('');
   const [sort, setSort] = useState<ProductSort>('NEWEST');
   const [editing, setEditing] = useState<AdminProductFieldsFragment | 'new' | null>(null);
+  const [selected, setSelected] = useState<AdminProductFieldsFragment[]>([]);
+  const [promotionOpen, setPromotionOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const { message } = App.useApp();
   const query = useAdminQuery(AdminProductsDocument, {
@@ -69,6 +72,13 @@ export default function Products() {
         </Button>
       </div>
       <Card>
+        <Button
+          className="mb-3"
+          disabled={!selected.length || pending}
+          onClick={() => setPromotionOpen(true)}
+        >
+          تخفیف / جشنواره ({formatNumber(selected.length)} محصول)
+        </Button>
         <Space wrap>
           <Input.Search
             aria-label="جستجوی محصول"
@@ -78,6 +88,7 @@ export default function Products() {
             onSearch={(value) => {
               setSearch(value);
               setPage(1);
+              setSelected([]);
             }}
           />
           <Select
@@ -87,6 +98,7 @@ export default function Products() {
             onChange={(value) => {
               setCategoryId(value);
               setPage(1);
+              setSelected([]);
             }}
             options={[
               { value: '', label: 'همه دسته‌ها' },
@@ -103,6 +115,7 @@ export default function Products() {
             onChange={(value) => {
               setActive(value);
               setPage(1);
+              setSelected([]);
             }}
             options={[
               { value: 'all', label: 'همه محصولات' },
@@ -117,6 +130,7 @@ export default function Products() {
             onChange={(value) => {
               setSort(value);
               setPage(1);
+              setSelected([]);
             }}
             options={[
               { value: 'NEWEST', label: 'جدیدترین' },
@@ -133,6 +147,10 @@ export default function Products() {
         <Card>
           <Table<AdminProductFieldsFragment>
             rowKey="id"
+            rowSelection={{
+              selectedRowKeys: selected.map((product) => product.id),
+              onChange: (_, rows) => setSelected(rows),
+            }}
             dataSource={query.data.adminProducts.items}
             scroll={{ x: 800 }}
             pagination={{
@@ -140,13 +158,27 @@ export default function Products() {
               pageSize: 20,
               total: query.data.adminProducts.total,
               showSizeChanger: false,
-              onChange: setPage,
+              onChange: (value) => {
+                setPage(value);
+                setSelected([]);
+              },
             }}
             columns={[
               { title: 'محصول', dataIndex: 'title' },
               { title: 'دسته', render: (_, product) => product.category.title },
               { title: 'وزن', dataIndex: 'weight' },
-              { title: 'قیمت', render: (_, product) => formatPrice(product.price) },
+              { title: 'قیمت اصلی', render: (_, product) => formatPrice(product.price) },
+              {
+                title: 'تخفیف',
+                render: (_, product) =>
+                  product.discountPercent ? (
+                    <Tag color="gold">
+                      {product.discountTitle || 'تخفیف'}؛ {formatNumber(product.discountPercent)}٪
+                    </Tag>
+                  ) : (
+                    '—'
+                  ),
+              },
               {
                 title: 'وضعیت',
                 render: (_, product) => (
@@ -190,6 +222,18 @@ export default function Products() {
             ]}
           />
         </Card>
+      )}
+      {promotionOpen && selected.length > 0 && (
+        <PromotionEditor
+          products={selected}
+          onCancel={() => setPromotionOpen(false)}
+          onSaved={() => {
+            setPromotionOpen(false);
+            setSelected([]);
+            query.refresh();
+            void message.success('تخفیف محصولات ذخیره شد.');
+          }}
+        />
       )}
       {editing && query.data && (
         <ProductEditor

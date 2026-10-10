@@ -9,6 +9,15 @@ type Category {
   title: String!
   image: String!
 }
+type ProductPromotion {
+  title: String!
+  percent: Int!
+  amount: Int!
+  originalPrice: Int!
+  price: Int!
+  startsAt: String!
+  endsAt: String!
+}
 type Product {
   id: ID!
   slug: String!
@@ -18,6 +27,11 @@ type Product {
   category: Category!
   price: Int!
   weight: String!
+  discountPercent: Int
+  discountTitle: String
+  discountStartsAt: String
+  discountEndsAt: String
+  promotion: ProductPromotion
   images: [ProductImage!]!
   isActive: Boolean!
   badge: String
@@ -42,6 +56,7 @@ type Query {
   orderByRequestId(requestId: ID!): OrderReceipt
   me: AuthUser
   health: String!
+  promotionalProducts: [Product!]!
   products(category: String, search: String): [Product!]!
   product(slug: String!): Product
   categories: [Category!]!
@@ -100,6 +115,10 @@ input VerifyOtpInput {
   code: String!
 }
 type Mutation {
+  setAdminPromotion(
+    input: AdminPromotionInput!
+    products: [AdminPromotionTargetInput!]!
+  ): [Product!]!
   adminLogin(input: AdminLoginInput!): AdminSessionPayload!
   adminRefresh: AdminSessionPayload!
   adminLogout: Boolean!
@@ -295,6 +314,10 @@ input AdminProductInput {
   isActive: Boolean!
   badge: String
   images: [AdminProductImageInput!]!
+  discountPercent: Int
+  discountTitle: String
+  discountStartsAt: String
+  discountEndsAt: String
 }
 type AdminProductDeletion {
   deleted: Boolean!
@@ -417,4 +440,15 @@ type AdminDashboard {
   averageOrderValue: Float!
   recentOrders: [AdminOrderSummary!]!
   report: AdminReport!
+}
+
+input AdminPromotionInput {
+  discountPercent: Int
+  discountTitle: String
+  discountStartsAt: String
+  discountEndsAt: String
+}
+input AdminPromotionTargetInput {
+  id: ID!
+  expectedUpdatedAt: String!
 }

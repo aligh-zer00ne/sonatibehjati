@@ -7,6 +7,7 @@ import {
   type AdminProductsQuery,
 } from '../generated/graphql';
 import { adminRequest } from '../lib/client';
+import PromotionFields, { promotionFormInput, promotionFormValues } from './PromotionFields';
 import ProductImagesFields from './ProductImagesFields';
 export default function ProductEditor({
   product,
@@ -50,7 +51,7 @@ export default function ProductEditor({
     >
       <Form
         layout="vertical"
-        initialValues={initial}
+        initialValues={{ ...initial, ...promotionFormValues(product) }}
         onFinish={async (raw) => {
           if (pending) return;
           setError('');
@@ -67,6 +68,7 @@ export default function ProductEditor({
             images,
           } = raw;
           const parsed = adminProductInputSchema.safeParse({
+            ...promotionFormInput(raw),
             title,
             slug,
             price,
@@ -79,9 +81,7 @@ export default function ProductEditor({
             images,
           });
           if (!parsed.success) {
-            setError(
-              'اطلاعات محصول را کامل کنید؛ تصاویر باید مسیر محلی یا HTTPS و مبلغ صحیح تومان باشند.',
-            );
+            setError(parsed.error.issues[0]?.message ?? 'اطلاعات محصول را کامل کنید.');
             return;
           }
           setPending(true);
@@ -153,6 +153,10 @@ export default function ProductEditor({
         <Form.Item name="isActive" label="فعال بودن محصول" valuePropName="checked">
           <Switch />
         </Form.Item>
+        <div className="mt-5 border-t border-stone-200 pt-5">
+          <h3 className="mb-4 font-bold">تخفیف زمان‌دار محصول</h3>
+          <PromotionFields />
+        </div>
         <ProductImagesFields />
         {error && <Alert className="mt-4" title={error} type="error" role="alert" showIcon />}
         <div className="mt-5 flex flex-wrap gap-3">

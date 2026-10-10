@@ -35,6 +35,10 @@ fragment AdminProductFields on Product {
   shortDescription
   description
   price
+  discountPercent
+  discountTitle
+  discountStartsAt
+  discountEndsAt
   weight
   isActive
   badge
@@ -238,5 +242,11 @@ query AdminSelectedUser($id: ID!) {
     createdAt
     ordersCount
     totalOrdersValue
+  }
+}
+
+mutation SetAdminPromotion($input: AdminPromotionInput!, $products: [AdminPromotionTargetInput!]!) {
+  setAdminPromotion(input: $input, products: $products) {
+    ...AdminProductFields
   }
 }

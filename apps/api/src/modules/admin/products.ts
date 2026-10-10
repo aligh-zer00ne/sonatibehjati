@@ -1,5 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { adminProductInputSchema, adminProductsFilterSchema } from '@behjati/shared/admin';
+import {
+  adminProductInputSchema,
+  adminProductsFilterSchema,
+  adminPromotionInputSchema,
+  adminPromotionTargetsSchema,
+} from '@behjati/shared/admin';
 import { db } from '../../database/client.js';
 import { authError } from '../auth/errors.js';
 import { validate, omitNulls } from './validation.js';
@@ -57,8 +62,19 @@ export async function saveAdminProduct(
       const previous = id ? await lockProduct(tx, id, expectedUpdatedAt ?? '') : null;
       if (!(await tx.category.findUnique({ where: { id: input.categoryId } })))
         throw authError('دسته‌بندی معتبر انتخاب کنید.', 'BAD_USER_INPUT');
-      const { images, ...fields } = input;
-      const data = { ...fields, badge: fields.badge || null };
+      const {
+        images,
+        discountPercent,
+        discountTitle,
+        discountStartsAt,
+        discountEndsAt,
+        ...fields
+      } = input;
+      const data = {
+        ...fields,
+        badge: fields.badge || null,
+        ...promotionData({ discountPercent, discountTitle, discountStartsAt, discountEndsAt }),
+      };
       const orderedImages = images.map((image, position) => ({ ...image, position }));
       if (id) {
         await tx.productImage.deleteMany({ where: { productId: id } });
@@ -109,4 +125,41 @@ export async function deleteAdminProduct(id: string, expectedUpdatedAt: string) 
     await tx.product.delete({ where: { id } });
     return { deleted: true, product: null };
   });
+}
+
+function promotionData(input: ReturnType<typeof adminPromotionInputSchema.parse>) {
+  if (input.discountPercent === undefined) return {};
+  return {
+    discountPercent: input.discountPercent ?? null,
+    discountTitle: input.discountPercent ? input.discountTitle || null : null,
+    discountStartsAt:
+      input.discountPercent && input.discountStartsAt ? new Date(input.discountStartsAt) : null,
+    discountEndsAt:
+      input.discountPercent && input.discountEndsAt ? new Date(input.discountEndsAt) : null,
+  };
+}
+export async function setAdminPromotion(raw: unknown, targets: unknown) {
+  const input = validate(adminPromotionInputSchema, raw);
+  const products = validate(adminPromotionTargetsSchema, targets).sort((a, b) =>
+    a.id.localeCompare(b.id),
+  );
+  if (input.discountPercent === undefined)
+    throw authError('درصد تخفیف را مشخص کنید.', 'BAD_USER_INPUT');
+  return db.$transaction(
+    async (tx) => {
+      const result = [];
+      for (const target of products) {
+        const previous = await lockProduct(tx, target.id, target.expectedUpdatedAt);
+        result.push(
+          await tx.product.update({
+            where: { id: target.id },
+            data: { ...promotionData(input), updatedAt: nextVersion(previous.updatedAt) },
+            include,
+          }),
+        );
+      }
+      return result;
+    },
+    { timeout: 15000 },
+  );
 }

@@ -5,6 +5,7 @@ import { db } from '../../database/client.js';
 import { env } from '../../config/env.js';
 import { authError } from '../auth/errors.js';
 import { FixedShippingService } from '../../services/shipping.js';
+import { activeProductPromotion } from '@behjati/shared/promotions';
 import { discountAmount } from './pricing.js';
 const shipping = new FixedShippingService(env.SHIPPING_COST);
 const invalid = () => authError('اطلاعات سفارش را بررسی کنید.', 'BAD_USER_INPUT');
@@ -64,16 +65,18 @@ async function calculate(tx: Prisma.TransactionClient, userId: string, input: Ch
       'برخی محصولات دیگر قابل سفارش نیستند؛ سبد را به‌روزرسانی کنید.',
       'PRODUCT_UNAVAILABLE',
     );
+  const pricedAt = Date.now();
   const items = input.items.map((line) => {
     const product = products.find((product) => product.id === line.productId)!;
+    const unitPrice = activeProductPromotion(product, pricedAt)?.price ?? product.price;
     return {
       productId: product.id,
       title: product.title,
       weight: product.weight,
       imageUrl: product.images[0]?.url ?? null,
       quantity: line.quantity,
-      unitPrice: product.price,
-      lineTotal: product.price * line.quantity,
+      unitPrice,
+      lineTotal: unitPrice * line.quantity,
     };
   });
   const subtotal = items.reduce((sum, line) => sum + line.lineTotal, 0);

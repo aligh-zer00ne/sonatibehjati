@@ -9,6 +9,7 @@ import {
 } from './auth.js';
 import {
   adminProducts,
+  setAdminPromotion,
   saveAdminProduct,
   setAdminProductActive,
   deleteAdminProduct,
@@ -16,7 +17,7 @@ import {
 import { adminOrders, adminOrder, changeOrderStatus } from './orders.js';
 import { adminUsers, adminUser } from './users.js';
 import { adminReport, adminDashboard } from './reports.js';
-import { serializeDates } from './validation.js';
+import { serializeProduct as serializeDates } from '../products/presentation.js';
 export const adminResolvers: Resolvers = {
   Query: {
     adminMe: (_parent, _args, context) => currentAdmin(context),
@@ -51,6 +52,11 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    setAdminPromotion: async (_parent, { input, products }, context) => {
+      requireAdminOrigin(context);
+      await requireAdmin(context);
+      return (await setAdminPromotion(input, products)).map(serializeDates);
+    },
     adminLogin: (_parent, { input }, context) => loginAdmin(context, input),
     adminRefresh: (_parent, _args, context) => refreshAdmin(context),
     adminLogout: (_parent, _args, context) => logoutAdmin(context),
