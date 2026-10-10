@@ -7,7 +7,7 @@ export default function BrandStory() {
     <section
       id="story"
       aria-labelledby="story-title"
-      className="group/story relative isolate my-8 h-[215px] scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:h-[230px] min-[480px]:h-[250px] sm:h-[200px] md:my-12 md:h-[430px] lg:h-[480px] lg:rounded-[28px] xl:my-14"
+      className="group/story relative isolate mx-2 my-8 h-[215px] scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:h-[230px] min-[480px]:h-[250px] sm:h-[200px] md:mx-0 md:my-12 md:h-[430px] lg:h-[480px] lg:rounded-[28px] xl:my-14"
     >
       <span id="ardakan" aria-hidden="true" className="absolute top-0 scroll-mt-8" />
       <div

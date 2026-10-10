@@ -20,7 +20,7 @@ export default function EnamadBadge({
       data-enamad-badge
       className={cn(
         'flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center',
-        compact && 'size-12 gap-0 rounded-lg',
+        compact && 'size-9 gap-0 rounded-md p-0.5',
         className,
       )}
       role="region"
@@ -34,14 +34,20 @@ export default function EnamadBadge({
         aria-label="مشاهده اعتبار نماد اعتماد الکترونیکی سنتی بهجتی در تب جدید"
         className={cn(
           'inline-flex size-[46px] cursor-pointer items-center justify-center rounded-lg transition-transform duration-300 motion-safe:hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none',
-          compact && 'size-10',
+          compact && 'size-8',
         )}
       >
         {imageFailed ? (
           <span className="flex flex-col items-center text-center">
-            <ExternalLink className="size-5 text-primary" aria-hidden="true" />
+            <ExternalLink
+              className={cn('size-5 text-primary', compact && 'size-4')}
+              aria-hidden="true"
+            />
             <span
-              className={cn('text-[9px] leading-3 font-bold text-primary', compact && 'text-[7px]')}
+              className={cn(
+                'text-[9px] leading-3 font-bold text-primary',
+                compact && 'text-[6px] leading-2',
+              )}
             >
               استعلام نماد
             </span>
@@ -56,7 +62,7 @@ export default function EnamadBadge({
             loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
-            className={cn('size-[46px] cursor-pointer object-contain', compact && 'size-10')}
+            className={cn('size-[46px] cursor-pointer object-contain', compact && 'size-8')}
             {...{ code: sealCode }}
           />
         )}

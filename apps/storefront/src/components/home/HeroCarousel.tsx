@@ -173,7 +173,7 @@ export default function HeroCarousel() {
       />
       <div
         data-slot="hero-copy"
-        className="absolute top-1/2 right-3 z-[1] w-[46%] -translate-y-1/2 text-right md:translate-y-0 md:top-10 md:right-[5%] md:w-[43%] lg:top-14 lg:right-[6%]"
+        className="absolute top-1/2 right-2 z-[1] w-[46%] -translate-y-1/2 text-right md:translate-y-0 md:top-10 md:right-[5%] md:w-[43%] lg:top-14 lg:right-[6%]"
       >
         <div
           key={current}
@@ -184,7 +184,7 @@ export default function HeroCarousel() {
           </p>
           <h1
             id="hero-title"
-            className="text-[18px] leading-[1.5] font-[900] tracking-[-0.5px] text-[#ffebc8] min-[375px]:text-[20px] min-[480px]:text-[24px] md:mt-2 md:leading-[1.6] md:text-[36px] lg:text-[58px]"
+            className="text-[16px] leading-[1.5] font-[900] tracking-[-0.5px] text-[#ffebc8] min-[375px]:text-[18px] min-[480px]:text-[24px] md:mt-2 md:leading-[1.6] md:text-[36px] lg:text-[58px]"
           >
             {slide.title}
           </h1>

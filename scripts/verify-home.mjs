@@ -5,6 +5,15 @@ import { readFile, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
+const logoSvg = await readFile('apps/storefront/public/images/logo-footer.svg', 'utf8');
+assert.ok(
+  !/<(?:image|script|foreignObject)\b|data:image/i.test(logoSvg),
+  'Footer logo must contain native vectors only',
+);
+assert.ok(
+  (await sharp(Buffer.from(logoSvg)).metadata()).hasAlpha,
+  'Footer vector logo must have a transparent background',
+);
 const baseURL = 'http://localhost:3002';
 const server = spawn(
   process.execPath,
@@ -297,6 +306,20 @@ try {
       `Footer must stack badges above social icons above links at ${width}px`,
     );
     assert.ok(Math.abs(footerBox.width - width) < 2, `Footer must span the viewport at ${width}px`);
+    for (const frame of [
+      footer.locator('[data-slot="footer-banner-background"]'),
+      footer.locator('[data-slot="footer-banner-background"] > div[aria-hidden="true"]'),
+    ]) {
+      await expect(frame).toHaveCSS('border-top-left-radius', '0px');
+      await expect(frame).toHaveCSS('border-bottom-right-radius', '0px');
+    }
+    const brandImage = footer.locator('[data-slot="footer-brand"] img');
+    await expect(brandImage).toHaveAttribute('src', '/images/logo-footer.svg');
+    const brandImageBox = await brandImage.boundingBox();
+    assert.ok(
+      brandImageBox.width >= 72 && brandImageBox.height >= 94,
+      `Footer logo must be larger at ${width}px`,
+    );
     const brandBox = await footer.locator('[data-slot="footer-brand"]').boundingBox();
     assert.ok(
       Math.abs(brandBox.x + brandBox.width / 2 - center) < 1,
@@ -314,7 +337,7 @@ try {
       .all()) {
       const rect = await badge.boundingBox();
       assert.ok(
-        rect.width <= 48 && rect.height <= 48,
+        rect.width <= 36 && rect.height <= 36,
         `Trust badges must be compact at ${width}px`,
       );
     }
@@ -329,8 +352,8 @@ try {
       );
       const heroBox = await hero.boundingBox();
       assert.ok(
-        Math.abs(heroBox.width - width) < 2,
-        `Mobile hero must span the viewport at ${width}px`,
+        Math.abs(heroBox.width - (width - (width >= 480 ? 64 : 48))) < 2,
+        `Mobile hero must have matching side gutters at ${width}px`,
       );
       assert.equal(
         heroBox.height,
@@ -358,6 +381,13 @@ try {
       await expect(social).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     const storyBox = await page.locator('#story').boundingBox();
     const storyCopy = await page.locator('[data-slot="story-copy"]').boundingBox();
+    const heroBoxForGutters = await hero.boundingBox();
+    assert.ok(
+      Math.abs(storyBox.x - heroBoxForGutters.x) < 1 &&
+        Math.abs(storyBox.width - heroBoxForGutters.width) < 1,
+      `Hero and story must share the same side gutters at ${width}px`,
+    );
+
     assert.ok(
       storyCopy.y >= storyBox.y && storyCopy.y + storyCopy.height < storyBox.y + storyBox.height,
       `Story copy must stay on the image at ${width}px`,
@@ -480,7 +510,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, compact full-width mobile hero with side-by-side copy and products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, right-side stacked badges, links and social icons, top-center branding, compact badges, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, compact mobile hero with matching story gutters with side-by-side copy and products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, right-side stacked badges, links and social icons, larger transparent vector branding, square footer/frame, smaller badges, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

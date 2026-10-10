@@ -21,11 +21,11 @@ export default function Footer() {
     <footer className="w-full pt-3 pb-[calc(70px+env(safe-area-inset-bottom))] md:pb-0">
       <div
         data-slot="footer-banner-background"
-        className="group/footer relative isolate w-full overflow-hidden rounded-t-[26px] border border-[#d6a457]/40 bg-[radial-gradient(ellipse_at_bottom_left,#bc3034_0%,#981c29_45%,#6d1022_100%)] text-[#fff5e3] shadow-[0_18px_40px_-28px_rgba(109,16,34,0.65)]"
+        className="group/footer relative isolate w-full overflow-hidden rounded-none border border-[#d6a457]/40 bg-[radial-gradient(ellipse_at_bottom_left,#bc3034_0%,#981c29_45%,#6d1022_100%)] text-[#fff5e3] shadow-[0_18px_40px_-28px_rgba(109,16,34,0.65)]"
       >
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-2 z-[2] rounded-[20px] border border-[#f4d493]/25"
+          className="pointer-events-none absolute inset-2 z-[2] rounded-none border border-[#f4d493]/25"
         />
         <ArdakanOutline />
         <Link
@@ -35,18 +35,18 @@ export default function Footer() {
           aria-label="فروشگاه سنتی بهجتی اردکان"
         >
           <Image
-            src="/images/logo-brand.png"
+            src="/images/logo-footer.svg"
             alt="لوگوی سنتی بهجتی"
-            width={56}
-            height={73}
-            className="h-[58px] w-11 object-contain drop-shadow-md md:h-[73px] md:w-14"
-            sizes="(min-width: 768px) 56px, 44px"
+            width={88}
+            height={116}
+            className="h-[94px] w-[72px] object-contain drop-shadow-md md:h-[116px] md:w-[88px]"
+            sizes="(min-width: 768px) 88px, 72px"
           />
-          <span className="whitespace-nowrap text-[10px] font-bold text-[#f5d59c] md:text-xs">
+          <span className="whitespace-nowrap text-xs font-bold text-[#f5d59c] md:text-sm">
             فروشگاه سنتی بهجتی اردکان
           </span>
         </Link>
-        <div className="relative z-[1] flex min-h-[240px] flex-col items-start justify-end px-4 pt-24 pb-3 md:min-h-[270px] md:px-8 md:pt-32 md:pb-5 lg:min-h-[290px] lg:px-10">
+        <div className="relative z-[1] flex min-h-[260px] flex-col items-start justify-end px-4 pt-[132px] pb-3 md:min-h-[290px] md:px-8 md:pt-40 md:pb-5 lg:min-h-[300px] lg:px-10">
           <div className="flex w-[150px] flex-col items-start gap-1 min-[480px]:w-auto md:gap-2">
             <nav
               aria-label="لینک‌های فوتر"
@@ -88,13 +88,13 @@ export default function Footer() {
             className="order-first mb-1 flex items-center justify-start gap-1.5"
             aria-label="نشان‌های اعتماد و پرداخت"
           >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[#f4d493]/30 bg-[#fff8ed] p-1">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#f4d493]/30 bg-[#fff8ed] p-1">
               <Image
                 src="/images/sep-logo.png"
                 alt="لوگوی پرداخت الکترونیک سامان کیش"
                 width={78}
                 height={49}
-                className="h-auto w-10 object-contain"
+                className="h-auto w-7 object-contain"
               />
             </div>
             <EnamadBadge compact />
