@@ -69,7 +69,12 @@ export default function Header() {
         </Link>
       </nav>
       <div data-slot="header-actions" className="flex shrink-0 items-center gap-0">
-        <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex">
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild
+          className="hidden text-foreground md:inline-flex"
+        >
           <Link href="/account" aria-label="حساب کاربری">
             <UserRound />
           </Link>
