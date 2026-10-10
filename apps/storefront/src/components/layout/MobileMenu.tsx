@@ -8,7 +8,7 @@ const links = [
   { href: '/', label: 'خانه', icon: House },
   { href: '/shop', label: 'محصولات', icon: Store },
   { href: '/shop#categories', label: 'دسته‌بندی محصولات', icon: LayoutGrid },
-  { href: '/#story', label: 'داستان سنتی بهجتی و اردکان', icon: BookOpen },
+  { href: '/#story', label: 'درباره ما', icon: BookOpen },
 ];
 export default function MobileMenu() {
   const close = useUI((state) => state.setPanel);

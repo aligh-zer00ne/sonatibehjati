@@ -185,7 +185,7 @@ try {
   await page.getByRole('button', { name: 'باز کردن فهرست' }).click();
   assert.equal(await page.getByRole('dialog').locator('a[href="/#ardakan"]').count(), 0);
   assert.equal(await page.getByRole('dialog').locator('a[href="/#story"]').count(), 1);
-  await page.getByRole('dialog').getByRole('link', { name: 'داستان سنتی بهجتی و اردکان' }).click();
+  await page.getByRole('dialog').getByRole('link', { name: 'درباره ما', exact: true }).click();
   await page.locator('[data-slot="dialog-content"]').waitFor({ state: 'hidden' });
   assert.equal(await page.getByRole('dialog').count(), 0);
   await page.setViewportSize({ width: 1440, height: 1000 });

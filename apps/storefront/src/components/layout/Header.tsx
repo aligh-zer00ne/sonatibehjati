@@ -65,7 +65,7 @@ export default function Header() {
           دسته‌بندی‌ها
         </Link>
         <Link className="py-3" href="/#story">
-          داستان سنتی بهجتی و اردکان
+          درباره ما
         </Link>
       </nav>
       <div data-slot="header-actions" className="flex shrink-0 items-center gap-0">
