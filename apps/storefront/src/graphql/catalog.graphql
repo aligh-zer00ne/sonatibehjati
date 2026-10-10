@@ -5,6 +5,15 @@ fragment CatalogProduct on Product {
   shortDescription
   description
   price
+  promotion {
+    title
+    percent
+    amount
+    originalPrice
+    price
+    startsAt
+    endsAt
+  }
   weight
   badge
   isActive

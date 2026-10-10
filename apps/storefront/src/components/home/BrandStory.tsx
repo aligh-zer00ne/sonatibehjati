@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Wheat } from 'lucide-react';
+import { ArrowLeft, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function BrandStory() {
@@ -42,11 +42,6 @@ export default function BrandStory() {
         data-slot="story-copy"
         className="absolute top-6 right-5 z-[1] w-[55%] text-right min-[375px]:top-7 min-[480px]:right-7 min-[480px]:w-[61%] sm:top-10 sm:right-[5%] sm:w-[43%] lg:top-12 lg:right-[6%]"
       >
-        <p className="mb-2 flex items-center gap-1.5 text-[10px] leading-5 font-medium text-[#f4d69f] sm:text-[11px] lg:text-xs">
-          <Wheat className="size-3.5 shrink-0" aria-hidden="true" />
-          <span className="sm:hidden">سنتی بهجتی و اردکان</span>
-          <span className="hidden sm:inline">داستان سنتی بهجتی و اردکان</span>
-        </p>
         <h2
           id="story-title"
           className="text-[23px] leading-[1.65] font-extrabold text-[#fff0d6] min-[375px]:text-[26px] min-[480px]:text-[30px] sm:text-[27px] md:text-[31px] lg:text-[39px]"
@@ -55,11 +50,8 @@ export default function BrandStory() {
           <span className="block text-[#f4d69f]">تا سفرهٔ شما</span>
         </h2>
         <p className="mt-3 text-[12px] leading-6 text-[#f5e6ce] md:text-[13px] md:leading-7 lg:mt-4 lg:max-w-[390px] lg:text-sm lg:leading-8">
-          <span className="md:hidden">قصهٔ کنجد و اصالت؛ از شهر بادگیرها تا سفرهٔ هر روز شما.</span>
-          <span className="hidden md:inline">
-            میان کوچه‌های خشتی و بادگیرهای اردکان، کنجد بخشی از قصهٔ طعم‌هاست. سنتی بهجتی این پیوند
-            را با ارده، حلواارده و فرآورده‌های کنجدی به سفرهٔ شما می‌آورد.
-          </span>
+          تولیدی محصولات سنتی بهجتی اردکان با بیش از ۱۰ سال سابقه، به دنبال حفظ طعم اصیل و کیفیت
+          ماندگار است. با مواد اولیهٔ مرغوب، طعم سنتی اردکان را به سفرهٔ شما می‌رسانیم.
         </p>
         <Button
           asChild

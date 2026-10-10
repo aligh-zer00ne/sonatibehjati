@@ -1,4 +1,5 @@
 'use client';
+import { useLivePromotion } from '@/components/promotion/ProductPrice';
 import { productPhotoUrl } from '@/lib/product-photo';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,6 +10,8 @@ import { formatNumber, formatPrice } from '@behjati/shared';
 import { useCart } from '@/stores/cart';
 import type { CatalogProductFragment } from '@/generated/graphql';
 export default function CartItem({ product }: { product: CatalogProductFragment }) {
+  const { promotion } = useLivePromotion(product.promotion);
+  const price = promotion?.price ?? product.price;
   const quantity = useCart((state) => state.items[product.id] ?? 0);
   const remove = useCart((state) => state.remove);
   const image = product.images[0];
@@ -42,12 +45,10 @@ export default function CartItem({ product }: { product: CatalogProductFragment 
           {product.title}
         </Link>
         <p className="mt-1 text-xs text-muted-foreground">{product.weight}</p>
-        <p className="my-2 text-sm font-bold text-primary">
-          {formatPrice(product.price * quantity)}
-        </p>
+        <p className="my-2 text-sm font-bold text-primary">{formatPrice(price * quantity)}</p>
         <QuantityControl className="max-w-[170px]" id={product.id} title={product.title} />
         <p className="mt-2 text-[10px] text-muted-foreground">
-          {formatNumber(quantity)} × {formatPrice(product.price)}
+          {formatNumber(quantity)} × {formatPrice(price)}
         </p>
       </div>
       <Button

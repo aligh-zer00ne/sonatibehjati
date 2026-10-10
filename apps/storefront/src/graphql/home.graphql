@@ -6,27 +6,9 @@ query HomepageCatalog {
     image
   }
   products {
-    id
-    slug
-    title
-    shortDescription
-    description
-    price
-    weight
-    badge
-    isActive
-    images {
-      id
-      url
-      alt
-    }
-    category {
-      id
-      slug
-      title
-      image
-    }
-    createdAt
-    updatedAt
+    ...CatalogProduct
+  }
+  promotionalProducts {
+    ...CatalogProduct
   }
 }

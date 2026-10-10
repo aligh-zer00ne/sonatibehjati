@@ -7,12 +7,12 @@ import HomePanels from '@/components/layout/HomePanels';
 import HeroSection from '@/components/home/HeroSection';
 import CategorySection from '@/components/home/CategorySection';
 import ProductSection from '@/components/home/ProductSection';
+import DiscountSection from '@/components/promotion/DiscountSection';
 import BrandStory from '@/components/home/BrandStory';
-import BenefitsSection from '@/components/home/BenefitsSection';
 import { getHomepageCatalog } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
 export default async function Home() {
-  const { products, categories } = await getHomepageCatalog();
+  const { products, categories, promotionalProducts } = await getHomepageCatalog();
   const featuredSlugs = [
     'traditional-halva-500',
     'sesame-tahini-350',
@@ -38,11 +38,9 @@ export default async function Home() {
       <main id="main" className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0">
         <HeroSection />
         <Reveal>
-          <BenefitsSection />
-        </Reveal>
-        <Reveal>
           <CategorySection categories={categories} />
         </Reveal>
+        <DiscountSection products={promotionalProducts} />
         <Reveal>
           <ProductSection
             title="پرفروش‌های سنتی بهجتی"
@@ -54,15 +52,22 @@ export default async function Home() {
         <Reveal>
           <BrandStory />
         </Reveal>
-        <Reveal>
-          <ProductSection
-            title="محصولات کنجدی"
-            id="all-products"
-            products={products.filter(
-              (product) => !featured.some((item) => item.id === product.id),
-            )}
-          />
-        </Reveal>
+        <div id="all-products">
+          {['tahini', 'halva', 'oil', 'traditional-sweets', 'sesame'].map((slug) => {
+            const category = categories.find((item) => item.slug === slug);
+            return category ? (
+              <Reveal key={category.id}>
+                <ProductSection
+                  title={category.title}
+                  id={`products-${slug}`}
+                  href={`/category/${slug}`}
+                  horizontal
+                  products={products.filter((product) => product.category.slug === slug)}
+                />
+              </Reveal>
+            ) : null;
+          })}
+        </div>
         <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
           محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
         </p>

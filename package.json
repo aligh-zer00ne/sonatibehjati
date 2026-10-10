@@ -21,6 +21,8 @@
     "dev:bun": "bun run dev",
     "check": "npm run codegen && npm run lint && npm run typecheck && npm test && npm run build",
     "verify:home": "node scripts/verify-home.mjs",
+    "verify:promotions": "bun scripts/verify-promotions.mjs",
+    "verify:admin-promotions": "bun scripts/verify-admin-promotions.mjs",
     "verify:api": "node scripts/verify-api.mjs",
     "verify:commerce": "node scripts/verify-commerce.mjs",
     "verify:product-design": "node scripts/verify-product-design.mjs",

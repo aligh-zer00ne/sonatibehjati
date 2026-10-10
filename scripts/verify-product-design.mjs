@@ -122,6 +122,8 @@ try {
   for (const product of mockCatalog.products) {
     await goto('/product/' + product.slug);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(product.title);
+    await expect(page.getByText('انتخاب تا سفارش', { exact: true })).toHaveCount(0);
+    await expect(page.locator('[aria-label="مزایای خرید"]')).toHaveCount(0);
     await expect(page.getByRole('button', { name: /^نمایش تصویر [۱-۴]$/ })).toHaveCount(4);
     for (let index = 0; index < 4; index++) {
       const name = `نمایش تصویر ${new Intl.NumberFormat('fa-IR').format(index + 1)}`;

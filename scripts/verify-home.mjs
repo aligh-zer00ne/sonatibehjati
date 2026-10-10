@@ -82,13 +82,13 @@ try {
   await page.goto(baseURL, { waitUntil: 'load' });
   const hero = page.getByRole('region', { name: 'تصاویر محصولات کنجدی' });
   await expect(hero.getByRole('heading', { level: 1 })).toHaveText('سنتی بهجتی');
-  await hero.getByRole('button', { name: 'اسلاید بعدی', exact: true }).click();
+  await hero.getByRole('button', { name: 'نمایش اسلاید ۲: روغن کنجد', exact: true }).click();
   await expect(hero.getByRole('heading', { level: 1 })).toHaveText('طلای کنجد');
   await expect(hero.getByRole('link', { name: 'دیدن روغن‌ها' })).toHaveAttribute(
     'href',
     '/category/oil',
   );
-  await hero.getByRole('button', { name: 'اسلاید بعدی', exact: true }).click();
+  await hero.getByRole('button', { name: 'نمایش اسلاید ۳: ارده‌های طعم‌دار', exact: true }).click();
   await expect(hero.getByRole('heading', { level: 1 })).toHaveText('طعم‌های تازه');
   await expect(hero.getByRole('link', { name: 'کشف طعم‌ها' })).toHaveAttribute(
     'href',
@@ -104,9 +104,33 @@ try {
   );
   assert.deepEqual(
     await page.locator('main section[id]').evaluateAll((sections) => sections.map(({ id }) => id)),
-    ['categories', 'products', 'story', 'all-products'],
+    [
+      'categories',
+      'products',
+      'story',
+      'products-tahini',
+      'products-halva',
+      'products-oil',
+      'products-traditional-sweets',
+      'products-sesame',
+    ],
     'The merged story must follow bestsellers; the promotional banner is now the footer',
   );
+  await expect(page.getByRole('region', { name: 'آشنایی با سنتی بهجتی' })).toHaveCount(0);
+  await expect(page.locator('#story')).not.toContainText('داستان سنتی بهجتی و اردکان');
+  await expect(page.locator('#story')).toContainText('بیش از ۱۰ سال سابقه');
+  for (const slug of ['tahini', 'halva', 'oil', 'traditional-sweets', 'sesame']) {
+    const row = page.locator(`#products-${slug}`);
+    for (const card of await row.locator('article[data-product-slug]').all())
+      await expect(card.locator('a[href^="/category/"]')).toHaveCount(0);
+    const cards = await row
+      .locator('article[data-product-slug]')
+      .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().y));
+    assert.ok(
+      cards.every((y) => Math.abs(y - cards[0]) < 1),
+      `Category ${slug} must stay on one horizontal row`,
+    );
+  }
   await expect(page.locator('footer nav a')).toHaveText(['خانه', 'محصولات', 'درباره ما']);
   await expect(page.locator('footer [data-footer-mascot]')).toHaveCount(1);
   const icon = await page.locator('link[rel="icon"][href^="/icon.png"]').getAttribute('href');
@@ -125,7 +149,7 @@ try {
   await page.getByRole('button', { name: 'افزایش تعداد حلواارده سنتی' }).first().click();
   await page.reload({ waitUntil: 'load' });
   assert.equal(
-    await page.locator('[data-product-slug="traditional-halva-500"] output').textContent(),
+    await page.locator('[data-product-slug="traditional-halva-500"] output').first().textContent(),
     '۲',
   );
   await page.getByRole('button', { name: 'سبد خرید، ۲ محصول' }).click();
@@ -170,6 +194,15 @@ try {
     'Desktop must use its dedicated composition instead of cropping the mobile photograph',
   );
   assert.equal(await page.getByRole('navigation', { name: 'ناوبری موبایل' }).isVisible(), false);
+  const actions = await page
+    .locator('[data-slot="header-actions"] > *')
+    .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().toJSON()));
+  assert.equal(actions.length, 2);
+  assert.ok(
+    Math.abs(actions[0].x - (actions[1].x + actions[1].width)) < 1,
+    'Desktop account and cart controls must be adjacent',
+  );
+
   assert.ok(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     'Desktop horizontal overflow',
@@ -212,7 +245,7 @@ try {
       headingSize.height <= headingSize.lineHeight + 1,
       `Brand heading wraps at ${width}px`,
     );
-    const expectedImage = width >= 640 ? 'hero-tahini-desktop-v6' : 'hero-tahini-mobile-v6';
+    const expectedImage = width >= 768 ? 'hero-tahini-desktop-v6' : 'hero-tahini-mobile-v6';
     assert.ok(
       (
         await hero
@@ -254,18 +287,42 @@ try {
       `Boy must align with the panel bottom at ${width}px`,
     );
     assert.ok(
-      Math.abs(badgeBox.x + badgeBox.width / 2 - center) < 1,
-      `Payment and trust badges must be centered at ${width}px`,
+      badgeBox.x + badgeBox.width / 2 > center &&
+        navBox.x + navBox.width / 2 > center &&
+        socialBox.x + socialBox.width / 2 > center,
+      `Footer navigation, social and trust items must sit to the right at ${width}px`,
     );
     assert.ok(
-      navBox.x + navBox.width / 2 > center && socialBox.x + socialBox.width / 2 > center,
-      `Navigation and social icons must sit to the right at ${width}px`,
+      badgeBox.y + badgeBox.height <= socialBox.y && socialBox.y + socialBox.height <= navBox.y,
+      `Footer must stack badges above social icons above links at ${width}px`,
     );
-    if (width < 768)
+    if (width < 768) {
       assert.ok(
-        badgeBox.y + badgeBox.height <= mascotBox.y,
+        Math.abs(footerBox.width - (width - 16) * 0.8) < 2,
+        `Mobile footer must be narrower at ${width}px`,
+      );
+      assert.ok(
+        badgeBox.x >= mascotBox.x + mascotBox.width || badgeBox.y + badgeBox.height <= mascotBox.y,
         `Mobile badges must not overlap the boy at ${width}px`,
       );
+      assert.ok(
+        socialBox.x >= mascotBox.x + mascotBox.width,
+        `Mobile social icons must not overlap the boy at ${width}px`,
+      );
+      const heroBox = await hero.boundingBox();
+      const mainWidth = await page
+        .locator('main')
+        .evaluate(
+          (node) =>
+            node.clientWidth -
+            parseFloat(getComputedStyle(node).paddingLeft) -
+            parseFloat(getComputedStyle(node).paddingRight),
+        );
+      assert.ok(
+        Math.abs(heroBox.width - mainWidth / 2) < 2,
+        `Mobile hero width must be half of its container at ${width}px`,
+      );
+    }
     if (width === 1440) {
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await footer.locator('nav a').first().hover();
@@ -321,9 +378,9 @@ try {
       );
       await expect(copy).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
       await expect(copy).toHaveCSS('border-top-width', '0px');
-      if (width < 640) {
+      if (width < 768) {
         assert.ok(
-          copyBox.y + copyBox.height < imageBox.y + imageBox.height * 0.3,
+          copyBox.y + copyBox.height < imageBox.y + imageBox.height * 0.4,
           `Mobile copy must leave the large product group unobstructed at ${width}px`,
         );
       }
@@ -403,7 +460,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, centered badges, right-side links and social icons, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, right-side stacked badges, links and social icons, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

@@ -4,13 +4,11 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { getProduct, getCatalogPage } from '@/lib/catalog/service';
-import { formatPrice } from '@behjati/shared';
+import ProductPrice from '@/components/promotion/ProductPrice';
 import Breadcrumbs from '@/components/layout/Breadcrumbs';
 import ProductGallery from '@/components/product/ProductGallery';
 import ProductPurchase from '@/components/product/ProductPurchase';
-import ProductFeatures from '@/components/product/ProductFeatures';
 import ProductTabs from '@/components/product/ProductTabs';
-import PurchaseJourney from '@/components/product/PurchaseJourney';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product/ProductGrid';
@@ -82,9 +80,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <p className="mt-5 text-sm leading-8 text-earth/85">{product.shortDescription}</p>
           <div className="mt-5 border-t border-border/70 pt-5">
             <p className="mb-1 text-xs text-muted-foreground">قیمت محصول</p>
-            <p className="text-2xl font-extrabold text-primary lg:text-3xl">
-              {formatPrice(product.price)}
-            </p>
+            <ProductPrice
+              product={product}
+              details
+              className="text-2xl font-extrabold lg:text-3xl"
+            />
           </div>
           <ProductPurchase
             key={product.id}
@@ -92,10 +92,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             title={product.title}
             weight={product.weight}
           />
-          <ProductFeatures />
         </Card>
       </section>
-      <PurchaseJourney />
       <ProductTabs key={product.id} product={product} />
       {catalog.items.length > 0 && (
         <section className="mt-9">

@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Plus, ImageOff } from 'lucide-react';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
-import { formatPrice, MAX_CART_LINES } from '@behjati/shared';
+import { MAX_CART_LINES } from '@behjati/shared';
 import { useCart } from '@/stores/cart';
+import ProductPrice from '@/components/promotion/ProductPrice';
 import ProductBadge from './ProductBadge';
 import QuantityControl from './QuantityControl';
 import FavoriteButton from './FavoriteButton';
@@ -15,9 +16,13 @@ import { cn } from '@/lib/utils';
 export default function ProductCard({
   product,
   compactOnMobile = false,
+  horizontal = false,
+  promotionDetails = false,
 }: {
   product: HomepageCatalogQuery['products'][number];
   compactOnMobile?: boolean;
+  horizontal?: boolean;
+  promotionDetails?: boolean;
 }) {
   const quantity = useCart((state) => state.items[product.id] ?? 0);
   const add = useCart((state) => state.add);
@@ -27,7 +32,9 @@ export default function ProductCard({
     <article
       className={cn(
         'group/product min-w-0',
-        compactOnMobile && 'w-[154px] shrink-0 snap-start min-[480px]:w-[180px] md:w-auto',
+        horizontal
+          ? 'w-[154px] shrink-0 snap-start min-[480px]:w-[180px] md:w-[210px] lg:w-[230px]'
+          : compactOnMobile && 'w-[154px] shrink-0 snap-start min-[480px]:w-[180px] md:w-auto',
       )}
       data-product-slug={product.slug}
     >
@@ -70,9 +77,11 @@ export default function ProductCard({
             </Link>
           </h3>
           <p className="my-[3px] text-xs text-muted-foreground">{product.weight}</p>
-          <p className="my-[9px] text-sm font-[750] text-primary min-[480px]:text-base lg:text-lg">
-            {formatPrice(product.price)}
-          </p>
+          <ProductPrice
+            product={product}
+            details={promotionDetails}
+            className="min-[480px]:text-base lg:text-lg"
+          />
           {quantity ? (
             <QuantityControl id={product.id} title={product.title} />
           ) : (

@@ -41,6 +41,29 @@ export function useSelectedProducts(ids: string[], hydrated: boolean) {
       });
     return () => controller.abort();
   }, [key, hydrated, attempt]);
+  useEffect(() => {
+    if (!result.products.some((product) => product.promotion)) return;
+    const timer = setInterval(() => {
+      const now = Date.now();
+      setResult((current) => {
+        if (
+          !current.products.some(
+            (product) => product.promotion && Date.parse(product.promotion.endsAt) <= now,
+          )
+        )
+          return current;
+        return {
+          ...current,
+          products: current.products.map((product) =>
+            product.promotion && Date.parse(product.promotion.endsAt) <= now
+              ? { ...product, promotion: null }
+              : product,
+          ),
+        };
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [result.products]);
   return {
     products: result.products,
     loading: !hydrated || key !== result.key,

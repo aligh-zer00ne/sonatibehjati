@@ -8,12 +8,14 @@ import {
 const categories = photoCategories.map((category) => ({ ...category, id: category.slug }));
 export const mockCatalog: HomepageCatalogQuery = {
   categories,
+  promotionalProducts: [],
   products: photoProducts.map((product) => ({
     id: product.id,
     slug: product.slug,
     title: product.title,
     category: categories.find((category) => category.slug === product.category)!,
     price: product.price,
+    promotion: null,
     weight: product.weight,
     badge: product.badge,
     isActive: true,

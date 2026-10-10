@@ -1,4 +1,5 @@
 'use client';
+import { productSellingPrice } from '@behjati/shared/promotions';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { MAX_CART_LINES, MAX_CART_QUANTITY } from '@behjati/shared';
@@ -82,5 +83,13 @@ export const useCart = create<CartState>()(
 );
 export const getSubtotal = (
   items: Record<string, number>,
-  products: ReadonlyArray<{ id: string; price: number }>,
-) => products.reduce((total, product) => total + product.price * (items[product.id] ?? 0), 0);
+  products: ReadonlyArray<{
+    id: string;
+    price: number;
+    promotion?: { price: number; startsAt: string; endsAt: string } | null;
+  }>,
+) =>
+  products.reduce(
+    (total, product) => total + productSellingPrice(product) * (items[product.id] ?? 0),
+    0,
+  );

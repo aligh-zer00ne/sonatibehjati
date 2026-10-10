@@ -68,28 +68,30 @@ export default function Header() {
           داستان سنتی بهجتی و اردکان
         </Link>
       </nav>
-      <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex">
-        <Link href="/account" aria-label="حساب کاربری">
-          <UserRound />
-        </Link>
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="relative text-foreground"
-        aria-label={`سبد خرید، ${formatNumber(count)} محصول`}
-        onClick={() => open('cart')}
-      >
-        <ShoppingCart />
-        {count > 0 && (
-          <span
-            key={count}
-            className="absolute top-0 -right-px min-w-[17px] animate-in zoom-in-50 fade-in rounded-full bg-primary text-center text-[10px] leading-[17px] text-white duration-300 motion-reduce:animate-none"
-          >
-            {formatNumber(count)}
-          </span>
-        )}
-      </Button>
+      <div data-slot="header-actions" className="flex shrink-0 items-center gap-0">
+        <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex">
+          <Link href="/account" aria-label="حساب کاربری">
+            <UserRound />
+          </Link>
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative text-foreground"
+          aria-label={`سبد خرید، ${formatNumber(count)} محصول`}
+          onClick={() => open('cart')}
+        >
+          <ShoppingCart />
+          {count > 0 && (
+            <span
+              key={count}
+              className="absolute top-0 -right-px min-w-[17px] animate-in zoom-in-50 fade-in rounded-full bg-primary text-center text-[10px] leading-[17px] text-white duration-300 motion-reduce:animate-none"
+            >
+              {formatNumber(count)}
+            </span>
+          )}
+        </Button>
+      </div>
     </header>
   );
 }

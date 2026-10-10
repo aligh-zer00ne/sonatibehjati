@@ -2,16 +2,20 @@
 
 import { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const sealCode = 'LhcPkkTt16DfQeGGnaGyvZEhRrXuuVuY';
 const sealQuery = `id=7974460&Code=${sealCode}`;
 
-export default function EnamadBadge() {
+export default function EnamadBadge({ className }: { className?: string }) {
   const [imageFailed, setImageFailed] = useState(false);
   return (
     <div
       data-enamad-badge
-      className="flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center"
+      className={cn(
+        'flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center',
+        className,
+      )}
       role="region"
       aria-labelledby="enamad-title"
     >
