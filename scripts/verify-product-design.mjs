@@ -10,6 +10,17 @@ import { catalogFilterSchema } from '@behjati/shared';
 const require = createRequire(import.meta.url);
 const repo = fileURLToPath(new URL('../', import.meta.url));
 const sharp = require('sharp');
+const categoryIcons = {
+  tahini: '/images/categories/tahini-icon.png',
+  halva: '/images/categories/halva-icon.png',
+  oil: '/images/categories/oil-icon.png',
+  'traditional-sweets': '/images/categories/sweets-icon.png',
+  sesame: '/images/categories/sesame-icon.png',
+};
+for (const image of Object.values(categoryIcons)) {
+  const metadata = await sharp(repo + '/apps/storefront/public' + image).metadata();
+  assert.equal(metadata.hasAlpha, true, `Category illustration lost transparency: ${image}`);
+}
 for (const product of mockCatalog.products) {
   assert.equal(product.images.length, 4);
   assert.equal(new Set(product.images.map((image) => image.url)).size, 4);
@@ -101,18 +112,23 @@ try {
   await expect(page.locator('#categories h3')).toHaveText([
     'ارده',
     'حلواارده',
-    'روغن خوراکی',
+    'روغن های خوراکی',
     'شیرینی و محصولات سنتی',
     'سایر محصولات',
   ]);
   await expect(page.locator('#categories [data-category-symbol]')).toHaveCount(5);
   for (const image of await page.locator('[data-category-symbol]').all()) {
     const source = new URL(await image.getAttribute('src'), base);
-    assert.match(
+    assert.equal(
       source.searchParams.get('url') ?? source.pathname,
-      /^\/images\/categories\/(tahini|halva|oil|sweets|sesame)-emblem\.svg$/,
+      categoryIcons[await image.getAttribute('data-category-symbol')],
     );
   }
+  await loadImages();
+  await page.locator('#categories').screenshot({ path: '/tmp/behjati-categories-desktop.png' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('#categories').screenshot({ path: '/tmp/behjati-categories-mobile.png' });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await goto('/shop');
   await expect(page.locator('main article[data-product-slug]')).toHaveCount(12);
   await expect(page.locator('article[data-product-slug] [data-decoration]')).toHaveCount(0);
@@ -212,7 +228,7 @@ try {
   await staticContext.close();
   assert.deepEqual(errors, []);
   console.log(
-    'Product design verified: the same 5 categories with custom vector emblems, plain product cards, 12 products × 4 gallery states, wraparound, zoom/focus, keyboard tabs, cart/favorites persistence, desktop RTL placement, responsive 320–1440 and SSR. Isolated fixture; authentication unchanged.',
+    'Product design verified: the same 5 categories with supplied transparent illustrations, plain product cards, 12 products × 4 gallery states, wraparound, zoom/focus, keyboard tabs, cart/favorites persistence, desktop RTL placement, responsive 320–1440 and SSR. Isolated fixture; authentication unchanged.',
   );
 } finally {
   await browser?.close();

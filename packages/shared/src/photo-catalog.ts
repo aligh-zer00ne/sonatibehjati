@@ -1,14 +1,14 @@
 /** Real product photographs; prices and weights are temporary development values. */
 export const photoCategories = [
-  { slug: 'tahini', title: 'ارده', image: '/images/categories/tahini-emblem.svg' },
-  { slug: 'halva', title: 'حلواارده', image: '/images/categories/halva-emblem.svg' },
-  { slug: 'oil', title: 'روغن خوراکی', image: '/images/categories/oil-emblem.svg' },
+  { slug: 'tahini', title: 'ارده', image: '/images/categories/tahini-icon.png' },
+  { slug: 'halva', title: 'حلواارده', image: '/images/categories/halva-icon.png' },
+  { slug: 'oil', title: 'روغن های خوراکی', image: '/images/categories/oil-icon.png' },
   {
     slug: 'traditional-sweets',
     title: 'شیرینی و محصولات سنتی',
-    image: '/images/categories/sweets-emblem.svg',
+    image: '/images/categories/sweets-icon.png',
   },
-  { slug: 'sesame', title: 'سایر محصولات', image: '/images/categories/sesame-emblem.svg' },
+  { slug: 'sesame', title: 'سایر محصولات', image: '/images/categories/sesame-icon.png' },
 ] as const;
 
 export const photoProducts = [
