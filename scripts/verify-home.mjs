@@ -351,9 +351,12 @@ try {
         `Mobile social icons must not overlap the boy at ${width}px`,
       );
       const heroBox = await hero.boundingBox();
+      const searchBox = await page
+        .getByRole('button', { name: /جستجو در محصولات سنتی بهجتی/ })
+        .boundingBox();
       assert.ok(
-        Math.abs(heroBox.width - (width - (width >= 480 ? 64 : 48))) < 2,
-        `Mobile hero must have matching side gutters at ${width}px`,
+        Math.abs(heroBox.x - searchBox.x) < 1 && Math.abs(heroBox.width - searchBox.width) < 1,
+        `Mobile hero must match the search bar width and side gutters at ${width}px`,
       );
       assert.equal(
         heroBox.height,

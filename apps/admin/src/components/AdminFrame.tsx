@@ -147,13 +147,6 @@ export default function AdminFrame() {
             />
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              to="/admin/settings"
-              aria-label="تنظیمات حساب مدیر"
-              className="grid size-9 place-items-center rounded-full bg-[#f1e6d4] !text-[#810c20]"
-            >
-              <AdminIcon name="settings" />
-            </Link>
             <div className="hidden text-left sm:block">
               <p className="text-xs font-bold">مدیر فروشگاه</p>
               <bdi className="block max-w-40 truncate text-[10px] text-[#7d746a]">
