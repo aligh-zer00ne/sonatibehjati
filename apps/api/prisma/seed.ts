@@ -143,14 +143,17 @@ async function seed() {
     },
   });
   if (process.env.DEV_ADMIN_EMAIL && process.env.DEV_ADMIN_PASSWORD) {
-    if (process.env.DEV_ADMIN_PASSWORD.length < 12)
-      throw new Error('Development admin password must have at least 12 characters.');
-    const passwordHash = await hashAdminPassword(process.env.DEV_ADMIN_PASSWORD);
-    await db.admin.upsert({
-      where: { email: process.env.DEV_ADMIN_EMAIL.trim().toLowerCase() },
-      update: {},
-      create: { email: process.env.DEV_ADMIN_EMAIL.trim().toLowerCase(), passwordHash },
-    });
+    const email = process.env.DEV_ADMIN_EMAIL.trim().toLowerCase();
+    // A maintenance reset may have changed the existing account's credentials.
+    // Seed only provisions missing accounts; it never validates or resets their passwords.
+    if (!(await db.admin.findUnique({ where: { email } }))) {
+      const passwordHash = await hashAdminPassword(process.env.DEV_ADMIN_PASSWORD);
+      await db.admin.upsert({
+        where: { email },
+        update: {},
+        create: { email, passwordHash },
+      });
+    }
   }
 }
 seed().finally(() => db.$disconnect());

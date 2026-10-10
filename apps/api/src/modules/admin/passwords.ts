@@ -1,9 +1,10 @@
 import { randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 const derive = promisify(scrypt);
-export async function hashAdminPassword(password: string) {
-  if (password.length < 12 || password.length > 128)
-    throw new Error('Admin password must contain 12–128 characters.');
+export async function hashAdminPassword(password: string, allowShortPassword = false) {
+  const minimum = allowShortPassword ? 6 : 12;
+  if (password.length < minimum || password.length > 128)
+    throw new Error(`Admin password must contain ${minimum}–128 characters.`);
   const salt = randomBytes(16).toString('hex');
   const key = await new Promise<Buffer>((resolve, reject) =>
     scrypt(password, salt, 64, { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 }, (error, key) =>

@@ -35,6 +35,7 @@
     "verify:account-ui": "node scripts/verify-account-ui.mjs",
     "setup:admin": "node scripts/setup-admin-env.mjs",
     "admin:create": "node scripts/create-admin.mjs",
+    "admin:reset": "bun --env-file=apps/api/.env scripts/reset-admin.mjs",
     "verify:admin-auth": "node scripts/verify-admin-auth.mjs",
     "verify:admin": "node scripts/verify-admin-commerce.mjs",
     "verify:admin-ui": "node scripts/verify-admin-ui.mjs",

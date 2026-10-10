@@ -55,4 +55,11 @@ describe('Independent admin security', () => {
     expect(calendarBounds(new Date('2026-10-03T12:00:00Z')).month).toBe('2026-09-23');
     expect(dateDays('2026-10-02', '2026-10-04')).toHaveLength(3);
   });
+  it('requires an explicit maintenance override to hash a six-character password', async () => {
+    await expect(hashAdminPassword('123456')).rejects.toThrow();
+    await expect(hashAdminPassword('12345', true)).rejects.toThrow();
+    const hash = await hashAdminPassword('123456', true);
+    expect(await verifyAdminPassword('123456', hash)).toBe(true);
+    expect(await verifyAdminPassword('654321', hash)).toBe(false);
+  });
 });
