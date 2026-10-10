@@ -7,7 +7,7 @@ export default function BrandStory() {
     <section
       id="story"
       aria-labelledby="story-title"
-      className="group/story relative isolate my-8 h-[430px] scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:h-[460px] min-[480px]:h-[500px] sm:h-[400px] md:my-12 md:h-[430px] lg:h-[480px] lg:rounded-[28px] xl:my-14"
+      className="group/story relative isolate my-8 h-[215px] scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:h-[230px] min-[480px]:h-[250px] sm:h-[200px] md:my-12 md:h-[430px] lg:h-[480px] lg:rounded-[28px] xl:my-14"
     >
       <span id="ardakan" aria-hidden="true" className="absolute top-0 scroll-mt-8" />
       <div
@@ -40,23 +40,23 @@ export default function BrandStory() {
       />
       <div
         data-slot="story-copy"
-        className="absolute top-6 right-5 z-[1] w-[55%] text-right min-[375px]:top-7 min-[480px]:right-7 min-[480px]:w-[61%] sm:top-10 sm:right-[5%] sm:w-[43%] lg:top-12 lg:right-[6%]"
+        className="absolute top-3 right-3 z-[1] w-[58%] text-right min-[480px]:w-[52%] md:top-10 md:right-[5%] md:w-[43%] lg:top-12 lg:right-[6%]"
       >
         <h2
           id="story-title"
-          className="text-[23px] leading-[1.65] font-extrabold text-[#fff0d6] min-[375px]:text-[26px] min-[480px]:text-[30px] sm:text-[27px] md:text-[31px] lg:text-[39px]"
+          className="text-[17px] leading-[1.5] font-extrabold text-[#fff0d6] min-[375px]:text-[18px] min-[480px]:text-[21px] md:leading-[1.65] md:text-[31px] lg:text-[39px]"
         >
           از دل اردکان
           <span className="block text-[#f4d69f]">تا سفرهٔ شما</span>
         </h2>
-        <p className="mt-3 text-[12px] leading-6 text-[#f5e6ce] md:text-[13px] md:leading-7 lg:mt-4 lg:max-w-[390px] lg:text-sm lg:leading-8">
+        <p className="mt-1.5 text-[10px] leading-4 min-[480px]:text-[11px] min-[480px]:leading-[18px] md:mt-3 text-[#f5e6ce] md:text-[13px] md:leading-7 lg:mt-4 lg:max-w-[390px] lg:text-sm lg:leading-8">
           تولیدی محصولات سنتی بهجتی اردکان با بیش از ۱۰ سال سابقه، به دنبال حفظ طعم اصیل و کیفیت
           ماندگار است. با مواد اولیهٔ مرغوب، طعم سنتی اردکان را به سفرهٔ شما می‌رسانیم.
         </p>
         <Button
           asChild
           variant="outline"
-          className="mt-4 max-w-full gap-2 border-[#e4c18d]/60 bg-[#3c2319]/20 px-3 text-[11px] text-[#fff0d6] hover:border-[#f4d69f] hover:bg-[#f4d69f]/15 hover:text-[#fff0d6] lg:mt-6 lg:px-5 lg:text-sm"
+          className="mt-1.5 min-h-8 max-w-full gap-2 md:mt-4 md:min-h-12 border-[#e4c18d]/60 bg-[#3c2319]/20 px-3 py-1 text-[10px] md:py-2.5 md:text-[11px] text-[#fff0d6] hover:border-[#f4d69f] hover:bg-[#f4d69f]/15 hover:text-[#fff0d6] lg:mt-6 lg:px-5 lg:text-sm"
         >
           <Link href="/shop">
             <span className="md:hidden">محصولات ما</span>
@@ -65,7 +65,7 @@ export default function BrandStory() {
           </Link>
         </Button>
       </div>
-      <p className="absolute bottom-5 left-5 z-[1] flex items-center gap-1.5 text-[10px] font-medium text-[#fff0d6] sm:text-xs lg:bottom-7 lg:left-7">
+      <p className="absolute bottom-2 left-3 z-[1] flex items-center gap-1.5 text-[10px] font-medium text-[#fff0d6] md:bottom-5 md:left-5 md:text-xs lg:bottom-7 lg:left-7">
         <MapPin className="size-3.5" aria-hidden="true" /> اردکان، شهر بادگیرها
       </p>
     </section>

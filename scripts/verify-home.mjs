@@ -245,7 +245,7 @@ try {
       headingSize.height <= headingSize.lineHeight + 1,
       `Brand heading wraps at ${width}px`,
     );
-    const expectedImage = width >= 768 ? 'hero-tahini-desktop-v6' : 'hero-tahini-mobile-v6';
+    const expectedImage = width >= 480 ? 'hero-tahini-desktop-v6' : 'hero-tahini-mobile-v6';
     assert.ok(
       (
         await hero
@@ -296,11 +296,29 @@ try {
       badgeBox.y + badgeBox.height <= socialBox.y && socialBox.y + socialBox.height <= navBox.y,
       `Footer must stack badges above social icons above links at ${width}px`,
     );
-    if (width < 768) {
+    assert.ok(Math.abs(footerBox.width - width) < 2, `Footer must span the viewport at ${width}px`);
+    const brandBox = await footer.locator('[data-slot="footer-brand"]').boundingBox();
+    assert.ok(
+      Math.abs(brandBox.x + brandBox.width / 2 - center) < 1,
+      `Footer branding must be centered at ${width}px`,
+    );
+    assert.ok(
+      brandBox.y + brandBox.height <= badgeBox.y,
+      `Footer branding must sit above the trust row at ${width}px`,
+    );
+    await expect(footer.locator('[data-slot="footer-brand"]')).toContainText(
+      'فروشگاه سنتی بهجتی اردکان',
+    );
+    for (const badge of await footer
+      .locator('[aria-label="نشان‌های اعتماد و پرداخت"] > div')
+      .all()) {
+      const rect = await badge.boundingBox();
       assert.ok(
-        Math.abs(footerBox.width - (width - 16) * 0.8) < 2,
-        `Mobile footer must be narrower at ${width}px`,
+        rect.width <= 48 && rect.height <= 48,
+        `Trust badges must be compact at ${width}px`,
       );
+    }
+    if (width < 768) {
       assert.ok(
         badgeBox.x >= mascotBox.x + mascotBox.width || badgeBox.y + badgeBox.height <= mascotBox.y,
         `Mobile badges must not overlap the boy at ${width}px`,
@@ -310,17 +328,19 @@ try {
         `Mobile social icons must not overlap the boy at ${width}px`,
       );
       const heroBox = await hero.boundingBox();
-      const mainWidth = await page
-        .locator('main')
-        .evaluate(
-          (node) =>
-            node.clientWidth -
-            parseFloat(getComputedStyle(node).paddingLeft) -
-            parseFloat(getComputedStyle(node).paddingRight),
-        );
       assert.ok(
-        Math.abs(heroBox.width - mainWidth / 2) < 2,
-        `Mobile hero width must be half of its container at ${width}px`,
+        Math.abs(heroBox.width - width) < 2,
+        `Mobile hero must span the viewport at ${width}px`,
+      );
+      assert.equal(
+        heroBox.height,
+        width >= 640 ? 200 : width >= 480 ? 275 : width >= 375 ? 250 : 240,
+        `Mobile hero height must be half its original height at ${width}px`,
+      );
+      assert.equal(
+        (await page.locator('#story').boundingBox()).height,
+        width >= 640 ? 200 : width >= 480 ? 250 : width >= 375 ? 230 : 215,
+        `Mobile story height must be half its original height at ${width}px`,
       );
     }
     if (width === 1440) {
@@ -380,8 +400,8 @@ try {
       await expect(copy).toHaveCSS('border-top-width', '0px');
       if (width < 768) {
         assert.ok(
-          copyBox.y + copyBox.height < imageBox.y + imageBox.height * 0.4,
-          `Mobile copy must leave the large product group unobstructed at ${width}px`,
+          copyBox.x >= imageBox.x + imageBox.width * 0.5,
+          `Mobile copy must stay to the right of the product group at ${width}px`,
         );
       }
       if ([320, 390, 480, 768, 1440].includes(width)) {
@@ -460,7 +480,7 @@ try {
   await noJS.close();
   assert.equal(errors.length, 0, errors.join('\n'));
   console.log(
-    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, borderless overlay copy with unobstructed mobile products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, right-side stacked badges, links and social icons, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
+    'Homepage checks passed: synchronized hero copy and links, keyboard slide navigation, responsive editorial art direction, compact full-width mobile hero with side-by-side copy and products, native image delivery and retina pixel density, unified story menus, anchors and section order, banner-style footer with full-width skyline, right-side stacked badges, links and social icons, top-center branding, compact badges, bottom-left mascot and hover/reduced-motion behavior, transparent social icons, RTL, responsive overflow, cart persistence and totals, search, category discovery, menu, desktop navigation, hover lift and image zoom, reduced motion, visible content without JavaScript, no runtime errors.',
   );
 } finally {
   await browser.close();

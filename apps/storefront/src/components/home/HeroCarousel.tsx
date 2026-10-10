@@ -94,7 +94,7 @@ export default function HeroCarousel() {
       aria-roledescription="اسلایدر"
       aria-label="تصاویر محصولات کنجدی"
       tabIndex={0}
-      className="relative isolate aspect-[2/3] h-auto overflow-hidden rounded-[24px] border border-[#60382b]/30 bg-[#2b1410] shadow-[0_18px_50px_-28px_rgba(49,21,13,0.55)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:aspect-auto md:h-[430px] lg:h-[480px] lg:rounded-[28px]"
+      className="relative isolate h-[240px] min-[375px]:h-[250px] min-[480px]:h-[275px] sm:h-[200px] overflow-hidden rounded-[24px] border border-[#60382b]/30 bg-[#2b1410] shadow-[0_18px_50px_-28px_rgba(49,21,13,0.55)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:h-[430px] lg:h-[480px] lg:rounded-[28px]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
@@ -126,7 +126,7 @@ export default function HeroCarousel() {
       <div
         id={id}
         data-slot="hero-image"
-        className="absolute inset-0 touch-pan-y overflow-hidden md:right-auto md:w-[78%] md:[mask-image:linear-gradient(to_right,#000_78%,transparent)] lg:w-[60%]"
+        className="absolute inset-0 right-auto w-[64%] touch-pan-y overflow-hidden min-[480px]:w-[78%] [mask-image:linear-gradient(to_right,#000_80%,transparent)] md:w-[78%] md:[mask-image:linear-gradient(to_right,#000_78%,transparent)] lg:w-[60%]"
       >
         {slides.map((item, index) => {
           return (
@@ -144,14 +144,14 @@ export default function HeroCarousel() {
             >
               <picture>
                 <source
-                  media="(min-width: 768px)"
+                  media="(min-width: 480px)"
                   srcSet={`${item.src.replace('.webp', '-768.webp')} 768w, ${item.src} 1536w`}
-                  sizes="(min-width: 1024px) 720px, (min-width: 875px) calc(78vw - 37.44px), (min-width: 768px) 645px, 600px"
+                  sizes="(min-width: 1024px) 720px, (min-width: 875px) calc(78vw - 37.44px), (min-width: 768px) 645px, (min-width: 480px) 78vw, 64vw"
                 />
                 <img
                   src={item.mobileSrc}
                   srcSet={`${item.mobileSrc.replace('.webp', '-512.webp')} 512w, ${item.mobileSrc.replace('.webp', '-768.webp')} 768w, ${item.mobileSrc} 1024w`}
-                  sizes="(min-width: 768px) 645px, (min-width: 480px) calc(50vw - 24px), calc(50vw - 16px)"
+                  sizes="(min-width: 768px) 645px, (min-width: 480px) 78vw, 64vw"
                   alt={item.alt}
                   width={1024}
                   height={1536}
@@ -169,11 +169,11 @@ export default function HeroCarousel() {
       <div
         data-slot="hero-shade"
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(28,11,9,0.32),transparent_52%,rgba(28,11,9,0.34))] md:bg-[linear-gradient(270deg,#2b1410_0%,rgba(43,20,16,0.98)_28%,rgba(43,20,16,0.55)_48%,transparent_69%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(270deg,#2b1410_0%,rgba(43,20,16,0.96)_25%,rgba(43,20,16,0.35)_48%,transparent_70%)] md:bg-[linear-gradient(270deg,#2b1410_0%,rgba(43,20,16,0.98)_28%,rgba(43,20,16,0.55)_48%,transparent_69%)]"
       />
       <div
         data-slot="hero-copy"
-        className="absolute top-2 right-2 z-[1] w-[calc(100%-16px)] text-right md:top-10 md:right-[5%] md:w-[43%] lg:top-14 lg:right-[6%]"
+        className="absolute top-1/2 right-3 z-[1] w-[46%] -translate-y-1/2 text-right md:translate-y-0 md:top-10 md:right-[5%] md:w-[43%] lg:top-14 lg:right-[6%]"
       >
         <div
           key={current}
@@ -184,11 +184,11 @@ export default function HeroCarousel() {
           </p>
           <h1
             id="hero-title"
-            className="text-[16px] leading-[1.25] font-[900] tracking-[-0.5px] text-[#ffebc8] min-[375px]:text-[18px] min-[480px]:text-[20px] md:mt-2 md:leading-[1.6] md:text-[36px] lg:text-[58px]"
+            className="text-[18px] leading-[1.5] font-[900] tracking-[-0.5px] text-[#ffebc8] min-[375px]:text-[20px] min-[480px]:text-[24px] md:mt-2 md:leading-[1.6] md:text-[36px] lg:text-[58px]"
           >
             {slide.title}
           </h1>
-          <p className="hidden font-semibold text-[#fff4df] md:mt-1 md:block md:text-[14px] md:leading-6 lg:text-xl lg:leading-8">
+          <p className="mt-1 text-[10px] leading-5 font-semibold text-[#fff4df] min-[480px]:text-xs md:text-[14px] md:leading-6 lg:text-xl lg:leading-8">
             {slide.subtitle}
           </p>
           <p className="mt-3 hidden text-[13px] leading-7 text-[#ecdac4] md:block lg:max-w-[390px] lg:text-sm lg:leading-8">
@@ -196,7 +196,7 @@ export default function HeroCarousel() {
           </p>
           <Button
             asChild
-            className="mt-1 min-h-7 gap-1 border-[#f5d7a0] md:mt-4 md:min-h-12 bg-[#f3d39b] px-2 py-1 text-[9px] md:gap-2 md:px-4 md:text-xs text-[#482216] shadow-[0_6px_24px_rgba(0,0,0,0.15)] hover:bg-[#ffe6b8] lg:mt-6 lg:px-6 lg:text-sm"
+            className="mt-3 min-h-9 gap-1 border-[#f5d7a0] md:mt-4 md:min-h-12 bg-[#f3d39b] px-3 py-1 text-[10px] md:gap-2 md:px-4 md:text-xs text-[#482216] shadow-[0_6px_24px_rgba(0,0,0,0.15)] hover:bg-[#ffe6b8] lg:mt-6 lg:px-6 lg:text-sm"
           >
             <Link href={slide.href}>
               <span className="md:hidden">{slide.mobileAction}</span>
