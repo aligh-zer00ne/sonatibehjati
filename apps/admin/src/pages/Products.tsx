@@ -1,7 +1,8 @@
+import { Money } from '../components/Money';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, Input, Select, Button, Table, Tag, Space, Popconfirm, App, Typography } from 'antd';
-import { formatPrice, formatNumber } from '@behjati/shared';
+import { formatNumber } from '@behjati/shared';
 import {
   AdminProductsDocument,
   SetAdminProductActiveDocument,
@@ -13,17 +14,14 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 import PromotionEditor from '../components/PromotionEditor';
-import ProductEditor from '../components/ProductEditor';
-export default function Products({ promotionsOnly = false }: { promotionsOnly?: boolean }) {
+export default function Products() {
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const search = (params.get('search') ?? '').slice(0, 100);
   const [active, setActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [categoryId, setCategoryId] = useState('');
   const [sort, setSort] = useState<ProductSort>('NEWEST');
-  const [editing, setEditing] = useState<AdminProductFieldsFragment | 'new' | null>(
-    params.get('new') === '1' ? 'new' : null,
-  );
   const [selected, setSelected] = useState<AdminProductFieldsFragment[]>([]);
   const [promotionOpen, setPromotionOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -70,19 +68,15 @@ export default function Products({ promotionsOnly = false }: { promotionsOnly?: 
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Typography.Title level={2}>
-          {promotionsOnly ? 'تخفیف‌ها و جشنواره‌ها' : 'محصولات'}
-        </Typography.Title>
-        <Button type="primary" onClick={() => setEditing('new')} disabled={!query.data || pending}>
+        <Typography.Title level={2}>محصولات</Typography.Title>
+        <Button
+          type="primary"
+          onClick={() => navigate('/admin/products/new')}
+          disabled={!query.data || pending}
+        >
           محصول جدید
         </Button>
       </div>
-      {promotionsOnly && (
-        <p className="text-sm text-[#7d746a]">
-          محصولات را انتخاب کنید و «تخفیف / جشنواره» را بزنید. برای تخفیف یک محصول نیز می‌توانید از
-          ویرایش آن استفاده کنید.
-        </p>
-      )}
       <Card>
         <Button
           className="mb-3"
@@ -179,7 +173,7 @@ export default function Products({ promotionsOnly = false }: { promotionsOnly?: 
               { title: 'محصول', dataIndex: 'title' },
               { title: 'دسته', render: (_, product) => product.category.title },
               { title: 'وزن', dataIndex: 'weight' },
-              { title: 'قیمت اصلی', render: (_, product) => formatPrice(product.price) },
+              { title: 'قیمت اصلی', render: (_, product) => <Money amount={product.price} /> },
               {
                 title: 'تخفیف',
                 render: (_, product) =>
@@ -205,7 +199,7 @@ export default function Products({ promotionsOnly = false }: { promotionsOnly?: 
                   <Space wrap>
                     <Button
                       disabled={pending}
-                      onClick={() => setEditing(product)}
+                      onClick={() => navigate(`/admin/products/${product.id}/edit`)}
                       aria-label={`ویرایش ${product.title}`}
                     >
                       ویرایش
@@ -244,19 +238,6 @@ export default function Products({ promotionsOnly = false }: { promotionsOnly?: 
             setSelected([]);
             query.refresh();
             void message.success('تخفیف محصولات ذخیره شد.');
-          }}
-        />
-      )}
-      {editing && query.data && (
-        <ProductEditor
-          key={editing === 'new' ? 'new' : editing.id}
-          product={editing === 'new' ? null : editing}
-          categories={query.data.categories}
-          onCancel={() => setEditing(null)}
-          onSaved={() => {
-            setEditing(null);
-            query.refresh();
-            void message.success('محصول ذخیره شد.');
           }}
         />
       )}

@@ -1,7 +1,9 @@
+import { Money } from '../components/Money';
+import { AmountInWords } from '../components/AmountInWords';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Empty } from 'antd';
-import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
+import { formatNumber, formatDate } from '@behjati/shared';
 import { AdminDashboardDocument } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import DataState from '../components/DataState';
@@ -11,8 +13,8 @@ import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import { customerName } from '../lib/format';
 const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
   { label: 'مدیریت سفارش‌ها', href: '/admin/orders', icon: 'orders' },
-  { label: 'افزودن محصول', href: '/admin/products?new=1', icon: 'plus' },
-  { label: 'مدیریت تخفیف‌ها', href: '/admin/promotions', icon: 'discount' },
+  { label: 'افزودن محصول', href: '/admin/products/new', icon: 'plus' },
+  { label: 'مدیریت مشتریان', href: '/admin/users', icon: 'users' },
   { label: 'گزارش فروش', href: '/admin/reports', icon: 'reports' },
 ];
 export default function Dashboard() {
@@ -77,21 +79,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-5" data-admin-dashboard>
       <h1 className="sr-only">داشبورد مدیریت</h1>
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-[1.6fr_repeat(4,minmax(0,1fr))]">
-        <section className="relative isolate col-span-2 min-h-[176px] overflow-hidden rounded-xl border border-[#e6d8c1] bg-[linear-gradient(120deg,#fffaf1,#f3e6cf)] p-5 xl:col-span-1">
-          <div className="relative z-10 max-w-[65%]">
-            <h2 className="mb-2 text-sm font-bold text-[#702011]">سلام مدیر عزیز</h2>
-            <p className="text-[11px] leading-6 text-[#76513b]">
-              به پنل مدیریت فروشگاه سنتی بهجتی خوش آمدید.
-            </p>
-            <p className="mt-3 text-[10px] text-[#9b7245]">«کیفیت، اعتماد، استمرار»</p>
-          </div>
-          <img
-            src="/images/categories/tahini-icon.png"
-            alt=""
-            className="absolute bottom-1 left-0 h-[130px] w-[145px] object-contain"
-          />
-        </section>
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {metrics.map((metric) => (
           <div
             key={metric.label}
@@ -104,6 +92,7 @@ export default function Dashboard() {
             <b className="block text-xl leading-9 break-all tabular-nums sm:text-[25px]">
               {formatNumber(metric.value)}
             </b>
+            {metric.icon === 'wallet' && <AmountInWords amount={metric.value} />}
             <p className="mt-1 text-xs font-medium">{metric.label}</p>
             <p className="mt-4 text-[10px] text-[#8b8277]">{metric.detail}</p>
           </div>
@@ -178,7 +167,7 @@ export default function Dashboard() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-bold">{product.title}</p>
                     <p className="mt-1 text-[10px] text-[#8c8176]">
-                      {formatPrice(product.orderValue)}
+                      {<Money amount={product.orderValue} />}
                     </p>
                   </div>
                   <span className="rounded-full bg-[#fff0ef] px-2 py-1 text-[10px] whitespace-nowrap text-[#a51432]">

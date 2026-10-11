@@ -656,6 +656,7 @@ export type Query = {
   adminMe?: Maybe<AdminIdentity>;
   adminOrder: AdminOrder;
   adminOrders: AdminOrdersPage;
+  adminProduct: Product;
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;
   adminUser: AdminUser;
@@ -685,6 +686,11 @@ export type QueryAdminOrderArgs = {
 
 export type QueryAdminOrdersArgs = {
   input: AdminOrdersInput;
+};
+
+
+export type QueryAdminProductArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -1318,6 +1324,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminMe?: Resolver<Maybe<ResolversTypes['AdminIdentity']>, ParentType, ContextType>;
   adminOrder?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<QueryAdminOrderArgs, 'id'>>;
   adminOrders?: Resolver<ResolversTypes['AdminOrdersPage'], ParentType, ContextType, RequireFields<QueryAdminOrdersArgs, 'input'>>;
+  adminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<QueryAdminProductArgs, 'id'>>;
   adminProducts?: Resolver<ResolversTypes['AdminProductsPage'], ParentType, ContextType, RequireFields<QueryAdminProductsArgs, 'input'>>;
   adminReport?: Resolver<ResolversTypes['AdminReport'], ParentType, ContextType, RequireFields<QueryAdminReportArgs, 'input'>>;
   adminUser?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<QueryAdminUserArgs, 'id'>>;

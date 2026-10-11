@@ -13,8 +13,9 @@ const OrderDetails = lazy(() => import('./pages/OrderDetails'));
 const OrdersMap = lazy(() => import('./pages/OrdersMap'));
 const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
-const Invoice = lazy(() => import('./pages/Invoice'));
+const ProductEdit = lazy(() => import('./pages/ProductEdit'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Invoice = lazy(() => import('./pages/Invoice'));
 const ShippingLabel = lazy(() => import('./pages/ShippingLabel'));
 export default function App() {
   return (
@@ -58,7 +59,9 @@ export default function App() {
                   <Route path="/admin" element={<AdminFrame />}>
                     <Route index element={<Dashboard />} />
                     <Route path="products" element={<Products />} />
-                    <Route path="promotions" element={<Products promotionsOnly />} />
+                    <Route path="products/new" element={<ProductEdit />} />
+                    <Route path="products/:id/edit" element={<ProductEdit />} />
+                    <Route path="promotions" element={<Navigate to="/admin/products" replace />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />

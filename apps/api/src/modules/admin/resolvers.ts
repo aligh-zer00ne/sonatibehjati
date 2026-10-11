@@ -10,6 +10,7 @@ import {
 } from './auth.js';
 import {
   adminProducts,
+  adminProduct,
   setAdminPromotion,
   saveAdminProduct,
   setAdminProductActive,
@@ -23,6 +24,10 @@ import { serializeProduct as serializeDates } from '../products/presentation.js'
 export const adminResolvers: Resolvers = {
   Query: {
     adminMe: (_parent, _args, context) => currentAdmin(context),
+    adminProduct: async (_parent, { id }, context) => {
+      await requireAdmin(context);
+      return serializeDates(await adminProduct(id));
+    },
     adminProducts: async (_parent, { input }, context) => {
       await requireAdmin(context);
       const page = await adminProducts(input);

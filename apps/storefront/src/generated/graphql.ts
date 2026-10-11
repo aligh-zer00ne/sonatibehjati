@@ -655,6 +655,7 @@ export type Query = {
   adminMe?: Maybe<AdminIdentity>;
   adminOrder: AdminOrder;
   adminOrders: AdminOrdersPage;
+  adminProduct: Product;
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;
   adminUser: AdminUser;
@@ -684,6 +685,11 @@ export type QueryAdminOrderArgs = {
 
 export type QueryAdminOrdersArgs = {
   input: AdminOrdersInput;
+};
+
+
+export type QueryAdminProductArgs = {
+  id: Scalars['ID']['input'];
 };
 
 

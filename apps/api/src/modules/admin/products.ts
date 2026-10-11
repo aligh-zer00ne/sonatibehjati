@@ -9,6 +9,12 @@ import { db } from '../../database/client.js';
 import { authError } from '../auth/errors.js';
 import { validate, omitNulls } from './validation.js';
 import { productRelations as include } from '../products/repository.js';
+export async function adminProduct(id: string) {
+  if (!id || id.length > 100) throw authError('شناسه محصول معتبر نیست.', 'BAD_USER_INPUT');
+  const product = await db.product.findUnique({ where: { id }, include });
+  if (!product) throw authError('محصول یافت نشد.', 'NOT_FOUND');
+  return product;
+}
 export async function adminProducts(raw: Record<string, unknown>) {
   const input = validate(adminProductsFilterSchema, omitNulls(raw));
   const { page, pageSize } = input;

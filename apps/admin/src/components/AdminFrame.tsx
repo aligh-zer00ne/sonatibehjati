@@ -9,13 +9,12 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin/orders', label: 'سفارش‌ها', icon: 'orders' },
   { href: '/admin/products', label: 'محصولات', icon: 'products' },
   { href: '/admin/users', label: 'مشتریان', icon: 'users' },
-  { href: '/admin/promotions', label: 'تخفیف‌ها و جشنواره‌ها', icon: 'discount' },
   { href: '/admin/orders/map', label: 'نقشه سفارش‌ها', icon: 'map' },
   { href: '/admin/reports', label: 'گزارش‌ها', icon: 'reports' },
   { href: '/admin/settings', label: 'تنظیمات حساب', icon: 'settings' },
 ];
 export default function AdminFrame() {
-  const { admin, logout } = useAdmin();
+  const { logout } = useAdmin();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
@@ -38,7 +37,7 @@ export default function AdminFrame() {
             aria-label={label}
             aria-current={selected === href ? 'page' : undefined}
             onClick={() => setMenuOpen(false)}
-            className={`flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:bg-white/10 ${compact ? 'justify-center' : ''} ${selected === href ? 'bg-white/20 font-bold shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]' : ''}`}
+            className={`flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${compact ? 'justify-center' : ''} ${selected === href ? '!bg-[#b16b66] font-bold shadow-[inset_-4px_0_0_#efd294]' : ''}`}
           >
             <AdminIcon name={icon} className="shrink-0" />
             {!compact && <span>{label}</span>}
@@ -147,12 +146,6 @@ export default function AdminFrame() {
             />
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden text-left sm:block">
-              <p className="text-xs font-bold">مدیر فروشگاه</p>
-              <bdi className="block max-w-40 truncate text-[10px] text-[#7d746a]">
-                {admin?.email}
-              </bdi>
-            </div>
             <Button
               aria-label="خروج از مدیریت"
               loading={pending}

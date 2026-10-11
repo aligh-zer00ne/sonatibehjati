@@ -41,6 +41,7 @@ type Product {
 type Query {
   adminMe: AdminIdentity
   adminProducts(input: AdminProductsInput!): AdminProductsPage!
+  adminProduct(id: ID!): Product!
   adminOrders(input: AdminOrdersInput!): AdminOrdersPage!
   adminOrder(id: ID!): AdminOrder!
   adminUser(id: ID!): AdminUser!

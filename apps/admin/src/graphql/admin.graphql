@@ -54,6 +54,16 @@ fragment AdminProductFields on Product {
     alt
   }
 }
+query AdminProduct($id: ID!) {
+  adminProduct(id: $id) {
+    ...AdminProductFields
+  }
+  categories {
+    id
+    title
+  }
+}
+
 query AdminProducts($input: AdminProductsInput!) {
   adminProducts(input: $input) {
     items {
