@@ -115,7 +115,7 @@ try {
     .filter({ hasText: 'عنوان تغییرکرده آزمون' });
   await expect(orderedProduct).toBeVisible();
   await expect(orderedProduct.getByText('تصویر در دسترس نیست', { exact: true })).toBeVisible();
-  const primaryImage = '/images/products/reference/cutouts-v2/gallery/tahini-blue.webp';
+  const primaryImage = '/images/products/tahini-blue.webp';
   await db.productImage.updateMany({
     where: { productId: product.id },
     data: { url: primaryImage },
@@ -125,7 +125,7 @@ try {
     name: 'عنوان تغییرکرده آزمون',
     exact: true,
   });
-  await expect(dashboardPhoto).toHaveAttribute('src', primaryImage);
+  await expect(dashboardPhoto).toHaveAttribute('src', `${primaryImage}?v=styled-3`);
   await expect.poll(() => dashboardPhoto.evaluate((image) => image.naturalWidth > 0)).toBe(true);
   const nextPrimary = '/images/products/reference/cutouts-v2/gallery/premium-tahini.webp';
   await db.productImage.updateMany({ where: { productId: product.id }, data: { position: 1 } });

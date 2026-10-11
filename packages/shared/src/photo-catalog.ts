@@ -169,3 +169,12 @@ export function photoGallery(product: (typeof photoProducts)[number]) {
     })),
   ];
 }
+
+const managedPhotos = new Set(
+  photoProducts.flatMap((product) => photoGallery(product).map((image) => image.url)),
+);
+
+// Invalidate old bundled artwork while keeping uploaded and external image URLs intact.
+export function productPhotoUrl(url: string) {
+  return managedPhotos.has(url) ? `${url}?v=styled-3` : url;
+}

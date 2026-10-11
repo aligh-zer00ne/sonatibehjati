@@ -247,6 +247,31 @@ try {
     true,
   );
   assert.equal(await db.product.findUnique({ where: { id: spare.id } }), null);
+  const demos = [];
+  // Seeded demo items must not occupy all five ranking slots ahead of real products.
+  for (let index = 0; index < 5; index++) {
+    const demo = await db.product.create({
+      data: {
+        title: 'محصول نمونه قدیمی',
+        slug: `retired-demo-${randomBytes(8).toString('hex')}`,
+        categoryId: category.id,
+        price: 100000,
+        weight: '۵۰۰ گرم',
+        shortDescription: 'محصول نمونه برای توسعه',
+        description: '',
+        isActive: false,
+        images: { create: { url: '/images/tahini.webp', alt: 'تصویر نمونه' } },
+      },
+    });
+    products.add(demo.id);
+    demos.push(demo.id);
+    const demoOrder = await createOrderFixture(customer, demo, { total: 100050000 });
+    await db.order.update({ where: { id: demoOrder.id }, data: { subtotal: 100000000 } });
+    await db.orderItem.updateMany({
+      where: { orderId: demoOrder.id },
+      data: { quantity: 1000, lineTotal: 100000000 },
+    });
+  }
   const dashboard = (
     await run(
       '{adminDashboard{ordersCount orderValue revenue ordersToday ordersThisMonth recentOrders{id} topProducts{id title image} report{daily{date}}}}',
@@ -258,12 +283,28 @@ try {
   assert.equal(dashboard.report.daily.length, 30);
   const topProduct = dashboard.topProducts.find((item) => item.id === product.id);
   assert.ok(topProduct);
+  assert.equal(
+    deletion.product.isActive,
+    false,
+    'A real inactive product must remain in historical rankings',
+  );
+  assert.ok(dashboard.topProducts.every((item) => !demos.includes(item.id)));
   const mainImage = await db.productImage.findFirstOrThrow({
     where: { productId: product.id },
     orderBy: [{ position: 'asc' }, { id: 'asc' }],
   });
   assert.equal(topProduct.image, mainImage.url);
   assert.equal(topProduct.title, current.title);
+  // A retired seed becomes eligible when its image is replaced with a real photograph.
+  await db.productImage.updateMany({
+    where: { productId: demos[0] },
+    data: { url: '/images/products/tahini-blue.webp' },
+  });
+  const updatedRanking = (await run('{adminDashboard{topProducts{id image}}}')).adminDashboard;
+  assert.equal(
+    updatedRanking.topProducts.find((item) => item.id === demos[0])?.image,
+    '/images/products/tahini-blue.webp',
+  );
   console.log(
     'Admin commerce passed: private CRUD, safe images/order, duplicate/invalid input, atomic edit conflicts, public active filtering, historical snapshots, bounded filters, legal audited status races, Tehran report boundaries, zero paid revenue, customer aggregates and safe product deletion.',
   );

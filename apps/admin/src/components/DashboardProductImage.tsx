@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { productPhotoUrl } from '@behjati/shared/photo-catalog';
 
 export default function DashboardProductImage({
   src,
@@ -13,7 +14,7 @@ export default function DashboardProductImage({
       {src && src !== failedSource ? (
         <img
           key={src}
-          src={src}
+          src={productPhotoUrl(src)}
           alt={title}
           className="h-full w-full object-contain"
           onError={() => setFailedSource(src)}

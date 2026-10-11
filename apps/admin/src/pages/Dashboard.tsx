@@ -168,7 +168,7 @@ export default function Dashboard() {
           ) : (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="پس از ثبت سفارش نمایش داده می‌شود"
+              description="هنوز سفارشی برای محصولات فروشگاه ثبت نشده است"
             />
           )}
         </Card>

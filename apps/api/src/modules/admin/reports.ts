@@ -7,6 +7,25 @@ import { calendarBounds, dayStart, dayAfter, dateDays } from './time.js';
 import { adminOrders } from './orders.js';
 import { adminUsers } from './users.js';
 import { productRelations } from '../products/repository.js';
+const retiredDemoProduct = {
+  isActive: false,
+  shortDescription: 'محصول نمونه برای توسعه',
+  images: {
+    some: {},
+    every: {
+      url: {
+        in: [
+          '/images/tahini.webp',
+          '/images/halva.webp',
+          '/images/oil.webp',
+          '/images/chocolate.webp',
+          '/images/date.webp',
+          '/images/premium.webp',
+        ],
+      },
+    },
+  },
+} satisfies Prisma.ProductWhereInput;
 export async function adminReport(raw: Record<string, unknown>) {
   const input = validate(adminReportFilterSchema, omitNulls(raw));
   const where = {
@@ -77,7 +96,10 @@ export async function adminDashboard() {
     adminUsers({ page: 1, pageSize: 5 }),
     db.orderItem.groupBy({
       by: ['productId'],
-      where: { order: { status: { not: 'CANCELED' } } },
+      where: {
+        order: { status: { not: 'CANCELED' } },
+        product: { NOT: retiredDemoProduct },
+      },
       _sum: { quantity: true, lineTotal: true },
       orderBy: { _sum: { quantity: 'desc' } },
       take: 5,
