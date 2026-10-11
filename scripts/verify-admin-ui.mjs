@@ -40,6 +40,9 @@ try {
   const missing = await createOrderFixture(customer, product, {
     snapshot: { ...customer.snapshot, latitude: null, longitude: null },
   });
+  const otherLocation = await createOrderFixture(customer, product, {
+    snapshot: { ...customer.snapshot, city: 'میبد', latitude: 32.248, longitude: 54.007 },
+  });
   await db.address.update({ where: { id: customer.address.id }, data: { city: 'تهران' } });
   await db.product.update({ where: { id: product.id }, data: { title: 'عنوان تغییرکرده آزمون' } });
   browser = await chromium.launch({
@@ -48,16 +51,18 @@ try {
     args: ['--no-sandbox'],
   });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-  await context.route('https://tile.openstreetmap.org/**', (route) =>
-    route.fulfill({
+  let mapTileRequests = 0;
+  await context.route('https://tile.openstreetmap.org/**', (route) => {
+    mapTileRequests += 1;
+    return route.fulfill({
       status: 200,
       contentType: 'image/png',
       body: Buffer.from(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9HcAAAAASUVORK5CYII=',
         'base64',
       ),
-    }),
-  );
+    });
+  });
   await context.route('https://assets.example.test/**', (route) =>
     route.fulfill({
       status: 200,
@@ -194,12 +199,70 @@ try {
     'PROCESSING',
   );
   await goto(`/admin/orders/map?userId=${customer.user.id}`);
+  const mapList = page.getByRole('list', { name: 'سفارش‌های دارای موقعیت' });
+  const orderNumber = new Intl.NumberFormat('fa-IR').format(order.number);
+  const otherNumber = new Intl.NumberFormat('fa-IR').format(otherLocation.number);
+  const selectLocation = page.getByRole('button', {
+    name: `نمایش موقعیت سفارش ${orderNumber}`,
+    exact: true,
+  });
+  const selectOtherLocation = page.getByRole('button', {
+    name: `نمایش موقعیت سفارش ${otherNumber}`,
+    exact: true,
+  });
+  await expect(mapList.getByRole('button')).toHaveCount(2);
+  await expect(page.getByText('ابتدا یک سفارش انتخاب کنید', { exact: true })).toBeVisible();
+  await expect(page.locator('.leaflet-container')).toHaveCount(0);
+  assert.equal(mapTileRequests, 0, 'Map tiles must not load before selecting an order');
+  await selectOtherLocation.click();
+  await expect(selectOtherLocation).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
+  await page.locator('.leaflet-marker-icon').click();
+  await expect(page.locator('.leaflet-popup-content')).toContainText('میبد');
+  await page.locator('.leaflet-control-zoom-in').click();
+  await selectLocation.click();
+  await expect(selectLocation).toHaveAttribute('aria-pressed', 'true');
+  await expect(selectOtherLocation).toHaveAttribute('aria-pressed', 'false');
   await expect(page.getByRole('region', { name: 'نقشه سفارش‌ها', exact: true })).toBeVisible();
   await expect(page.locator('.leaflet-container')).toHaveCSS('direction', 'rtl');
   await expect(page.locator('.leaflet-container')).toHaveCSS('font-family', /Vazirmatn/);
   await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
   await page.locator('.leaflet-marker-icon').click();
   await expect(page.locator('.leaflet-popup-content')).toContainText('اردکان');
+  await expect(page.locator('.leaflet-popup-content')).not.toContainText('میبد');
+  await expect(page.locator('[data-admin-sidebar] a[aria-current="page"]')).toHaveCSS(
+    'box-shadow',
+    'none',
+  );
+  await expect(page.locator('[data-admin-sidebar] a[aria-current="page"]')).toHaveCSS(
+    'background-color',
+    'rgb(177, 107, 102)',
+  );
+  await page.screenshot({ path: '/tmp/behjati-orders-map-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await selectOtherLocation.click();
+  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
+  await page.screenshot({ path: '/tmp/behjati-orders-map-mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByLabel('شهر مقصد', { exact: true }).fill('میبد');
+  await page.getByLabel('شهر مقصد', { exact: true }).press('Enter');
+  await expect(mapList.getByRole('button')).toHaveCount(1);
+  await expect(page.getByText('ابتدا یک سفارش انتخاب کنید', { exact: true })).toBeVisible();
+  await expect(page.locator('.leaflet-container')).toHaveCount(0);
+  await selectOtherLocation.click();
+  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
+  await page.getByLabel('شهر مقصد', { exact: true }).fill('شهر بدون سفارش');
+  await page.getByLabel('شهر مقصد', { exact: true }).press('Enter');
+  await expect(
+    page.getByText('در این صفحه سفارشی با موقعیت ثبت‌شده وجود ندارد.', { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator('.leaflet-container')).toHaveCount(0);
+  await goto(`/admin/orders/map?userId=${customer.user.id}`);
+  await selectLocation.click();
+  await page.locator('.leaflet-marker-icon').click();
   await page.locator('.leaflet-popup-content button').click();
   await expect(page).toHaveURL(adminOrigin + `/admin/orders/${order.id}`);
   await goto('/admin/users');

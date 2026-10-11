@@ -17,7 +17,9 @@ export const orderMapAdapter: OrderMapAdapter = {
     const map = L.map(container, {
       center: [32.31, 54.01],
       zoom: 11,
-      zoomAnimation: !matchMedia('(prefers-reduced-motion: reduce)').matches,
+      // Leaflet's deferred zoom callback can outlive a map removed during order selection.
+      zoomAnimation: false,
+      fadeAnimation: !matchMedia('(prefers-reduced-motion: reduce)').matches,
     });
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -63,7 +65,7 @@ export const orderMapAdapter: OrderMapAdapter = {
         .bindPopup(popup);
     }
     if (positions.length)
-      map.fitBounds(L.latLngBounds(positions), { padding: [35, 35], maxZoom: 14 });
+      map.fitBounds(L.latLngBounds(positions), { padding: [35, 35], maxZoom: 14, animate: false });
     return { destroy: () => map.remove() };
   },
 };

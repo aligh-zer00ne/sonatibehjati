@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Alert, Skeleton } from 'antd';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import { orderMapAdapter } from '../lib/order-map';
-export default function OrdersMapView({ orders }: { orders: AdminOrderSummaryFieldsFragment[] }) {
+export default function OrdersMapView({ order }: { order: AdminOrderSummaryFieldsFragment }) {
   const container = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const key = JSON.stringify(orders);
+  const key = JSON.stringify(order);
   useEffect(() => {
     const controller = new AbortController();
     let destroy: (() => void) | undefined;
@@ -18,7 +18,7 @@ export default function OrdersMapView({ orders }: { orders: AdminOrderSummaryFie
       void orderMapAdapter
         .create(
           container.current,
-          JSON.parse(key) as AdminOrderSummaryFieldsFragment[],
+          [JSON.parse(key) as AdminOrderSummaryFieldsFragment],
           (id) => navigate(`/admin/orders/${id}`),
           controller.signal,
         )
@@ -47,7 +47,7 @@ export default function OrdersMapView({ orders }: { orders: AdminOrderSummaryFie
         dir="rtl"
         role="region"
         aria-label="نقشه سفارش‌ها"
-        className="!font-sans !text-right [direction:rtl] [&_.leaflet-popup-content]:!font-sans relative z-0 h-[440px] rounded-lg border border-slate-200"
+        className="!font-sans !text-right [direction:rtl] [&_.leaflet-popup-content]:!font-sans relative z-0 h-[340px] rounded-lg border border-slate-200 md:h-[440px]"
       />
       {loading && <Skeleton active className="mt-3" />}
       {error && <Alert type="error" title={error} role="alert" className="mt-3" />}
