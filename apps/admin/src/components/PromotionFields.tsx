@@ -1,5 +1,5 @@
-import { Form, Input, InputNumber, DatePicker } from 'antd';
-import dayjs from 'dayjs';
+import { Form, Input, InputNumber } from 'antd';
+import CalendarPicker from './CalendarPicker';
 export function promotionFormValues(
   product?: {
     discountPercent?: number | null;
@@ -11,8 +11,8 @@ export function promotionFormValues(
   return {
     discountPercent: product?.discountPercent ?? null,
     discountTitle: product?.discountTitle ?? '',
-    discountStartsAt: product?.discountStartsAt ? dayjs(product.discountStartsAt) : dayjs(),
-    discountEndsAt: product?.discountEndsAt ? dayjs(product.discountEndsAt) : dayjs().add(7, 'day'),
+    discountStartsAt: product?.discountStartsAt ?? new Date().toISOString(),
+    discountEndsAt: product?.discountEndsAt ?? new Date(Date.now() + 7 * 86400000).toISOString(),
   };
 }
 export function promotionFormInput(raw: Record<string, unknown>) {
@@ -21,9 +21,8 @@ export function promotionFormInput(raw: Record<string, unknown>) {
     discountPercent: percent,
     discountTitle: percent && typeof raw.discountTitle === 'string' ? raw.discountTitle : null,
     discountStartsAt:
-      percent && dayjs.isDayjs(raw.discountStartsAt) ? raw.discountStartsAt.toISOString() : null,
-    discountEndsAt:
-      percent && dayjs.isDayjs(raw.discountEndsAt) ? raw.discountEndsAt.toISOString() : null,
+      percent && typeof raw.discountStartsAt === 'string' ? raw.discountStartsAt : null,
+    discountEndsAt: percent && typeof raw.discountEndsAt === 'string' ? raw.discountEndsAt : null,
   };
 }
 export default function PromotionFields() {
@@ -37,10 +36,10 @@ export default function PromotionFields() {
         <Input maxLength={80} disabled={!percent} />
       </Form.Item>
       <Form.Item name="discountStartsAt" label="شروع تخفیف">
-        <DatePicker showTime format="YYYY-MM-DD HH:mm" className="!w-full" disabled={!percent} />
+        <CalendarPicker withTime disabled={!percent} />
       </Form.Item>
       <Form.Item name="discountEndsAt" label="پایان تخفیف">
-        <DatePicker showTime format="YYYY-MM-DD HH:mm" className="!w-full" disabled={!percent} />
+        <CalendarPicker withTime disabled={!percent} />
       </Form.Item>
     </div>
   );

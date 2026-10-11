@@ -10,8 +10,9 @@ import {
   PieChart,
   Pie,
 } from 'recharts';
-import { formatNumber, formatPrice, orderStatusLabels } from '@behjati/shared';
+import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import type { AdminReportFieldsFragment } from '../generated/graphql';
+import { Money } from './Money';
 import { chartDate } from '../lib/format';
 import AdminIcon from './AdminIcon';
 const colors = ['#b01032', '#f5a54c', '#03a77b', '#49aeb7', '#789acd', '#f36b72'];
@@ -65,7 +66,7 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
               />
               <Tooltip
                 labelFormatter={(value) => chartDate(String(value))}
-                formatter={(value) => [formatPrice(Number(value)), 'ارزش سفارش']}
+                formatter={(value) => [<Money amount={Number(value)} />, 'ارزش سفارش']}
               />
               <Area
                 type="monotone"

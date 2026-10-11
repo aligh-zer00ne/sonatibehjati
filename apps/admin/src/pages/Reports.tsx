@@ -1,7 +1,8 @@
+import { Money } from '../components/Money';
 import { useState } from 'react';
-import { Typography, Card, DatePicker, Select, Button, Alert, Space, Table } from 'antd';
-import dayjs from 'dayjs';
-import { orderStatuses, orderStatusLabels, formatNumber, formatPrice } from '@behjati/shared';
+import { Typography, Card, Select, Button, Alert, Space, Table } from 'antd';
+import CalendarPicker from '../components/CalendarPicker';
+import { orderStatuses, orderStatusLabels, formatNumber } from '@behjati/shared';
 import { defaultReportRange, adminReportFilterSchema } from '@behjati/shared/admin';
 import {
   AdminReportDocument,
@@ -31,29 +32,27 @@ export default function Reports() {
         <Space wrap align="end">
           <div>
             <label htmlFor="report-from" className="mb-2 block text-xs">
-              از تاریخ (میلادی)
+              از تاریخ
             </label>
-            <DatePicker
+            <CalendarPicker
               id="report-from"
-              value={dayjs(range.from)}
-              allowClear={false}
-              format="YYYY/MM/DD"
+              clearable={false}
+              value={range.from}
               onChange={(date) => {
-                if (date) setRange({ ...range, from: date.format('YYYY-MM-DD') });
+                if (date) setRange({ ...range, from: date });
               }}
             />
           </div>
           <div>
             <label htmlFor="report-to" className="mb-2 block text-xs">
-              تا تاریخ (میلادی)
+              تا تاریخ
             </label>
-            <DatePicker
+            <CalendarPicker
               id="report-to"
-              value={dayjs(range.to)}
-              allowClear={false}
-              format="YYYY/MM/DD"
+              clearable={false}
+              value={range.to}
               onChange={(date) => {
-                if (date) setRange({ ...range, to: date.format('YYYY-MM-DD') });
+                if (date) setRange({ ...range, to: date });
               }}
             />
           </div>
@@ -111,14 +110,14 @@ export default function Reports() {
           <Card title="داده‌های روزانه">
             <Table<AdminReportFieldsFragment['daily'][number]>
               rowKey="date"
-              dataSource={report.daily}
+              dataSource={[...report.daily].sort((a, b) => b.date.localeCompare(a.date))}
               pagination={{ pageSize: 15, showSizeChanger: false }}
               scroll={{ x: 650 }}
               columns={[
                 { title: 'روز', render: (_, day) => chartDate(day.date) },
                 { title: 'تعداد سفارش', render: (_, day) => formatNumber(day.ordersCount) },
-                { title: 'ارزش سفارش', render: (_, day) => formatPrice(day.orderValue) },
-                { title: 'درآمد تأییدشده', render: (_, day) => formatPrice(day.revenue) },
+                { title: 'ارزش سفارش', render: (_, day) => <Money amount={day.orderValue} /> },
+                { title: 'درآمد تأییدشده', render: (_, day) => <Money amount={day.revenue} /> },
               ]}
             />
           </Card>

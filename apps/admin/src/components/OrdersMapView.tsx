@@ -44,10 +44,10 @@ export default function OrdersMapView({ orders }: { orders: AdminOrderSummaryFie
     <>
       <div
         ref={container}
-        dir="ltr"
+        dir="rtl"
         role="region"
         aria-label="نقشه سفارش‌ها"
-        className="relative z-0 h-[440px] rounded-lg border border-slate-200"
+        className="!font-sans !text-right [direction:rtl] [&_.leaflet-popup-content]:!font-sans relative z-0 h-[440px] rounded-lg border border-slate-200"
       />
       {loading && <Skeleton active className="mt-3" />}
       {error && <Alert type="error" title={error} role="alert" className="mt-3" />}

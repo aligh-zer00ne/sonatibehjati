@@ -1,6 +1,7 @@
+import { Money } from './Money';
 import { Table, Button } from 'antd';
 import { Link } from 'react-router-dom';
-import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
+import { formatNumber, formatDate } from '@behjati/shared';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import { customerName, persianDigits } from '../lib/format';
 import OrderStatus from './OrderStatus';
@@ -53,7 +54,7 @@ export default function OrdersTable({
             ]
           : []),
         { title: 'وضعیت', render: (_, order) => <OrderStatus status={order.status} /> },
-        { title: 'مبلغ', render: (_, order) => formatPrice(order.total) },
+        { title: 'مبلغ', render: (_, order) => <Money amount={order.total} /> },
         { title: 'تاریخ', render: (_, order) => formatDate(order.createdAt) },
         {
           title: 'عملیات',

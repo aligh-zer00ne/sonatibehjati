@@ -1,5 +1,5 @@
-import { Input, InputNumber, Select, Button, Card, Space, DatePicker } from 'antd';
-import dayjs from 'dayjs';
+import { Input, InputNumber, Select, Button, Card, Space } from 'antd';
+import CalendarPicker from './CalendarPicker';
 import { orderStatuses, orderStatusLabels } from '@behjati/shared';
 import type { AdminOrdersInput, OrderStatus } from '../generated/graphql';
 import UserFilter from './UserFilter';
@@ -77,25 +77,19 @@ export default function OrderFilters({
         </div>
         <div>
           <label className="mb-2 block text-xs" htmlFor="order-from">
-            از تاریخ (میلادی)
+            از تاریخ
           </label>
-          <DatePicker
+          <CalendarPicker
             id="order-from"
-            value={input.from ? dayjs(input.from) : null}
-            format="YYYY/MM/DD"
-            onChange={(date) => onChange({ from: date?.format('YYYY-MM-DD') ?? null })}
+            value={input.from}
+            onChange={(from) => onChange({ from })}
           />
         </div>
         <div>
           <label className="mb-2 block text-xs" htmlFor="order-to">
-            تا تاریخ (میلادی)
+            تا تاریخ
           </label>
-          <DatePicker
-            id="order-to"
-            value={input.to ? dayjs(input.to) : null}
-            format="YYYY/MM/DD"
-            onChange={(date) => onChange({ to: date?.format('YYYY-MM-DD') ?? null })}
-          />
+          <CalendarPicker id="order-to" value={input.to} onChange={(to) => onChange({ to })} />
         </div>
         <Select
           aria-label="مرتب‌سازی سفارش‌ها"

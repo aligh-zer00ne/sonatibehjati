@@ -1,5 +1,6 @@
 import { formatNumber, formatPrice, orderStatusLabels } from '@behjati/shared';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
+import { amountToPersianWords } from './numbers';
 import { customerName } from './format';
 export interface OrderMapAdapter {
   create(
@@ -41,6 +42,7 @@ export const orderMapAdapter: OrderMapAdapter = {
         `سفارش ${formatNumber(order.number)}`,
         customerName(order.user),
         formatPrice(order.total),
+        amountToPersianWords(order.total),
         orderStatusLabels[order.status],
         [order.address.province, order.address.city, order.address.postalAddress]
           .filter(Boolean)

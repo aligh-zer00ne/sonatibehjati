@@ -1,7 +1,8 @@
+import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Typography, Card, Input, Table, Button } from 'antd';
-import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
+import { formatNumber, formatDate } from '@behjati/shared';
 import { AdminUsersDocument, type AdminUsersQuery } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import { customerName, persianDigits } from '../lib/format';
@@ -48,7 +49,7 @@ export default function Users() {
               { title: 'تعداد سفارش', render: (_, user) => formatNumber(user.ordersCount) },
               {
                 title: 'ارزش سفارش‌های غیرلغوشده',
-                render: (_, user) => formatPrice(user.totalOrdersValue),
+                render: (_, user) => <Money amount={user.totalOrdersValue} />,
               },
               {
                 title: 'عملیات',

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import type { AdminReportFieldsFragment } from '../generated/graphql';
+import { Money } from './Money';
 import { chartDate } from '../lib/format';
 export default function ReportCharts({ report }: { report: AdminReportFieldsFragment }) {
   const statuses = report.statuses
@@ -51,7 +52,10 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={chartDate} />
               <YAxis tickFormatter={(value) => formatNumber(Number(value))} width={90} />
-              <Tooltip labelFormatter={(value) => chartDate(String(value))} />
+              <Tooltip
+                labelFormatter={(value) => chartDate(String(value))}
+                formatter={(value, name) => [<Money amount={Number(value)} />, name]}
+              />
               <Legend />
               <Line
                 dataKey="orderValue"
