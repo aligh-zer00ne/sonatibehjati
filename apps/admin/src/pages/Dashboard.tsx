@@ -8,6 +8,7 @@ import { AdminDashboardDocument } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import DataState from '../components/DataState';
 import DashboardCharts from '../components/DashboardCharts';
+import DashboardProductImage from '../components/DashboardProductImage';
 import OrdersTable from '../components/OrdersTable';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import { customerName } from '../lib/format';
@@ -148,22 +149,10 @@ export default function Dashboard() {
         </Card>
         <Card title={panelTitle('محصولات پرسفارش', '/admin/products')} className="min-w-0">
           {data.topProducts.length ? (
-            <ul className="divide-y divide-[#eee5d9]">
+            <ul aria-label="محصولات پرسفارش" className="divide-y divide-[#eee5d9]">
               {data.topProducts.map((product) => (
                 <li key={product.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                  <div className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#f3e8d5] text-[#a07442]">
-                    <AdminIcon name="products" />
-                    {product.image && (
-                      <img
-                        src={product.image}
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover"
-                        onError={(event) => {
-                          event.currentTarget.hidden = true;
-                        }}
-                      />
-                    )}
-                  </div>
+                  <DashboardProductImage src={product.image} title={product.title} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-bold">{product.title}</p>
                     <p className="mt-1 text-[10px] text-[#8c8176]">

@@ -100,6 +100,41 @@ try {
   await expect(page).toHaveURL(adminOrigin + '/admin');
   await expect(page.getByRole('heading', { name: 'داشبورد مدیریت' })).toBeVisible();
   await expect(page.locator('.recharts-surface').first()).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'ردیف', exact: true })).toBeVisible();
+  const recentRows = page.locator('[data-admin-dashboard] .ant-table-tbody tr.ant-table-row');
+  const recentCount = await recentRows.count();
+  assert.ok(recentCount > 0);
+  for (let index = 0; index < recentCount; index++) {
+    await expect(recentRows.nth(index).locator('td').first()).toHaveText(
+      new Intl.NumberFormat('fa-IR').format(index + 1),
+    );
+  }
+  const orderedProduct = page
+    .getByRole('list', { name: 'محصولات پرسفارش' })
+    .getByRole('listitem')
+    .filter({ hasText: 'عنوان تغییرکرده آزمون' });
+  await expect(orderedProduct).toBeVisible();
+  await expect(orderedProduct.getByText('تصویر در دسترس نیست', { exact: true })).toBeVisible();
+  const primaryImage = '/images/products/reference/cutouts-v2/gallery/tahini-blue.webp';
+  await db.productImage.updateMany({
+    where: { productId: product.id },
+    data: { url: primaryImage },
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+  const dashboardPhoto = orderedProduct.getByRole('img', {
+    name: 'عنوان تغییرکرده آزمون',
+    exact: true,
+  });
+  await expect(dashboardPhoto).toHaveAttribute('src', primaryImage);
+  await expect.poll(() => dashboardPhoto.evaluate((image) => image.naturalWidth > 0)).toBe(true);
+  const nextPrimary = '/images/products/reference/cutouts-v2/gallery/premium-tahini.webp';
+  await db.productImage.updateMany({ where: { productId: product.id }, data: { position: 1 } });
+  await db.productImage.create({
+    data: { productId: product.id, url: nextPrimary, alt: 'تصویر اصلی جدید', position: 0 },
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(dashboardPhoto).toHaveAttribute('src', nextPrimary);
+  await expect.poll(() => dashboardPhoto.evaluate((image) => image.naturalWidth > 0)).toBe(true);
   const cookies = await context.cookies();
   assert.equal(cookies.filter((cookie) => cookie.name === 'behjati_admin_refresh').length, 1);
   assert.ok(cookies.find((cookie) => cookie.name === 'behjati_admin_refresh').httpOnly);

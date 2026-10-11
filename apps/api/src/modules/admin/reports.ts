@@ -6,6 +6,7 @@ import { validate, omitNulls } from './validation.js';
 import { calendarBounds, dayStart, dayAfter, dateDays } from './time.js';
 import { adminOrders } from './orders.js';
 import { adminUsers } from './users.js';
+import { productRelations } from '../products/repository.js';
 export async function adminReport(raw: Record<string, unknown>) {
   const input = validate(adminReportFilterSchema, omitNulls(raw));
   const where = {
@@ -84,7 +85,7 @@ export async function adminDashboard() {
   ]);
   const products = await db.product.findMany({
     where: { id: { in: orderedProducts.map((item) => item.productId) } },
-    include: { images: { orderBy: { position: 'asc' }, take: 1 } },
+    include: { images: { orderBy: productRelations.images.orderBy, take: 1 } },
   });
   return {
     activeProductsCount,

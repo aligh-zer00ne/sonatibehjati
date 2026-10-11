@@ -32,7 +32,10 @@ export default function OrdersTable({
           : false
       }
       columns={[
-        { title: 'شماره', render: (_, order) => formatNumber(order.number) },
+        {
+          title: compact ? 'ردیف' : 'شماره',
+          render: (_, order, index) => formatNumber(compact ? index + 1 : order.number),
+        },
         {
           title: 'مشتری',
           render: (_, order) => (

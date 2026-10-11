@@ -249,13 +249,21 @@ try {
   assert.equal(await db.product.findUnique({ where: { id: spare.id } }), null);
   const dashboard = (
     await run(
-      '{adminDashboard{ordersCount orderValue revenue ordersToday ordersThisMonth recentOrders{id} report{daily{date}}}}',
+      '{adminDashboard{ordersCount orderValue revenue ordersToday ordersThisMonth recentOrders{id} topProducts{id title image} report{daily{date}}}}',
     )
   ).adminDashboard;
   assert.ok(dashboard.ordersCount >= 3);
   assert.equal(dashboard.revenue, 0);
   assert.ok(dashboard.recentOrders.length <= 5);
   assert.equal(dashboard.report.daily.length, 30);
+  const topProduct = dashboard.topProducts.find((item) => item.id === product.id);
+  assert.ok(topProduct);
+  const mainImage = await db.productImage.findFirstOrThrow({
+    where: { productId: product.id },
+    orderBy: [{ position: 'asc' }, { id: 'asc' }],
+  });
+  assert.equal(topProduct.image, mainImage.url);
+  assert.equal(topProduct.title, current.title);
   console.log(
     'Admin commerce passed: private CRUD, safe images/order, duplicate/invalid input, atomic edit conflicts, public active filtering, historical snapshots, bounded filters, legal audited status races, Tehran report boundaries, zero paid revenue, customer aggregates and safe product deletion.',
   );
