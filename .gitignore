@@ -10,3 +10,4 @@ test-results
 apps/api/.photo-import-backups/
 
 .deployment/
+apps/api/uploads/

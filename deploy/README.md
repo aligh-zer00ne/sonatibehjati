@@ -422,3 +422,29 @@ npm run deploy:production
 نوار صفحهٔ اصلی فقط هنگام وجود تخفیف فعال بالای پرفروش‌ها نمایش داده می‌شود؛ شمارش معکوس و قیمت
 قبل و بعد از تخفیف دارد و پس از انقضا حذف می‌شود. کدهای تخفیف سفارش همچنان روی مبلغ پس از
 تخفیف محصول اعمال می‌شوند. زمان‌های پنل طبق منطقهٔ زمانی مرورگر مدیر ثبت و به UTC ذخیره می‌شوند.
+
+## آپلود تصاویر محصول در پنل
+
+نسخهٔ جدید مسیر `/api/admin/uploads` دارد که تصویر را روی دیسک API ذخیره می‌کند. برای اولین
+دیپلوی این نسخه، علاوه بر اسکریپت معمول، کانفیگ فعال Nginx را یک‌بار به‌روز کنید. فایل‌های
+`deploy/nginx/payment-review.conf` (فروشگاه عمومی و ورود مشتری غیرفعال) و `site.conf`
+(پیش‌نمایش محافظت‌شده) به‌روز شده‌اند. حالت فعال فعلی را حفظ کنید.
+
+اگر کانفیگ فعلی همان نسخهٔ بازدید عمومی است، پس از اجرای اسکریپت دیپلوی:
+
+```bash
+sudo cp /etc/nginx/sites-available/sonatibehjati.conf /etc/nginx/sites-available/sonatibehjati.conf.before-admin-upload
+sudo cp deploy/nginx/payment-review.conf /etc/nginx/sites-available/sonatibehjati.conf
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+نام فایل کانفیگ را با فایل فعال همین دامنه تطبیق دهید. اگر مسیر certificate یا تنظیمات دیگری
+در فایل فعال متفاوت است، آن‌ها را حفظ کرده و فقط locationهای جدید را اضافه کنید: مسیر
+`/uploads/products/` در هر دو دامنه به API روی ۴۱۰۰ می‌رود؛ مسیر دقیق `/api/admin/uploads`
+فقط در دامنهٔ پنل، با سقف ۸ مگابایت به `/admin/uploads` در API می‌رود. نشست مدیر و Origin
+در API بررسی می‌شوند.
+
+پوشهٔ پیش‌فرض `apps/api/uploads` با کاربر PM2 ساخته می‌شود. آن را از نسخه‌های پشتیبان حذف
+نکنید؛ Git و اسکریپت دیپلوی تصاویر آپلودشده را جابه‌جا یا پاک نمی‌کنند. دیپلوی‌های بعدی همان
+`git pull --ff-only origin dev` و `npm run deploy:production` هستند و تغییر مجدد Nginx لازم نیست.

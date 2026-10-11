@@ -11,6 +11,7 @@ import { operationLimits } from './graphql/limits.js';
 import { env } from './config/env.js';
 import { resolvers } from './graphql/resolvers.js';
 import { db } from './database/client.js';
+import { adminUploads } from './modules/admin/uploads.js';
 const app = express();
 app.disable('x-powered-by');
 app.use(helmet());
@@ -20,6 +21,7 @@ app.use(
 );
 app.use(express.json({ limit: '32kb' }));
 app.get('/health', (_request, response) => response.json({ status: 'ok' }));
+app.use(adminUploads);
 const yoga = createYoga<{ req: IncomingMessage; res: ServerResponse }, AuthContext>({
   context: createAuthContext,
   cors: false,

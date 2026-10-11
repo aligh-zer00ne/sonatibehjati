@@ -39,6 +39,10 @@ const schema = z.object({
     z.coerce.number().int().positive().optional(),
   ),
   SHIPPING_COST: z.coerce.number().int().nonnegative().default(60000),
+  UPLOAD_DIRECTORY: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().min(1).optional(),
+  ),
 });
 export const env = schema.parse(process.env);
 if (env.NODE_ENV === 'production') {

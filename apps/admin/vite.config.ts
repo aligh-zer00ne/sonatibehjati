@@ -37,6 +37,15 @@ async function sharedImages(request: IncomingMessage, response: ServerResponse, 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const proxy = {
+    '/api/admin/uploads': {
+      target: env.API_PROXY_TARGET ?? 'http://localhost:4000',
+      changeOrigin: false,
+      rewrite: () => '/admin/uploads',
+    },
+    '/uploads/': {
+      target: env.API_PROXY_TARGET ?? 'http://localhost:4000',
+      changeOrigin: false,
+    },
     '/api/admin': {
       target: env.API_PROXY_TARGET ?? 'http://localhost:4000',
       changeOrigin: false,
