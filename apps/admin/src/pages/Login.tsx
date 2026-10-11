@@ -26,10 +26,12 @@ export default function Login() {
       <Card className="w-full max-w-md shadow-sm">
         <img src="/images/logo-brand.png" alt={BRAND_NAME} className="mx-auto mb-5 h-24 w-auto" />
         <Typography.Title level={2}>ورود مدیر</Typography.Title>
-        <Typography.Paragraph type="secondary">پنل مدیریت {BRAND_NAME}</Typography.Paragraph>
+        <Typography.Paragraph type="secondary" className="!mt-2 !mb-6">
+          پنل مدیریت {BRAND_NAME}
+        </Typography.Paragraph>
         {sessionError && (
           <Alert
-            className="mb-4"
+            className="!mb-4"
             title={sessionError}
             type="error"
             action={<Button onClick={() => void refresh()}>تلاش دوباره</Button>}
@@ -74,7 +76,7 @@ export default function Login() {
           >
             <Input.Password autoComplete="current-password" dir="ltr" maxLength={128} />
           </Form.Item>
-          {error && <Alert className="mb-4" title={error} type="error" showIcon role="alert" />}
+          {error && <Alert className="!mb-4" title={error} type="error" showIcon role="alert" />}
           <Button type="primary" htmlType="submit" loading={pending} block>
             ورود به پنل
           </Button>

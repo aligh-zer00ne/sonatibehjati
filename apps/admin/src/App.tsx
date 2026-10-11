@@ -34,6 +34,7 @@ export default function App() {
           controlHeight: 44,
         },
         components: {
+          Typography: { titleMarginTop: 0, titleMarginBottom: 0 },
           Card: { headerFontSize: 14, headerHeight: 52, bodyPadding: 18 },
           Table: { headerBg: '#f7f1e8', rowHoverBg: '#fff4e6', cellPaddingBlock: 14 },
           Button: { primaryShadow: '0 4px 10px rgba(147,13,37,0.12)' },

@@ -28,7 +28,7 @@ export default function Settings() {
         <Alert
           type="info"
           showIcon
-          className="mb-5"
+          className="!mb-5"
           title="پس از تغییر رمز، همهٔ نشست‌های این حساب بسته می‌شوند و باید با رمز جدید وارد شوید."
         />
         <Form
@@ -90,7 +90,7 @@ export default function Settings() {
           >
             <Input.Password autoComplete="new-password" dir="ltr" maxLength={128} />
           </Form.Item>
-          {error && <Alert role="alert" type="error" title={error} className="mb-4" />}
+          {error && <Alert role="alert" type="error" title={error} className="!mb-4" />}
           <Button type="primary" htmlType="submit" loading={pending}>
             تغییر رمز و خروج از نشست‌ها
           </Button>

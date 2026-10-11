@@ -102,7 +102,7 @@ export default function AdminFrame() {
         <div id="admin-mobile-navigation">{navigation()}</div>
       </Drawer>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex min-h-[82px] flex-wrap items-center justify-between gap-3 border-b border-[#e8ded1] bg-[#fffdf9]/85 px-4 py-3 sm:px-6 print:!hidden">
+        <header className="flex min-h-[82px] flex-wrap items-center justify-between gap-3 border-b border-[#e8ded1] bg-[#fffdf9]/85 px-4 py-3 sm:px-6 lg:px-8 print:!hidden">
           <div className="flex min-w-0 items-center gap-3">
             <Button
               type="text"
@@ -166,13 +166,16 @@ export default function AdminFrame() {
             </Button>
           </div>
         </header>
-        <main className="min-w-0 flex-1 p-4 sm:p-6 print:p-0">
-          <div className="mx-auto max-w-[1560px] space-y-5 print:max-w-none print:space-y-0">
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 print:p-0">
+          <div
+            data-admin-page
+            className="mx-auto flex min-w-0 max-w-[1560px] flex-col gap-5 sm:gap-6 [&>*]:min-w-0 print:max-w-none print:gap-0"
+          >
             {error && <Alert title={error} type="error" role="alert" className="print:!hidden" />}
             <Outlet />
           </div>
         </main>
-        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ded1] bg-[#fffdf9]/70 px-6 py-3 text-[10px] text-[#7d746a] print:!hidden">
+        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ded1] bg-[#fffdf9]/70 px-4 py-3 text-[10px] text-[#7d746a] sm:px-6 lg:px-8 print:!hidden">
           <span>پنل مدیریت سنتی بهجتی اردکان</span>
           <span className="flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-[#17977e]" />

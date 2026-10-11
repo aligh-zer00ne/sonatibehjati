@@ -150,7 +150,7 @@ export default function ProductEditor({
       {dirty && (
         <Alert
           type="info"
-          className="mb-4"
+          className="!mb-4"
           title={
             draft
               ? 'پیش‌نویس قبلی بازیابی شد. تغییرات را بررسی و ذخیره کنید.'
@@ -262,7 +262,7 @@ export default function ProductEditor({
             },
           ]}
         />
-        {error && <Alert className="mt-4" title={error} type="error" role="alert" showIcon />}
+        {error && <Alert className="!mt-4" title={error} type="error" role="alert" showIcon />}
         <div className="mt-5 flex flex-wrap gap-3 border-t border-[#e8ded1] bg-[#fffdf9] py-4">
           <Button type="primary" htmlType="submit" loading={pending} disabled={uploading}>
             ذخیره محصول

@@ -166,7 +166,7 @@ export default function ShippingLabel({
       <Alert
         type="info"
         showIcon
-        className="print:!hidden"
+        className="!mb-5 print:!hidden"
         title="اطلاعات از نشانی هنگام ثبت سفارش پر شده است. تغییر لیبل، نشانی سفارش را تغییر نمی‌دهد. قالب پایه تا دریافت نمونهٔ نهایی لیبل استفاده می‌شود."
       />
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(330px,0.8fr)] print:block">
@@ -232,7 +232,7 @@ export default function ShippingLabel({
             </div>
             {field('packageContent', 'محتویات بسته (اختیاری)', 300, true)}
             {field('note', 'یادداشت روی بسته (اختیاری)', 200, true)}
-            {error && <Alert type="error" role="alert" title={error} className="mb-4" />}
+            {error && <Alert type="error" role="alert" title={error} className="!mb-4" />}
             <div className="flex flex-wrap items-center gap-3">
               <Button type="primary" htmlType="submit" loading={pending}>
                 ذخیره لیبل سفارش

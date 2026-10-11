@@ -132,7 +132,7 @@ export default function Invoice({
         </Button>
       </div>
       <Alert
-        className="print:!hidden"
+        className="!my-4 print:!hidden"
         type="info"
         title="فاکتور در اندازه A5 عمودی چاپ می‌شود. برای فایل PDF، گزینه ذخیره PDF را در پنجره چاپ مرورگر انتخاب کنید."
       />

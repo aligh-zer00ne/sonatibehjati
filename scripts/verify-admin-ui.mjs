@@ -350,17 +350,51 @@ try {
   for (const path of [
     '/admin',
     '/admin/products',
+    '/admin/orders',
     `/admin/orders/${order.id}`,
     '/admin/orders/map',
     '/admin/users',
     '/admin/reports',
+    '/admin/settings',
+    '/admin/products/new',
+    `/admin/products/${product.id}/edit`,
   ]) {
     await goto(path);
-    for (const width of [390, 768, 1440]) {
+    for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
       await expect
         .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
         .toBe(true);
+      const spacing = await page.locator('[data-admin-page]').evaluate((container) => {
+        const main = container.closest('main').getBoundingClientRect();
+        const bounds = container.getBoundingClientRect();
+        const children = Array.from(container.children)
+          .filter(
+            (element) =>
+              element.getBoundingClientRect().height > 0 &&
+              getComputedStyle(element).position !== 'absolute',
+          )
+          .map((element) => element.getBoundingClientRect());
+        return {
+          left: bounds.left - main.left,
+          right: main.right - bounds.right,
+          gaps: children.slice(1).map((child, index) => child.top - children[index].bottom),
+        };
+      });
+      assert.ok(
+        spacing.left >= 15 && spacing.right >= 15,
+        `${path} at ${width}: missing page padding`,
+      );
+      assert.ok(
+        spacing.gaps.every((gap) => gap >= 19),
+        `${path} at ${width}: sections are touching`,
+      );
+      if (width === 390 || width === 1440) {
+        await page.screenshot({
+          path: `/tmp/behjati-admin-spacing-${path.replaceAll('/', '-').replaceAll('?', '-')}-${width}.png`,
+          fullPage: true,
+        });
+      }
     }
   }
   await page.setViewportSize({ width: 390, height: 844 });

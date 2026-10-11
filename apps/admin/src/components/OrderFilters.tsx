@@ -1,4 +1,4 @@
-import { Input, InputNumber, Select, Button, Card, Space } from 'antd';
+import { Input, InputNumber, Select, Button, Card } from 'antd';
 import CalendarPicker from './CalendarPicker';
 import { orderStatuses, orderStatusLabels } from '@behjati/shared';
 import type { AdminOrdersInput, OrderStatus } from '../generated/graphql';
@@ -14,7 +14,7 @@ export default function OrderFilters({
 }) {
   return (
     <Card>
-      <Space wrap align="end">
+      <div className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div>
           <label className="mb-2 block text-xs" htmlFor="order-search">
             جستجو
@@ -34,7 +34,7 @@ export default function OrderFilters({
           </label>
           <Select<OrderStatus | ''>
             id="order-status"
-            className="min-w-44"
+            className="w-full"
             value={input.status ?? ''}
             onChange={(status) => onChange({ status: status || null })}
             options={[
@@ -52,6 +52,7 @@ export default function OrderFilters({
           </label>
           <InputNumber
             id="order-number"
+            className="!w-full"
             min={1}
             max={2147483647}
             precision={0}
@@ -93,7 +94,7 @@ export default function OrderFilters({
         </div>
         <Select
           aria-label="مرتب‌سازی سفارش‌ها"
-          className="min-w-40"
+          className="w-full"
           value={input.sort ?? 'NEWEST'}
           onChange={(sort) => onChange({ sort })}
           options={[
@@ -104,7 +105,7 @@ export default function OrderFilters({
           ]}
         />
         <Button onClick={onReset}>پاک کردن فیلترها</Button>
-      </Space>
+      </div>
     </Card>
   );
 }

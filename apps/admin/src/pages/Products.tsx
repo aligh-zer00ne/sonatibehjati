@@ -79,13 +79,13 @@ export default function Products() {
       </div>
       <Card>
         <Button
-          className="mb-3"
+          className="!mb-4 w-full sm:w-fit"
           disabled={!selected.length || pending}
           onClick={() => setPromotionOpen(true)}
         >
           تخفیف / جشنواره ({formatNumber(selected.length)} محصول)
         </Button>
-        <Space wrap>
+        <div className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Input.Search
             aria-label="جستجوی محصول"
             placeholder="عنوان یا نامک"
@@ -99,7 +99,7 @@ export default function Products() {
           />
           <Select
             aria-label="فیلتر دسته‌بندی"
-            className="min-w-44"
+            className="w-full"
             value={categoryId}
             onChange={(value) => {
               setCategoryId(value);
@@ -116,7 +116,7 @@ export default function Products() {
           />
           <Select
             aria-label="فیلتر فعال بودن"
-            className="min-w-36"
+            className="w-full"
             value={active}
             onChange={(value) => {
               setActive(value);
@@ -131,7 +131,7 @@ export default function Products() {
           />
           <Select
             aria-label="مرتب‌سازی محصولات"
-            className="min-w-40"
+            className="w-full"
             value={sort}
             onChange={(value) => {
               setSort(value);
@@ -145,7 +145,7 @@ export default function Products() {
               { value: 'NAME_ASC', label: 'نام محصول' },
             ]}
           />
-        </Space>
+        </div>
       </Card>
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />

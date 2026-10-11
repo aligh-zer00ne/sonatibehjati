@@ -1,6 +1,6 @@
 import { Money } from '../components/Money';
 import { useState } from 'react';
-import { Typography, Card, Select, Button, Alert, Space, Table } from 'antd';
+import { Typography, Card, Select, Button, Alert, Table } from 'antd';
 import CalendarPicker from '../components/CalendarPicker';
 import { orderStatuses, orderStatusLabels, formatNumber } from '@behjati/shared';
 import { defaultReportRange, adminReportFilterSchema } from '@behjati/shared/admin';
@@ -29,7 +29,7 @@ export default function Reports() {
     <>
       <Typography.Title level={2}>گزارش سفارش‌ها</Typography.Title>
       <Card>
-        <Space wrap align="end">
+        <div className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <div>
             <label htmlFor="report-from" className="mb-2 block text-xs">
               از تاریخ
@@ -58,7 +58,7 @@ export default function Reports() {
           </div>
           <Select<OrderStatus | ''>
             aria-label="وضعیت گزارش"
-            className="min-w-44"
+            className="w-full"
             value={status}
             onChange={setStatus}
             options={[
@@ -82,7 +82,7 @@ export default function Reports() {
           >
             خروجی CSV
           </Button>
-        </Space>
+        </div>
       </Card>
       {!parsed.success ? (
         <Alert type="error" title="بازه گزارش باید معتبر و حداکثر ۳۶۶ روز باشد." role="alert" />

@@ -78,7 +78,7 @@ export default function Dashboard() {
     </div>
   );
   return (
-    <div className="space-y-5" data-admin-dashboard>
+    <div className="flex flex-col gap-5 sm:gap-6" data-admin-dashboard>
       <h1 className="sr-only">داشبورد مدیریت</h1>
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {metrics.map((metric) => (

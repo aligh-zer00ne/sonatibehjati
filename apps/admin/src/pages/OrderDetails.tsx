@@ -130,7 +130,7 @@ export default function OrderDetails() {
           type="info"
           showIcon
           title="تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست."
-          className="mb-4"
+          className="!mb-4"
         />
         {orderStatusTransitions[order.status].length ? (
           <div className="flex flex-wrap gap-3">

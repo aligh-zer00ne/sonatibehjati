@@ -23,7 +23,7 @@ export default function UserFilter({
     items.unshift(selected.data.adminUser);
   return (
     <Select
-      className="min-w-56"
+      className="w-full"
       aria-label="فیلتر کاربر"
       placeholder="نام یا موبایل مشتری"
       value={value || undefined}

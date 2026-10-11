@@ -30,7 +30,7 @@ export default function PromotionEditor({
       <Alert
         type="info"
         showIcon
-        className="mb-4"
+        className="!mb-4"
         title="قیمت اصلی محصولات حفظ می‌شود؛ تخفیف فقط در بازهٔ انتخابی اعمال خواهد شد."
       />
       <Form
@@ -59,7 +59,7 @@ export default function PromotionEditor({
         }}
       >
         <PromotionFields />
-        {error && <Alert type="error" role="alert" title={error} className="mb-4" />}
+        {error && <Alert type="error" role="alert" title={error} className="!mb-4" />}
         <Button type="primary" htmlType="submit" loading={pending}>
           اعمال روی محصولات انتخاب‌شده
         </Button>
