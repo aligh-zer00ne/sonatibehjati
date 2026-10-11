@@ -15,8 +15,6 @@ const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
 const ProductEdit = lazy(() => import('./pages/ProductEdit'));
 const Settings = lazy(() => import('./pages/Settings'));
-const Invoice = lazy(() => import('./pages/Invoice'));
-const ShippingLabel = lazy(() => import('./pages/ShippingLabel'));
 export default function App() {
   return (
     <ConfigProvider
@@ -65,8 +63,6 @@ export default function App() {
                     <Route path="orders" element={<Orders />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
-                    <Route path="orders/:id/invoice" element={<Invoice />} />
-                    <Route path="orders/:id/label" element={<ShippingLabel />} />
                     <Route path="users" element={<Users />} />
                     <Route path="reports" element={<Reports />} />
                     <Route path="settings" element={<Settings />} />

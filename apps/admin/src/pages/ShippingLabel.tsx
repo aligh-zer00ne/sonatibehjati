@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Alert, App, Button, Card, Form, Input, Select, Typography } from 'antd';
+import { Alert, App, Button, Card, Form, Input, Select, Modal } from 'antd';
 import { BRAND_NAME, formatNumber } from '@behjati/shared';
 import { shippingLabelSchema, type ShippingLabelValues } from '@behjati/shared/admin';
 import {
-  AdminOrderDocument,
   SaveAdminShippingLabelDocument,
   type AdminOrderFieldsFragment,
 } from '../generated/graphql';
-import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
-import DataState from '../components/DataState';
+import PrintSheet from '../components/PrintSheet';
 import AdminIcon from '../components/AdminIcon';
 import { persianDigits } from '../lib/format';
 
@@ -36,7 +33,13 @@ function defaults(order: AdminOrderFieldsFragment): ShippingLabelValues {
     paperSize: 'THERMAL',
   };
 }
-function LabelEditor({ order }: { order: AdminOrderFieldsFragment }) {
+export default function ShippingLabel({
+  order,
+  onClose,
+}: {
+  order: AdminOrderFieldsFragment;
+  onClose: () => void;
+}) {
   const [form] = Form.useForm<ShippingLabelValues>();
   const initial = order.shippingLabel
     ? (Object.fromEntries(
@@ -52,7 +55,7 @@ function LabelEditor({ order }: { order: AdminOrderFieldsFragment }) {
   const [printing, setPrinting] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState('');
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const field = (
     name: keyof ShippingLabelValues,
     label: string,
@@ -83,14 +86,83 @@ function LabelEditor({ order }: { order: AdminOrderFieldsFragment }) {
       )}
     </Form.Item>
   );
+  const sheet = (
+    <article
+      dir="rtl"
+      className={`mx-auto break-inside-avoid rounded-lg border border-[#d8c6b0] bg-white p-4 text-[11px] leading-6 text-black shadow-sm print:w-full print:max-w-none print:rounded-none print:p-0 print:shadow-none ${values.paperSize === 'A5' ? 'max-w-[138mm]' : 'max-w-[90mm]'}`}
+    >
+      <header className="mb-3 flex items-center justify-between gap-3 border-b-2 border-black pb-3">
+        <div>
+          <h2 className="font-bold">سنتی بهجتی اردکان</h2>
+          <p>سفارش شماره {formatNumber(order.number)}</p>
+        </div>
+        <img src="/images/logo-footer.svg" alt="سنتی بهجتی" className="h-14 w-10 object-contain" />
+      </header>
+      <section className="border-b border-black/30 pb-3">
+        <h3 className="mb-1 font-bold">فرستنده</h3>
+        <p className="break-words font-medium">{values.senderName}</p>
+        {values.senderAddress && (
+          <p className="break-words whitespace-pre-wrap">{values.senderAddress}</p>
+        )}
+        {values.senderPhone && (
+          <p>
+            تلفن: <bdi>{persianDigits(values.senderPhone)}</bdi>
+          </p>
+        )}
+        {values.senderPostalCode && (
+          <p>
+            کد پستی: <bdi>{persianDigits(values.senderPostalCode)}</bdi>
+          </p>
+        )}
+      </section>
+      <section className="py-3">
+        <h3 className="mb-2 text-base font-bold">گیرنده: {values.recipientName}</h3>
+        <p className="break-words whitespace-pre-wrap">{values.recipientAddress}</p>
+        {values.recipientPhone && (
+          <p className="mt-2">
+            تلفن: <bdi>{persianDigits(values.recipientPhone)}</bdi>
+          </p>
+        )}
+        {values.recipientPostalCode && (
+          <p className="mt-2 text-sm font-bold">
+            کد پستی: <bdi>{persianDigits(values.recipientPostalCode)}</bdi>
+          </p>
+        )}
+      </section>
+      <section className="border-t border-black/30 pt-2">
+        {values.carrier && <p>ارسال: {values.carrier}</p>}
+        {values.packageWeight && <p>وزن بسته: {values.packageWeight}</p>}
+        {values.trackingNumber && (
+          <p className="break-all">
+            رهگیری: <bdi>{persianDigits(values.trackingNumber)}</bdi>
+          </p>
+        )}
+        {values.packageContent && <p className="break-words">محتویات: {values.packageContent}</p>}
+        {values.note && (
+          <p className="mt-2 break-words whitespace-pre-wrap font-bold">{values.note}</p>
+        )}
+      </section>
+    </article>
+  );
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-3 print:!hidden">
-        <Typography.Title level={2}>لیبل پستی سفارش {formatNumber(order.number)}</Typography.Title>
-        <Link to={`/admin/orders/${order.id}`}>
-          <Button>بازگشت به سفارش</Button>
-        </Link>
-      </div>
+    <Modal
+      open
+      title={`لیبل پستی سفارش ${formatNumber(order.number)}`}
+      footer={null}
+      width={1100}
+      maskClosable={false}
+      keyboard={false}
+      closable={!pending && !printing}
+      onCancel={() => {
+        if (!dirty) return onClose();
+        modal.confirm({
+          title: 'تغییرات لیبل ذخیره نشده است. بستن پنجره؟',
+          okText: 'بستن بدون ذخیره',
+          cancelText: 'ادامه ویرایش',
+          onOk: onClose,
+        });
+      }}
+    >
       <Alert
         type="info"
         showIcon
@@ -160,15 +232,7 @@ function LabelEditor({ order }: { order: AdminOrderFieldsFragment }) {
             </div>
             {field('packageContent', 'محتویات بسته (اختیاری)', 300, true)}
             {field('note', 'یادداشت روی بسته (اختیاری)', 200, true)}
-            {error && (
-              <Alert
-                type="error"
-                role="alert"
-                title={error}
-                className="mb-4"
-                action={<Button onClick={() => window.location.reload()}>دریافت دوباره</Button>}
-              />
-            )}
+            {error && <Alert type="error" role="alert" title={error} className="mb-4" />}
             <div className="flex flex-wrap items-center gap-3">
               <Button type="primary" htmlType="submit" loading={pending}>
                 ذخیره لیبل سفارش
@@ -208,81 +272,15 @@ function LabelEditor({ order }: { order: AdminOrderFieldsFragment }) {
               چاپ لیبل / PDF
             </Button>
           </div>
-          <style media="print">{`@page { size: ${values.paperSize === 'A5' ? 'A5 portrait' : '100mm 150mm'}; margin: 5mm; }`}</style>
-          <article
-            data-shipping-label
-            dir="rtl"
-            className={`mx-auto break-inside-avoid rounded-lg border border-[#d8c6b0] bg-white p-4 text-[11px] leading-6 text-black shadow-sm print:w-full print:max-w-none print:rounded-none print:p-0 print:shadow-none ${values.paperSize === 'A5' ? 'max-w-[138mm]' : 'max-w-[90mm]'}`}
-          >
-            <header className="mb-3 flex items-center justify-between gap-3 border-b-2 border-black pb-3">
-              <div>
-                <h2 className="font-bold">سنتی بهجتی اردکان</h2>
-                <p>سفارش شماره {formatNumber(order.number)}</p>
-              </div>
-              <img
-                src="/images/logo-footer.svg"
-                alt="سنتی بهجتی"
-                className="h-14 w-10 object-contain"
-              />
-            </header>
-            <section className="border-b border-black/30 pb-3">
-              <h3 className="mb-1 font-bold">فرستنده</h3>
-              <p className="break-words font-medium">{values.senderName}</p>
-              {values.senderAddress && (
-                <p className="break-words whitespace-pre-wrap">{values.senderAddress}</p>
-              )}
-              {values.senderPhone && (
-                <p>
-                  تلفن: <bdi>{persianDigits(values.senderPhone)}</bdi>
-                </p>
-              )}
-              {values.senderPostalCode && (
-                <p>
-                  کد پستی: <bdi>{persianDigits(values.senderPostalCode)}</bdi>
-                </p>
-              )}
-            </section>
-            <section className="py-3">
-              <h3 className="mb-2 text-base font-bold">گیرنده: {values.recipientName}</h3>
-              <p className="break-words whitespace-pre-wrap">{values.recipientAddress}</p>
-              {values.recipientPhone && (
-                <p className="mt-2">
-                  تلفن: <bdi>{persianDigits(values.recipientPhone)}</bdi>
-                </p>
-              )}
-              {values.recipientPostalCode && (
-                <p className="mt-2 text-sm font-bold">
-                  کد پستی: <bdi>{persianDigits(values.recipientPostalCode)}</bdi>
-                </p>
-              )}
-            </section>
-            <section className="border-t border-black/30 pt-2">
-              {values.carrier && <p>ارسال: {values.carrier}</p>}
-              {values.packageWeight && <p>وزن بسته: {values.packageWeight}</p>}
-              {values.trackingNumber && (
-                <p className="break-all">
-                  رهگیری: <bdi>{persianDigits(values.trackingNumber)}</bdi>
-                </p>
-              )}
-              {values.packageContent && (
-                <p className="break-words">محتویات: {values.packageContent}</p>
-              )}
-              {values.note && (
-                <p className="mt-2 break-words whitespace-pre-wrap font-bold">{values.note}</p>
-              )}
-            </section>
-          </article>
+          <div data-shipping-label>{sheet}</div>
+          <PrintSheet size={values.paperSize === 'A5' ? 'A5 portrait' : '100mm 150mm'} margin="5mm">
+            {sheet}
+          </PrintSheet>
           <p className="mt-3 text-xs text-[#7d746a] print:!hidden">
             چاپ شامل پیش‌نمایش فعلی است. برای نگهداری تغییرات، «ذخیره لیبل سفارش» را بزنید.
           </p>
         </section>
       </div>
-    </>
+    </Modal>
   );
-}
-export default function ShippingLabel() {
-  const { id = '' } = useParams();
-  const query = useAdminQuery(AdminOrderDocument, { id });
-  if (!query.data) return <DataState error={query.error} retry={query.refresh} />;
-  return <LabelEditor key={query.data.adminOrder.id} order={query.data.adminOrder} />;
 }

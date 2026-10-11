@@ -1,8 +1,10 @@
 import { chromium, expect } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, unlink } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
+import { createRequire } from 'node:module';
+const sharp = createRequire(new URL('../apps/api/package.json', import.meta.url))('sharp');
 import { startAPI, startStorefront, origin, adminOrigin, db } from './auth-harness.mjs';
 import {
   createAdmin,
@@ -13,6 +15,7 @@ import {
   cleanupAdmin,
 } from './admin-harness.mjs';
 let browser;
+const uploadedFiles = [];
 try {
   await startAPI();
   await startAdmin();
@@ -76,7 +79,7 @@ try {
     '/admin/orders/map',
     '/admin/users',
     '/admin/reports',
-    `/admin/orders/${order.id}/invoice`,
+    `/admin/orders/${order.id}`,
   ]) {
     await goto(path);
     await expect(page).toHaveURL(adminOrigin + '/login');
@@ -108,23 +111,44 @@ try {
   await page.screenshot({ path: '/tmp/behjati-phase8-dashboard-desktop.png', fullPage: true });
   await goto('/admin/products');
   await page.getByRole('button', { name: 'محصول جدید', exact: true }).click();
-  const dialog = page.getByRole('dialog');
+  const dialog = page.locator('main');
+  await expect(page).toHaveURL(adminOrigin + '/admin/products/new');
   const title = 'محصول ایجادشده در مرورگر';
   const slug = `ui-create-${randomBytes(8).toString('hex')}`;
   await dialog.getByLabel('عنوان محصول', { exact: true }).fill(title);
   await dialog.getByLabel('نامک انگلیسی', { exact: true }).fill(slug);
   await dialog.getByLabel('قیمت (تومان)', { exact: true }).fill('150000');
+  await expect(dialog.getByLabel('قیمت (تومان)', { exact: true })).toHaveValue('150٬000');
+  await expect(dialog.getByText('صد و پنجاه هزار تومان', { exact: true })).toBeVisible();
   await dialog.getByLabel('وزن یا حجم', { exact: true }).fill('۵۰۰ گرم');
   await dialog.getByLabel('دسته‌بندی', { exact: true }).click();
   await page.locator('.ant-select-item-option').filter({ hasText: category.title }).last().click();
-  await dialog
-    .getByLabel('مسیر یا URL تصویر', { exact: true })
-    .fill('https://assets.example.test/halva.png');
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(dialog.getByLabel('عنوان محصول', { exact: true })).toHaveValue(title);
+  await expect(dialog.getByLabel('قیمت (تومان)', { exact: true })).toHaveValue('150٬000');
+  await page.getByRole('tab', { name: 'آپلود تصویر', exact: true }).click();
+  const uploadResponse = page.waitForResponse((response) =>
+    response.url().endsWith('/api/admin/uploads'),
+  );
+  await page.getByLabel('آپلود تصویر 1', { exact: true }).setInputFiles({
+    name: 'halva.png',
+    mimeType: 'image/png',
+    buffer: await sharp({ create: { width: 128, height: 128, channels: 3, background: '#af8053' } })
+      .png()
+      .toBuffer(),
+  });
+  const uploadResult = await uploadResponse;
+  assert.equal(uploadResult.status(), 201, await uploadResult.text());
+  const uploaded = (await uploadResult.json()).url;
+  uploadedFiles.push('apps/api' + uploaded);
   await dialog.getByLabel('توضیح تصویر', { exact: true }).fill('حلوا سنتی');
   await dialog.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
-  await expect(dialog).not.toBeVisible();
+  await expect(page).toHaveURL(adminOrigin + '/admin/products');
   const created = await db.product.findUniqueOrThrow({ where: { slug } });
   products.add(created.id);
+  const uploadedDelivery = await context.request.get(origin + uploaded);
+  assert.equal(uploadedDelivery.status(), 200);
   const shop = await context.newPage();
   shop.on('pageerror', (error) => errors.push(error.message));
   await shop.goto(origin + '/product/' + slug, { waitUntil: 'networkidle' });
@@ -132,16 +156,17 @@ try {
   await expect
     .poll(() =>
       shop
-        .locator('img[src="https://assets.example.test/halva.png"]')
+        .getByAltText('حلوا سنتی', { exact: true })
         .first()
         .evaluate((img) => img.naturalWidth > 0),
     )
     .toBe(true);
+  console.log('Product page creation, draft recovery, amount words and upload delivery passed.');
   await expect(page.getByText(title, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: `ویرایش ${title}`, exact: true }).click();
   await dialog.getByLabel('قیمت (تومان)', { exact: true }).fill('180000');
   await dialog.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
-  await expect(dialog).not.toBeVisible();
+  await expect(page).toHaveURL(adminOrigin + '/admin/products');
   await expect
     .poll(async () => (await db.product.findUniqueOrThrow({ where: { id: created.id } })).price)
     .toBe(180000);
@@ -163,13 +188,15 @@ try {
   await page.locator('.ant-select-item-option').filter({ hasText: 'در حال آماده‌سازی' }).click();
   await page.getByRole('button', { name: 'ثبت وضعیت', exact: true }).click();
   await page.getByRole('button', { name: 'تأیید', exact: true }).click();
-  await expect(page.getByText(admin.email, { exact: true })).toHaveCount(2);
+  await expect(page.getByText(admin.email, { exact: true })).toHaveCount(1);
   assert.equal(
     (await db.order.findUniqueOrThrow({ where: { id: order.id } })).status,
     'PROCESSING',
   );
   await goto(`/admin/orders/map?userId=${customer.user.id}`);
   await expect(page.getByRole('region', { name: 'نقشه سفارش‌ها', exact: true })).toBeVisible();
+  await expect(page.locator('.leaflet-container')).toHaveCSS('direction', 'rtl');
+  await expect(page.locator('.leaflet-container')).toHaveCSS('font-family', /Vazirmatn/);
   await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
   await page.locator('.leaflet-marker-icon').click();
   await expect(page.locator('.leaflet-popup-content')).toContainText('اردکان');
@@ -181,6 +208,25 @@ try {
   await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(1);
   await goto('/admin/reports');
   await expect(page.getByRole('button', { name: 'خروجی CSV', exact: true })).toBeEnabled();
+  const reportTo = await page.locator('#report-to').inputValue();
+  assert.match(reportTo, /^۱۴۰[۰-۹]\//);
+  await page.locator('#report-to').click();
+  await expect(page.locator('.rmdp-calendar')).toBeVisible();
+  await page.locator('.rmdp-day.rmdp-selected span.sd').click();
+  await page.getByRole('heading', { name: 'گزارش سفارش‌ها' }).click();
+  await expect(page.locator('#report-to')).toHaveValue(reportTo);
+  const dailyFirst = await page
+    .locator('.ant-table-tbody tr.ant-table-row')
+    .first()
+    .locator('td')
+    .first()
+    .innerText();
+  const todayLabel = new Intl.DateTimeFormat('fa-IR', {
+    timeZone: 'Asia/Tehran',
+    month: 'short',
+    day: 'numeric',
+  }).format(new Date());
+  assert.equal(dailyFirst, todayLabel);
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'خروجی CSV', exact: true }).click();
   const download = await downloadPromise;
@@ -223,7 +269,9 @@ try {
   await goto('/admin');
   await page.screenshot({ path: '/tmp/behjati-phase8-dashboard-mobile.png', fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await goto(`/admin/orders/${order.id}/invoice`);
+  await goto(`/admin/orders/${order.id}`);
+  await page.getByRole('button', { name: 'چاپ فاکتور / PDF' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('[data-invoice]')).toContainText('عنوان تاریخی آزمون');
   await page.evaluate(() => {
     window.print = () => {
@@ -261,8 +309,10 @@ try {
   });
   await db.order.update({ where: { id: order.id }, data: { subtotal: 7200000, total: 7250000 } });
   await page.reload({ waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'چاپ فاکتور / PDF' }).click();
   await expect(page.locator('[data-invoice] tbody tr')).toHaveCount(36);
   await page.evaluate(() => document.fonts.ready);
+  await page.emulateMedia({ media: 'print' });
   await page.pdf({
     path: '/tmp/behjati-phase8-invoice-long.pdf',
     preferCSSPageSize: true,
@@ -278,6 +328,11 @@ try {
     { encoding: 'utf8' },
   );
   assert.ok(longText.includes('۷٬۲۵۰٬۰۰۰'));
+  assert.ok(!longText.includes('خروج از مدیریت'));
+  assert.ok(!longText.includes(admin.email));
+  await page.emulateMedia({ media: 'screen' });
+  await page.locator('.ant-modal-close').click();
+  await unlink('apps/api' + uploaded).catch(() => {});
   const tab = await context.newPage();
   tab.on('pageerror', (error) => errors.push(error.message));
   await tab.goto(adminOrigin + '/admin', { waitUntil: 'networkidle' });
@@ -293,4 +348,5 @@ try {
 } finally {
   await browser?.close();
   await cleanupAdmin();
+  await Promise.all(uploadedFiles.map((file) => unlink(file).catch(() => {})));
 }

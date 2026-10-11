@@ -93,6 +93,11 @@ try {
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('spinbutton', { name: 'درصد تخفیف', exact: true }).fill('20');
   await dialog.getByLabel('عنوان جشنواره (اختیاری)', { exact: true }).fill('جشنواره آزمون');
+  await dialog.getByLabel('پایان تخفیف', { exact: true }).click();
+  await expect(dialog.locator('.rmdp-calendar')).toBeVisible();
+  await expect(dialog.locator('.rmdp-time-picker')).toBeVisible();
+  await dialog.locator('.rmdp-day.rmdp-selected span.sd').click();
+  await dialog.getByLabel('عنوان جشنواره (اختیاری)', { exact: true }).click();
   await dialog.getByRole('button', { name: 'اعمال روی محصولات انتخاب‌شده', exact: true }).click();
   await expect(dialog).toBeHidden();
   const stored = await db.product.findMany({
@@ -112,9 +117,12 @@ try {
       ),
     );
   await page.getByRole('button', { name: `ویرایش ${fixtures[0].title}`, exact: true }).click();
-  await dialog.getByRole('spinbutton', { name: 'درصد تخفیف', exact: true }).fill('');
-  await dialog.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
-  await expect(dialog).toBeHidden();
+  await page.getByRole('tab', { name: 'تخفیف', exact: true }).click();
+  await page.getByRole('spinbutton', { name: 'درصد تخفیف', exact: true }).fill('');
+  await page.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
+  await expect(page).toHaveURL(adminOrigin + '/admin/products');
+  await page.getByLabel('جستجوی محصول', { exact: true }).fill(suffix);
+  await page.getByLabel('جستجوی محصول', { exact: true }).press('Enter');
   assert.equal(
     (await db.product.findUniqueOrThrow({ where: { id: fixtures[0].id } })).discountPercent,
     null,

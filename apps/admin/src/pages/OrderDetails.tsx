@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { Money } from '../components/Money';
+import { lazy, Suspense, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Typography,
@@ -12,7 +13,7 @@ import {
   App,
   Popconfirm,
 } from 'antd';
-import { formatNumber, formatPrice, orderStatusLabels } from '@behjati/shared';
+import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import { orderStatusTransitions } from '@behjati/shared/admin';
 import {
   AdminOrderDocument,
@@ -25,9 +26,12 @@ import { adminRequest } from '../lib/client';
 import { customerName, persianDigits, formatDateTime } from '../lib/format';
 import DataState from '../components/DataState';
 import OrderStatus from '../components/OrderStatus';
+const Invoice = lazy(() => import('./Invoice'));
+const ShippingLabel = lazy(() => import('./ShippingLabel'));
 export default function OrderDetails() {
   const { id = '' } = useParams();
   const query = useAdminQuery(AdminOrderDocument, { id });
+  const [printView, setPrintView] = useState<'invoice' | 'label' | null>(null);
   const [status, setStatus] = useState<Status | null>(null);
   const [pending, setPending] = useState(false);
   const { message } = App.useApp();
@@ -39,12 +43,10 @@ export default function OrderDetails() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Typography.Title level={2}>سفارش {formatNumber(order.number)}</Typography.Title>
         <div className="flex flex-wrap gap-2">
-          <Link to={`/admin/orders/${id}/label`}>
-            <Button type="primary">لیبل پستی / چاپ</Button>
-          </Link>
-          <Link to={`/admin/orders/${id}/invoice`}>
-            <Button>چاپ فاکتور / PDF</Button>
-          </Link>
+          <Button type="primary" onClick={() => setPrintView('label')}>
+            لیبل پستی / چاپ
+          </Button>
+          <Button onClick={() => setPrintView('invoice')}>چاپ فاکتور / PDF</Button>
         </div>
       </div>
       <Card>
@@ -102,8 +104,8 @@ export default function OrderDetails() {
             { title: 'محصول', dataIndex: 'productTitle' },
             { title: 'وزن', dataIndex: 'productWeight' },
             { title: 'تعداد', render: (_, item) => formatNumber(item.quantity) },
-            { title: 'قیمت واحد', render: (_, item) => formatPrice(item.unitPrice) },
-            { title: 'مبلغ ردیف', render: (_, item) => formatPrice(item.lineTotal) },
+            { title: 'قیمت واحد', render: (_, item) => <Money amount={item.unitPrice} /> },
+            { title: 'مبلغ ردیف', render: (_, item) => <Money amount={item.lineTotal} /> },
           ]}
         />
       </Card>
@@ -112,10 +114,14 @@ export default function OrderDetails() {
           bordered
           column={{ xs: 1, sm: 2 }}
           items={[
-            { key: 'subtotal', label: 'جمع محصولات', children: formatPrice(order.subtotal) },
-            { key: 'discount', label: 'تخفیف', children: formatPrice(order.discount) },
-            { key: 'shipping', label: 'ارسال', children: formatPrice(order.shipping) },
-            { key: 'total', label: 'مبلغ سفارش', children: <b>{formatPrice(order.total)}</b> },
+            { key: 'subtotal', label: 'جمع محصولات', children: <Money amount={order.subtotal} /> },
+            { key: 'discount', label: 'تخفیف', children: <Money amount={order.discount} /> },
+            { key: 'shipping', label: 'ارسال', children: <Money amount={order.shipping} /> },
+            {
+              key: 'total',
+              label: 'مبلغ سفارش',
+              children: <b>{<Money amount={order.total} />}</b>,
+            },
           ]}
         />
       </Card>
@@ -192,6 +198,18 @@ export default function OrderDetails() {
           <Typography.Text type="secondary">هنوز تغییری توسط مدیر ثبت نشده است.</Typography.Text>
         )}
       </Card>
+      <Suspense fallback={null}>
+        {printView === 'invoice' && <Invoice order={order} onClose={() => setPrintView(null)} />}
+        {printView === 'label' && (
+          <ShippingLabel
+            order={order}
+            onClose={() => {
+              setPrintView(null);
+              query.refresh();
+            }}
+          />
+        )}
+      </Suspense>
       <Link to="/admin/orders">
         <Button>بازگشت به سفارش‌ها</Button>
       </Link>

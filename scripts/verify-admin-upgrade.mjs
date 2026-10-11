@@ -134,9 +134,20 @@ try {
   await page.getByLabel('رمز ورود', { exact: true }).fill(admin.password);
   await page.getByRole('button', { name: 'ورود به پنل', exact: true }).click();
   await expect(page.locator('[data-admin-dashboard]')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'تخفیف‌ها و جشنواره‌ها', exact: true })).toHaveCount(
+    0,
+  );
+  await expect(page.getByText('سلام مدیر عزیز', { exact: true })).toHaveCount(0);
+  await expect(page.locator('header').getByText('مدیر فروشگاه', { exact: true })).toHaveCount(0);
+  const selectedMenu = page.locator('[data-admin-sidebar] a[aria-current=page]');
+  await expect(selectedMenu).toHaveCSS('background-color', 'rgb(177, 107, 102)');
+  await page
+    .locator('[data-admin-sidebar]')
+    .getByRole('link', { name: 'محصولات', exact: true })
+    .hover();
   await expect(
-    page.getByRole('link', { name: 'تخفیف‌ها و جشنواره‌ها', exact: true }),
-  ).toBeVisible();
+    page.locator('[data-admin-sidebar]').getByRole('link', { name: 'محصولات', exact: true }),
+  ).toHaveCSS('background-color', 'rgb(173, 83, 96)');
   await page.screenshot({ path: '/tmp/behjati-admin-redesign-desktop.png', fullPage: true });
   await page.getByRole('button', { name: 'جمع کردن منوی مدیریت' }).click();
   await expect(page.locator('[data-admin-sidebar]')).toHaveCSS('width', '80px');
@@ -146,13 +157,14 @@ try {
   await expect(page).toHaveURL(new RegExp('/admin/products\\?search=' + suffix));
   await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(1);
   await goto(`/admin/orders/${order.id}`);
-  await page.getByRole('link', { name: 'لیبل پستی / چاپ' }).click();
+  await page.getByRole('button', { name: 'لیبل پستی / چاپ' }).click();
   await expect(page.getByLabel('نام گیرنده', { exact: true })).toHaveValue(input.recipientName);
   await page.getByLabel('نام گیرنده', { exact: true }).fill('گیرنده شخصی‌سازی شده');
   await page.getByLabel('یادداشت روی بسته (اختیاری)', { exact: true }).fill('لیبل قابل چاپ آزمون');
   await page.getByRole('button', { name: 'ذخیره لیبل سفارش' }).click();
   await expect(page.getByText('لیبل ذخیره شده', { exact: true })).toBeVisible();
   await page.reload({ waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'لیبل پستی / چاپ' }).click();
   await expect(page.getByLabel('نام گیرنده', { exact: true })).toHaveValue('گیرنده شخصی‌سازی شده');
   await expect(page.locator('[data-shipping-label]')).toContainText('لیبل قابل چاپ آزمون');
   await page.evaluate(() => {
@@ -163,7 +175,7 @@ try {
   await page.getByRole('button', { name: 'چاپ لیبل / PDF' }).click();
   await expect.poll(() => page.evaluate(() => window.__printed)).toBe(true);
   await page.emulateMedia({ media: 'print' });
-  await expect(page.locator('[data-shipping-label]')).toBeVisible();
+  await expect(page.locator('#behjati-admin-print')).toBeVisible();
   await expect(page.getByRole('button', { name: 'ذخیره لیبل سفارش' })).not.toBeVisible();
   await expect(page.locator('[data-admin-sidebar]')).not.toBeVisible();
   await page.pdf({
@@ -176,9 +188,11 @@ try {
     await page.setViewportSize({ width, height: 900 });
     for (const path of [
       '/admin',
-      '/admin/promotions',
+      '/admin/products',
+      '/admin/products/new',
+      `/admin/products/${product.id}/edit`,
       '/admin/settings',
-      `/admin/orders/${order.id}/label`,
+      `/admin/orders/${order.id}`,
     ]) {
       await goto(path);
       await expect
@@ -199,6 +213,11 @@ try {
       await expect(page.getByRole('dialog')).not.toBeVisible();
     }
   }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await goto(`/admin/products/${product.id}/edit`);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('tab')).toHaveCount(3);
+  await page.screenshot({ path: '/tmp/behjati-admin-product-editor-mobile.png', fullPage: true });
   await goto('/admin/settings');
   const newPassword = randomBytes(24).toString('base64url');
   await page.getByLabel('رمز فعلی', { exact: true }).fill('wrong-password');
