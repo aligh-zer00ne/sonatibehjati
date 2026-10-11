@@ -37,7 +37,7 @@ export default function AdminFrame() {
             aria-label={label}
             aria-current={selected === href ? 'page' : undefined}
             onClick={() => setMenuOpen(false)}
-            className={`flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${compact ? 'justify-center' : ''} ${selected === href ? '!bg-[#b16b66] font-bold shadow-[inset_-4px_0_0_#efd294]' : ''}`}
+            className={`flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${compact ? 'justify-center' : ''} ${selected === href ? '!bg-[#b16b66] font-bold' : ''}`}
           >
             <AdminIcon name={icon} className="shrink-0" />
             {!compact && <span>{label}</span>}
