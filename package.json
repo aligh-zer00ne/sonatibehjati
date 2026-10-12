@@ -46,7 +46,9 @@
     "deploy:production": "bash deploy/update-production.sh",
     "verify:operations": "bun scripts/verify-operations.mjs",
     "verify:operations-ui": "bun scripts/verify-operations-ui.mjs",
-    "verify:support-ui": "bun scripts/verify-support-ui.mjs"
+    "verify:support-ui": "bun scripts/verify-support-ui.mjs",
+    "verify:admin-config": "bun scripts/verify-admin-config.mjs",
+    "verify:admin-config-ui": "bun scripts/verify-admin-config-ui.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
