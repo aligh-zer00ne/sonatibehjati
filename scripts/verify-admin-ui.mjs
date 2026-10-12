@@ -184,6 +184,8 @@ try {
   uploadedFiles.push('apps/api' + uploaded);
   await dialog.getByLabel('توضیح تصویر', { exact: true }).fill('حلوا سنتی');
   await dialog.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp('/admin/products/[^/]+/edit$'));
+  await page.getByRole('button', { name: 'بازگشت به محصولات', exact: true }).click();
   await expect(page).toHaveURL(adminOrigin + '/admin/products');
   const created = await db.product.findUniqueOrThrow({ where: { slug } });
   products.add(created.id);
@@ -206,6 +208,8 @@ try {
   await page.getByRole('button', { name: `ویرایش ${title}`, exact: true }).click();
   await dialog.getByLabel('قیمت (تومان)', { exact: true }).fill('180000');
   await dialog.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
+  await expect(page).toHaveURL(adminOrigin + `/admin/products/${created.id}/edit`);
+  await page.getByRole('button', { name: 'بازگشت به محصولات', exact: true }).click();
   await expect(page).toHaveURL(adminOrigin + '/admin/products');
   await expect
     .poll(async () => (await db.product.findUniqueOrThrow({ where: { id: created.id } })).price)

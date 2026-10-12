@@ -1,3 +1,4 @@
+import ProductPreview from '../components/ProductPreview';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -197,6 +198,7 @@ export default function Products() {
                 title: 'عملیات',
                 render: (_, product) => (
                   <Space wrap>
+                    <ProductPreview slug={product.slug} isActive={product.isActive} />
                     <Button
                       disabled={pending}
                       onClick={() => navigate(`/admin/products/${product.id}/edit`)}

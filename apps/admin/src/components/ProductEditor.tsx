@@ -21,7 +21,7 @@ export default function ProductEditor({
 }: {
   product: AdminProductFieldsFragment | null;
   categories: AdminProductsQuery['categories'];
-  onSaved: () => void;
+  onSaved: (product: AdminProductFieldsFragment) => void;
   onCancel: () => void;
 }) {
   const { admin } = useAdmin();
@@ -212,14 +212,14 @@ export default function ProductEditor({
           }
           setPending(true);
           try {
-            await adminRequest(SaveAdminProductDocument, {
+            const result = await adminRequest(SaveAdminProductDocument, {
               id: product?.id,
               expectedUpdatedAt: draft?.version ?? product?.updatedAt,
               input: parsed.data,
             });
             forgetDraft();
             setDirty(false);
-            onSaved();
+            onSaved(result.saveAdminProduct);
           } catch (error) {
             setError(error instanceof Error ? error.message : 'محصول ذخیره نشد.');
           } finally {

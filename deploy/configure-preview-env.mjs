@@ -53,7 +53,10 @@ save(`${root}apps/storefront/.env.production`, {
   AUTH_PROXY_SECRET: api.AUTH_PROXY_SECRET,
   AUTH_TRUST_PROXY_HEADERS: 'true',
 });
-save(`${root}apps/admin/.env.production`, { VITE_API_URL: '/api/admin' });
+save(`${root}apps/admin/.env.production`, {
+  VITE_API_URL: '/api/admin',
+  VITE_STOREFRONT_URL: 'https://sonatibehjati.ir',
+});
 console.log(
   'Server preview env configured. Existing secrets and OTP preserved; no SMS will be sent.',
 );
