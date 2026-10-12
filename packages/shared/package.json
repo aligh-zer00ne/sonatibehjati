@@ -7,6 +7,8 @@
     "./promotions": "./src/promotions.ts",
     "./admin": "./src/admin.ts",
     "./photo-catalog": "./src/photo-catalog.ts",
+    "./permissions": "./src/permissions.ts",
+    "./homepage": "./src/homepage.ts",
     "./operations": "./src/operations.ts"
   },
   "scripts": {

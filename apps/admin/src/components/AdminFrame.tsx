@@ -1,3 +1,4 @@
+import { canOpenAdminPath, hasPermission, adminLanding } from '@behjati/shared/permissions';
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Alert, Drawer, Input, Select, Tooltip } from 'antd';
@@ -14,18 +15,20 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin/coupons', label: 'کدهای تخفیف', icon: 'discount' },
   { href: '/admin/tickets', label: 'پشتیبانی و تیکت‌ها', icon: 'support' },
   { href: '/admin/reviews', label: 'نظرات محصولات', icon: 'review' },
+  { href: '/admin/homepage', label: 'هیروسکشن و درباره ما', icon: 'home' },
   { href: '/admin/accounts', label: 'کاربران پنل', icon: 'shield' },
   { href: '/admin/settings', label: 'تنظیمات حساب', icon: 'settings' },
 ];
 export default function AdminFrame() {
   const { logout, admin } = useAdmin();
   const owner = admin?.role === 'OWNER';
-  const visibleLinks = links.filter(
-    (link) =>
-      owner ||
-      !['/admin', '/admin/users', '/admin/reports', '/admin/accounts', '/admin/coupons'].includes(
-        link.href,
-      ),
+  const visibleLinks = links.filter((link) => admin && canOpenAdminPath(admin, link.href));
+  const searchOptions = [
+    { value: 'products', label: 'محصولات', permission: 'PRODUCTS' },
+    { value: 'orders', label: 'سفارش‌ها', permission: 'ORDERS' },
+    { value: 'users', label: 'مشتریان', permission: 'CUSTOMERS' },
+  ].filter((option) =>
+    hasPermission(admin, option.permission as 'PRODUCTS' | 'ORDERS' | 'CUSTOMERS'),
   );
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -34,6 +37,9 @@ export default function AdminFrame() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [searchScope, setSearchScope] = useState('products');
+  const activeSearch = searchOptions.some((option) => option.value === searchScope)
+    ? searchScope
+    : searchOptions[0]?.value;
   const selected = pathname.startsWith('/admin/orders/map')
     ? '/admin/orders/map'
     : (links.slice(1).find(({ href }) => pathname.startsWith(href))?.href ?? '/admin');
@@ -65,7 +71,7 @@ export default function AdminFrame() {
         className={`sticky top-0 hidden h-dvh shrink-0 overflow-hidden bg-[radial-gradient(ellipse_at_bottom_left,#8f1425_0%,#660311_55%,#420009_100%)] shadow-[-6px_0_24px_rgba(74,8,15,0.08)] transition-[width] duration-300 motion-reduce:transition-none min-[992px]:flex min-[992px]:flex-col print:!hidden ${collapsed ? 'w-20' : 'w-[204px] xl:w-[220px]'}`}
       >
         <div className="relative z-10 flex min-h-[110px] items-center justify-center gap-4 px-3">
-          <Link to={owner ? '/admin' : '/admin/orders'} aria-label="مدیریت سنتی بهجتی">
+          <Link to={admin ? adminLanding(admin) : '/login'} aria-label="مدیریت سنتی بهجتی">
             <img
               src="/images/logo-footer.svg"
               alt="سنتی بهجتی"
@@ -133,30 +139,28 @@ export default function AdminFrame() {
               <p className="mt-0.5 text-[11px] text-[#7d746a]">مدیریت فرآورده‌های کنجدی اردکان</p>
             </div>
           </div>
-          <div className="order-3 flex w-full gap-2 min-[1200px]:order-none min-[1200px]:max-w-md">
-            <Select
-              aria-label="محدوده جستجوی مدیریت"
-              value={searchScope}
-              onChange={setSearchScope}
-              className="w-28 shrink-0"
-              options={[
-                { value: 'products', label: 'محصولات' },
-                { value: 'orders', label: 'سفارش‌ها' },
-                ...(owner ? [{ value: 'users', label: 'مشتریان' }] : []),
-              ]}
-            />
-            <Input.Search
-              aria-label="جستجوی پنل مدیریت"
-              placeholder="نام، شماره سفارش یا موبایل…"
-              maxLength={100}
-              allowClear
-              onSearch={(value) =>
-                navigate(
-                  `/admin/${searchScope}${value.trim() ? '?search=' + encodeURIComponent(value.trim()) : ''}`,
-                )
-              }
-            />
-          </div>
+          {activeSearch && (
+            <div className="order-3 flex w-full gap-2 min-[1200px]:order-none min-[1200px]:max-w-md">
+              <Select
+                aria-label="محدوده جستجوی مدیریت"
+                value={activeSearch}
+                onChange={setSearchScope}
+                className="w-28 shrink-0"
+                options={searchOptions}
+              />
+              <Input.Search
+                aria-label="جستجوی پنل مدیریت"
+                placeholder="نام، شماره سفارش یا موبایل…"
+                maxLength={100}
+                allowClear
+                onSearch={(value) =>
+                  navigate(
+                    `/admin/${activeSearch}${value.trim() ? '?search=' + encodeURIComponent(value.trim()) : ''}`,
+                  )
+                }
+              />
+            </div>
+          )}
           <div className="flex items-center gap-2 sm:gap-3">
             <Button
               aria-label="خروج از مدیریت"

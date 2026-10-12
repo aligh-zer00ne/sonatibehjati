@@ -1,3 +1,4 @@
+import { hasPermission } from '@behjati/shared/permissions';
 import { Input, InputNumber, Select, Button, Card } from 'antd';
 import CalendarPicker from './CalendarPicker';
 import { orderStatuses, orderStatusLabels } from '@behjati/shared';
@@ -62,7 +63,7 @@ export default function OrderFilters({
             onChange={(number) => onChange({ number })}
           />
         </div>
-        {admin?.role === 'OWNER' && (
+        {hasPermission(admin, 'CUSTOMERS') && (
           <div>
             <span className="mb-2 block text-xs">مشتری</span>
             <UserFilter value={input.userId} onChange={(userId) => onChange({ userId })} />

@@ -1,4 +1,5 @@
 fragment AdminIdentityFields on AdminIdentity {
+  permissions
   role
   isActive
   id
@@ -429,5 +430,50 @@ mutation ModerateProductReview($id: ID!, $status: ReviewStatus!, $expectedUpdate
     id
     status
     updatedAt
+  }
+}
+
+mutation SetStaffPermissions($id: ID!, $permissions: [AdminPermission!]!) {
+  setStaffPermissions(id: $id, permissions: $permissions) {
+    ...AdminIdentityFields
+  }
+}
+
+fragment HomepageContentFields on HomepageContent {
+  updatedAt
+  slides {
+    src
+    mobileSrc
+    alt
+    label
+    eyebrow
+    title
+    subtitle
+    description
+    href
+    action
+    mobileAction
+  }
+  story {
+    src
+    mobileSrc
+    alt
+    title
+    subtitle
+    description
+    action
+    mobileAction
+    href
+    location
+  }
+}
+query AdminHomepageContent {
+  adminHomepageContent {
+    ...HomepageContentFields
+  }
+}
+mutation SaveHomepageContent($input: HomepageContentInput!, $expectedUpdatedAt: String) {
+  saveHomepageContent(input: $input, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...HomepageContentFields
   }
 }

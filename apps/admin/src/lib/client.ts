@@ -111,7 +111,10 @@ export async function adminRequest<T, V extends Record<string, unknown>>(
   return pending;
 }
 
-export async function uploadAdminImage(file: File): Promise<string> {
+export async function uploadAdminImage(
+  file: File,
+  purpose: 'product' | 'homepage' = 'product',
+): Promise<string> {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 8 * 1024 * 1024)
     throw new AdminRequestError(
       'تصویر JPG، PNG یا WebP تا ۸ مگابایت انتخاب کنید.',
@@ -124,7 +127,7 @@ export async function uploadAdminImage(file: File): Promise<string> {
       ? new URL('/admin/uploads', api).href
       : '/api/admin/uploads';
     const sendImage = () =>
-      fetch(endpoint, {
+      fetch(purpose === 'homepage' ? endpoint + '?purpose=homepage' : endpoint, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': file.type, Authorization: `Bearer ${accessToken}` },

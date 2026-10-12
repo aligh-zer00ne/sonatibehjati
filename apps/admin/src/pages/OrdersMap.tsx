@@ -1,3 +1,5 @@
+import { hasPermission } from '@behjati/shared/permissions';
+import { useAdmin } from '../auth/AdminProvider';
 import { useRef, useState } from 'react';
 import { Typography, Alert, Card, Pagination, Button, Input, Select, Empty, Tag } from 'antd';
 import { Link } from 'react-router-dom';
@@ -11,6 +13,7 @@ import OrdersMapView from '../components/OrdersMapView';
 import DataState from '../components/DataState';
 
 export default function OrdersMap() {
+  const { admin } = useAdmin();
   const filters = useOrderFilters(50);
   const query = useAdminQuery(AdminOrdersDocument, { input: filters.input }, !filters.error);
   const result = query.data?.adminOrders;
@@ -49,9 +52,11 @@ export default function OrdersMap() {
             یک سفارش را انتخاب کنید تا موقعیت ثبت‌شدهٔ آن روی نقشه نمایش داده شود.
           </p>
         </div>
-        <Link to="/admin/orders">
-          <Button>فهرست همهٔ سفارش‌ها</Button>
-        </Link>
+        {hasPermission(admin, 'ORDERS') && (
+          <Link to="/admin/orders">
+            <Button>فهرست همهٔ سفارش‌ها</Button>
+          </Link>
+        )}
       </div>
       <Card>
         <div className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]">
@@ -212,9 +217,11 @@ export default function OrdersMap() {
                         <span dir="ltr">
                           {persianDigits(selected.address.recipientPhone ?? selected.user.phone)}
                         </span>
-                        <Link to={`/admin/orders/${selected.id}`}>
-                          <Button>جزئیات سفارش</Button>
-                        </Link>
+                        {hasPermission(admin, 'ORDERS') && (
+                          <Link to={`/admin/orders/${selected.id}`}>
+                            <Button>جزئیات سفارش</Button>
+                          </Link>
+                        )}
                       </div>
                     </div>
                     <OrdersMapView key={selected.id} order={selected} />

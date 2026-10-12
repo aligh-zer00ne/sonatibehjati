@@ -76,6 +76,14 @@ try {
   const staffPassword = randomBytes(20).toString('base64url');
   await page.getByLabel('ایمیل همکار', { exact: true }).fill(staffEmail);
   await page.getByLabel('رمز اولیه (حداقل ۱۲ نویسه)', { exact: true }).fill(staffPassword);
+  for (const label of [
+    'سفارش‌ها و چاپ',
+    'نقشه سفارش‌ها',
+    'محصولات و تخفیف محصول',
+    'پشتیبانی و تیکت‌ها',
+    'نظرات محصولات',
+  ])
+    await page.getByRole('checkbox', { name: label, exact: true }).check();
   await page.getByRole('button', { name: 'ساخت حساب همکار', exact: true }).click();
   await expect(page.getByText(staffEmail, { exact: true })).toBeVisible();
   const staff = await db.admin.findUniqueOrThrow({ where: { email: staffEmail } });

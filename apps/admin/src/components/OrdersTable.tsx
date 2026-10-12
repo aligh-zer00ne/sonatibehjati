@@ -1,3 +1,5 @@
+import { hasPermission } from '@behjati/shared/permissions';
+import { useAdmin } from '../auth/AdminProvider';
 import { Money } from './Money';
 import { Table, Button } from 'antd';
 import { Link } from 'react-router-dom';
@@ -20,6 +22,7 @@ export default function OrdersTable({
   onPage?: (page: number) => void;
   compact?: boolean;
 }) {
+  const { admin } = useAdmin();
   return (
     <Table<AdminOrderSummaryFieldsFragment>
       rowKey="id"
@@ -61,11 +64,12 @@ export default function OrdersTable({
         { title: 'تاریخ', render: (_, order) => formatDate(order.createdAt) },
         {
           title: 'عملیات',
-          render: (_, order) => (
-            <Link to={`/admin/orders/${order.id}`}>
-              <Button aria-label={`جزئیات سفارش ${formatNumber(order.number)}`}>جزئیات</Button>
-            </Link>
-          ),
+          render: (_, order) =>
+            hasPermission(admin, 'ORDERS') && (
+              <Link to={`/admin/orders/${order.id}`}>
+                <Button aria-label={`جزئیات سفارش ${formatNumber(order.number)}`}>جزئیات</Button>
+              </Link>
+            ),
         },
       ]}
     />

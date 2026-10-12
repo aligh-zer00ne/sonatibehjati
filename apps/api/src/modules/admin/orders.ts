@@ -1,3 +1,4 @@
+import { presentAdminIdentity } from './identity.js';
 import type { Prisma } from '@prisma/client';
 import {
   adminOrdersFilterSchema,
@@ -92,7 +93,11 @@ export async function adminOrder(id: string) {
       user: { select: customerSelect },
       items: { orderBy: { id: 'asc' } },
       statusEvents: {
-        include: { admin: { select: { id: true, email: true, role: true, isActive: true } } },
+        include: {
+          admin: {
+            select: { id: true, email: true, role: true, isActive: true, permissions: true },
+          },
+        },
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       },
     },
@@ -104,6 +109,7 @@ export async function adminOrder(id: string) {
     shippingLabel: presentShippingLabel(order.shippingLabel),
     statusEvents: order.statusEvents.map((event) => ({
       ...event,
+      admin: presentAdminIdentity(event.admin),
       createdAt: event.createdAt.toISOString(),
     })),
   };

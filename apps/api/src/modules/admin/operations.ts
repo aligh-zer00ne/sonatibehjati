@@ -1,3 +1,4 @@
+import { permissionsSchema } from '@behjati/shared/permissions';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 import ExcelJS from 'exceljs';
@@ -18,6 +19,7 @@ export async function createStaff(raw: unknown) {
         email: input.email,
         passwordHash: await hashAdminPassword(input.password),
         role: 'STAFF',
+        permissions: input.permissions,
       },
     });
   } catch (error) {
@@ -133,4 +135,26 @@ export async function customerExport(rawSearch = '') {
     base64: Buffer.from(buffer).toString('base64'),
     count: users.length,
   };
+}
+
+export async function setStaffPermissions(id: string, raw: unknown) {
+  validate(entityId, id);
+  const permissions = validate(permissionsSchema, raw);
+  return db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM Admin WHERE id = ${id} FOR UPDATE`;
+    const admin = await tx.admin.findUnique({ where: { id } });
+    if (!admin || admin.role !== 'STAFF')
+      throw authError('فقط دسترسی همکار قابل تغییر است.', 'FORBIDDEN');
+    const result = await tx.admin.update({ where: { id }, data: { permissions } });
+    const revokedAt = new Date();
+    await tx.adminSession.updateMany({
+      where: { adminId: id, revokedAt: null },
+      data: { revokedAt },
+    });
+    await tx.adminRefreshToken.updateMany({
+      where: { adminId: id, revokedAt: null },
+      data: { revokedAt },
+    });
+    return result;
+  });
 }

@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
     '/api/admin/uploads': {
       target: env.API_PROXY_TARGET ?? 'http://localhost:4000',
       changeOrigin: false,
-      rewrite: () => '/admin/uploads',
+      rewrite: (path: string) => path.replace(/^\/api\/admin\/uploads/, '/admin/uploads'),
     },
     '/uploads/': {
       target: env.API_PROXY_TARGET ?? 'http://localhost:4000',

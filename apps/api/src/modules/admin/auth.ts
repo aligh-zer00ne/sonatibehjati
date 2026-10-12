@@ -1,3 +1,4 @@
+import { hasPermission, readPermissions, type AdminPermission } from '@behjati/shared/permissions';
 import { randomBytes } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
 import { adminLoginSchema, adminPasswordChangeSchema } from '@behjati/shared/admin';
@@ -45,7 +46,13 @@ export async function currentAdmin(context: AuthContext) {
     include: { admin: true },
   });
   return session?.admin.isActive
-    ? { id: session.admin.id, email: session.admin.email, role: session.admin.role, isActive: true }
+    ? {
+        id: session.admin.id,
+        email: session.admin.email,
+        role: session.admin.role,
+        permissions: readPermissions(session.admin.permissions),
+        isActive: true,
+      }
     : null;
 }
 export async function requireAdmin(context: AuthContext) {
@@ -104,7 +111,13 @@ export async function loginAdmin(context: AuthContext, raw: unknown) {
   });
   cookie(context, pair);
   return {
-    admin: { id: admin.id, email: admin.email, role: admin.role, isActive: admin.isActive },
+    admin: {
+      id: admin.id,
+      email: admin.email,
+      role: admin.role,
+      permissions: readPermissions(admin.permissions),
+      isActive: admin.isActive,
+    },
     accessToken: pair.access,
     accessExpiresAt: pair.accessExpiresAt.toISOString(),
   };
@@ -166,6 +179,7 @@ export async function refreshAdmin(context: AuthContext) {
         id: session.admin.id,
         email: session.admin.email,
         role: session.admin.role,
+        permissions: readPermissions(session.admin.permissions),
         isActive: session.admin.isActive,
       },
     };
@@ -247,5 +261,12 @@ export async function changeAdminPassword(context: AuthContext, raw: unknown) {
 export async function requireOwner(context: AuthContext) {
   const admin = await requireAdmin(context);
   if (admin.role !== 'OWNER') throw authError('این بخش فقط در اختیار مدیر است.', 'FORBIDDEN');
+  return admin;
+}
+
+export async function requirePermission(context: AuthContext, ...permissions: AdminPermission[]) {
+  const admin = await requireAdmin(context);
+  if (!permissions.some((permission) => hasPermission(admin, permission)))
+    throw authError('دسترسی به این بخش برای حساب شما فعال نیست.', 'FORBIDDEN');
   return admin;
 }

@@ -281,7 +281,20 @@ enum AdminRole {
   OWNER
   STAFF
 }
+enum AdminPermission {
+  DASHBOARD
+  ORDERS
+  ORDER_MAP
+  PRODUCTS
+  CUSTOMERS
+  REPORTS
+  COUPONS
+  TICKETS
+  REVIEWS
+  HOMEPAGE
+}
 type AdminIdentity {
+  permissions: [AdminPermission!]!
   role: AdminRole!
   isActive: Boolean!
   id: ID!
@@ -559,6 +572,7 @@ input AdminCouponInput {
   isActive: Boolean!
 }
 input StaffInput {
+  permissions: [AdminPermission!]
   email: String!
   password: String!
 }
@@ -644,6 +658,7 @@ extend type Query {
 }
 extend type Mutation {
   createStaff(input: StaffInput!): AdminIdentity!
+  setStaffPermissions(id: ID!, permissions: [AdminPermission!]!): AdminIdentity!
   setStaffActive(id: ID!, isActive: Boolean!): AdminIdentity!
   saveAdminCoupon(id: ID, expectedUpdatedAt: String, input: AdminCouponInput!): AdminCoupon!
   createTicket(input: TicketInput!): SupportTicket!
@@ -652,4 +667,75 @@ extend type Mutation {
   setAdminTicketStatus(id: ID!, status: TicketStatus!, expectedUpdatedAt: String!): SupportTicket!
   submitProductReview(input: ReviewInput!): ProductReview!
   moderateProductReview(id: ID!, status: ReviewStatus!, expectedUpdatedAt: String!): ProductReview!
+}
+
+type HeroSlide {
+  src: String!
+  mobileSrc: String!
+  alt: String!
+  label: String!
+  eyebrow: String!
+  title: String!
+  subtitle: String!
+  description: String!
+  href: String!
+  action: String!
+  mobileAction: String!
+}
+
+input HeroSlideInput {
+  src: String!
+  mobileSrc: String!
+  alt: String!
+  label: String!
+  eyebrow: String!
+  title: String!
+  subtitle: String!
+  description: String!
+  href: String!
+  action: String!
+  mobileAction: String!
+}
+
+type BrandStoryContent {
+  src: String!
+  mobileSrc: String!
+  alt: String!
+  title: String!
+  subtitle: String!
+  description: String!
+  action: String!
+  mobileAction: String!
+  href: String!
+  location: String!
+}
+
+input BrandStoryContentInput {
+  src: String!
+  mobileSrc: String!
+  alt: String!
+  title: String!
+  subtitle: String!
+  description: String!
+  action: String!
+  mobileAction: String!
+  href: String!
+  location: String!
+}
+
+type HomepageContent {
+  slides: [HeroSlide!]!
+  story: BrandStoryContent!
+  updatedAt: String
+}
+input HomepageContentInput {
+  slides: [HeroSlideInput!]!
+  story: BrandStoryContentInput!
+}
+extend type Query {
+  homepageContent: HomepageContent!
+  adminHomepageContent: HomepageContent!
+}
+extend type Mutation {
+  saveHomepageContent(input: HomepageContentInput!, expectedUpdatedAt: String): HomepageContent!
 }

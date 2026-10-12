@@ -6,7 +6,7 @@ import sharp from 'sharp';
 import { GraphQLError } from 'graphql';
 import { env } from '../../config/env.js';
 import { createAuthContext } from '../../graphql/context.js';
-import { requireAdmin, requireAdminOrigin } from './auth.js';
+import { requirePermission, requireAdminOrigin } from './auth.js';
 import { consumeAuthLimit } from '../auth/rate-limit.js';
 import { authError } from '../auth/errors.js';
 
@@ -27,7 +27,10 @@ adminUploads.post(
         res,
       });
       requireAdminOrigin(context);
-      const admin = await requireAdmin(context);
+      const admin = await requirePermission(
+        context,
+        req.query.purpose === 'homepage' ? 'HOMEPAGE' : 'PRODUCTS',
+      );
       await consumeAuthLimit(`admin-upload:${admin.id}`, 30, 60);
       if (
         !['image/jpeg', 'image/png', 'image/webp'].includes(

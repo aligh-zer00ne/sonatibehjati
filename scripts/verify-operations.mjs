@@ -27,7 +27,13 @@ try {
   const password = randomBytes(24).toString('hex');
   const created = await adminGql(
     'mutation($input:StaffInput!){createStaff(input:$input){id email role isActive}}',
-    { input: { email, password } },
+    {
+      input: {
+        email,
+        password,
+        permissions: ['ORDERS', 'ORDER_MAP', 'PRODUCTS', 'TICKETS', 'REVIEWS'],
+      },
+    },
     ownerSession.cookies,
   );
   assert.equal(created.errors, undefined);

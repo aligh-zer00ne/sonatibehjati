@@ -68,6 +68,7 @@ model Admin {
  email String @unique
  passwordHash String
  role AdminRole @default(OWNER)
+ permissions Json?
  isActive Boolean @default(true)
  createdAt DateTime @default(now())
  refreshTokens AdminRefreshToken[]
@@ -291,4 +292,10 @@ model ProductReview {
  @@unique([userId,productId])
  @@index([productId,status,createdAt])
  @@index([status,createdAt])
+}
+
+model HomepageContent {
+ id String @id
+ data Json
+ updatedAt DateTime @updatedAt
 }

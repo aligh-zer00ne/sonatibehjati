@@ -19,7 +19,7 @@ app.use(cors({ origin: [env.STOREFRONT_ORIGIN, env.ADMIN_ORIGIN], credentials: t
 app.use(
   rateLimit({ windowMs: 60000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }),
 );
-app.use(express.json({ limit: '32kb' }));
+app.use(express.json({ limit: '64kb' }));
 app.get('/health', (_request, response) => response.json({ status: 'ok' }));
 app.use(adminUploads);
 const yoga = createYoga<{ req: IncomingMessage; res: ServerResponse }, AuthContext>({

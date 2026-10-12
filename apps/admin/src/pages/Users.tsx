@@ -1,3 +1,5 @@
+import { hasPermission } from '@behjati/shared/permissions';
+import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -13,6 +15,7 @@ import { customerName, persianDigits } from '../lib/format';
 import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 export default function Users() {
+  const { admin } = useAdmin();
   const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const [exporting, setExporting] = useState(false);
@@ -97,11 +100,12 @@ export default function Users() {
               },
               {
                 title: 'عملیات',
-                render: (_, user) => (
-                  <Link to={`/admin/orders?userId=${user.id}`}>
-                    <Button>سفارش‌های کاربر</Button>
-                  </Link>
-                ),
+                render: (_, user) =>
+                  hasPermission(admin, 'ORDERS') && (
+                    <Link to={`/admin/orders?userId=${user.id}`}>
+                      <Button>سفارش‌های کاربر</Button>
+                    </Link>
+                  ),
               },
             ]}
           />

@@ -1,3 +1,4 @@
+import { canOpenAdminPath, adminLanding } from '@behjati/shared/permissions';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Alert, Button, Skeleton } from 'antd';
 import { useAdmin } from './AdminProvider';
@@ -23,12 +24,7 @@ export default function ProtectedAdmin() {
     );
   if (!admin)
     return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
-  if (
-    admin.role === 'STAFF' &&
-    ['/admin/users', '/admin/reports', '/admin/accounts', '/admin/coupons'].some((path) =>
-      location.pathname.startsWith(path),
-    )
-  )
-    return <Navigate to="/admin/orders" replace />;
+  if (!canOpenAdminPath(admin, location.pathname))
+    return <Navigate to={adminLanding(admin)} replace />;
   return <Outlet key={admin.id + admin.role} />;
 }

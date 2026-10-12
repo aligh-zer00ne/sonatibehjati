@@ -6,6 +6,7 @@ import AdminProvider from './auth/AdminProvider';
 import ProtectedAdmin from './auth/ProtectedAdmin';
 import OwnerOnly from './auth/OwnerOnly';
 import AdminFrame from './components/AdminFrame';
+const Homepage = lazy(() => import('./pages/Homepage'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Coupons = lazy(() => import('./pages/Coupons'));
 const Tickets = lazy(() => import('./pages/Tickets'));
@@ -61,12 +62,13 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route element={<ProtectedAdmin />}>
                   <Route path="/admin" element={<AdminFrame />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="users" element={<Users />} />
+                    <Route path="reports" element={<Reports />} />
+                    <Route path="coupons" element={<Coupons />} />
+                    <Route path="homepage" element={<Homepage />} />
                     <Route element={<OwnerOnly />}>
-                      <Route index element={<Dashboard />} />
-                      <Route path="users" element={<Users />} />
-                      <Route path="reports" element={<Reports />} />
                       <Route path="accounts" element={<Accounts />} />
-                      <Route path="coupons" element={<Coupons />} />
                     </Route>
                     <Route path="products" element={<Products />} />
                     <Route path="products/new" element={<ProductEdit />} />

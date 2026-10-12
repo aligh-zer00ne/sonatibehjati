@@ -1,3 +1,5 @@
+import { canOpenAdminPath } from '@behjati/shared/permissions';
+import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
 import { AmountInWords } from '../components/AmountInWords';
 import { useState, useEffect } from 'react';
@@ -19,6 +21,7 @@ const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
   { label: 'گزارش فروش', href: '/admin/reports', icon: 'reports' },
 ];
 export default function Dashboard() {
+  const { admin } = useAdmin();
   const query = useAdminQuery(AdminDashboardDocument, {});
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -71,10 +74,12 @@ export default function Dashboard() {
   const panelTitle = (label: string, href: string) => (
     <div className="flex items-center justify-between gap-2">
       <span>{label}</span>
-      <Link to={href} className="flex items-center gap-1 text-[10px] !text-[#786044]">
-        مشاهده همه
-        <AdminIcon name="arrow" width={14} height={14} />
-      </Link>
+      {admin && canOpenAdminPath(admin, href) && (
+        <Link to={href} className="flex items-center gap-1 text-[10px] !text-[#786044]">
+          مشاهده همه
+          <AdminIcon name="arrow" width={14} height={14} />
+        </Link>
+      )}
     </div>
   );
   return (
@@ -121,21 +126,23 @@ export default function Dashboard() {
           className="min-w-0 md:col-span-2 xl:col-span-1 xl:order-last"
         >
           <div className="grid grid-cols-2 gap-3">
-            {shortcuts.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className="group flex min-h-[103px] flex-col items-center justify-center gap-3 rounded-lg border border-[#eee3d5] bg-[#fffcf7] px-2 !text-[#34251e] transition hover:border-[#cfa99f] hover:shadow-sm"
-              >
-                <AdminIcon
-                  name={item.icon}
-                  width={25}
-                  height={25}
-                  className="text-[#930d25] transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none"
-                />
-                <span className="text-[11px]">{item.label}</span>
-              </Link>
-            ))}
+            {shortcuts
+              .filter((item) => admin && canOpenAdminPath(admin, item.href))
+              .map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className="group flex min-h-[103px] flex-col items-center justify-center gap-3 rounded-lg border border-[#eee3d5] bg-[#fffcf7] px-2 !text-[#34251e] transition hover:border-[#cfa99f] hover:shadow-sm"
+                >
+                  <AdminIcon
+                    name={item.icon}
+                    width={25}
+                    height={25}
+                    className="text-[#930d25] transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none"
+                  />
+                  <span className="text-[11px]">{item.label}</span>
+                </Link>
+              ))}
           </div>
         </Card>
         <DashboardCharts report={data.report} />

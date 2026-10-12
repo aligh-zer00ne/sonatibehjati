@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { permissionsSchema } from '@behjati/shared/permissions';
 export const entityId = z.string().min(1).max(100);
 export const pageInput = z.object({
   page: z.number().int().min(1).max(100000).default(1),
@@ -47,6 +48,7 @@ export const couponInput = z
       ctx.addIssue({ code: 'custom', path: ['expiresAt'], message: 'پایان باید پس از شروع باشد.' });
   });
 export const staffInput = z.object({
+  permissions: permissionsSchema.default([]),
   email: z.string().trim().toLowerCase().email().max(254),
   password: z.string().min(12).max(128),
 });
