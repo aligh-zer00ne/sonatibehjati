@@ -67,6 +67,34 @@ export type AddressInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminCoupon = {
+  __typename?: 'AdminCoupon';
+  code: Scalars['String']['output'];
+  expiresAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isActive: Scalars['Boolean']['output'];
+  maxDiscountAmount?: Maybe<Scalars['Int']['output']>;
+  minOrderAmount: Scalars['Int']['output'];
+  startsAt: Scalars['String']['output'];
+  type: DiscountType;
+  updatedAt: Scalars['String']['output'];
+  usageCount: Scalars['Int']['output'];
+  usageLimit?: Maybe<Scalars['Int']['output']>;
+  value: Scalars['Int']['output'];
+};
+
+export type AdminCouponInput = {
+  code: Scalars['String']['input'];
+  expiresAt: Scalars['String']['input'];
+  isActive: Scalars['Boolean']['input'];
+  maxDiscountAmount?: InputMaybe<Scalars['Int']['input']>;
+  minOrderAmount: Scalars['Int']['input'];
+  startsAt: Scalars['String']['input'];
+  type: DiscountType;
+  usageLimit?: InputMaybe<Scalars['Int']['input']>;
+  value: Scalars['Int']['input'];
+};
+
 export type AdminDailyMetric = {
   __typename?: 'AdminDailyMetric';
   date: Scalars['String']['output'];
@@ -95,6 +123,8 @@ export type AdminIdentity = {
   __typename?: 'AdminIdentity';
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  isActive: Scalars['Boolean']['output'];
+  role: AdminRole;
 };
 
 export type AdminLoginInput = {
@@ -245,6 +275,10 @@ export type AdminReportInput = {
   status?: InputMaybe<OrderStatus>;
   to: Scalars['String']['input'];
 };
+
+export type AdminRole =
+  | 'OWNER'
+  | 'STAFF';
 
 export type AdminSessionPayload = {
   __typename?: 'AdminSessionPayload';
@@ -415,6 +449,17 @@ export type CreateOrderInput = {
   requestId: Scalars['ID']['input'];
 };
 
+export type CustomerExport = {
+  __typename?: 'CustomerExport';
+  base64: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+  filename: Scalars['String']['output'];
+};
+
+export type DiscountType =
+  | 'FIXED'
+  | 'PERCENT';
+
 export type LabelPaperSize =
   | 'A5'
   | 'THERMAL';
@@ -426,16 +471,25 @@ export type Mutation = {
   adminRefresh: AdminSessionPayload;
   changeAdminPassword: Scalars['Boolean']['output'];
   createOrder: OrderReceipt;
+  createStaff: AdminIdentity;
+  createTicket: SupportTicket;
   deleteAddress: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
+  moderateProductReview: ProductReview;
   refreshToken: AuthSession;
+  replyAdminTicket: SupportTicket;
+  replyTicket: SupportTicket;
   requestOtp: OtpChallenge;
   saveAddress: Address;
+  saveAdminCoupon: AdminCoupon;
   saveAdminProduct: Product;
   saveAdminShippingLabel: AdminShippingLabel;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
+  setAdminTicketStatus: SupportTicket;
+  setStaffActive: AdminIdentity;
+  submitProductReview: ProductReview;
   updateAdminOrderStatus: AdminOrder;
   updateProfile: AuthUser;
   verifyOtp: AuthSession;
@@ -457,6 +511,16 @@ export type MutationCreateOrderArgs = {
 };
 
 
+export type MutationCreateStaffArgs = {
+  input: StaffInput;
+};
+
+
+export type MutationCreateTicketArgs = {
+  input: TicketInput;
+};
+
+
 export type MutationDeleteAddressArgs = {
   id: Scalars['ID']['input'];
 };
@@ -468,6 +532,23 @@ export type MutationDeleteAdminProductArgs = {
 };
 
 
+export type MutationModerateProductReviewArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  status: ReviewStatus;
+};
+
+
+export type MutationReplyAdminTicketArgs = {
+  input: TicketReplyInput;
+};
+
+
+export type MutationReplyTicketArgs = {
+  input: TicketReplyInput;
+};
+
+
 export type MutationRequestOtpArgs = {
   input: RequestOtpInput;
 };
@@ -476,6 +557,13 @@ export type MutationRequestOtpArgs = {
 export type MutationSaveAddressArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
   input: AddressInput;
+};
+
+
+export type MutationSaveAdminCouponArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  input: AdminCouponInput;
 };
 
 
@@ -503,6 +591,24 @@ export type MutationSetAdminProductActiveArgs = {
 export type MutationSetAdminPromotionArgs = {
   input: AdminPromotionInput;
   products: Array<AdminPromotionTargetInput>;
+};
+
+
+export type MutationSetAdminTicketStatusArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  status: TicketStatus;
+};
+
+
+export type MutationSetStaffActiveArgs = {
+  id: Scalars['ID']['input'];
+  isActive: Scalars['Boolean']['input'];
+};
+
+
+export type MutationSubmitProductReviewArgs = {
+  input: ReviewInput;
 };
 
 
@@ -636,6 +742,19 @@ export type ProductPromotion = {
   title: Scalars['String']['output'];
 };
 
+export type ProductReview = {
+  __typename?: 'ProductReview';
+  authorName: Scalars['String']['output'];
+  body: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  productId: Scalars['ID']['output'];
+  productTitle: Scalars['String']['output'];
+  rating: Scalars['Int']['output'];
+  status: ReviewStatus;
+  updatedAt: Scalars['String']['output'];
+};
+
 export type ProductSort =
   | 'FEATURED'
   | 'NAME_ASC'
@@ -651,6 +770,9 @@ export type ProfileInput = {
 
 export type Query = {
   __typename?: 'Query';
+  adminAccounts: Array<AdminIdentity>;
+  adminCoupons: Array<AdminCoupon>;
+  adminCustomerExport: CustomerExport;
   adminDashboard: AdminDashboard;
   adminMe?: Maybe<AdminIdentity>;
   adminOrder: AdminOrder;
@@ -658,6 +780,9 @@ export type Query = {
   adminProduct: Product;
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;
+  adminReviews: ReviewPage;
+  adminTicket: SupportTicket;
+  adminTickets: TicketPage;
   adminUser: AdminUser;
   adminUsers: AdminUsersPage;
   catalog: CatalogPage;
@@ -668,13 +793,22 @@ export type Query = {
   myAddresses: Array<Address>;
   myOrder: AccountOrder;
   myOrders: MyOrdersPage;
+  myProductReview?: Maybe<ProductReview>;
+  myTicket: SupportTicket;
+  myTickets: TicketPage;
   orderByRequestId?: Maybe<OrderReceipt>;
   orderReceipt: OrderReceipt;
   product?: Maybe<Product>;
+  productReviews: ReviewPage;
   products: Array<Product>;
   productsByIds: Array<Product>;
   promotionalProducts: Array<Product>;
   reverseLocation?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type QueryAdminCustomerExportArgs = {
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -700,6 +834,21 @@ export type QueryAdminProductsArgs = {
 
 export type QueryAdminReportArgs = {
   input: AdminReportInput;
+};
+
+
+export type QueryAdminReviewsArgs = {
+  input: ReviewFilter;
+};
+
+
+export type QueryAdminTicketArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdminTicketsArgs = {
+  input: TicketFilter;
 };
 
 
@@ -733,6 +882,21 @@ export type QueryMyOrdersArgs = {
 };
 
 
+export type QueryMyProductReviewArgs = {
+  productId: Scalars['ID']['input'];
+};
+
+
+export type QueryMyTicketArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryMyTicketsArgs = {
+  input: TicketFilter;
+};
+
+
 export type QueryOrderByRequestIdArgs = {
   requestId: Scalars['ID']['input'];
 };
@@ -745,6 +909,12 @@ export type QueryOrderReceiptArgs = {
 
 export type QueryProductArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryProductReviewsArgs = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  productId: Scalars['ID']['input'];
 };
 
 
@@ -767,6 +937,86 @@ export type QueryReverseLocationArgs = {
 export type RequestOtpInput = {
   phone: Scalars['String']['input'];
 };
+
+export type ReviewFilter = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<ReviewStatus>;
+};
+
+export type ReviewInput = {
+  body: Scalars['String']['input'];
+  productId: Scalars['ID']['input'];
+  rating: Scalars['Int']['input'];
+};
+
+export type ReviewPage = {
+  __typename?: 'ReviewPage';
+  items: Array<ProductReview>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type ReviewStatus =
+  | 'APPROVED'
+  | 'PENDING'
+  | 'REJECTED';
+
+export type StaffInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type SupportTicket = {
+  __typename?: 'SupportTicket';
+  createdAt: Scalars['String']['output'];
+  customerName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  messages: Array<TicketMessage>;
+  orderNumber?: Maybe<Scalars['Int']['output']>;
+  status: TicketStatus;
+  subject: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
+export type TicketFilter = {
+  page?: InputMaybe<Scalars['Int']['input']>;
+  pageSize?: InputMaybe<Scalars['Int']['input']>;
+  status?: InputMaybe<TicketStatus>;
+};
+
+export type TicketInput = {
+  body: Scalars['String']['input'];
+  orderId?: InputMaybe<Scalars['ID']['input']>;
+  subject: Scalars['String']['input'];
+};
+
+export type TicketMessage = {
+  __typename?: 'TicketMessage';
+  body: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  fromSupport: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+};
+
+export type TicketPage = {
+  __typename?: 'TicketPage';
+  items: Array<SupportTicket>;
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type TicketReplyInput = {
+  body: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+};
+
+export type TicketStatus =
+  | 'CLOSED'
+  | 'IN_PROGRESS'
+  | 'OPEN';
 
 export type VerifyOtpInput = {
   challengeId: Scalars['ID']['input'];
@@ -916,11 +1166,67 @@ export type HomepageCatalogQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type HomepageCatalogQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id: string, slug: string, title: string, image: string }>, products: Array<{ __typename?: 'Product', id: string, slug: string, title: string, shortDescription: string, description: string, price: number, weight: string, badge?: string | null, isActive: boolean, createdAt: string, updatedAt: string, promotion?: { __typename?: 'ProductPromotion', title: string, percent: number, amount: number, originalPrice: number, price: number, startsAt: string, endsAt: string } | null, images: Array<{ __typename?: 'ProductImage', id: string, url: string, alt: string }>, category: { __typename?: 'Category', id: string, slug: string, title: string, image: string } }>, promotionalProducts: Array<{ __typename?: 'Product', id: string, slug: string, title: string, shortDescription: string, description: string, price: number, weight: string, badge?: string | null, isActive: boolean, createdAt: string, updatedAt: string, promotion?: { __typename?: 'ProductPromotion', title: string, percent: number, amount: number, originalPrice: number, price: number, startsAt: string, endsAt: string } | null, images: Array<{ __typename?: 'ProductImage', id: string, url: string, alt: string }>, category: { __typename?: 'Category', id: string, slug: string, title: string, image: string } }> };
 
+export type TicketFieldsFragment = { __typename?: 'SupportTicket', id: string, subject: string, status: TicketStatus, orderNumber?: number | null, customerName: string, createdAt: string, updatedAt: string, messages: Array<{ __typename?: 'TicketMessage', id: string, body: string, fromSupport: boolean, createdAt: string }> };
+
+export type MyTicketsQueryVariables = Exact<{
+  input: TicketFilter;
+}>;
+
+
+export type MyTicketsQuery = { __typename?: 'Query', myTickets: { __typename?: 'TicketPage', total: number, page: number, pageSize: number, items: Array<{ __typename?: 'SupportTicket', id: string, subject: string, status: TicketStatus, orderNumber?: number | null, updatedAt: string }> } };
+
+export type MyTicketQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type MyTicketQuery = { __typename?: 'Query', myTicket: { __typename?: 'SupportTicket', id: string, subject: string, status: TicketStatus, orderNumber?: number | null, customerName: string, createdAt: string, updatedAt: string, messages: Array<{ __typename?: 'TicketMessage', id: string, body: string, fromSupport: boolean, createdAt: string }> } };
+
+export type CreateTicketMutationVariables = Exact<{
+  input: TicketInput;
+}>;
+
+
+export type CreateTicketMutation = { __typename?: 'Mutation', createTicket: { __typename?: 'SupportTicket', id: string, subject: string, status: TicketStatus, orderNumber?: number | null, customerName: string, createdAt: string, updatedAt: string, messages: Array<{ __typename?: 'TicketMessage', id: string, body: string, fromSupport: boolean, createdAt: string }> } };
+
+export type ReplyTicketMutationVariables = Exact<{
+  input: TicketReplyInput;
+}>;
+
+
+export type ReplyTicketMutation = { __typename?: 'Mutation', replyTicket: { __typename?: 'SupportTicket', id: string, subject: string, status: TicketStatus, orderNumber?: number | null, customerName: string, createdAt: string, updatedAt: string, messages: Array<{ __typename?: 'TicketMessage', id: string, body: string, fromSupport: boolean, createdAt: string }> } };
+
+export type ReviewFieldsFragment = { __typename?: 'ProductReview', id: string, rating: number, body: string, authorName: string, status: ReviewStatus, productId: string, productTitle: string, createdAt: string, updatedAt: string };
+
+export type PublicProductReviewsQueryVariables = Exact<{
+  productId: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type PublicProductReviewsQuery = { __typename?: 'Query', productReviews: { __typename?: 'ReviewPage', total: number, page: number, pageSize: number, items: Array<{ __typename?: 'ProductReview', id: string, rating: number, body: string, authorName: string, status: ReviewStatus, productId: string, productTitle: string, createdAt: string, updatedAt: string }> } };
+
+export type MyProductReviewQueryVariables = Exact<{
+  productId: Scalars['ID']['input'];
+}>;
+
+
+export type MyProductReviewQuery = { __typename?: 'Query', myProductReview?: { __typename?: 'ProductReview', id: string, rating: number, body: string, authorName: string, status: ReviewStatus, productId: string, productTitle: string, createdAt: string, updatedAt: string } | null };
+
+export type SubmitProductReviewMutationVariables = Exact<{
+  input: ReviewInput;
+}>;
+
+
+export type SubmitProductReviewMutation = { __typename?: 'Mutation', submitProductReview: { __typename?: 'ProductReview', id: string, rating: number, body: string, authorName: string, status: ReviewStatus, productId: string, productTitle: string, createdAt: string, updatedAt: string } };
+
 export const AccountOrderSummaryFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AccountOrderSummaryFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccountOrderSummary"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<AccountOrderSummaryFieldsFragment, unknown>;
 export const SessionUserFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SessionUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]} as unknown as DocumentNode<SessionUserFragment, unknown>;
 export const CatalogProductFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CatalogProduct"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Product"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"promotion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"percent"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"originalPrice"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"badge"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"alt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<CatalogProductFragment, unknown>;
 export const CheckoutAddressFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CheckoutAddress"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Address"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recipientName"}},{"kind":"Field","name":{"kind":"Name","value":"recipientPhone"}},{"kind":"Field","name":{"kind":"Name","value":"province"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"postalAddress"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}}]}}]} as unknown as DocumentNode<CheckoutAddressFragment, unknown>;
 export const ReceiptFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Receipt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderReceipt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"subtotal"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"shipping"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<ReceiptFragment, unknown>;
+export const TicketFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TicketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportTicket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"orderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"customerName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"messages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"fromSupport"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<TicketFieldsFragment, unknown>;
+export const ReviewFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ReviewFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductReview"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"authorName"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productTitle"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ReviewFieldsFragment, unknown>;
 export const UpdateAccountProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAccountProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SessionUser"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SessionUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]} as unknown as DocumentNode<UpdateAccountProfileMutation, UpdateAccountProfileMutationVariables>;
 export const AccountOrdersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AccountOrders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MyOrdersInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myOrders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AccountOrderSummaryFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"pageSize"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AccountOrderSummaryFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccountOrderSummary"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<AccountOrdersQuery, AccountOrdersQueryVariables>;
 export const AccountOrderDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AccountOrderDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"subtotal"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"shipping"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recipientName"}},{"kind":"Field","name":{"kind":"Name","value":"recipientPhone"}},{"kind":"Field","name":{"kind":"Name","value":"province"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"postalAddress"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productTitle"}},{"kind":"Field","name":{"kind":"Name","value":"productWeight"}},{"kind":"Field","name":{"kind":"Name","value":"unitPrice"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"lineTotal"}}]}}]}}]}}]} as unknown as DocumentNode<AccountOrderDetailsQuery, AccountOrderDetailsQueryVariables>;
@@ -941,3 +1247,10 @@ export const CheckoutQuoteDocument = {"kind":"Document","definitions":[{"kind":"
 export const CreateCheckoutOrderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCheckoutOrder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateOrderInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Receipt"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Receipt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderReceipt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"subtotal"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"shipping"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<CreateCheckoutOrderMutation, CreateCheckoutOrderMutationVariables>;
 export const CheckoutOrderReceiptDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckoutOrderReceipt"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"orderReceipt"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Receipt"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Receipt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderReceipt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"subtotal"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"shipping"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<CheckoutOrderReceiptQuery, CheckoutOrderReceiptQueryVariables>;
 export const HomepageCatalogDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HomepageCatalog"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"products"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CatalogProduct"}}]}},{"kind":"Field","name":{"kind":"Name","value":"promotionalProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CatalogProduct"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CatalogProduct"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Product"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"promotion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"percent"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"originalPrice"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"badge"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"alt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<HomepageCatalogQuery, HomepageCatalogQueryVariables>;
+export const MyTicketsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyTickets"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TicketFilter"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myTickets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"orderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"pageSize"}}]}}]}}]} as unknown as DocumentNode<MyTicketsQuery, MyTicketsQueryVariables>;
+export const MyTicketDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyTicket"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myTicket"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TicketFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TicketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportTicket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"orderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"customerName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"messages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"fromSupport"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<MyTicketQuery, MyTicketQueryVariables>;
+export const CreateTicketDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTicket"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TicketInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTicket"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TicketFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TicketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportTicket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"orderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"customerName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"messages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"fromSupport"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateTicketMutation, CreateTicketMutationVariables>;
+export const ReplyTicketDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ReplyTicket"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TicketReplyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"replyTicket"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TicketFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TicketFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SupportTicket"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"orderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"customerName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"messages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"fromSupport"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<ReplyTicketMutation, ReplyTicketMutationVariables>;
+export const PublicProductReviewsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PublicProductReviews"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"productId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productReviews"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"productId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"productId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ReviewFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"pageSize"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ReviewFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductReview"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"authorName"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productTitle"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<PublicProductReviewsQuery, PublicProductReviewsQueryVariables>;
+export const MyProductReviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyProductReview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"productId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myProductReview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"productId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"productId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ReviewFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ReviewFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductReview"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"authorName"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productTitle"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<MyProductReviewQuery, MyProductReviewQueryVariables>;
+export const SubmitProductReviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SubmitProductReview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReviewInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"submitProductReview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ReviewFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ReviewFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ProductReview"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"authorName"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productTitle"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<SubmitProductReviewMutation, SubmitProductReviewMutationVariables>;

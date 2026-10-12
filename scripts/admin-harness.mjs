@@ -155,6 +155,9 @@ export async function cleanupAdmin() {
   const rateKeys = admins.flatMap((admin) => [
     `admin-login-email:${admin.email}`,
     `admin-password:${admin.id}`,
+    `staff:${admin.id}`,
+    `export:${admin.id}`,
+    `support:${admin.id}`,
   ]);
   for (const ip of [
     '127.0.0.1',

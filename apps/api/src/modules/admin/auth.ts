@@ -44,7 +44,9 @@ export async function currentAdmin(context: AuthContext) {
     },
     include: { admin: true },
   });
-  return session ? { id: session.admin.id, email: session.admin.email } : null;
+  return session?.admin.isActive
+    ? { id: session.admin.id, email: session.admin.email, role: session.admin.role, isActive: true }
+    : null;
 }
 export async function requireAdmin(context: AuthContext) {
   const admin = await currentAdmin(context);
@@ -86,11 +88,12 @@ export async function loginAdmin(context: AuthContext, raw: unknown) {
     parsed.data.password,
     admin?.passwordHash ?? (await dummyHash),
   );
-  if (!admin || !valid) throw authError('ایمیل یا رمز ورود نادرست است.', 'INVALID_CREDENTIALS');
+  if (!admin || !admin.isActive || !valid)
+    throw authError('ایمیل یا رمز ورود نادرست است.', 'INVALID_CREDENTIALS');
   const pair = await db.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM Admin WHERE id = ${admin.id} FOR UPDATE`;
     const latest = await tx.admin.findUnique({ where: { id: admin.id } });
-    if (latest?.passwordHash !== admin.passwordHash)
+    if (!latest?.isActive || latest.passwordHash !== admin.passwordHash)
       throw authError('رمز ورود تغییر کرده است؛ دوباره وارد شوید.', 'INVALID_CREDENTIALS');
     const pair = await adminTokens.issue(admin.id);
     await tx.adminSession.create({
@@ -101,7 +104,7 @@ export async function loginAdmin(context: AuthContext, raw: unknown) {
   });
   cookie(context, pair);
   return {
-    admin: { id: admin.id, email: admin.email },
+    admin: { id: admin.id, email: admin.email, role: admin.role, isActive: admin.isActive },
     accessToken: pair.access,
     accessExpiresAt: pair.accessExpiresAt.toISOString(),
   };
@@ -126,6 +129,7 @@ export async function refreshAdmin(context: AuthContext) {
     });
     if (
       !session ||
+      !session.admin.isActive ||
       session.adminId !== claims.subjectId ||
       session.revokedAt ||
       session.expiresAt <= new Date()
@@ -156,7 +160,15 @@ export async function refreshAdmin(context: AuthContext) {
     });
     const pair = await adminTokens.issue(record.adminId, record.familyId, session.expiresAt);
     await storeRefresh(tx, pair);
-    return { pair, admin: { id: session.admin.id, email: session.admin.email } };
+    return {
+      pair,
+      admin: {
+        id: session.admin.id,
+        email: session.admin.email,
+        role: session.admin.role,
+        isActive: session.admin.isActive,
+      },
+    };
   });
   if (!result) {
     cookie(context);
@@ -230,4 +242,10 @@ export async function changeAdminPassword(context: AuthContext, raw: unknown) {
   });
   cookie(context);
   return true;
+}
+
+export async function requireOwner(context: AuthContext) {
+  const admin = await requireAdmin(context);
+  if (admin.role !== 'OWNER') throw authError('این بخش فقط در اختیار مدیر است.', 'FORBIDDEN');
+  return admin;
 }

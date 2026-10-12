@@ -6,7 +6,8 @@
     ".": "./src/index.ts",
     "./promotions": "./src/promotions.ts",
     "./admin": "./src/admin.ts",
-    "./photo-catalog": "./src/photo-catalog.ts"
+    "./photo-catalog": "./src/photo-catalog.ts",
+    "./operations": "./src/operations.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

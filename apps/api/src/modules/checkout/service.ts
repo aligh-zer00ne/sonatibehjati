@@ -105,7 +105,9 @@ async function calculate(tx: Prisma.TransactionClient, userId: string, input: Ch
 export async function quoteCheckout(userId: string, raw: unknown) {
   const parsed = checkoutInputSchema.safeParse(raw);
   if (!parsed.success) throw invalid();
-  return db.$transaction(async (tx) => (await calculate(tx, userId, parsed.data)).quote);
+  return db.$transaction(async (tx) => (await calculate(tx, userId, parsed.data)).quote, {
+    isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+  });
 }
 export async function createOrder(userId: string, raw: unknown) {
   const parsed = createOrderInputSchema.safeParse(raw);
@@ -136,11 +138,19 @@ export async function createOrder(userId: string, raw: unknown) {
       const { address, coupon, quote } = await calculate(tx, userId, input);
       if (quote.total !== input.expectedTotal)
         throw authError('مبلغ سفارش تغییر کرده است؛ خلاصه را دوباره بررسی کنید.', 'PRICE_CHANGED');
-      if (coupon)
-        await tx.discountCode.update({
-          where: { id: coupon.id },
+      if (coupon) {
+        const used = await tx.discountCode.updateMany({
+          where: {
+            id: coupon.id,
+            isActive: true,
+            startsAt: { lte: new Date() },
+            expiresAt: { gt: new Date() },
+            ...(coupon.usageLimit === null ? {} : { usageCount: { lt: coupon.usageLimit } }),
+          },
           data: { usageCount: { increment: 1 } },
         });
+        if (!used.count) throw authError('کد تخفیف دیگر قابل استفاده نیست.', 'INVALID_DISCOUNT');
+      }
       return tx.order.create({
         data: {
           userId,
@@ -177,6 +187,6 @@ export async function createOrder(userId: string, raw: unknown) {
         },
       });
     },
-    { timeout: 10000 },
+    { timeout: 10000, isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted },
   );
 }

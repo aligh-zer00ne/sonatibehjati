@@ -1,0 +1,75 @@
+fragment TicketFields on SupportTicket {
+  id
+  subject
+  status
+  orderNumber
+  customerName
+  createdAt
+  updatedAt
+  messages {
+    id
+    body
+    fromSupport
+    createdAt
+  }
+}
+query MyTickets($input: TicketFilter!) {
+  myTickets(input: $input) {
+    items {
+      id
+      subject
+      status
+      orderNumber
+      updatedAt
+    }
+    total
+    page
+    pageSize
+  }
+}
+query MyTicket($id: ID!) {
+  myTicket(id: $id) {
+    ...TicketFields
+  }
+}
+mutation CreateTicket($input: TicketInput!) {
+  createTicket(input: $input) {
+    ...TicketFields
+  }
+}
+mutation ReplyTicket($input: TicketReplyInput!) {
+  replyTicket(input: $input) {
+    ...TicketFields
+  }
+}
+fragment ReviewFields on ProductReview {
+  id
+  rating
+  body
+  authorName
+  status
+  productId
+  productTitle
+  createdAt
+  updatedAt
+}
+query PublicProductReviews($productId: ID!, $page: Int) {
+  productReviews(productId: $productId, page: $page) {
+    items {
+      ...ReviewFields
+    }
+    total
+    page
+    pageSize
+  }
+}
+query MyProductReview($productId: ID!) {
+  myProductReview(productId: $productId) {
+    ...ReviewFields
+  }
+}
+mutation SubmitProductReview($input: ReviewInput!) {
+  submitProductReview(input: $input) {
+    ...ReviewFields
+  }
+}

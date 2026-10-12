@@ -277,7 +277,13 @@ type OrderItemSnapshot {
   lineTotal: Int!
 }
 
+enum AdminRole {
+  OWNER
+  STAFF
+}
 type AdminIdentity {
+  role: AdminRole!
+  isActive: Boolean!
   id: ID!
   email: String!
 }
@@ -511,4 +517,139 @@ input AdminPromotionInput {
 input AdminPromotionTargetInput {
   id: ID!
   expectedUpdatedAt: String!
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+type AdminCoupon {
+  id: ID!
+  code: String!
+  type: DiscountType!
+  value: Int!
+  minOrderAmount: Int!
+  maxDiscountAmount: Int
+  startsAt: String!
+  expiresAt: String!
+  usageLimit: Int
+  usageCount: Int!
+  isActive: Boolean!
+  updatedAt: String!
+}
+input AdminCouponInput {
+  code: String!
+  type: DiscountType!
+  value: Int!
+  minOrderAmount: Int!
+  maxDiscountAmount: Int
+  startsAt: String!
+  expiresAt: String!
+  usageLimit: Int
+  isActive: Boolean!
+}
+input StaffInput {
+  email: String!
+  password: String!
+}
+input TicketFilter {
+  page: Int
+  pageSize: Int
+  status: TicketStatus
+}
+input TicketInput {
+  subject: String!
+  body: String!
+  orderId: ID
+}
+input TicketReplyInput {
+  id: ID!
+  body: String!
+}
+type TicketMessage {
+  id: ID!
+  body: String!
+  fromSupport: Boolean!
+  createdAt: String!
+}
+type SupportTicket {
+  id: ID!
+  subject: String!
+  status: TicketStatus!
+  orderNumber: Int
+  customerName: String!
+  createdAt: String!
+  updatedAt: String!
+  messages: [TicketMessage!]!
+}
+type TicketPage {
+  items: [SupportTicket!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+input ReviewInput {
+  productId: ID!
+  rating: Int!
+  body: String!
+}
+input ReviewFilter {
+  page: Int
+  pageSize: Int
+  status: ReviewStatus
+}
+type ProductReview {
+  id: ID!
+  rating: Int!
+  body: String!
+  authorName: String!
+  status: ReviewStatus!
+  productId: ID!
+  productTitle: String!
+  createdAt: String!
+  updatedAt: String!
+}
+type ReviewPage {
+  items: [ProductReview!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+type CustomerExport {
+  filename: String!
+  base64: String!
+  count: Int!
+}
+extend type Query {
+  adminAccounts: [AdminIdentity!]!
+  adminCoupons: [AdminCoupon!]!
+  adminCustomerExport(search: String): CustomerExport!
+  myTickets(input: TicketFilter!): TicketPage!
+  myTicket(id: ID!): SupportTicket!
+  adminTickets(input: TicketFilter!): TicketPage!
+  adminTicket(id: ID!): SupportTicket!
+  productReviews(productId: ID!, page: Int): ReviewPage!
+  myProductReview(productId: ID!): ProductReview
+  adminReviews(input: ReviewFilter!): ReviewPage!
+}
+extend type Mutation {
+  createStaff(input: StaffInput!): AdminIdentity!
+  setStaffActive(id: ID!, isActive: Boolean!): AdminIdentity!
+  saveAdminCoupon(id: ID, expectedUpdatedAt: String, input: AdminCouponInput!): AdminCoupon!
+  createTicket(input: TicketInput!): SupportTicket!
+  replyTicket(input: TicketReplyInput!): SupportTicket!
+  replyAdminTicket(input: TicketReplyInput!): SupportTicket!
+  setAdminTicketStatus(id: ID!, status: TicketStatus!, expectedUpdatedAt: String!): SupportTicket!
+  submitProductReview(input: ReviewInput!): ProductReview!
+  moderateProductReview(id: ID!, status: ReviewStatus!, expectedUpdatedAt: String!): ProductReview!
 }

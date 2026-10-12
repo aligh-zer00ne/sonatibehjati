@@ -162,6 +162,7 @@ export async function cleanup() {
     select: { id: true },
   });
   const userIds = users.map((user) => user.id);
+  await db.supportTicket.deleteMany({ where: { userId: { in: userIds } } });
   await db.orderItem.deleteMany({ where: { order: { userId: { in: userIds } } } });
   await db.order.deleteMany({ where: { userId: { in: userIds } } });
   await db.otpCode.deleteMany({ where: { phone: { in: phones }, createdAt: { gte: startedAt } } });
@@ -174,6 +175,9 @@ export async function cleanup() {
       `order:${id}`,
       `location:${id}`,
       `profile:${id}`,
+      `ticket:${id}`,
+      `reply:${id}`,
+      `review:${id}`,
     );
   for (const ip of [
     '127.0.0.1',

@@ -2,6 +2,7 @@ import type { Resolvers } from '../../generated/resolvers.js';
 import {
   currentAdmin,
   requireAdmin,
+  requireOwner,
   requireAdminOrigin,
   loginAdmin,
   refreshAdmin,
@@ -42,19 +43,19 @@ export const adminResolvers: Resolvers = {
       return adminOrder(id);
     },
     adminUser: async (_parent, { id }, context) => {
-      await requireAdmin(context);
+      await requireOwner(context);
       return adminUser(id);
     },
     adminUsers: async (_parent, { input }, context) => {
-      await requireAdmin(context);
+      await requireOwner(context);
       return adminUsers(input);
     },
     adminReport: async (_parent, { input }, context) => {
-      await requireAdmin(context);
+      await requireOwner(context);
       return adminReport(input);
     },
     adminDashboard: async (_parent, _args, context) => {
-      await requireAdmin(context);
+      await requireOwner(context);
       return adminDashboard();
     },
   },

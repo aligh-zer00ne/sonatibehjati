@@ -92,7 +92,7 @@ export async function adminOrder(id: string) {
       user: { select: customerSelect },
       items: { orderBy: { id: 'asc' } },
       statusEvents: {
-        include: { admin: { select: { id: true, email: true } } },
+        include: { admin: { select: { id: true, email: true, role: true, isActive: true } } },
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       },
     },

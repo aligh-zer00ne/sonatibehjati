@@ -17,6 +17,20 @@ enum DiscountType {
  PERCENT
  FIXED
 }
+enum AdminRole {
+ OWNER
+ STAFF
+}
+enum TicketStatus {
+ OPEN
+ IN_PROGRESS
+ CLOSED
+}
+enum ReviewStatus {
+ PENDING
+ APPROVED
+ REJECTED
+}
 model User {
  id String @id @default(cuid())
  phone String @unique
@@ -25,6 +39,8 @@ model User {
  email String?
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
+ tickets SupportTicket[]
+ reviews ProductReview[]
  addresses Address[]
  orders Order[]
  refreshTokens RefreshToken[]
@@ -51,6 +67,8 @@ model Admin {
  id String @id @default(cuid())
  email String @unique
  passwordHash String
+ role AdminRole @default(OWNER)
+ isActive Boolean @default(true)
  createdAt DateTime @default(now())
  refreshTokens AdminRefreshToken[]
  sessions AdminSession[]
@@ -82,6 +100,7 @@ model Product {
  badge String?
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
+ reviews ProductReview[]
  orderItems OrderItem[]
  @@index([categoryId,isActive])
 }
@@ -106,6 +125,7 @@ model DiscountCode {
  expiresAt DateTime
  usageLimit Int?
  usageCount Int @default(0)
+ updatedAt DateTime @updatedAt
  isActive Boolean @default(true)
  orders Order[]
 }
@@ -130,6 +150,7 @@ model Order {
  statusEvents OrderStatusEvent[]
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
+ tickets SupportTicket[]
  shippingLabel OrderShippingLabel?
  @@index([userId,createdAt])
  @@index([status,createdAt])
@@ -231,4 +252,43 @@ model OrderStatusEvent {
  toStatus OrderStatus
  createdAt DateTime @default(now())
  @@index([orderId,createdAt])
+}
+
+model SupportTicket {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ orderId String?
+ order Order? @relation(fields:[orderId],references:[id],onDelete:Restrict)
+ subject String @db.VarChar(150)
+ status TicketStatus @default(OPEN)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ messages TicketMessage[]
+ @@index([userId,updatedAt])
+ @@index([status,updatedAt])
+}
+model TicketMessage {
+ id String @id @default(cuid())
+ ticketId String
+ ticket SupportTicket @relation(fields:[ticketId],references:[id],onDelete:Cascade)
+ body String @db.Text
+ fromSupport Boolean @default(false)
+ createdAt DateTime @default(now())
+ @@index([ticketId,createdAt])
+}
+model ProductReview {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ productId String
+ product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+ rating Int
+ body String @db.Text
+ status ReviewStatus @default(PENDING)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@unique([userId,productId])
+ @@index([productId,status,createdAt])
+ @@index([status,createdAt])
 }

@@ -1,4 +1,6 @@
 fragment AdminIdentityFields on AdminIdentity {
+  role
+  isActive
   id
   email
 }
@@ -310,5 +312,122 @@ query AdminSelectedUser($id: ID!) {
 mutation SetAdminPromotion($input: AdminPromotionInput!, $products: [AdminPromotionTargetInput!]!) {
   setAdminPromotion(input: $input, products: $products) {
     ...AdminProductFields
+  }
+}
+
+query AdminAccounts {
+  adminAccounts {
+    ...AdminIdentityFields
+  }
+}
+mutation CreateStaff($input: StaffInput!) {
+  createStaff(input: $input) {
+    ...AdminIdentityFields
+  }
+}
+mutation SetStaffActive($id: ID!, $isActive: Boolean!) {
+  setStaffActive(id: $id, isActive: $isActive) {
+    ...AdminIdentityFields
+  }
+}
+fragment AdminCouponFields on AdminCoupon {
+  id
+  code
+  type
+  value
+  minOrderAmount
+  maxDiscountAmount
+  startsAt
+  expiresAt
+  usageLimit
+  usageCount
+  isActive
+  updatedAt
+}
+query AdminCoupons {
+  adminCoupons {
+    ...AdminCouponFields
+  }
+}
+mutation SaveAdminCoupon($id: ID, $expectedUpdatedAt: String, $input: AdminCouponInput!) {
+  saveAdminCoupon(id: $id, expectedUpdatedAt: $expectedUpdatedAt, input: $input) {
+    ...AdminCouponFields
+  }
+}
+query AdminCustomerExport($search: String) {
+  adminCustomerExport(search: $search) {
+    filename
+    base64
+    count
+  }
+}
+fragment AdminTicketFields on SupportTicket {
+  id
+  subject
+  status
+  orderNumber
+  customerName
+  createdAt
+  updatedAt
+  messages {
+    id
+    body
+    fromSupport
+    createdAt
+  }
+}
+query AdminTickets($input: TicketFilter!) {
+  adminTickets(input: $input) {
+    items {
+      id
+      subject
+      status
+      orderNumber
+      customerName
+      updatedAt
+    }
+    total
+    page
+    pageSize
+  }
+}
+query AdminTicket($id: ID!) {
+  adminTicket(id: $id) {
+    ...AdminTicketFields
+  }
+}
+mutation ReplyAdminTicket($input: TicketReplyInput!) {
+  replyAdminTicket(input: $input) {
+    ...AdminTicketFields
+  }
+}
+mutation SetAdminTicketStatus($id: ID!, $status: TicketStatus!, $expectedUpdatedAt: String!) {
+  setAdminTicketStatus(id: $id, status: $status, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...AdminTicketFields
+  }
+}
+query AdminReviews($input: ReviewFilter!) {
+  adminReviews(input: $input) {
+    items {
+      id
+      rating
+      body
+      authorName
+      status
+      productId
+      productTitle
+      createdAt
+      updatedAt
+    }
+    total
+    page
+    pageSize
+  }
+}
+mutation ModerateProductReview($id: ID!, $status: ReviewStatus!, $expectedUpdatedAt: String!) {
+  moderateProductReview(id: $id, status: $status, expectedUpdatedAt: $expectedUpdatedAt) {
+    id
+    status
+    updatedAt
   }
 }

@@ -1,3 +1,4 @@
+import { supportResolvers } from '../modules/support/resolvers.js';
 import { adminResolvers } from '../modules/admin/resolvers.js';
 import { accountResolvers } from '../modules/account/resolvers.js';
 import { authResolvers } from '../modules/auth/resolvers.js';
@@ -9,12 +10,14 @@ import { serializeProduct as serialize } from '../modules/products/presentation.
 export const resolvers: Resolvers = {
   Mutation: {
     ...authResolvers.Mutation,
+    ...supportResolvers.Mutation,
     ...adminResolvers.Mutation,
     ...checkoutResolvers.Mutation,
     ...accountResolvers.Mutation,
   },
   Query: {
     ...authResolvers.Query,
+    ...supportResolvers.Query,
     ...adminResolvers.Query,
     ...accountResolvers.Query,
     ...checkoutResolvers.Query,
