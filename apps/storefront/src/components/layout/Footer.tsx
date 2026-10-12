@@ -7,6 +7,7 @@ const links = [
   ['/', 'خانه'],
   ['/shop', 'محصولات'],
   ['/#story', 'درباره ما'],
+  ['/support', 'پشتیبانی'],
 ] as const;
 
 const socialMarks = [

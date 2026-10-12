@@ -67,6 +67,12 @@ export default function Header() {
         <Link className="py-3" href="/#story">
           درباره ما
         </Link>
+        <Link
+          className={`py-3 ${pathname === '/support' || pathname.startsWith('/account/support') ? 'text-primary' : ''}`}
+          href="/support"
+        >
+          پشتیبانی
+        </Link>
       </nav>
       <div data-slot="header-actions" className="flex shrink-0 items-center gap-0">
         <Button
