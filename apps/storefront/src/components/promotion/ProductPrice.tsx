@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { formatPrice, formatNumber } from '@behjati/shared';
 import type { CatalogProductFragment } from '@/generated/graphql';
+import { Timer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 type Sale = CatalogProductFragment['promotion'];
 export function useLivePromotion(promotion: Sale) {
@@ -29,6 +30,36 @@ export function useLivePromotion(promotion: Sale) {
     ready: now !== null,
   };
 }
+export function PromotionTimer({ promotion: sale }: { promotion: Sale }) {
+  const { promotion, remaining, ready } = useLivePromotion(sale);
+  if (!promotion) return null;
+  const days = Math.floor(remaining / 86400);
+  const time = [
+    Math.floor((remaining % 86400) / 3600),
+    Math.floor((remaining % 3600) / 60),
+    remaining % 60,
+  ]
+    .map((value) => formatNumber(value).padStart(2, '۰'))
+    .join(':');
+  return (
+    <span
+      aria-label="زمان باقی‌مانده تخفیف"
+      className="absolute top-0 left-1/2 z-20 flex h-6 -translate-x-1/2 -translate-y-1/2 items-center gap-1 whitespace-nowrap rounded-full border border-primary/30 bg-[#fff8ed] px-2 text-[10px] font-bold text-primary shadow-sm min-[480px]:text-xs"
+    >
+      <Timer size={13} aria-hidden="true" />
+      {ready ? (
+        <>
+          {days > 0 && <span>{formatNumber(days)} روز</span>}
+          <span dir="ltr" className="tabular-nums">
+            {time}
+          </span>
+        </>
+      ) : (
+        <span>در حال محاسبه…</span>
+      )}
+    </span>
+  );
+}
 export default function ProductPrice({
   product,
   details = false,
@@ -38,11 +69,7 @@ export default function ProductPrice({
   details?: boolean;
   className?: string;
 }) {
-  const { promotion, remaining, ready } = useLivePromotion(product.promotion);
-  const days = Math.floor(remaining / 86400),
-    hours = Math.floor((remaining % 86400) / 3600),
-    minutes = Math.floor((remaining % 3600) / 60),
-    seconds = remaining % 60;
+  const { promotion } = useLivePromotion(product.promotion);
   return (
     <div
       className={cn('my-2 space-y-1 text-sm font-bold text-primary', className)}
@@ -60,14 +87,8 @@ export default function ProductPrice({
       )}
       <p aria-label="قیمت فعلی">{formatPrice(promotion?.price ?? product.price)}</p>
       {details && promotion && (
-        <div className="space-y-1 text-[10px] font-normal">
-          <p className="truncate font-semibold">{promotion.title}</p>
-          <p>{formatPrice(promotion.amount)} تخفیف</p>
-          <p aria-label="زمان باقی‌مانده تخفیف" className="tabular-nums">
-            {ready
-              ? `${days ? formatNumber(days) + ' روز و ' : ''}${formatNumber(hours)} ساعت و ${formatNumber(minutes)} دقیقه و ${formatNumber(seconds)} ثانیه`
-              : 'زمان باقی‌مانده در حال محاسبه…'}
-          </p>
+        <div className="relative mt-4 rounded-lg border border-primary/30 p-3">
+          <PromotionTimer promotion={promotion} />
         </div>
       )}
     </div>

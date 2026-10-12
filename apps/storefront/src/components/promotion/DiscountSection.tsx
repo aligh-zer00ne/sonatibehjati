@@ -21,10 +21,7 @@ export default function DiscountSection({
   );
   if (!active.length) return null;
   return (
-    <section
-      id="promotions"
-      className="my-8 rounded-3xl border border-primary/15 bg-sesame/20 p-3 md:my-12 md:p-5"
-    >
+    <section id="promotions" className="my-8 md:my-12 xl:my-14">
       <SectionHeading title="تخفیف‌ها و جشنواره‌های سنتی بهجتی" href="/shop" />
       <ProductGrid products={active} horizontal promotionDetails />
     </section>

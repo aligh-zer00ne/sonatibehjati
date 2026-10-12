@@ -8,7 +8,10 @@ import { Plus, ImageOff } from 'lucide-react';
 import type { HomepageCatalogQuery } from '@/generated/graphql';
 import { MAX_CART_LINES } from '@behjati/shared';
 import { useCart } from '@/stores/cart';
-import ProductPrice from '@/components/promotion/ProductPrice';
+import ProductPrice, {
+  PromotionTimer,
+  useLivePromotion,
+} from '@/components/promotion/ProductPrice';
 import ProductBadge from './ProductBadge';
 import QuantityControl from './QuantityControl';
 import FavoriteButton from './FavoriteButton';
@@ -28,17 +31,24 @@ export default function ProductCard({
   const add = useCart((state) => state.add);
   const full = useCart((state) => Object.keys(state.items).length >= MAX_CART_LINES);
   const image = product.images[0];
+  const { promotion } = useLivePromotion(product.promotion);
   return (
     <article
       className={cn(
-        'group/product min-w-0',
+        'group/product relative min-w-0',
         horizontal
           ? 'w-[154px] shrink-0 snap-start min-[480px]:w-[180px] md:w-[210px] lg:w-[230px]'
           : compactOnMobile && 'w-[154px] shrink-0 snap-start min-[480px]:w-[180px] md:w-auto',
       )}
       data-product-slug={product.slug}
     >
-      <Card className="relative isolate h-full overflow-hidden rounded-[19px] border-earth/10 bg-[linear-gradient(155deg,#fdf8ee,#f4e6d2)] p-2 shadow-[0_4px_18px_rgba(98,69,47,0.04)] transition-[translate,box-shadow,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/product:border-clay/40 group-hover/product:shadow-[0_16px_32px_rgba(98,69,47,0.16)] group-focus-within/product:border-clay/40 motion-safe:group-hover/product:-translate-y-2 motion-safe:group-focus-within/product:-translate-y-1 motion-reduce:transition-none lg:p-3">
+      {promotionDetails && promotion && <PromotionTimer promotion={promotion} />}
+      <Card
+        className={cn(
+          'relative isolate h-full overflow-hidden rounded-[19px] border-earth/10 bg-[linear-gradient(155deg,#fdf8ee,#f4e6d2)] p-2 shadow-[0_4px_18px_rgba(98,69,47,0.04)] transition-[translate,box-shadow,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/product:border-clay/40 group-hover/product:shadow-[0_16px_32px_rgba(98,69,47,0.16)] group-focus-within/product:border-clay/40 motion-safe:group-hover/product:-translate-y-2 motion-safe:group-focus-within/product:-translate-y-1 motion-reduce:transition-none lg:p-3',
+          promotionDetails && promotion && 'border-primary/40 ring-1 ring-primary/20',
+        )}
+      >
         <div className="relative aspect-square overflow-hidden rounded-[14px] bg-[#f4ecdf]">
           <Link
             href={`/product/${product.slug}`}
@@ -77,11 +87,7 @@ export default function ProductCard({
             </Link>
           </h3>
           <p className="my-[3px] text-xs text-muted-foreground">{product.weight}</p>
-          <ProductPrice
-            product={product}
-            details={promotionDetails}
-            className="min-[480px]:text-base lg:text-lg"
-          />
+          <ProductPrice product={product} className="min-[480px]:text-base lg:text-lg" />
           {quantity ? (
             <QuantityControl id={product.id} title={product.title} />
           ) : (

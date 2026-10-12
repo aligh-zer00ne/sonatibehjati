@@ -89,10 +89,10 @@ try {
   await expect(strip.locator('del')).toHaveText(formatPrice(baseProduct.price));
   await expect(strip.locator('[aria-label="قیمت فعلی"]')).toHaveText(formatPrice(promotion.price));
   await expect(strip).toContainText('۲۰٪ تخفیف');
-  await expect(strip).toContainText(formatPrice(promotion.amount) + ' تخفیف');
-  await expect(strip).toContainText(promotion.title);
+  await expect(strip).not.toContainText(formatPrice(promotion.amount) + ' تخفیف');
+  await expect(strip).not.toContainText(promotion.title);
   const countdown = await strip.locator('[aria-label="زمان باقی‌مانده تخفیف"]').textContent();
-  assert.ok(!/[0-9]/.test(countdown) && /ثانیه/.test(countdown));
+  assert.ok(!/[0-9]/.test(countdown) && /[۰-۹]{2}:[۰-۹]{2}:[۰-۹]{2}/.test(countdown));
   assert.ok(
     await page.evaluate(
       () =>
@@ -129,7 +129,7 @@ try {
   await expect(page.locator('#promotions')).toHaveCount(0);
   assert.deepEqual(errors, []);
   console.log(
-    'Promotions verified: conditional strip before bestsellers, Persian countdown, amount and old/new prices, discounted cart subtotal, automatic expiry and subtotal recalculation, no runtime errors. Isolated fixture; no database writes.',
+    'Promotions verified: conditional strip before bestsellers, Persian countdown above the card, hidden campaign details and old/new prices, discounted cart subtotal, automatic expiry and subtotal recalculation, no runtime errors. Isolated fixture; no database writes.',
   );
 } finally {
   await browser?.close();
