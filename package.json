@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "npm@10.8.2",
   "scripts": {
-    "dev": "concurrently -k \"npm run dev:storefront\" \"npm run dev:api\" \"npm run dev:admin\"",
+    "dev": "node scripts/dev.mjs",
     "dev:storefront": "npm run dev -w @behjati/storefront",
     "dev:admin": "npm run dev -w @behjati/admin",
     "dev:api": "npm run dev -w @behjati/api",

@@ -43,5 +43,6 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 ## Work completed in this continuation
 
 - Latest discount/footer corrections implemented; storefront typecheck, focused lint, production build and `verify:promotions` passed.
-- A local storefront development server was started at `http://localhost:3002` because port 3000 was occupied. Check live state before reusing this address.
+- Local development startup was repaired: `npm run dev` starts the dedicated MySQL on 3307, applies local migrations, then starts storefront on 3000, admin on 3001 and API on 4000. Check live state before reusing these addresses.
+- The old MySQL data directory was under `/tmp` and was missing on 2026-10-12. Data was recovered from the available local 2026-10-05 backup, with migrations applied and the previously requested development admin credentials restored. The new data directory is `~/tmp/sonatibehjati-dev-mysql/data`, which persists across reboots. Existing databases are not reseeded by the development runner.
 - Commit/push had been omitted before recovering this workflow; remedy that and report the result.
