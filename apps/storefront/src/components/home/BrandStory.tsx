@@ -1,13 +1,14 @@
+import type { BrandStoryContent } from '@behjati/shared/homepage';
 import Link from 'next/link';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function BrandStory() {
+export default function BrandStory({ content }: { content: BrandStoryContent }) {
   return (
     <section
       id="story"
       aria-labelledby="story-title"
-      className="group/story relative isolate my-8 h-[215px] w-full scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:h-[230px] min-[480px]:h-[250px] sm:h-[200px] md:my-12 md:h-[430px] lg:h-[480px] lg:rounded-[28px] xl:my-14"
+      className="group/story relative isolate my-8 min-h-[215px] w-full scroll-mt-8 overflow-hidden rounded-[24px] border border-[#69422e]/25 bg-[#3c2319] shadow-[0_18px_45px_-30px_rgba(49,21,13,0.4)] min-[375px]:min-h-[230px] min-[480px]:min-h-[250px] sm:min-h-[200px] md:my-12 md:min-h-[430px] lg:min-h-[480px] lg:rounded-[28px] xl:my-14"
     >
       <span id="ardakan" aria-hidden="true" className="absolute top-0 scroll-mt-8" />
       <div
@@ -17,14 +18,22 @@ export default function BrandStory() {
         <picture>
           <source
             media="(min-width: 640px)"
-            srcSet="/images/home/story-desktop-v6-768.webp 768w, /images/home/story-desktop-v6.webp 1536w"
+            srcSet={
+              content.src === '/images/home/story-desktop-v6.webp'
+                ? '/images/home/story-desktop-v6-768.webp 768w, /images/home/story-desktop-v6.webp 1536w'
+                : content.src
+            }
             sizes="(min-width: 1024px) 720px, (min-width: 875px) calc(78vw - 37.44px), (min-width: 768px) 645px, 600px"
           />
           <img
-            src="/images/home/story-mobile-v6.webp"
-            srcSet="/images/home/story-mobile-v6-512.webp 512w, /images/home/story-mobile-v6-768.webp 768w, /images/home/story-mobile-v6.webp 1024w"
+            src={content.mobileSrc}
+            srcSet={
+              content.mobileSrc === '/images/home/story-mobile-v6.webp'
+                ? '/images/home/story-mobile-v6-512.webp 512w, /images/home/story-mobile-v6-768.webp 768w, /images/home/story-mobile-v6.webp 1024w'
+                : undefined
+            }
             sizes="(min-width: 480px) 334px, calc(100vw - 32px)"
-            alt="بادگیر و بام‌های خشتی اردکان در نور عصر، با سفره‌ای از ارده و کنجد در پیش‌زمینه"
+            alt={content.alt}
             width={1024}
             height={1536}
             loading="lazy"
@@ -40,33 +49,32 @@ export default function BrandStory() {
       />
       <div
         data-slot="story-copy"
-        className="absolute top-3 right-3 z-[1] w-[58%] text-right min-[480px]:w-[52%] md:top-10 md:right-[5%] md:w-[43%] lg:top-12 lg:right-[6%]"
+        className="relative right-3 pt-3 z-[1] pb-12 w-[58%] text-right min-[480px]:w-[52%] md:pt-10 md:right-[5%] md:w-[43%] lg:pt-12 lg:right-[6%]"
       >
         <h2
           id="story-title"
           className="text-[17px] leading-[1.5] font-extrabold text-[#fff0d6] min-[375px]:text-[18px] min-[480px]:text-[21px] md:leading-[1.65] md:text-[31px] lg:text-[39px]"
         >
-          از دل اردکان
-          <span className="block text-[#f4d69f]">تا سفرهٔ شما</span>
+          {content.title}
+          <span className="block text-[#f4d69f]">{content.subtitle}</span>
         </h2>
-        <p className="mt-1.5 text-[10px] leading-4 min-[480px]:text-[11px] min-[480px]:leading-[18px] md:mt-3 text-[#f5e6ce] md:text-[13px] md:leading-7 lg:mt-4 lg:max-w-[390px] lg:text-sm lg:leading-8">
-          تولیدی محصولات سنتی بهجتی اردکان با بیش از ۱۰ سال سابقه، به دنبال حفظ طعم اصیل و کیفیت
-          ماندگار است. با مواد اولیهٔ مرغوب، طعم سنتی اردکان را به سفرهٔ شما می‌رسانیم.
+        <p className="mt-1.5 whitespace-pre-line text-[10px] leading-4 min-[480px]:text-[11px] min-[480px]:leading-[18px] md:mt-3 text-[#f5e6ce] md:text-[13px] md:leading-7 lg:mt-4 lg:max-w-[390px] lg:text-sm lg:leading-8">
+          {content.description}
         </p>
         <Button
           asChild
           variant="outline"
           className="mt-1.5 min-h-8 max-w-full gap-2 md:mt-4 md:min-h-12 border-[#e4c18d]/60 bg-[#3c2319]/20 px-3 py-1 text-[10px] md:py-2.5 md:text-[11px] text-[#fff0d6] hover:border-[#f4d69f] hover:bg-[#f4d69f]/15 hover:text-[#fff0d6] lg:mt-6 lg:px-5 lg:text-sm"
         >
-          <Link href="/shop">
-            <span className="md:hidden">محصولات ما</span>
-            <span className="hidden md:inline">آشنایی با محصولات</span>
+          <Link href={content.href}>
+            <span className="md:hidden">{content.mobileAction}</span>
+            <span className="hidden md:inline">{content.action}</span>
             <ArrowLeft className="size-3.5 shrink-0 lg:size-4" aria-hidden="true" />
           </Link>
         </Button>
       </div>
       <p className="absolute bottom-2 left-3 z-[1] flex items-center gap-1.5 text-[10px] font-medium text-[#fff0d6] md:bottom-5 md:left-5 md:text-xs lg:bottom-7 lg:left-7">
-        <MapPin className="size-3.5" aria-hidden="true" /> اردکان، شهر بادگیرها
+        <MapPin className="size-3.5" aria-hidden="true" /> {content.location}
       </p>
     </section>
   );

@@ -58,3 +58,37 @@ query SelectedProducts($ids: [ID!]!) {
     ...CatalogProduct
   }
 }
+
+fragment HomepageContentFields on HomepageContent {
+  updatedAt
+  slides {
+    src
+    mobileSrc
+    alt
+    label
+    eyebrow
+    title
+    subtitle
+    description
+    href
+    action
+    mobileAction
+  }
+  story {
+    src
+    mobileSrc
+    alt
+    title
+    subtitle
+    description
+    action
+    mobileAction
+    href
+    location
+  }
+}
+query HomepageContent {
+  homepageContent {
+    ...HomepageContentFields
+  }
+}

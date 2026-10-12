@@ -9,10 +9,13 @@ import CategorySection from '@/components/home/CategorySection';
 import ProductSection from '@/components/home/ProductSection';
 import DiscountSection from '@/components/promotion/DiscountSection';
 import BrandStory from '@/components/home/BrandStory';
-import { getHomepageCatalog } from '@/lib/catalog/service';
+import { getHomepageCatalog, getHomepageContent } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
 export default async function Home() {
-  const { products, categories, promotionalProducts } = await getHomepageCatalog();
+  const [{ products, categories, promotionalProducts }, content] = await Promise.all([
+    getHomepageCatalog(),
+    getHomepageContent(),
+  ]);
   const featuredSlugs = [
     'traditional-halva-500',
     'sesame-tahini-350',
@@ -36,7 +39,7 @@ export default async function Home() {
       <Header />
       <SearchBar />
       <main id="main" className="mx-auto w-full max-w-[1200px] px-4 min-[480px]:px-6 xl:px-0">
-        <HeroSection />
+        <HeroSection slides={content.slides} />
         <Reveal>
           <CategorySection categories={categories} />
         </Reveal>
@@ -50,7 +53,7 @@ export default async function Home() {
           />
         </Reveal>
         <Reveal>
-          <BrandStory />
+          <BrandStory content={content.story} />
         </Reveal>
         <div id="all-products">
           {['tahini', 'halva', 'oil', 'traditional-sweets', 'sesame'].map((slug) => {

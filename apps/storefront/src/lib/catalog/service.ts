@@ -1,6 +1,7 @@
 import 'server-only';
 import { executeGraphQL } from '@behjati/graphql';
-import { HomepageCatalogDocument } from '@/generated/graphql';
+import { defaultHomepage } from '@behjati/shared/homepage';
+import { HomepageContentDocument, HomepageCatalogDocument } from '@/generated/graphql';
 import {
   CatalogPageDocument,
   ProductDetailDocument,
@@ -48,3 +49,8 @@ export async function getSelectedProducts(ids: string[]) {
     (product) => product.isActive && valid.ids.includes(product.id),
   );
 }
+
+export const getHomepageContent = cache(async () => {
+  if (process.env.CATALOG_SOURCE !== 'api') return defaultHomepage;
+  return (await executeGraphQL(endpoint(), HomepageContentDocument, {})).homepageContent;
+});

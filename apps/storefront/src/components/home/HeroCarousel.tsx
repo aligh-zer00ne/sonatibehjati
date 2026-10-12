@@ -5,52 +5,12 @@ import Link from 'next/link';
 import { ArrowLeft, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { formatNumber } from '@behjati/shared';
 import { Button } from '@/components/ui/button';
+import type { HeroSlide } from '@behjati/shared/homepage';
 import { cn } from '@/lib/utils';
 
-const slides = [
-  {
-    src: '/images/home/hero-tahini-desktop-v6.webp',
-    mobileSrc: '/images/home/hero-tahini-mobile-v6.webp',
-    alt: 'اردهٔ روان سنتی بهجتی در کاسه، کنار بسته‌بندی‌های واقعی روی میز چوبی و پارچهٔ ترمه',
-    label: 'ارده ممتاز',
-    eyebrow: 'فرآورده‌های کنجدی اردکان',
-    title: 'سنتی بهجتی',
-    subtitle: 'طعم اصالت، از دل کویر',
-    description: 'ارده، حلواارده و طعم‌های کنجدی؛ همراه صبحانه و سفرهٔ هر روز شما.',
-    href: '/shop',
-    action: 'مشاهده محصولات',
-    mobileAction: 'دیدن محصولات',
-  },
-  {
-    src: '/images/home/hero-oil-desktop-v6.webp',
-    mobileSrc: '/images/home/hero-oil-mobile-v6.webp',
-    alt: 'بسته‌بندی‌های واقعی روغن کنجد سنتی بهجتی با رنگ طلایی و نور طبیعی',
-    label: 'روغن کنجد',
-    eyebrow: 'روغن کنجد سنتی بهجتی',
-    title: 'طلای کنجد',
-    subtitle: 'برای آشپزخانهٔ شما',
-    description: 'روغن‌های کنجد را ببینید و بسته‌بندی مناسب آشپزخانهٔ خود را انتخاب کنید.',
-    href: '/category/oil',
-    action: 'مشاهده روغن‌های کنجد',
-    mobileAction: 'دیدن روغن‌ها',
-  },
-  {
-    src: '/images/home/hero-flavored-desktop-v6.webp',
-    mobileSrc: '/images/home/hero-flavored-mobile-v6.webp',
-    alt: 'ارده شکلاتی، کرم ارده و ارده فندقی سنتی بهجتی در فضایی گرم و سنتی',
-    label: 'ارده‌های طعم‌دار',
-    eyebrow: 'طعم‌های تازهٔ سنتی بهجتی',
-    title: 'طعم‌های تازه',
-    subtitle: 'شکلاتی، فندقی یا کرم ارده؟',
-    description: 'از میان طعم‌های مختلف ارده، همراه تازهٔ صبحانه‌تان را پیدا کنید.',
-    href: '/category/tahini',
-    action: 'کشف ارده‌های طعم‌دار',
-    mobileAction: 'کشف طعم‌ها',
-  },
-];
-
-export default function HeroCarousel() {
-  const [current, setCurrent] = useState(0);
+export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
+  const [selected, setCurrent] = useState(0);
+  const current = Math.min(selected, slides.length - 1);
   const [playing, setPlaying] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -81,7 +41,7 @@ export default function HeroCarousel() {
     if (!playing || hovered || focused || !visible || reducedMotion) return;
     const timer = setInterval(() => setCurrent((value) => (value + 1) % slides.length), 7000);
     return () => clearInterval(timer);
-  }, [playing, hovered, focused, visible, reducedMotion]);
+  }, [playing, hovered, focused, visible, reducedMotion, slides.length]);
 
   function select(index: number) {
     setCurrent((index + slides.length) % slides.length);
@@ -94,7 +54,7 @@ export default function HeroCarousel() {
       aria-roledescription="اسلایدر"
       aria-label="تصاویر محصولات کنجدی"
       tabIndex={0}
-      className="relative isolate h-[240px] min-[375px]:h-[250px] min-[480px]:h-[275px] sm:h-[200px] overflow-hidden rounded-[24px] border border-[#60382b]/30 bg-[#2b1410] shadow-[0_18px_50px_-28px_rgba(49,21,13,0.55)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:h-[430px] lg:h-[480px] lg:rounded-[28px]"
+      className="relative isolate grid items-center md:items-start min-h-[240px] min-[375px]:min-h-[250px] min-[480px]:min-h-[275px] sm:min-h-[200px] overflow-hidden rounded-[24px] border border-[#60382b]/30 bg-[#2b1410] shadow-[0_18px_50px_-28px_rgba(49,21,13,0.55)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:min-h-[430px] lg:min-h-[480px] lg:rounded-[28px]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
@@ -131,7 +91,7 @@ export default function HeroCarousel() {
         {slides.map((item, index) => {
           return (
             <div
-              key={item.src}
+              key={index}
               role="group"
               aria-roledescription="اسلاید"
               aria-label={`${formatNumber(index + 1)} از ${formatNumber(slides.length)}: ${item.label}`}
@@ -145,12 +105,20 @@ export default function HeroCarousel() {
               <picture>
                 <source
                   media="(min-width: 480px)"
-                  srcSet={`${item.src.replace('.webp', '-768.webp')} 768w, ${item.src} 1536w`}
+                  srcSet={
+                    item.src.startsWith('/images/home/hero-')
+                      ? `${item.src.replace('.webp', '-768.webp')} 768w, ${item.src} 1536w`
+                      : item.src
+                  }
                   sizes="(min-width: 1024px) 720px, (min-width: 875px) calc(78vw - 37.44px), (min-width: 768px) 645px, (min-width: 480px) 78vw, 64vw"
                 />
                 <img
                   src={item.mobileSrc}
-                  srcSet={`${item.mobileSrc.replace('.webp', '-512.webp')} 512w, ${item.mobileSrc.replace('.webp', '-768.webp')} 768w, ${item.mobileSrc} 1024w`}
+                  srcSet={
+                    item.mobileSrc.startsWith('/images/home/hero-')
+                      ? `${item.mobileSrc.replace('.webp', '-512.webp')} 512w, ${item.mobileSrc.replace('.webp', '-768.webp')} 768w, ${item.mobileSrc} 1024w`
+                      : undefined
+                  }
                   sizes="(min-width: 768px) 645px, (min-width: 480px) 78vw, 64vw"
                   alt={item.alt}
                   width={1024}
@@ -173,7 +141,7 @@ export default function HeroCarousel() {
       />
       <div
         data-slot="hero-copy"
-        className="absolute top-1/2 right-2 z-[1] w-[46%] -translate-y-1/2 text-right md:translate-y-0 md:top-10 md:right-[5%] md:w-[43%] lg:top-14 lg:right-[6%]"
+        className="relative right-2 z-[1] w-[46%] py-10 text-right md:right-[5%] md:w-[43%] md:pt-10 md:pb-16 lg:pt-14 lg:pb-20 lg:right-[6%]"
       >
         <div
           key={current}
@@ -191,7 +159,7 @@ export default function HeroCarousel() {
           <p className="mt-1 text-[10px] leading-5 font-semibold text-[#fff4df] min-[480px]:text-xs md:text-[14px] md:leading-6 lg:text-xl lg:leading-8">
             {slide.subtitle}
           </p>
-          <p className="mt-3 hidden text-[13px] leading-7 text-[#ecdac4] md:block lg:max-w-[390px] lg:text-sm lg:leading-8">
+          <p className="mt-3 hidden whitespace-pre-line text-[13px] leading-7 text-[#ecdac4] md:block lg:max-w-[390px] lg:text-sm lg:leading-8">
             {slide.description}
           </p>
           <Button
@@ -223,7 +191,7 @@ export default function HeroCarousel() {
         </Button>
         {slides.map((item, index) => (
           <button
-            key={item.src}
+            key={index}
             type="button"
             className="flex h-8 w-7 cursor-pointer md:h-11 md:w-8 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             aria-label={`نمایش اسلاید ${formatNumber(index + 1)}: ${item.label}`}
