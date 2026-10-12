@@ -19,8 +19,8 @@ export default function EnamadBadge({
     <div
       data-enamad-badge
       className={cn(
-        'flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-xl border border-earth/10 bg-white/65 p-1 text-center',
-        compact && 'size-9 gap-0 rounded-md p-0.5',
+        'flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-md border border-earth/10 bg-white/65 p-1 text-center',
+        compact && 'size-11 gap-0 rounded p-0.5',
         className,
       )}
       role="region"
@@ -34,7 +34,7 @@ export default function EnamadBadge({
         aria-label="مشاهده اعتبار نماد اعتماد الکترونیکی سنتی بهجتی در تب جدید"
         className={cn(
           'inline-flex size-[46px] cursor-pointer items-center justify-center rounded-lg transition-transform duration-300 motion-safe:hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none',
-          compact && 'size-8',
+          compact && 'size-10',
         )}
       >
         {imageFailed ? (
@@ -62,7 +62,7 @@ export default function EnamadBadge({
             loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
-            className={cn('size-[46px] cursor-pointer object-contain', compact && 'size-8')}
+            className={cn('size-[46px] cursor-pointer object-contain', compact && 'size-10')}
             {...{ code: sealCode }}
           />
         )}

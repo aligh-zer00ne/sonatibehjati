@@ -88,13 +88,13 @@ export default function Footer() {
             className="order-first mb-1 flex items-center justify-start gap-1.5"
             aria-label="نشان‌های اعتماد و پرداخت"
           >
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#f4d493]/30 bg-[#fff8ed] p-1">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded border border-[#f4d493]/30 bg-[#fff8ed] p-1">
               <Image
                 src="/images/sep-logo.png"
                 alt="لوگوی پرداخت الکترونیک سامان کیش"
                 width={78}
                 height={49}
-                className="h-auto w-7 object-contain"
+                className="h-auto w-9 object-contain"
               />
             </div>
             <EnamadBadge compact />
