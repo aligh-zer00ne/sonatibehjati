@@ -9,7 +9,7 @@ import {
 import { adminRequest } from '../lib/client';
 import PrintSheet from '../components/PrintSheet';
 import AdminIcon from '../components/AdminIcon';
-import { persianDigits } from '../lib/format';
+import ShippingLabelSheet from '../components/ShippingLabelSheet';
 
 function defaults(order: AdminOrderFieldsFragment): ShippingLabelValues {
   const a = order.address;
@@ -86,64 +86,8 @@ export default function ShippingLabel({
       )}
     </Form.Item>
   );
-  const sheet = (
-    <article
-      dir="rtl"
-      className={`mx-auto break-inside-avoid rounded-lg border border-[#d8c6b0] bg-white p-4 text-[11px] leading-6 text-black shadow-sm print:w-full print:max-w-none print:rounded-none print:p-0 print:shadow-none ${values.paperSize === 'A5' ? 'max-w-[138mm]' : 'max-w-[90mm]'}`}
-    >
-      <header className="mb-3 flex items-center justify-between gap-3 border-b-2 border-black pb-3">
-        <div>
-          <h2 className="font-bold">سنتی بهجتی اردکان</h2>
-          <p>سفارش شماره {formatNumber(order.number)}</p>
-        </div>
-        <img src="/images/logo-footer.svg" alt="سنتی بهجتی" className="h-14 w-10 object-contain" />
-      </header>
-      <section className="border-b border-black/30 pb-3">
-        <h3 className="mb-1 font-bold">فرستنده</h3>
-        <p className="break-words font-medium">{values.senderName}</p>
-        {values.senderAddress && (
-          <p className="break-words whitespace-pre-wrap">{values.senderAddress}</p>
-        )}
-        {values.senderPhone && (
-          <p>
-            تلفن: <bdi>{persianDigits(values.senderPhone)}</bdi>
-          </p>
-        )}
-        {values.senderPostalCode && (
-          <p>
-            کد پستی: <bdi>{persianDigits(values.senderPostalCode)}</bdi>
-          </p>
-        )}
-      </section>
-      <section className="py-3">
-        <h3 className="mb-2 text-base font-bold">گیرنده: {values.recipientName}</h3>
-        <p className="break-words whitespace-pre-wrap">{values.recipientAddress}</p>
-        {values.recipientPhone && (
-          <p className="mt-2">
-            تلفن: <bdi>{persianDigits(values.recipientPhone)}</bdi>
-          </p>
-        )}
-        {values.recipientPostalCode && (
-          <p className="mt-2 text-sm font-bold">
-            کد پستی: <bdi>{persianDigits(values.recipientPostalCode)}</bdi>
-          </p>
-        )}
-      </section>
-      <section className="border-t border-black/30 pt-2">
-        {values.carrier && <p>ارسال: {values.carrier}</p>}
-        {values.packageWeight && <p>وزن بسته: {values.packageWeight}</p>}
-        {values.trackingNumber && (
-          <p className="break-all">
-            رهگیری: <bdi>{persianDigits(values.trackingNumber)}</bdi>
-          </p>
-        )}
-        {values.packageContent && <p className="break-words">محتویات: {values.packageContent}</p>}
-        {values.note && (
-          <p className="mt-2 break-words whitespace-pre-wrap font-bold">{values.note}</p>
-        )}
-      </section>
-    </article>
-  );
+  const sheet = <ShippingLabelSheet order={order} values={values} />;
+
   return (
     <Modal
       open
@@ -167,9 +111,9 @@ export default function ShippingLabel({
         type="info"
         showIcon
         className="!mb-5 print:!hidden"
-        title="اطلاعات از نشانی هنگام ثبت سفارش پر شده است. تغییر لیبل، نشانی سفارش را تغییر نمی‌دهد. قالب پایه تا دریافت نمونهٔ نهایی لیبل استفاده می‌شود."
+        title="اطلاعات از نشانی هنگام ثبت سفارش پر شده است. تغییر لیبل، نشانی سفارش را تغییر نمی‌دهد."
       />
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(330px,0.8fr)] print:block">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(330px,0.8fr)_minmax(0,1.2fr)] print:block">
         <Card className="print:!hidden" title="شخصی‌سازی لیبل">
           <Form
             form={form}
@@ -224,7 +168,7 @@ export default function ShippingLabel({
               <Form.Item name="paperSize" label="اندازه چاپ">
                 <Select
                   options={[
-                    { value: 'THERMAL', label: 'لیبل ۱۰ × ۱۵ سانتی‌متر' },
+                    { value: 'THERMAL', label: 'لیبل ۱۵ × ۱۰ سانتی‌متر (افقی)' },
                     { value: 'A5', label: 'کاغذ A5' },
                   ]}
                 />
@@ -259,10 +203,12 @@ export default function ShippingLabel({
                 setPrinting(true);
                 try {
                   await document.fonts.ready;
-                  await document
-                    .querySelector<HTMLImageElement>('[data-shipping-label] img')
-                    ?.decode()
-                    .catch(() => {});
+                  await Promise.all(
+                    Array.from(
+                      document.querySelectorAll<HTMLImageElement>('[data-shipping-label] img'),
+                      (image) => image.decode().catch(() => {}),
+                    ),
+                  );
                   window.print();
                 } finally {
                   setPrinting(false);
@@ -273,7 +219,10 @@ export default function ShippingLabel({
             </Button>
           </div>
           <div data-shipping-label>{sheet}</div>
-          <PrintSheet size={values.paperSize === 'A5' ? 'A5 portrait' : '100mm 150mm'} margin="5mm">
+          <PrintSheet
+            size={values.paperSize === 'A5' ? 'A5 landscape' : '150mm 100mm'}
+            margin="4mm"
+          >
             {sheet}
           </PrintSheet>
           <p className="mt-3 text-xs text-[#7d746a] print:!hidden">

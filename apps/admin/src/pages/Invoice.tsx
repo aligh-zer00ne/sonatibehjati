@@ -4,6 +4,7 @@ import { Button, Alert, Modal } from 'antd';
 import { BRAND_NAME, formatNumber, formatDate, orderStatusLabels } from '@behjati/shared';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import PrintSheet from '../components/PrintSheet';
+import BrandQr from '../components/BrandQr';
 import { persianDigits, customerName } from '../lib/format';
 export default function Invoice({
   order,
@@ -17,9 +18,9 @@ export default function Invoice({
   const sheet = (
     <article
       dir="rtl"
-      className="mx-auto max-w-[148mm] rounded-lg bg-white p-5 font-sans text-[11px] leading-6 text-black shadow-sm print:max-w-none print:rounded-none print:p-0 print:shadow-none"
+      className="mx-auto max-w-[148mm] rounded-lg bg-white p-5 font-sans text-[11px] leading-6 text-black shadow-sm print:max-w-none print:rounded-none print:p-0 print:shadow-none print:text-[10px] print:leading-4"
     >
-      <header className="mb-4 flex items-center justify-between gap-3 border-b border-slate-300 pb-3">
+      <header className="mb-4 print:mb-2 flex items-center justify-between gap-3 border-b border-slate-300 pb-3">
         <div>
           <h1 className="text-sm font-bold">{BRAND_NAME}</h1>
           <p>فاکتور سفارش شماره {formatNumber(order.number)}</p>
@@ -27,7 +28,7 @@ export default function Invoice({
         </div>
         <img src="/images/logo-brand.png" alt={BRAND_NAME} className="h-20 w-auto" />
       </header>
-      <section className="mb-4 break-inside-avoid">
+      <section className="mb-4 print:mb-2 break-inside-avoid">
         <h2 className="font-bold">مشخصات مشتری و گیرنده</h2>
         <p>
           مشتری: {customerName(order.user)} · موبایل: <bdi>{persianDigits(order.user.phone)}</bdi>
@@ -45,7 +46,7 @@ export default function Invoice({
           کد پستی: <bdi>{address.postalCode ? persianDigits(address.postalCode) : 'ثبت نشده'}</bdi>
         </p>
       </section>
-      <table className="mb-4 w-full table-fixed border-collapse text-[10px] [&_th]:border [&_th]:border-slate-300 [&_th]:p-1 [&_td]:border [&_td]:border-slate-300 [&_td]:p-1">
+      <table className="mb-4 print:mb-2 w-full table-fixed border-collapse text-[10px] [&_th]:border [&_th]:border-slate-300 [&_th]:p-1 [&_td]:border [&_td]:border-slate-300 [&_td]:p-1">
         <thead className="table-header-group bg-slate-100">
           <tr>
             <th className="w-[35%]">محصول / وزن</th>
@@ -87,13 +88,23 @@ export default function Invoice({
             </div>
           ))}
         </dl>
-        <p className="mt-4 border-t border-slate-300 pt-2">
+        <p className="mt-4 print:mt-2 border-t border-slate-300 pt-2">
           وضعیت سفارش: <b>{orderStatusLabels[order.status]}</b>
         </p>
         <p className="text-[10px]">
           این فاکتور، رسید پرداخت نیست. پرداخت آنلاین در این نسخه فعال نیست.
         </p>
       </section>
+      <footer className="mt-4 print:mt-2 flex break-inside-avoid items-center justify-between gap-4 border-t border-slate-300 pt-3">
+        <div>
+          <p className="font-bold">با عشق از اردکان، برای شما</p>
+          <p className="mt-1 text-[10px]">برای مشاهده راه‌های ارتباطی، QR را اسکن کنید.</p>
+          <p dir="ltr" className="mt-1 text-left text-[10px]">
+            sonatibehjati.ir/QR
+          </p>
+        </div>
+        <BrandQr className="w-[30mm] print:w-[25mm]" />
+      </footer>
     </article>
   );
   return (

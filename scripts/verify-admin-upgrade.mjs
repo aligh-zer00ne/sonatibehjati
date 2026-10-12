@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
 import { chromium, expect } from '@playwright/test';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
@@ -167,6 +168,7 @@ try {
   await page.getByRole('button', { name: 'لیبل پستی / چاپ' }).click();
   await expect(page.getByLabel('نام گیرنده', { exact: true })).toHaveValue('گیرنده شخصی‌سازی شده');
   await expect(page.locator('[data-shipping-label]')).toContainText('لیبل قابل چاپ آزمون');
+  await expect(page.locator('[data-shipping-label] [data-brand-qr]')).toBeVisible();
   await page.evaluate(() => {
     window.print = () => {
       window.__printed = true;
@@ -183,6 +185,12 @@ try {
     preferCSSPageSize: true,
     printBackground: true,
   });
+  const labelPdf = await readFile('/tmp/behjati-shipping-label.pdf', 'latin1');
+  assert.equal(
+    [...labelPdf.matchAll(/\/Type\s*\/Page\b/g)].length,
+    1,
+    'The complete thermal label must fit on one page.',
+  );
   await page.emulateMedia({ media: 'screen' });
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
