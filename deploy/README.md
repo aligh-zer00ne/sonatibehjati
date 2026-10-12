@@ -448,3 +448,53 @@ sudo systemctl reload nginx
 پوشهٔ پیش‌فرض `apps/api/uploads` با کاربر PM2 ساخته می‌شود. آن را از نسخه‌های پشتیبان حذف
 نکنید؛ Git و اسکریپت دیپلوی تصاویر آپلودشده را جابه‌جا یا پاک نمی‌کنند. دیپلوی‌های بعدی همان
 `git pull --ff-only origin dev` و `npm run deploy:production` هستند و تغییر مجدد Nginx لازم نیست.
+
+## نقش همکار، کد تخفیف، تیکت و تأیید نظرات
+
+این نسخه migration افزایشی `202610120001_operations` دارد؛ اطلاعات فعلی مدیرها و سفارش‌ها
+حفظ می‌شوند. اسکریپت معمول، وابستگی ExcelJS را با Bun نصب می‌کند و migration را اعمال می‌کند:
+
+```bash
+source ~/.nvm/nvm.sh
+nvm use
+cd /var/www/sonatibehjati
+git pull --ff-only origin dev
+npm run deploy:production
+```
+
+پس از انتشار، برای ایجاد کاربر محدود از «کاربران پنل» استفاده کنید. حساب همکار یا کد تخفیف
+نمونه‌ای خودکار ساخته نمی‌شود. ساخت همکار، کد تخفیف، Excel، تیکت و نظرات در
+[راهنمای پنل](../docs/admin-panel.md) توضیح داده شده‌اند.
+
+برای پیش‌نمایش محصول، `VITE_STOREFRONT_URL=https://sonatibehjati.ir` در env production پنل
+اختیاری است؛ مقدار پیش‌فرض همین دامنه است. فروشگاه برای iframe به
+`ADMIN_ORIGIN=https://admin.sonatibehjati.ir` اعتماد می‌کند؛ پیش‌فرض production همین است.
+اگر روی دامنهٔ دیگری منتشر می‌کنید، هر دو را پیش از build تنظیم کنید.
+
+اگر Nginx هنوز در حالت بازدید عمومی درگاه، `/api/auth` را مسدود می‌کند، ورود مشتری، ثبت سفارش،
+ثبت نظر و تیکت همچنان غیرفعال می‌مانند. این نسخه آن محدودیت را حذف نمی‌کند. فعال‌سازی عمومی
+این امکانات به تنظیم سرویس پیامک واقعی و خروج از حالت بازدید درگاه نیاز دارد. نظرات تأییدشده
+در HTML صفحهٔ محصول نمایش داده می‌شوند و به ورود مشتری وابسته نیستند.
+
+برای صفحه‌بندی و تازه‌سازی نظرات در همان حالت بازدید عمومی، یک بار location زیر را داخل
+server HTTPS فروشگاه در کانفیگ فعال Nginx، قبل از location عمومی `/api/` اضافه کنید.
+این مسیر فقط نظرات تأییدشده را می‌خواند و مسیر ورود را باز نمی‌کند. نسخهٔ آمادهٔ
+`deploy/nginx/payment-review.conf` نیز به‌روز شده است. سایر تنظیم‌ها و دامنه‌ها را حفظ کنید.
+
+```nginx
+location = /api/catalog/reviews {
+    if ($request_method != GET) { return 405; }
+    proxy_pass http://127.0.0.1:3100;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache off;
+    proxy_read_timeout 60s;
+}
+```
+
+پس از ویرایش کانفیگ:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```

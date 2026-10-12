@@ -1,11 +1,18 @@
 'use client';
 import { useId, useRef, useState } from 'react';
-import type { CatalogProductFragment } from '@/generated/graphql';
+import type { CatalogProductFragment, PublicProductReviewsQuery } from '@/generated/graphql';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import ProductReviews from './ProductReviews';
 import { cn } from '@/lib/utils';
 const tabs = ['توضیحات', 'مشخصات', 'نظرات'];
-export default function ProductTabs({ product }: { product: CatalogProductFragment }) {
+export default function ProductTabs({
+  product,
+  reviews,
+}: {
+  product: CatalogProductFragment;
+  reviews: PublicProductReviewsQuery['productReviews'];
+}) {
   const [selected, setSelected] = useState(0);
   const id = useId();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -67,9 +74,9 @@ export default function ProductTabs({ product }: { product: CatalogProductFragme
               <dt>وزن / حجم</dt>
               <dd>{product.weight}</dd>
             </dl>
-          ) : (
-            <p>هنوز نظری برای این محصول ثبت نشده است.</p>
-          )}
+          ) : selected === 2 ? (
+            <ProductReviews productId={product.id} slug={product.slug} initial={reviews} />
+          ) : null}
         </div>
       ))}
     </Card>

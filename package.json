@@ -41,7 +41,9 @@
     "verify:admin-ui": "node scripts/verify-admin-ui.mjs",
     "verify:admin-upgrade": "bun scripts/verify-admin-upgrade.mjs",
     "verify:admin-uploads": "bun scripts/verify-admin-uploads.mjs",
-    "deploy:production": "bash deploy/update-production.sh"
+    "deploy:production": "bash deploy/update-production.sh",
+    "verify:operations": "bun scripts/verify-operations.mjs",
+    "verify:operations-ui": "bun scripts/verify-operations-ui.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

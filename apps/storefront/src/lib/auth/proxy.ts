@@ -31,8 +31,48 @@ import {
   CheckoutOrderReceiptDocument,
   RecoverCheckoutOrderDocument,
 } from '@/generated/graphql';
+import {
+  ticketInput,
+  ticketReplyInput,
+  ticketFilter,
+  reviewInput,
+  entityId,
+} from '@behjati/shared/operations';
+import {
+  MyTicketsDocument,
+  MyTicketDocument,
+  CreateTicketDocument,
+  ReplyTicketDocument,
+  PublicProductReviewsDocument,
+  MyProductReviewDocument,
+  SubmitProductReviewDocument,
+} from '@/generated/graphql';
 const empty = z.object({}).strict();
 const operations = {
+  MyTickets: { document: MyTicketsDocument, schema: z.object({ input: ticketFilter }).strict() },
+  MyTicket: { document: MyTicketDocument, schema: z.object({ id: entityId }).strict() },
+  CreateTicket: {
+    document: CreateTicketDocument,
+    schema: z.object({ input: ticketInput }).strict(),
+  },
+  ReplyTicket: {
+    document: ReplyTicketDocument,
+    schema: z.object({ input: ticketReplyInput }).strict(),
+  },
+  PublicProductReviews: {
+    document: PublicProductReviewsDocument,
+    schema: z
+      .object({ productId: entityId, page: z.number().int().min(1).max(100000).optional() })
+      .strict(),
+  },
+  MyProductReview: {
+    document: MyProductReviewDocument,
+    schema: z.object({ productId: entityId }).strict(),
+  },
+  SubmitProductReview: {
+    document: SubmitProductReviewDocument,
+    schema: z.object({ input: reviewInput }).strict(),
+  },
   UpdateAccountProfile: {
     document: UpdateAccountProfileDocument,
     schema: z.object({ input: profileInputSchema }).strict(),
@@ -85,6 +125,13 @@ const operations = {
 export const proxyInputSchema = z
   .object({
     operation: z.enum([
+      'MyTickets',
+      'MyTicket',
+      'CreateTicket',
+      'ReplyTicket',
+      'PublicProductReviews',
+      'MyProductReview',
+      'SubmitProductReview',
       'UpdateAccountProfile',
       'AccountOrders',
       'AccountOrderDetails',

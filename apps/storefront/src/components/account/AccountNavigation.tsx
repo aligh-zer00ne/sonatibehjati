@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { House, MapPin, Package, UserRound, LogOut } from 'lucide-react';
+import { House, MapPin, Package, UserRound, LogOut, MessagesSquare } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,6 +11,7 @@ const links = [
   ['/account/profile', 'پروفایل', UserRound],
   ['/account/addresses', 'نشانی‌ها', MapPin],
   ['/account/orders', 'سفارش‌ها', Package],
+  ['/account/support', 'پشتیبانی و تیکت‌ها', MessagesSquare],
 ] as const;
 export default function AccountNavigation() {
   const { logout } = useAuth();

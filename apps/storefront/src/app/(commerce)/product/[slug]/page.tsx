@@ -8,6 +8,7 @@ import ProductPrice from '@/components/promotion/ProductPrice';
 import Breadcrumbs from '@/components/layout/Breadcrumbs';
 import ProductGallery from '@/components/product/ProductGallery';
 import ProductPurchase from '@/components/product/ProductPurchase';
+import { getPublicReviews } from '@/lib/catalog/reviews';
 import ProductTabs from '@/components/product/ProductTabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const product = await getProduct(slug);
   if (!product) notFound();
+  const reviews = await getPublicReviews(product.id);
   const { catalog } = await getCatalogPage({
     category: product.category.slug,
     excludeSlug: slug,
@@ -94,7 +96,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           />
         </Card>
       </section>
-      <ProductTabs key={product.id} product={product} />
+      <ProductTabs key={product.id} product={product} reviews={reviews} />
       {catalog.items.length > 0 && (
         <section className="mt-9">
           <div className="mb-5 flex items-center justify-between gap-3">
