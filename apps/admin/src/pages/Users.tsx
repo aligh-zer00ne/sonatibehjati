@@ -1,20 +1,64 @@
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Typography, Card, Input, Table, Button } from 'antd';
+import { Typography, Card, Input, Table, Button, Alert } from 'antd';
 import { formatNumber, formatDate } from '@behjati/shared';
-import { AdminUsersDocument, type AdminUsersQuery } from '../generated/graphql';
+import {
+  AdminUsersDocument,
+  AdminCustomerExportDocument,
+  type AdminUsersQuery,
+} from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import { customerName, persianDigits } from '../lib/format';
+import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 export default function Users() {
   const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
   const search = (params.get('search') ?? '').slice(0, 100);
   const query = useAdminQuery(AdminUsersDocument, { input: { page, pageSize: 20, search } });
   return (
     <>
-      <Typography.Title level={2}>کاربران</Typography.Title>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Typography.Title level={2}>کاربران</Typography.Title>
+        <Button
+          loading={exporting}
+          onClick={async () => {
+            setExporting(true);
+            setExportError('');
+            try {
+              const { adminCustomerExport: result } = await adminRequest(
+                AdminCustomerExportDocument,
+                { search },
+              );
+              const bytes = Uint8Array.from(atob(result.base64), (char) => char.charCodeAt(0));
+              const url = URL.createObjectURL(
+                new Blob([bytes], {
+                  type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                }),
+              );
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = result.filename;
+              link.click();
+              setTimeout(() => URL.revokeObjectURL(url), 10000);
+            } catch (e) {
+              setExportError(e instanceof Error ? e.message : 'خروجی ساخته نشد.');
+            } finally {
+              setExporting(false);
+            }
+          }}
+        >
+          خروجی اکسل مشتریان
+        </Button>
+      </div>
+      <p className="text-sm text-[#7d746a]">
+        خروجی شامل نام و موبایل تمام مشتریان مطابق جستجوی فعلی است؛ فقط صفحهٔ نمایش‌داده‌شده را
+        محدود نمی‌کند.
+      </p>
+      {exportError && <Alert type="error" title={exportError} role="alert" />}
       <Card>
         <Input.Search
           aria-label="جستجوی کاربران"

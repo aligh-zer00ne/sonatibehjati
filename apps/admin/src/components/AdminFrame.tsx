@@ -11,10 +11,22 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin/users', label: 'مشتریان', icon: 'users' },
   { href: '/admin/orders/map', label: 'نقشه سفارش‌ها', icon: 'map' },
   { href: '/admin/reports', label: 'گزارش‌ها', icon: 'reports' },
+  { href: '/admin/coupons', label: 'کدهای تخفیف', icon: 'discount' },
+  { href: '/admin/tickets', label: 'پشتیبانی و تیکت‌ها', icon: 'support' },
+  { href: '/admin/reviews', label: 'نظرات محصولات', icon: 'review' },
+  { href: '/admin/accounts', label: 'کاربران پنل', icon: 'shield' },
   { href: '/admin/settings', label: 'تنظیمات حساب', icon: 'settings' },
 ];
 export default function AdminFrame() {
-  const { logout } = useAdmin();
+  const { logout, admin } = useAdmin();
+  const owner = admin?.role === 'OWNER';
+  const visibleLinks = links.filter(
+    (link) =>
+      owner ||
+      !['/admin', '/admin/users', '/admin/reports', '/admin/accounts', '/admin/coupons'].includes(
+        link.href,
+      ),
+  );
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
@@ -30,7 +42,7 @@ export default function AdminFrame() {
   }, [pathname]);
   const navigation = (compact = false) => (
     <nav aria-label="منوی مدیریت" className="relative z-10 space-y-1.5 px-3">
-      {links.map(({ href, label, icon }) => (
+      {visibleLinks.map(({ href, label, icon }) => (
         <Tooltip key={href} title={compact ? label : undefined} placement="left">
           <Link
             to={href}
@@ -53,7 +65,7 @@ export default function AdminFrame() {
         className={`sticky top-0 hidden h-dvh shrink-0 overflow-hidden bg-[radial-gradient(ellipse_at_bottom_left,#8f1425_0%,#660311_55%,#420009_100%)] shadow-[-6px_0_24px_rgba(74,8,15,0.08)] transition-[width] duration-300 motion-reduce:transition-none min-[992px]:flex min-[992px]:flex-col print:!hidden ${collapsed ? 'w-20' : 'w-[204px] xl:w-[220px]'}`}
       >
         <div className="relative z-10 flex min-h-[110px] items-center justify-center gap-4 px-3">
-          <Link to="/admin" aria-label="مدیریت سنتی بهجتی">
+          <Link to={owner ? '/admin' : '/admin/orders'} aria-label="مدیریت سنتی بهجتی">
             <img
               src="/images/logo-footer.svg"
               alt="سنتی بهجتی"
@@ -130,7 +142,7 @@ export default function AdminFrame() {
               options={[
                 { value: 'products', label: 'محصولات' },
                 { value: 'orders', label: 'سفارش‌ها' },
-                { value: 'users', label: 'مشتریان' },
+                ...(owner ? [{ value: 'users', label: 'مشتریان' }] : []),
               ]}
             />
             <Input.Search
@@ -179,7 +191,7 @@ export default function AdminFrame() {
           <span>پنل مدیریت سنتی بهجتی اردکان</span>
           <span className="flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-[#17977e]" />
-            دسترسی مدیر احراز هویت شده
+            {owner ? 'دسترسی مدیر' : 'دسترسی همکار'}
           </span>
         </footer>
       </div>

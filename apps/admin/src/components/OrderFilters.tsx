@@ -2,6 +2,7 @@ import { Input, InputNumber, Select, Button, Card } from 'antd';
 import CalendarPicker from './CalendarPicker';
 import { orderStatuses, orderStatusLabels } from '@behjati/shared';
 import type { AdminOrdersInput, OrderStatus } from '../generated/graphql';
+import { useAdmin } from '../auth/AdminProvider';
 import UserFilter from './UserFilter';
 export default function OrderFilters({
   input,
@@ -12,6 +13,7 @@ export default function OrderFilters({
   onChange: (value: Partial<AdminOrdersInput>) => void;
   onReset: () => void;
 }) {
+  const { admin } = useAdmin();
   return (
     <Card>
       <div className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -60,10 +62,12 @@ export default function OrderFilters({
             onChange={(number) => onChange({ number })}
           />
         </div>
-        <div>
-          <span className="mb-2 block text-xs">مشتری</span>
-          <UserFilter value={input.userId} onChange={(userId) => onChange({ userId })} />
-        </div>
+        {admin?.role === 'OWNER' && (
+          <div>
+            <span className="mb-2 block text-xs">مشتری</span>
+            <UserFilter value={input.userId} onChange={(userId) => onChange({ userId })} />
+          </div>
+        )}
         <div>
           <label className="mb-2 block text-xs" htmlFor="order-city">
             شهر نشانی سفارش

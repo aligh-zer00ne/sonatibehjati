@@ -23,5 +23,12 @@ export default function ProtectedAdmin() {
     );
   if (!admin)
     return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
-  return <Outlet key={admin.id} />;
+  if (
+    admin.role === 'STAFF' &&
+    ['/admin/users', '/admin/reports', '/admin/accounts', '/admin/coupons'].some((path) =>
+      location.pathname.startsWith(path),
+    )
+  )
+    return <Navigate to="/admin/orders" replace />;
+  return <Outlet key={admin.id + admin.role} />;
 }

@@ -4,7 +4,12 @@ import faIR from 'antd/locale/fa_IR';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import AdminProvider from './auth/AdminProvider';
 import ProtectedAdmin from './auth/ProtectedAdmin';
+import OwnerOnly from './auth/OwnerOnly';
 import AdminFrame from './components/AdminFrame';
+const Accounts = lazy(() => import('./pages/Accounts'));
+const Coupons = lazy(() => import('./pages/Coupons'));
+const Tickets = lazy(() => import('./pages/Tickets'));
+const Reviews = lazy(() => import('./pages/Reviews'));
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Products = lazy(() => import('./pages/Products'));
@@ -56,7 +61,13 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route element={<ProtectedAdmin />}>
                   <Route path="/admin" element={<AdminFrame />}>
-                    <Route index element={<Dashboard />} />
+                    <Route element={<OwnerOnly />}>
+                      <Route index element={<Dashboard />} />
+                      <Route path="users" element={<Users />} />
+                      <Route path="reports" element={<Reports />} />
+                      <Route path="accounts" element={<Accounts />} />
+                      <Route path="coupons" element={<Coupons />} />
+                    </Route>
                     <Route path="products" element={<Products />} />
                     <Route path="products/new" element={<ProductEdit />} />
                     <Route path="products/:id/edit" element={<ProductEdit />} />
@@ -64,9 +75,9 @@ export default function App() {
                     <Route path="orders" element={<Orders />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
-                    <Route path="users" element={<Users />} />
-                    <Route path="reports" element={<Reports />} />
                     <Route path="settings" element={<Settings />} />
+                    <Route path="tickets" element={<Tickets />} />
+                    <Route path="reviews" element={<Reviews />} />
                   </Route>
                 </Route>
                 <Route

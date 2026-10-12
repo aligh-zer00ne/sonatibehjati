@@ -1,5 +1,7 @@
 import type { SVGProps } from 'react';
 const paths = {
+  support: 'M4 14v-3a8 8 0 0 1 16 0v3M4 12H2v7h4v-7H4ZM20 12h2v7h-4v-7h2ZM18 19v3h-6',
+  review: 'M3 3h18v14H8l-5 4V3ZM7 7h10M7 11h7',
   home: 'm3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7',
   orders: 'M3 3h2l3 12h11l3-9H6M9 20h.01M18 20h.01',
   products: 'm12 3 9 5v10l-9 5-9-5V8l9-5Zm-9 5 9 5 9-5M12 13v10M7 5l10 6',
