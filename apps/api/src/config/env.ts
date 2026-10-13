@@ -22,7 +22,8 @@ const schema = z.object({
     (value) => (value === '' ? undefined : value),
     z
       .string()
-      .regex(/^\d{6}$/)
+      // Accept existing six-digit preview settings; only the first five digits are used.
+      .regex(/^\d{5,6}$/)
       .optional(),
   ),
   MELI_PAYAMAK_HOSTNAME: z.string().default('console.melipayamak.com'),

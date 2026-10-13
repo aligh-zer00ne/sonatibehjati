@@ -52,7 +52,7 @@ export async function requestOtp(raw: unknown, ip: string) {
 export async function verifyOtp(raw: unknown, ip: string) {
   const parsed = otpVerifySchema.safeParse(raw);
   if (!parsed.success)
-    throw authError('شماره موبایل و کد شش‌رقمی را بررسی کنید.', 'BAD_USER_INPUT');
+    throw authError('شماره موبایل و کد پنج‌رقمی را بررسی کنید.', 'BAD_USER_INPUT');
   await consumeAuthLimit(`otp-verify-ip:${ip}`, 50, 900);
   const { challengeId: id, phone, code } = parsed.data;
   const result = await db.$transaction(async (tx) => {

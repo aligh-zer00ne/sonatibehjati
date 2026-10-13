@@ -20,7 +20,7 @@ describe('SMS environment boundary', () => {
     const fetcher = vi.fn();
     vi.stubGlobal('fetch', fetcher);
     vi.spyOn(console, 'info').mockImplementation(() => {});
-    await createSMSService(mode, config).sendOTP('09000000001', '123456');
+    await createSMSService(mode, config).sendOTP('09000000001', '12345');
     expect(fetcher).not.toHaveBeenCalled();
   });
   it('uses the real provider in production without logging the OTP', async () => {
@@ -28,11 +28,11 @@ describe('SMS environment boundary', () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ recId: 123 })));
     vi.stubGlobal('fetch', fetcher);
     const logger = vi.spyOn(console, 'info');
-    await createSMSService('production', config).sendOTP('09000000001', '000042');
+    await createSMSService('production', config).sendOTP('09000000001', '00042');
     expect(fetcher).toHaveBeenCalledExactlyOnceWith(
       'https://console.melipayamak.com:443/api/send/shared/test-only-key',
       expect.objectContaining({
-        body: JSON.stringify({ to: '09000000001', bodyId: 123, args: ['000042'] }),
+        body: JSON.stringify({ to: '09000000001', bodyId: 123, args: ['00042'] }),
       }),
     );
     expect(logger).not.toHaveBeenCalled();

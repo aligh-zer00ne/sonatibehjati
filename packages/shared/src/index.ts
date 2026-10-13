@@ -69,6 +69,7 @@ export const selectionSchema = z
   .strict();
 
 export const otpRequestSchema = z.object({ phone: phoneSchema }).strict();
+export const OTP_LENGTH = 5;
 export const otpVerifySchema = z
   .object({
     challengeId: z.string().uuid(),
@@ -77,10 +78,9 @@ export const otpVerifySchema = z
       .string()
       .max(12)
       .transform(normalizeDigits)
-      .pipe(z.string().regex(/^\d{6}$/, 'کد شش‌رقمی را وارد کنید.')),
+      .pipe(z.string().regex(new RegExp(`^\\d{${OTP_LENGTH}}$`), 'کد پنج‌رقمی را وارد کنید.')),
   })
   .strict();
-export const OTP_LENGTH = 6;
 export const OTP_LIFETIME_SECONDS = 180;
 export const OTP_RESEND_SECONDS = 60;
 export const OTP_MAX_ATTEMPTS = 5;

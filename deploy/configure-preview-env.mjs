@@ -16,8 +16,10 @@ for (const key of [
 ]) {
   if ((api[key] ?? '').length < 32) throw new Error(`Missing existing secret: ${key}`);
 }
-if (!/^\d{6}$/.test(api.DEV_OTP_CODE ?? ''))
-  throw new Error('An existing six-digit development OTP is required.');
+if (!/^\d{5,6}$/.test(api.DEV_OTP_CODE ?? ''))
+  throw new Error(
+    'An existing five-digit development OTP (or an existing six-digit preview setting) is required.',
+  );
 if (new URL(api.DATABASE_URL).protocol !== 'mysql:')
   throw new Error('Configure the server MySQL URL first.');
 for (const name of ['.env', '.env.local', '.env.production.local']) {

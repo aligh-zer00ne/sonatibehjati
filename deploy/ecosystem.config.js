@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const apiEnv = parse(fs.readFileSync(path.join(root, 'apps/api/.env')));
 if (
   !['development', 'production'].includes(apiEnv.NODE_ENV) ||
-  (apiEnv.NODE_ENV === 'development' && !/^\d{6}$/.test(apiEnv.DEV_OTP_CODE ?? ''))
+  (apiEnv.NODE_ENV === 'development' && !/^\d{5,6}$/.test(apiEnv.DEV_OTP_CODE ?? ''))
 )
   throw new Error(
     'Configure a development preview with fixed OTP or a production API with real SMS.',

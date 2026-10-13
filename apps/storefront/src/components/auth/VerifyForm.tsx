@@ -3,7 +3,13 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LoaderCircle, RefreshCw } from 'lucide-react';
-import { otpVerifySchema, normalizeDigits, safeReturnPath, formatNumber } from '@behjati/shared';
+import {
+  otpVerifySchema,
+  normalizeDigits,
+  safeReturnPath,
+  formatNumber,
+  OTP_LENGTH,
+} from '@behjati/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RequestOtpDocument, VerifyOtpDocument } from '@/generated/graphql';
@@ -71,7 +77,7 @@ export default function VerifyForm({
     if (!challenge || pending || !expiry) return;
     const parsed = otpVerifySchema.safeParse({ challengeId: challenge.challengeId, phone, code });
     if (!parsed.success) {
-      setError('کد شش‌رقمی را وارد کنید.');
+      setError('کد پنج‌رقمی را وارد کنید.');
       return;
     }
     setPending('verify');
@@ -121,11 +127,11 @@ export default function VerifyForm({
           dir="ltr"
           inputMode="numeric"
           autoComplete="one-time-code"
-          pattern="[0-9]{6}"
-          maxLength={6}
+          pattern={`[0-9]{${OTP_LENGTH}}`}
+          maxLength={OTP_LENGTH}
           value={code}
           onChange={(event) => {
-            setCode(normalizeDigits(event.target.value).replace(/\D/g, '').slice(0, 6));
+            setCode(normalizeDigits(event.target.value).replace(/\D/g, '').slice(0, OTP_LENGTH));
             setError('');
           }}
           className="text-center text-2xl tracking-[0.5em]"

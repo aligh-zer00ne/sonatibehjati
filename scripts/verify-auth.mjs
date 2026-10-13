@@ -15,7 +15,7 @@ import {
 } from './auth-harness.mjs';
 try {
   const development = process.env.AUTH_VERIFY_DEVELOPMENT === 'true';
-  await startAPI({ environment: development ? 'development' : 'test', developmentCode: '123456' });
+  await startAPI({ environment: development ? 'development' : 'test', developmentCode: '12345' });
   const adminCount = await db.adminRefreshToken.count();
   errorCode(await gql(keys.request, { input: { phone: 'not-a-phone' } }), 'BAD_USER_INPUT');
   errorCode(
@@ -23,7 +23,8 @@ try {
     'FORBIDDEN',
   );
   const otp = await challenge();
-  if (development) assert.equal(codes.get(otp.phone), '123456');
+  if (development) assert.equal(codes.get(otp.phone), '12345');
+  assert.match(codes.get(otp.phone), /^\d{5}$/);
   const record = await db.otpCode.findUniqueOrThrow({ where: { id: otp.challengeId } });
   assert.equal(record.codeHash.length, 64);
   assert.notEqual(record.codeHash, codes.get(otp.phone));
@@ -34,7 +35,11 @@ try {
   errorCode(limited, 'RATE_LIMITED');
   assert.ok(limited.errors[0].extensions.retryAfter > 0);
   const input = verification(otp);
-  const wrong = codes.get(otp.phone) === '999999' ? '000000' : '999999';
+  errorCode(
+    await gql(keys.verify, { input: { ...input.input, code: '123456' } }),
+    'BAD_USER_INPUT',
+  );
+  const wrong = codes.get(otp.phone) === '99999' ? '00000' : '99999';
   errorCode(await gql(keys.verify, { input: { ...input.input, code: wrong } }), 'INVALID_OTP');
   assert.equal(
     (await db.otpCode.findUniqueOrThrow({ where: { id: otp.challengeId } })).attempts,
@@ -98,7 +103,7 @@ try {
   errorCode(await gql(keys.refresh, {}, existing.cookies), 'UNAUTHENTICATED');
   const attempts = await challenge(undefined, '192.0.2.2');
   const attemptInput = verification(attempts);
-  const wrongAttempt = attemptInput.input.code === '999999' ? '000000' : '999999';
+  const wrongAttempt = attemptInput.input.code === '99999' ? '00000' : '99999';
   for (let i = 0; i < 5; i++)
     errorCode(
       await gql(

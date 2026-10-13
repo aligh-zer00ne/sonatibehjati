@@ -13,7 +13,7 @@ import {
 let browser;
 try {
   const development = process.env.AUTH_VERIFY_DEVELOPMENT === 'true';
-  await startAPI({ environment: development ? 'development' : 'test', developmentCode: '123456' });
+  await startAPI({ environment: development ? 'development' : 'test', developmentCode: '12345' });
   await startStorefront();
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
@@ -78,10 +78,12 @@ try {
   await expect(page.getByRole('button', { name: /ارسال مجدد تا/ })).toBeDisabled();
   await page.reload({ waitUntil: 'networkidle' });
   await expect(page.getByLabel('کد ورود', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('کد ورود', { exact: true })).toHaveAttribute('maxlength', '5');
+  await expect(page.getByLabel('کد ورود', { exact: true })).toHaveAttribute('pattern', '[0-9]{5}');
   const code = codes.get(mobile);
   assert.ok(code);
-  if (development) assert.equal(code, '123456');
-  await page.getByLabel('کد ورود', { exact: true }).fill(code === '999999' ? '000000' : '999999');
+  if (development) assert.equal(code, '12345');
+  await page.getByLabel('کد ورود', { exact: true }).fill(code === '99999' ? '00000' : '99999');
   await page.getByRole('button', { name: 'تأیید و ورود' }).click();
   await expect(page.locator('main p[role="alert"]')).toContainText('کد نادرست');
   await page.getByLabel('کد ورود', { exact: true }).fill('');

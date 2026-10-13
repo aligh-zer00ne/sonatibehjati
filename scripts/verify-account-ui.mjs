@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { startAPI, startStorefront, origin, phone, db, cleanup } from './auth-harness.mjs';
 let browser;
 try {
-  await startAPI({ environment: 'development', developmentCode: '123456' });
+  await startAPI({ environment: 'development', developmentCode: '12345' });
   await startStorefront();
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
@@ -38,7 +38,7 @@ try {
   const mobile = phone();
   await page.getByLabel('شماره موبایل', { exact: true }).fill(mobile);
   await page.getByRole('button', { name: 'دریافت کد ورود' }).click();
-  await page.getByLabel('کد ورود', { exact: true }).fill('۱۲۳۴۵۶');
+  await page.getByLabel('کد ورود', { exact: true }).fill('۱۲۳۴۵');
   await page.getByRole('button', { name: 'تأیید و ورود' }).click();
   await expect(page).toHaveURL(origin + '/account/profile');
   await expect(page.getByLabel('شماره موبایل تأییدشده')).toHaveAttribute('readonly', '');

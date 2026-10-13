@@ -19,7 +19,7 @@ const save = 'mutation($input:AddressInput!){saveAddress(input:$input){id}}';
 const runId = `account-${Date.now()}`;
 let productId;
 try {
-  await startAPI({ environment: 'development', developmentCode: '123456' });
+  await startAPI({ environment: 'development', developmentCode: '12345' });
   const otp = await challenge();
   const login = await gql(keys.verify, verification(otp));
   const otherOtp = await challenge();

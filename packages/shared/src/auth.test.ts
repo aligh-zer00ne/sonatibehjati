@@ -7,11 +7,20 @@ describe('auth input and return paths', () => {
       otpVerifySchema.parse({
         challengeId: 'e872f995-6d7e-47b6-a73c-6550357763c3',
         phone: '٠٩٠٠٠٠٠٠٠٠١',
-        code: '٠١٢٣٤٥',
+        code: '٠١٢٣٤',
       }).code,
-    ).toBe('012345');
+    ).toBe('01234');
     expect(
       otpVerifySchema.safeParse({ challengeId: 'no', phone: '09000000001', code: '12345' }).success,
+    ).toBe(false);
+  });
+  it.each(['1234', '123456'])('rejects codes with the wrong length: %s', (code) => {
+    expect(
+      otpVerifySchema.safeParse({
+        challengeId: 'e872f995-6d7e-47b6-a73c-6550357763c3',
+        phone: '09000000001',
+        code,
+      }).success,
     ).toBe(false);
   });
   it.each([

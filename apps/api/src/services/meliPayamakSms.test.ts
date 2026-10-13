@@ -15,7 +15,7 @@ describe('user-supplied SMS adapter', () => {
       .fn<typeof fetch>()
       .mockResolvedValue(new Response(JSON.stringify({ recId: '1234567' }), { status: 200 }));
     const service = new MeliPayamakSMSService(config, fetcher);
-    await service.sendOTP('۰۹۰۰۰۰۰۰۰۰۱', '123456');
+    await service.sendOTP('۰۹۰۰۰۰۰۰۰۰۱', '12345');
     expect(fetcher.mock.calls[0]?.[0]).toBe(
       'https://console.melipayamak.com:443/api/send/shared/test%2Fkey',
     );
@@ -23,7 +23,7 @@ describe('user-supplied SMS adapter', () => {
     expect(JSON.parse(String(request?.body))).toEqual({
       to: '09000000001',
       bodyId: 123,
-      args: ['123456'],
+      args: ['12345'],
     });
     expect(request?.redirect).toBe('error');
     expect(request?.signal).toBeInstanceOf(AbortSignal);
@@ -35,7 +35,7 @@ describe('user-supplied SMS adapter', () => {
         .fn<typeof fetch>()
         .mockResolvedValue(new Response(JSON.stringify(payload)));
       await expect(
-        new MeliPayamakSMSService(config, fetcher).sendOTP('09000000001', '123456'),
+        new MeliPayamakSMSService(config, fetcher).sendOTP('09000000001', '12345'),
       ).rejects.toThrow('ارسال پیامک انجام نشد');
     },
   );
@@ -44,14 +44,14 @@ describe('user-supplied SMS adapter', () => {
       .fn<typeof fetch>()
       .mockRejectedValue(new Error('secret test/key response body'));
     await expect(
-      new MeliPayamakSMSService(config, fetcher).sendOTP('09000000001', '123456'),
+      new MeliPayamakSMSService(config, fetcher).sendOTP('09000000001', '12345'),
     ).rejects.not.toThrow('test/key');
     expect(() => new MeliPayamakSMSService({ ...config, bodyId: 0 })).toThrow();
   });
   it('never logs development OTPs in production', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     const logger = vi.spyOn(console, 'info');
-    await expect(new DevelopmentSMSService().sendOTP('09000000001', '123456')).rejects.toThrow();
+    await expect(new DevelopmentSMSService().sendOTP('09000000001', '12345')).rejects.toThrow();
     expect(logger).not.toHaveBeenCalled();
     logger.mockRestore();
   });

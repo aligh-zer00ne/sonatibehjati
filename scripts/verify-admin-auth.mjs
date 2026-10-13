@@ -12,7 +12,7 @@ import {
 } from './auth-harness.mjs';
 import { adminQueries, adminGql, createAdmin, loginAdmin, cleanupAdmin } from './admin-harness.mjs';
 try {
-  await startAPI({ environment: 'development', developmentCode: '123456' });
+  await startAPI({ environment: 'development', developmentCode: '12345' });
   const admin = await createAdmin();
   const input = { email: admin.email, password: admin.password };
   const read = 'query{adminDashboard{ordersCount}}';

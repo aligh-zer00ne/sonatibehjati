@@ -70,7 +70,7 @@ export async function startAPI({ environment = 'test', developmentCode = '' } = 
     const lines = output.split('\n');
     output = lines.pop() ?? '';
     for (const line of lines) {
-      const match = line.match(/\[Development SMS\] (09\d{9}): (\d{6})/);
+      const match = line.match(/\[Development SMS\] (09\d{9}): (\d{5})/);
       if (match) codes.set(match[1], match[2]);
     }
   });

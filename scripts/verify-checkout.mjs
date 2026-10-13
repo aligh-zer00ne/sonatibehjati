@@ -21,7 +21,7 @@ const receipt = 'query($id:ID!){orderReceipt(id:$id){id total status}}';
 const remove = 'mutation($id:ID!){deleteAddress(id:$id)}';
 let productIds = [];
 try {
-  await startAPI({ environment: 'development', developmentCode: '123456' });
+  await startAPI({ environment: 'development', developmentCode: '12345' });
   const otp = await challenge();
   const login = await gql(keys.verify, verification(otp));
   const cookie = login.cookies;
