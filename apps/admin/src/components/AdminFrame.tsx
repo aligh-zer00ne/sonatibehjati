@@ -97,7 +97,7 @@ export default function AdminFrame() {
             icon={<AdminIcon name="menu" />}
           />
         )}
-        <div className="relative z-10 min-h-0 flex-1 overflow-y-auto pb-4">
+        <div className="relative z-10 min-h-0 flex-1 overflow-y-auto pb-4 [--admin-scrollbar-track:#4f0915] [--admin-scrollbar-thumb:#d8b97b] [--admin-scrollbar-hover:#f2d4a0]">
           {navigation(collapsed)}
         </div>
         <div className="relative h-48 shrink-0 opacity-65">
@@ -115,7 +115,10 @@ export default function AdminFrame() {
         size={280}
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        classNames={{ root: 'print:!hidden', body: '!bg-[#660311] !px-0 !py-4' }}
+        classNames={{
+          root: 'print:!hidden',
+          body: '!bg-[#660311] !px-0 !py-4 [--admin-scrollbar-track:#4f0915] [--admin-scrollbar-thumb:#d8b97b] [--admin-scrollbar-hover:#f2d4a0]',
+        }}
       >
         <div id="admin-mobile-navigation">{navigation()}</div>
       </Drawer>
