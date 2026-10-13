@@ -130,7 +130,64 @@ model DiscountCode {
  isActive Boolean @default(true)
  orders Order[]
 }
+enum PaymentStatus {
+ CREATING
+ READY
+ TOKEN_FAILED
+ CANCELED
+ FAILED
+ EXPIRED
+ VERIFYING
+ VERIFY_PENDING
+ SUCCEEDED
+ REFUND_PENDING
+ REFUNDING
+ REVERSED
+ REVIEW_REQUIRED
+}
+enum PaymentMode {
+ TEST
+ LIVE
+}
+model Payment {
+ mode PaymentMode @default(LIVE)
+ id String @id
+ orderId String
+ order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+ status PaymentStatus @default(CREATING)
+ amountRials BigInt
+ terminalId String @db.VarChar(20)
+ callbackKey String @db.VarChar(64)
+ sessionKey Int
+ token String? @db.VarChar(512)
+ refNum String? @db.VarChar(100)
+ traceNumber String? @db.VarChar(100)
+ rrn String? @db.VarChar(100)
+ resultCode Int?
+ reason String? @db.VarChar(50)
+ expiresAt DateTime
+ leaseUntil DateTime?
+ retryAt DateTime?
+ verifiedAt DateTime?
+ acceptedAt DateTime?
+ reversedAt DateTime?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ reference PaymentReference?
+ @@index([orderId,createdAt])
+ @@index([status,retryAt])
+ @@index([refNum])
+}
+model PaymentReference {
+ refNum String @id @db.VarChar(100)
+ paymentId String @unique
+ payment Payment @relation(fields:[paymentId],references:[id],onDelete:Cascade)
+ amountRials BigInt
+ createdAt DateTime @default(now())
+}
 model Order {
+ paidAt DateTime?
+ payments Payment[]
  id String @id @default(cuid())
  number Int @unique @default(autoincrement())
  clientRequestId String? @db.VarChar(36)

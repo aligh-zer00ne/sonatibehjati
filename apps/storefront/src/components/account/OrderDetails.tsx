@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import PayOrderButton from '@/components/payment/PayOrderButton';
+import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
 import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
 import { AccountOrderDetailsDocument } from '@/generated/graphql';
 import { useAccountQuery } from '@/hooks/useAccountQuery';
@@ -24,11 +26,31 @@ export default function OrderDetails({ id }: { id: string }) {
         <time dateTime={order.createdAt} className="mt-3 block text-sm text-muted-foreground">
           {formatDate(order.createdAt)}
         </time>
-        {order.status === 'PENDING_PAYMENT' && (
-          <p className="mt-4 text-sm leading-7 text-primary">
-            این سفارش در انتظار پرداخت است؛ پرداخت آنلاین هنوز فعال نیست.
+        <div className="mt-4 space-y-3">
+          <p className="text-sm font-bold text-primary">
+            {order.paidAt
+              ? 'پرداخت تأییدشده'
+              : order.payments[0]
+                ? paymentStatusLabels[order.payments[0].status]
+                : 'پرداخت تأیید نشده'}
           </p>
-        )}
+          {order.payments[0]?.rrn && (
+            <p className="text-sm">
+              شماره پیگیری: <bdi>{order.payments[0].rrn}</bdi>
+            </p>
+          )}
+          {!order.paidAt &&
+            ['CREATED', 'PENDING_PAYMENT'].includes(order.status) &&
+            !pendingPaymentStates.includes(order.payments[0]?.status ?? '') && (
+              <PayOrderButton orderId={id} />
+            )}
+          {pendingPaymentStates.includes(order.payments[0]?.status ?? '') && (
+            <p className="text-sm leading-7">نتیجه در حال بررسی است؛ دوباره پرداخت نکنید.</p>
+          )}
+          <Button variant="outline" onClick={query.refresh}>
+            به‌روزرسانی وضعیت
+          </Button>
+        </div>
       </Card>
       <Card className="rounded-3xl bg-card/85 p-5">
         <h2 className="mb-4 font-extrabold">محصولات سفارش</h2>

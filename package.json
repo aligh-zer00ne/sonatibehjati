@@ -48,7 +48,10 @@
     "verify:operations-ui": "bun scripts/verify-operations-ui.mjs",
     "verify:support-ui": "bun scripts/verify-support-ui.mjs",
     "verify:admin-config": "bun scripts/verify-admin-config.mjs",
-    "verify:admin-config-ui": "bun scripts/verify-admin-config-ui.mjs"
+    "verify:admin-config-ui": "bun scripts/verify-admin-config-ui.mjs",
+    "verify:payments": "bun --env-file=apps/api/.env scripts/verify-payments.mjs",
+    "verify:payments-ui": "bun --env-file=apps/api/.env scripts/verify-payments-ui.mjs",
+    "payments:configure": "node deploy/configure-payments.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

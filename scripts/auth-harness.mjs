@@ -9,7 +9,7 @@ export const origin = 'http://localhost:3004';
 export const adminOrigin = 'http://localhost:3005';
 export const apiURL = 'http://localhost:4003';
 export const otpSecret = randomBytes(48).toString('hex');
-const proxySecret = randomBytes(48).toString('hex');
+export const proxySecret = randomBytes(48).toString('hex');
 export const codes = new Map();
 export const phones = [];
 const startedAt = new Date();
@@ -173,6 +173,7 @@ export async function cleanup() {
       `address:${id}`,
       `quote:${id}`,
       `order:${id}`,
+      `payment:${id}`,
       `location:${id}`,
       `profile:${id}`,
       `ticket:${id}`,

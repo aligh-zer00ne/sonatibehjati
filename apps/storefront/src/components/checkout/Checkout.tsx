@@ -424,8 +424,8 @@ export default function Checkout() {
           {pending ? 'در حال ثبت سفارش...' : 'ثبت سفارش'}
         </Button>
         <p className="text-xs leading-7 text-muted-foreground">
-          سفارش با وضعیت «در انتظار پرداخت» ثبت می‌شود. پرداخت آنلاین هنوز فعال نیست و در این مرحله
-          وجهی دریافت نمی‌شود.
+          پس از ثبت سفارش می‌توانید پرداخت را از درگاه سامان انجام دهید. سفارش فقط پس از تأیید
+          پرداخت توسط بانک، پرداخت‌شده محسوب می‌شود.
         </p>
         <Link href="/cart" className="block min-h-11 text-center text-sm text-earth">
           بازگشت به سبد خرید

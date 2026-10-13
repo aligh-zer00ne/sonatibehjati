@@ -94,7 +94,7 @@ npm run db:migrate
 restart_or_start() {
   local application_name=$1
   if pm2 describe "$application_name" >/dev/null 2>&1; then
-    pm2 restart "$application_name" --update-env
+    pm2 restart deploy/ecosystem.config.js --only "$application_name" --update-env
   else
     pm2 start deploy/ecosystem.config.js --only "$application_name"
   fi

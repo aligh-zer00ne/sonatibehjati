@@ -92,7 +92,9 @@ export default function Invoice({
           وضعیت سفارش: <b>{orderStatusLabels[order.status]}</b>
         </p>
         <p className="text-[10px]">
-          این فاکتور، رسید پرداخت نیست. پرداخت آنلاین در این نسخه فعال نیست.
+          {order.paidAt
+            ? 'پرداخت این سفارش توسط بانک تأیید شده است.'
+            : 'پرداخت این سفارش تأیید نشده است؛ این برگه رسید پرداخت نیست.'}
         </p>
       </section>
       <footer className="mt-4 print:mt-2 flex break-inside-avoid items-center justify-between gap-4 border-t border-slate-300 pt-3">

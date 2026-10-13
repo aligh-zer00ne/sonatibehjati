@@ -1,3 +1,5 @@
+import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
+import { RetryAdminPaymentDocument } from '../generated/graphql';
 import { Money } from '../components/Money';
 import { lazy, Suspense, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -93,6 +95,58 @@ export default function OrderDetails() {
             },
           ]}
         />
+      </Card>
+      <Card title="پرداخت‌های سفارش">
+        <p className="mb-4 font-bold">
+          {order.paidAt ? 'پرداخت بانک تأیید شده است' : 'پرداخت بانک تأیید نشده است'}
+        </p>
+        {order.payments.length ? (
+          <div className="space-y-3">
+            {order.payments.map((payment) => (
+              <div
+                key={payment.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#e8ded1] p-3"
+              >
+                <div>
+                  <p>
+                    {paymentStatusLabels[payment.status]}
+                    {payment.bankCode !== null &&
+                    payment.bankCode !== undefined &&
+                    payment.status === 'TOKEN_FAILED'
+                      ? ` · کد بانک: ${payment.bankCode}`
+                      : ''}
+                  </p>
+                  <p className="mt-1 text-xs">
+                    رسید بانک: <bdi>{payment.reference ?? '—'}</bdi> · پیگیری:{' '}
+                    <bdi>{payment.rrn ?? payment.traceNumber ?? '—'}</bdi>
+                  </p>
+                </div>
+                {pendingPaymentStates.includes(payment.status) &&
+                  (payment.status !== 'REVIEW_REQUIRED' ||
+                    [
+                      'VERIFICATION_UNRESOLVED',
+                      'REFUND_UNCONFIRMED',
+                      'BANK_DETAILS_MISMATCH',
+                    ].includes(payment.reason ?? '')) && (
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await adminRequest(RetryAdminPaymentDocument, { paymentId: payment.id });
+                          query.refresh();
+                        } catch (e) {
+                          void message.error(e instanceof Error ? e.message : 'بررسی انجام نشد.');
+                        }
+                      }}
+                    >
+                      پیگیری بانک
+                    </Button>
+                  )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-[#7d746a]">تراکنشی برای این سفارش ثبت نشده است.</p>
+        )}
       </Card>
       <Card title="محصولات هنگام ثبت سفارش">
         <Table<AdminOrderFieldsFragment['items'][number]>

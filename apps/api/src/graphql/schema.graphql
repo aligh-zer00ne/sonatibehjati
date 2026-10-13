@@ -202,6 +202,8 @@ type CheckoutQuote {
   total: Int!
 }
 type OrderReceipt {
+  paidAt: String
+  payments: [PaymentInfo!]!
   id: ID!
   number: Int!
   status: String!
@@ -245,6 +247,8 @@ type AccountOrderSummary {
   createdAt: String!
 }
 type AccountOrder {
+  paidAt: String
+  payments: [PaymentInfo!]!
   id: ID!
   number: Int!
   status: OrderStatus!
@@ -425,6 +429,8 @@ type AdminOrderSummary {
   address: OrderAddressSnapshot!
 }
 type AdminOrder {
+  paidAt: String
+  payments: [PaymentInfo!]!
   shippingLabel: AdminShippingLabel
   id: ID!
   number: Int!
@@ -738,4 +744,43 @@ extend type Query {
 }
 extend type Mutation {
   saveHomepageContent(input: HomepageContentInput!, expectedUpdatedAt: String): HomepageContent!
+}
+
+enum PaymentStatus {
+  CREATING
+  READY
+  TOKEN_FAILED
+  CANCELED
+  FAILED
+  EXPIRED
+  VERIFYING
+  VERIFY_PENDING
+  SUCCEEDED
+  REFUND_PENDING
+  REFUNDING
+  REVERSED
+  REVIEW_REQUIRED
+}
+type PaymentInfo {
+ bankCode: Int
+  id: ID!
+  status: PaymentStatus!
+  amount: Int!
+  reference: String
+  traceNumber: String
+  rrn: String
+  reason: String
+  createdAt: String!
+  verifiedAt: String
+  reversedAt: String
+}
+type PaymentRedirect {
+  redirectUrl: String!
+}
+extend type Query {
+  paymentAvailable: Boolean!
+}
+extend type Mutation {
+  startOrderPayment(orderId: ID!): PaymentRedirect!
+  retryAdminPayment(paymentId: ID!): PaymentInfo!
 }

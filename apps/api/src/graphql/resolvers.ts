@@ -1,3 +1,4 @@
+import { paymentResolvers } from '../modules/payments/resolvers.js';
 import { supportResolvers } from '../modules/support/resolvers.js';
 import { adminResolvers } from '../modules/admin/resolvers.js';
 import { accountResolvers } from '../modules/account/resolvers.js';
@@ -8,7 +9,9 @@ import { productRepository } from '../modules/products/repository.js';
 import { catalogRepository } from '../modules/products/catalog.js';
 import { serializeProduct as serialize } from '../modules/products/presentation.js';
 export const resolvers: Resolvers = {
+  OrderReceipt: paymentResolvers.OrderReceipt, AccountOrder: paymentResolvers.AccountOrder, AdminOrder: paymentResolvers.AdminOrder,
   Mutation: {
+    ...paymentResolvers.Mutation,
     ...authResolvers.Mutation,
     ...supportResolvers.Mutation,
     ...adminResolvers.Mutation,
@@ -16,6 +19,7 @@ export const resolvers: Resolvers = {
     ...accountResolvers.Mutation,
   },
   Query: {
+    ...paymentResolvers.Query,
     ...authResolvers.Query,
     ...supportResolvers.Query,
     ...adminResolvers.Query,

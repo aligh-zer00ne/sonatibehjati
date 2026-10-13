@@ -20,6 +20,3 @@ export interface MapService {
 export interface GeocodingService {
   reverse(coordinates: Coordinates): Promise<string | null>;
 }
-export interface PaymentService {
-  createPayment(orderId: string): Promise<{ redirectUrl: string }>;
-}

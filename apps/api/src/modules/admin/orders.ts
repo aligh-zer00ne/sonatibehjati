@@ -1,4 +1,5 @@
 import { presentAdminIdentity } from './identity.js';
+import { env } from '../../config/env.js';
 import type { Prisma } from '@prisma/client';
 import {
   adminOrdersFilterSchema,
@@ -127,6 +128,12 @@ export async function changeOrderStatus(adminId: string, raw: unknown) {
       );
     if (!orderStatusTransitions[order.status].includes(input.status))
       throw authError('این تغییر وضعیت مجاز نیست.', 'BAD_USER_INPUT');
+    if (
+      env.PAYMENT_PROVIDER === 'sep' &&
+      ['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(input.status) &&
+      !order.paidAt
+    )
+      throw authError('پرداخت این سفارش هنوز توسط بانک تأیید نشده است.', 'BAD_USER_INPUT');
     await tx.order.update({ where: { id: input.id }, data: { status: input.status } });
     await tx.orderStatusEvent.create({
       data: { orderId: input.id, adminId, fromStatus: order.status, toStatus: input.status },

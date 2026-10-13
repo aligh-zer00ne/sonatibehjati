@@ -4,7 +4,15 @@ const config: CodegenConfig = {
   generates: {
     'apps/api/src/generated/resolvers.ts': {
       plugins: ['typescript', 'typescript-resolvers'],
-      config: { contextType: '../graphql/context.js#AuthContext', enumsAsTypes: true },
+      config: {
+        contextType: '../graphql/context.js#AuthContext',
+        enumsAsTypes: true,
+        mappers: {
+          OrderReceipt: '../modules/payments/types.js#ReceiptSource',
+          AccountOrder: '../modules/payments/types.js#AccountOrderSource',
+          AdminOrder: '../modules/payments/types.js#AdminOrderSource',
+        },
+      },
     },
     'apps/storefront/src/generated/': {
       preset: 'client',

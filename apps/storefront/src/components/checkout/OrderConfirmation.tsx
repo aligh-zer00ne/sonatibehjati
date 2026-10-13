@@ -9,6 +9,8 @@ import { authRequest } from '@/lib/auth/client';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import PayOrderButton from '@/components/payment/PayOrderButton';
+import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
 import { Skeleton } from '@/components/ui/skeleton';
 export default function OrderConfirmation({ id }: { id: string }) {
   const { user, loading, error: authError, refresh } = useAuth();
@@ -57,17 +59,32 @@ export default function OrderConfirmation({ id }: { id: string }) {
   return (
     <Card className="mx-auto max-w-[520px] space-y-5 rounded-3xl bg-card/90 p-7 text-center">
       <ClipboardCheck className="mx-auto text-primary" size={44} />
-      <h1 className="text-2xl font-extrabold">سفارش شما ثبت شد</h1>
+      <h1 className="text-2xl font-extrabold">
+        {order.paidAt ? 'پرداخت شما تأیید شد' : 'سفارش شما ثبت شد'}
+      </h1>
       <p>
         شمارهٔ سفارش: <b>{formatNumber(order.number)}</b>
       </p>
       <p className="rounded-xl bg-primary/5 p-3 font-bold text-primary">
-        {order.status === 'PENDING_PAYMENT' ? 'در انتظار پرداخت' : 'سفارش ثبت‌شده'}
+        {order.paidAt
+          ? 'پرداخت موفق'
+          : order.payments[0]
+            ? paymentStatusLabels[order.payments[0].status]
+            : order.status === 'PENDING_PAYMENT'
+              ? 'در انتظار پرداخت'
+              : 'سفارش ثبت‌شده'}
       </p>
       <p className="font-bold">مبلغ سفارش: {formatPrice(order.total)}</p>
       <p className="text-sm leading-8 text-muted-foreground">
-        پرداختی انجام نشده است. پرداخت آنلاین هنوز فعال نیست.
+        {order.paidAt
+          ? 'بانک پرداخت را تأیید کرده است؛ سفارش در حال پیگیری است.'
+          : 'پرداخت سفارش پس از تأیید بانک ثبت می‌شود.'}
       </p>
+      {!order.paidAt &&
+        ['CREATED', 'PENDING_PAYMENT'].includes(order.status) &&
+        !pendingPaymentStates.includes(order.payments[0]?.status ?? '') && (
+          <PayOrderButton orderId={id} />
+        )}
       <Button className="w-full" asChild>
         <Link href="/shop">ادامهٔ خرید</Link>
       </Button>

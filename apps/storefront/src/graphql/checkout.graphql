@@ -51,6 +51,10 @@ query CheckoutQuote($input: CheckoutInput!) {
   }
 }
 fragment Receipt on OrderReceipt {
+  paidAt
+  payments {
+    ...PaymentFields
+  }
   id
   number
   status
@@ -68,5 +72,26 @@ mutation CreateCheckoutOrder($input: CreateOrderInput!) {
 query CheckoutOrderReceipt($id: ID!) {
   orderReceipt(id: $id) {
     ...Receipt
+  }
+}
+
+fragment PaymentFields on PaymentInfo {
+  id
+  status
+  amount
+  reference
+  traceNumber
+  rrn
+  reason
+  createdAt
+  verifiedAt
+  reversedAt
+}
+query PaymentAvailability {
+  paymentAvailable
+}
+mutation StartOrderPayment($orderId: ID!) {
+  startOrderPayment(orderId: $orderId) {
+    redirectUrl
   }
 }

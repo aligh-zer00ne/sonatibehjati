@@ -4,9 +4,12 @@ const fs = require('node:fs');
 const { parse } = require('dotenv');
 const root = path.resolve(__dirname, '..');
 const apiEnv = parse(fs.readFileSync(path.join(root, 'apps/api/.env')));
-if (apiEnv.NODE_ENV !== 'development' || !/^\d{6}$/.test(apiEnv.DEV_OTP_CODE ?? ''))
+if (
+  !['development', 'production'].includes(apiEnv.NODE_ENV) ||
+  (apiEnv.NODE_ENV === 'development' && !/^\d{6}$/.test(apiEnv.DEV_OTP_CODE ?? ''))
+)
   throw new Error(
-    'This ecosystem is for the password-protected preview with the existing fixed OTP.',
+    'Configure a development preview with fixed OTP or a production API with real SMS.',
   );
 module.exports = {
   apps: [
@@ -17,7 +20,7 @@ module.exports = {
       interpreter: process.execPath,
       exec_mode: 'fork',
       instances: 1,
-      env: { NODE_ENV: 'development', PORT: '4100' },
+      env: { NODE_ENV: apiEnv.NODE_ENV, PORT: '4100' },
       autorestart: true,
       watch: false,
       restart_delay: 2000,

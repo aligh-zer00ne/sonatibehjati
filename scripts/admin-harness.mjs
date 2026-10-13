@@ -158,6 +158,7 @@ export async function cleanupAdmin() {
     `staff:${admin.id}`,
     `export:${admin.id}`,
     `support:${admin.id}`,
+    `payment-check:${admin.id}`,
   ]);
   for (const ip of [
     '127.0.0.1',

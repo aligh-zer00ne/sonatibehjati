@@ -11,17 +11,21 @@ import { operationLimits } from './graphql/limits.js';
 import { env } from './config/env.js';
 import { resolvers } from './graphql/resolvers.js';
 import { db } from './database/client.js';
+import { paymentRoutes } from './modules/payments/routes.js';
+import { startPaymentWorker } from './modules/payments/worker.js';
 import { adminUploads } from './modules/admin/uploads.js';
 const app = express();
 app.disable('x-powered-by');
 app.use(helmet());
 app.use(cors({ origin: [env.STOREFRONT_ORIGIN, env.ADMIN_ORIGIN], credentials: true }));
+app.use(paymentRoutes);
 app.use(
   rateLimit({ windowMs: 60000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }),
 );
 app.use(express.json({ limit: '64kb' }));
 app.get('/health', (_request, response) => response.json({ status: 'ok' }));
 app.use(adminUploads);
+
 const yoga = createYoga<{ req: IncomingMessage; res: ServerResponse }, AuthContext>({
   context: createAuthContext,
   cors: false,
@@ -43,7 +47,9 @@ app.use('/graphql', (req, res) => {
   void yoga(req, res, { req, res });
 });
 const server = app.listen(env.PORT, () => console.info(`API listening on ${env.PORT}`));
+const stopPaymentWorker = startPaymentWorker();
 async function shutdown() {
+  stopPaymentWorker();
   server.close();
   await db.$disconnect();
 }

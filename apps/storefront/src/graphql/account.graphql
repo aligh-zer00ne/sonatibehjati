@@ -23,6 +23,10 @@ query AccountOrders($input: MyOrdersInput!) {
 }
 query AccountOrderDetails($id: ID!) {
   myOrder(id: $id) {
+    paidAt
+    payments {
+      ...PaymentFields
+    }
     id
     number
     status

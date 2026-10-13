@@ -38,6 +38,22 @@ const schema = z.object({
     (value) => (value === '' ? undefined : value),
     z.coerce.number().int().positive().optional(),
   ),
+  PAYMENT_PROVIDER: z.enum(['disabled', 'sep']).default('disabled'),
+  SEP_TERMINAL_ID: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string()
+      .regex(/^\d{1,10}$/)
+      .optional(),
+  ),
+  SEP_CALLBACK_ORIGIN: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().url().optional(),
+  ),
+  SEP_TEST_BASE_URL: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().url().optional(),
+  ),
   SHIPPING_COST: z.coerce.number().int().nonnegative().default(60000),
   UPLOAD_DIRECTORY: z.preprocess(
     (value) => (value === '' ? undefined : value),
@@ -72,3 +88,28 @@ const configuredTokenSecrets = [
 ].filter(Boolean);
 if (new Set(configuredTokenSecrets).size !== configuredTokenSecrets.length)
   throw new Error('Token secrets must be independent across roles and kinds.');
+
+if (
+  env.SEP_TEST_BASE_URL &&
+  (env.NODE_ENV !== 'test' ||
+    !['127.0.0.1', 'localhost', '[::1]'].includes(new URL(env.SEP_TEST_BASE_URL).hostname))
+)
+  throw new Error('Payment test endpoints are permitted only in local tests.');
+if (env.PAYMENT_PROVIDER === 'sep') {
+  if (env.NODE_ENV === 'test' && !env.SEP_TEST_BASE_URL)
+    throw new Error('Payment tests require a local bank simulator.');
+  if (!env.SEP_TERMINAL_ID || Number(env.SEP_TERMINAL_ID) <= 0)
+    throw new Error('Configure SEP_TERMINAL_ID.');
+  const callback = new URL(env.SEP_CALLBACK_ORIGIN ?? env.STOREFRONT_ORIGIN);
+  if (
+    callback.pathname !== '/' ||
+    callback.search ||
+    callback.hash ||
+    callback.username ||
+    callback.password
+  )
+    throw new Error('SEP_CALLBACK_ORIGIN must be an origin.');
+  if (env.NODE_ENV !== 'test' && callback.protocol !== 'https:')
+    throw new Error('Real SEP callbacks require HTTPS.');
+  z.string().min(32).parse(env.AUTH_PROXY_SECRET);
+}

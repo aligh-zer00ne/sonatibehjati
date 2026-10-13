@@ -1,3 +1,4 @@
+import { paymentMode } from '../payments/service.js';
 import { Prisma } from '@prisma/client';
 import { adminReportFilterSchema } from '@behjati/shared/admin';
 import { orderStatuses } from '@behjati/shared';
@@ -33,7 +34,7 @@ export async function adminReport(raw: Record<string, unknown>) {
     ...(input.status ? { status: input.status } : {}),
   };
   const statusClause = input.status ? Prisma.sql`AND status = ${input.status}` : Prisma.empty;
-  const [daily, statuses, aggregate, count] = await db.$transaction([
+  const [daily, statuses, aggregate, count, income, incomeDaily] = await db.$transaction([
     db.$queryRaw<Array<{ date: string; ordersCount: bigint; orderValue: Prisma.Decimal }>>(
       Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, COUNT(*) AS ordersCount, SUM(CASE WHEN status <> 'CANCELED' THEN total ELSE 0 END) AS orderValue FROM \`Order\` WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} ${statusClause} GROUP BY date ORDER BY date`,
     ),
@@ -46,6 +47,18 @@ export async function adminReport(raw: Record<string, unknown>) {
       _avg: { total: true },
     }),
     db.order.count({ where }),
+    db.payment.aggregate({
+      where: {
+        status: 'SUCCEEDED',
+        mode: paymentMode,
+        acceptedAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
+        ...(input.status ? { order: { status: input.status } } : {}),
+      },
+      _sum: { amountRials: true },
+    }),
+    db.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
+      Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(p.acceptedAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(p.amountRials) AS revenue FROM Payment p JOIN \`Order\` o ON o.id = p.orderId WHERE p.mode = ${paymentMode} AND p.status = 'SUCCEEDED' AND p.acceptedAt >= ${where.createdAt.gte} AND p.acceptedAt < ${where.createdAt.lt} ${input.status ? Prisma.sql`AND o.status = ${input.status}` : Prisma.empty} GROUP BY date ORDER BY date`,
+    ),
   ]);
   return {
     from: input.from,
@@ -53,14 +66,14 @@ export async function adminReport(raw: Record<string, unknown>) {
     ordersCount: count,
     orderValue: aggregate._sum.total ?? 0,
     averageOrderValue: aggregate._avg.total ?? 0,
-    revenue: 0,
+    revenue: Number((income._sum.amountRials ?? 0n) / 10n),
     daily: dateDays(input.from, input.to).map((date) => {
       const value = daily.find((row) => row.date === date);
       return {
         date,
         ordersCount: Number(value?.ordersCount ?? 0),
         orderValue: Number(value?.orderValue ?? 0),
-        revenue: 0,
+        revenue: Number(incomeDaily.find((row) => row.date === date)?.revenue ?? 0) / 10,
       };
     }),
     statuses: orderStatuses.map((status) => ({
@@ -76,6 +89,7 @@ export async function adminDashboard() {
     ordersToday,
     ordersThisMonth,
     values,
+    paidIncome,
     recent,
     report,
     activeProductsCount,
@@ -89,6 +103,10 @@ export async function adminDashboard() {
       where: { status: { not: 'CANCELED' } },
       _sum: { total: true },
       _avg: { total: true },
+    }),
+    db.payment.aggregate({
+      where: { status: 'SUCCEEDED', mode: paymentMode },
+      _sum: { amountRials: true },
     }),
     adminOrders({ page: 1, pageSize: 5 }),
     adminReport({ from, to: today }),
@@ -132,7 +150,7 @@ export async function adminDashboard() {
     ordersThisMonth,
     orderValue: values._sum.total ?? 0,
     averageOrderValue: values._avg.total ?? 0,
-    revenue: 0,
+    revenue: Number((paidIncome._sum.amountRials ?? 0n) / 10n),
     recentOrders: recent.items,
     report,
   };

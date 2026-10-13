@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { ReceiptSource, AccountOrderSource, AdminOrderSource } from '../modules/payments/types.js';
 import { AuthContext } from '../graphql/context.js';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -25,6 +26,8 @@ export type AccountOrder = {
   id: Scalars['ID']['output'];
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
+  paidAt?: Maybe<Scalars['String']['output']>;
+  payments: Array<PaymentInfo>;
   shipping: Scalars['Int']['output'];
   status: OrderStatus;
   subtotal: Scalars['Int']['output'];
@@ -142,6 +145,8 @@ export type AdminOrder = {
   id: Scalars['ID']['output'];
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
+  paidAt?: Maybe<Scalars['String']['output']>;
+  payments: Array<PaymentInfo>;
   shipping: Scalars['Int']['output'];
   shippingLabel?: Maybe<AdminShippingLabel>;
   status: OrderStatus;
@@ -563,6 +568,7 @@ export type Mutation = {
   replyAdminTicket: SupportTicket;
   replyTicket: SupportTicket;
   requestOtp: OtpChallenge;
+  retryAdminPayment: PaymentInfo;
   saveAddress: Address;
   saveAdminCoupon: AdminCoupon;
   saveAdminProduct: Product;
@@ -573,6 +579,7 @@ export type Mutation = {
   setAdminTicketStatus: SupportTicket;
   setStaffActive: AdminIdentity;
   setStaffPermissions: AdminIdentity;
+  startOrderPayment: PaymentRedirect;
   submitProductReview: ProductReview;
   updateAdminOrderStatus: AdminOrder;
   updateProfile: AuthUser;
@@ -635,6 +642,11 @@ export type MutationReplyTicketArgs = {
 
 export type MutationRequestOtpArgs = {
   input: RequestOtpInput;
+};
+
+
+export type MutationRetryAdminPaymentArgs = {
+  paymentId: Scalars['ID']['input'];
 };
 
 
@@ -703,6 +715,11 @@ export type MutationSetStaffPermissionsArgs = {
 };
 
 
+export type MutationStartOrderPaymentArgs = {
+  orderId: Scalars['ID']['input'];
+};
+
+
 export type MutationSubmitProductReviewArgs = {
   input: ReviewInput;
 };
@@ -767,6 +784,8 @@ export type OrderReceipt = {
   discount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   number: Scalars['Int']['output'];
+  paidAt?: Maybe<Scalars['String']['output']>;
+  payments: Array<PaymentInfo>;
   shipping: Scalars['Int']['output'];
   status: Scalars['String']['output'];
   subtotal: Scalars['Int']['output'];
@@ -797,6 +816,41 @@ export type OtpChallenge = {
   phone: Scalars['String']['output'];
   resendAt: Scalars['String']['output'];
 };
+
+export type PaymentInfo = {
+  __typename?: 'PaymentInfo';
+  amount: Scalars['Int']['output'];
+  bankCode?: Maybe<Scalars['Int']['output']>;
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  reason?: Maybe<Scalars['String']['output']>;
+  reference?: Maybe<Scalars['String']['output']>;
+  reversedAt?: Maybe<Scalars['String']['output']>;
+  rrn?: Maybe<Scalars['String']['output']>;
+  status: PaymentStatus;
+  traceNumber?: Maybe<Scalars['String']['output']>;
+  verifiedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type PaymentRedirect = {
+  __typename?: 'PaymentRedirect';
+  redirectUrl: Scalars['String']['output'];
+};
+
+export type PaymentStatus =
+  | 'CANCELED'
+  | 'CREATING'
+  | 'EXPIRED'
+  | 'FAILED'
+  | 'READY'
+  | 'REFUNDING'
+  | 'REFUND_PENDING'
+  | 'REVERSED'
+  | 'REVIEW_REQUIRED'
+  | 'SUCCEEDED'
+  | 'TOKEN_FAILED'
+  | 'VERIFYING'
+  | 'VERIFY_PENDING';
 
 export type Product = {
   __typename?: 'Product';
@@ -896,6 +950,7 @@ export type Query = {
   myTickets: TicketPage;
   orderByRequestId?: Maybe<OrderReceipt>;
   orderReceipt: OrderReceipt;
+  paymentAvailable: Scalars['Boolean']['output'];
   product?: Maybe<Product>;
   productReviews: ReviewPage;
   products: Array<Product>;
@@ -1196,7 +1251,7 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AccountOrder: ResolverTypeWrapper<AccountOrder>;
+  AccountOrder: ResolverTypeWrapper<AccountOrderSource>;
   AccountOrderSummary: ResolverTypeWrapper<AccountOrderSummary>;
   Address: ResolverTypeWrapper<Address>;
   AddressInput: AddressInput;
@@ -1206,7 +1261,7 @@ export type ResolversTypes = {
   AdminDashboard: ResolverTypeWrapper<AdminDashboard>;
   AdminIdentity: ResolverTypeWrapper<AdminIdentity>;
   AdminLoginInput: AdminLoginInput;
-  AdminOrder: ResolverTypeWrapper<AdminOrder>;
+  AdminOrder: ResolverTypeWrapper<AdminOrderSource>;
   AdminOrderSort: AdminOrderSort;
   AdminOrderStatusInput: AdminOrderStatusInput;
   AdminOrderSummary: ResolverTypeWrapper<AdminOrderSummary>;
@@ -1260,10 +1315,13 @@ export type ResolversTypes = {
   MyOrdersPage: ResolverTypeWrapper<MyOrdersPage>;
   OrderAddressSnapshot: ResolverTypeWrapper<OrderAddressSnapshot>;
   OrderItemSnapshot: ResolverTypeWrapper<OrderItemSnapshot>;
-  OrderReceipt: ResolverTypeWrapper<OrderReceipt>;
+  OrderReceipt: ResolverTypeWrapper<ReceiptSource>;
   OrderStatus: OrderStatus;
   OrderStatusEvent: ResolverTypeWrapper<OrderStatusEvent>;
   OtpChallenge: ResolverTypeWrapper<OtpChallenge>;
+  PaymentInfo: ResolverTypeWrapper<PaymentInfo>;
+  PaymentRedirect: ResolverTypeWrapper<PaymentRedirect>;
+  PaymentStatus: PaymentStatus;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
   ProductPromotion: ResolverTypeWrapper<ProductPromotion>;
@@ -1290,7 +1348,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  AccountOrder: AccountOrder;
+  AccountOrder: AccountOrderSource;
   AccountOrderSummary: AccountOrderSummary;
   Address: Address;
   AddressInput: AddressInput;
@@ -1300,7 +1358,7 @@ export type ResolversParentTypes = {
   AdminDashboard: AdminDashboard;
   AdminIdentity: AdminIdentity;
   AdminLoginInput: AdminLoginInput;
-  AdminOrder: AdminOrder;
+  AdminOrder: AdminOrderSource;
   AdminOrderStatusInput: AdminOrderStatusInput;
   AdminOrderSummary: AdminOrderSummary;
   AdminOrdersInput: AdminOrdersInput;
@@ -1349,9 +1407,11 @@ export type ResolversParentTypes = {
   MyOrdersPage: MyOrdersPage;
   OrderAddressSnapshot: OrderAddressSnapshot;
   OrderItemSnapshot: OrderItemSnapshot;
-  OrderReceipt: OrderReceipt;
+  OrderReceipt: ReceiptSource;
   OrderStatusEvent: OrderStatusEvent;
   OtpChallenge: OtpChallenge;
+  PaymentInfo: PaymentInfo;
+  PaymentRedirect: PaymentRedirect;
   Product: Product;
   ProductImage: ProductImage;
   ProductPromotion: ProductPromotion;
@@ -1380,6 +1440,8 @@ export type AccountOrderResolvers<ContextType = AuthContext, ParentType extends 
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes['OrderItemSnapshot']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1460,6 +1522,8 @@ export type AdminOrderResolvers<ContextType = AuthContext, ParentType extends Re
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes['OrderItemSnapshot']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   shippingLabel?: Resolver<Maybe<ResolversTypes['AdminShippingLabel']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
@@ -1671,6 +1735,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   replyAdminTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationReplyAdminTicketArgs, 'input'>>;
   replyTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationReplyTicketArgs, 'input'>>;
   requestOtp?: Resolver<ResolversTypes['OtpChallenge'], ParentType, ContextType, RequireFields<MutationRequestOtpArgs, 'input'>>;
+  retryAdminPayment?: Resolver<ResolversTypes['PaymentInfo'], ParentType, ContextType, RequireFields<MutationRetryAdminPaymentArgs, 'paymentId'>>;
   saveAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationSaveAddressArgs, 'input'>>;
   saveAdminCoupon?: Resolver<ResolversTypes['AdminCoupon'], ParentType, ContextType, RequireFields<MutationSaveAdminCouponArgs, 'input'>>;
   saveAdminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSaveAdminProductArgs, 'input'>>;
@@ -1681,6 +1746,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   setAdminTicketStatus?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationSetAdminTicketStatusArgs, 'expectedUpdatedAt' | 'id' | 'status'>>;
   setStaffActive?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType, RequireFields<MutationSetStaffActiveArgs, 'id' | 'isActive'>>;
   setStaffPermissions?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType, RequireFields<MutationSetStaffPermissionsArgs, 'id' | 'permissions'>>;
+  startOrderPayment?: Resolver<ResolversTypes['PaymentRedirect'], ParentType, ContextType, RequireFields<MutationStartOrderPaymentArgs, 'orderId'>>;
   submitProductReview?: Resolver<ResolversTypes['ProductReview'], ParentType, ContextType, RequireFields<MutationSubmitProductReviewArgs, 'input'>>;
   updateAdminOrderStatus?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationUpdateAdminOrderStatusArgs, 'input'>>;
   updateProfile?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
@@ -1722,6 +1788,8 @@ export type OrderReceiptResolvers<ContextType = AuthContext, ParentType extends 
   discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1741,6 +1809,24 @@ export type OtpChallengeResolvers<ContextType = AuthContext, ParentType extends 
   expiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resendAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type PaymentInfoResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['PaymentInfo'] = ResolversParentTypes['PaymentInfo']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  bankCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reference?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reversedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  rrn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['PaymentStatus'], ParentType, ContextType>;
+  traceNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  verifiedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
+export type PaymentRedirectResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['PaymentRedirect'] = ResolversParentTypes['PaymentRedirect']> = {
+  redirectUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type ProductResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
@@ -1823,6 +1909,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   myTickets?: Resolver<ResolversTypes['TicketPage'], ParentType, ContextType, RequireFields<QueryMyTicketsArgs, 'input'>>;
   orderByRequestId?: Resolver<Maybe<ResolversTypes['OrderReceipt']>, ParentType, ContextType, RequireFields<QueryOrderByRequestIdArgs, 'requestId'>>;
   orderReceipt?: Resolver<ResolversTypes['OrderReceipt'], ParentType, ContextType, RequireFields<QueryOrderReceiptArgs, 'id'>>;
+  paymentAvailable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'slug'>>;
   productReviews?: Resolver<ResolversTypes['ReviewPage'], ParentType, ContextType, RequireFields<QueryProductReviewsArgs, 'productId'>>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, Partial<QueryProductsArgs>>;
@@ -1900,6 +1987,8 @@ export type Resolvers<ContextType = AuthContext> = {
   OrderReceipt?: OrderReceiptResolvers<ContextType>;
   OrderStatusEvent?: OrderStatusEventResolvers<ContextType>;
   OtpChallenge?: OtpChallengeResolvers<ContextType>;
+  PaymentInfo?: PaymentInfoResolvers<ContextType>;
+  PaymentRedirect?: PaymentRedirectResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductImage?: ProductImageResolvers<ContextType>;
   ProductPromotion?: ProductPromotionResolvers<ContextType>;

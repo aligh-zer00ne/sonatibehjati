@@ -30,6 +30,7 @@ import {
   CreateCheckoutOrderDocument,
   CheckoutOrderReceiptDocument,
   RecoverCheckoutOrderDocument,
+  StartOrderPaymentDocument,
 } from '@/generated/graphql';
 import {
   ticketInput,
@@ -49,6 +50,10 @@ import {
 } from '@/generated/graphql';
 const empty = z.object({}).strict();
 const operations = {
+  StartOrderPayment: {
+    document: StartOrderPaymentDocument,
+    schema: z.object({ orderId: z.string().min(1).max(100) }).strict(),
+  },
   MyTickets: { document: MyTicketsDocument, schema: z.object({ input: ticketFilter }).strict() },
   MyTicket: { document: MyTicketDocument, schema: z.object({ id: entityId }).strict() },
   CreateTicket: {
@@ -125,6 +130,7 @@ const operations = {
 export const proxyInputSchema = z
   .object({
     operation: z.enum([
+      'StartOrderPayment',
       'MyTickets',
       'MyTicket',
       'CreateTicket',
@@ -214,6 +220,11 @@ export async function proxyAuth(request: Request, input: ProxyInput) {
       'REQUEST_CONFLICT',
       'PRICE_CHANGED',
       'LOCATION_UNAVAILABLE',
+      'PAYMENT_DISABLED',
+      'PAYMENT_UNAVAILABLE',
+      'PAYMENT_PENDING',
+      'ALREADY_PAID',
+      'ORDER_NOT_PAYABLE',
     ];
     if (result.body.errors)
       result.body = {

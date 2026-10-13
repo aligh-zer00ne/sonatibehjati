@@ -132,6 +132,10 @@ fragment AdminOrderSummaryFields on AdminOrderSummary {
   }
 }
 fragment AdminOrderFields on AdminOrder {
+  paidAt
+  payments {
+    ...AdminPaymentFields
+  }
   shippingLabel {
     ...AdminShippingLabelFields
   }
@@ -475,5 +479,24 @@ query AdminHomepageContent {
 mutation SaveHomepageContent($input: HomepageContentInput!, $expectedUpdatedAt: String) {
   saveHomepageContent(input: $input, expectedUpdatedAt: $expectedUpdatedAt) {
     ...HomepageContentFields
+  }
+}
+
+fragment AdminPaymentFields on PaymentInfo {
+ bankCode
+  id
+  status
+  amount
+  reference
+  traceNumber
+  rrn
+  reason
+  createdAt
+  verifiedAt
+  reversedAt
+}
+mutation RetryAdminPayment($paymentId: ID!) {
+  retryAdminPayment(paymentId: $paymentId) {
+    ...AdminPaymentFields
   }
 }

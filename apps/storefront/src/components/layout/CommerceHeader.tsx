@@ -12,21 +12,23 @@ export default function CommerceHeader() {
   const count = useCart((state) =>
     Object.values(state.items).reduce((sum, quantity) => sum + quantity, 0),
   );
-  const title = path.startsWith('/checkout')
-    ? 'ثبت سفارش'
-    : path === '/support' || path.startsWith('/account/support')
-      ? 'پشتیبانی'
-      : path.startsWith('/account') || ['/login', '/verify'].includes(path)
-        ? 'حساب کاربری'
-        : path.startsWith('/product/')
-          ? 'جزئیات محصول'
-          : path === '/cart'
-            ? 'سبد خرید'
-            : path === '/favorites'
-              ? 'علاقه‌مندی‌ها'
-              : path === '/search'
-                ? 'جستجو'
-                : 'فروشگاه';
+  const title = path.startsWith('/payment/')
+    ? 'نتیجه پرداخت'
+    : path.startsWith('/checkout')
+      ? 'ثبت سفارش'
+      : path === '/support' || path.startsWith('/account/support')
+        ? 'پشتیبانی'
+        : path.startsWith('/account') || ['/login', '/verify'].includes(path)
+          ? 'حساب کاربری'
+          : path.startsWith('/product/')
+            ? 'جزئیات محصول'
+            : path === '/cart'
+              ? 'سبد خرید'
+              : path === '/favorites'
+                ? 'علاقه‌مندی‌ها'
+                : path === '/search'
+                  ? 'جستجو'
+                  : 'فروشگاه';
   return (
     <header className="flex h-[72px] items-center justify-between border-b border-border bg-background/70 px-4 md:hidden">
       {path === '/shop' ? (
