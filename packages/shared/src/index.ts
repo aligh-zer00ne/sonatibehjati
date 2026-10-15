@@ -70,17 +70,26 @@ export const selectionSchema = z
 
 export const otpRequestSchema = z.object({ phone: phoneSchema }).strict();
 export const OTP_LENGTH = 5;
-export const otpVerifySchema = z
-  .object({
-    challengeId: z.string().uuid(),
-    phone: phoneSchema,
-    code: z
-      .string()
-      .max(12)
-      .transform(normalizeDigits)
-      .pipe(z.string().regex(new RegExp(`^\\d{${OTP_LENGTH}}$`), 'کد پنج‌رقمی را وارد کنید.')),
-  })
-  .strict();
+export const otpVerifySchemaForLength = (length: 5 | 6) =>
+  z
+    .object({
+      challengeId: z.string().uuid(),
+      phone: phoneSchema,
+      code: z
+        .string()
+        .max(12)
+        .transform(normalizeDigits)
+        .pipe(
+          z
+            .string()
+            .regex(
+              new RegExp(`^\\d{${length}}$`),
+              length === 6 ? 'کد شش‌رقمی را وارد کنید.' : 'کد پنج‌رقمی را وارد کنید.',
+            ),
+        ),
+    })
+    .strict();
+export const otpVerifySchema = otpVerifySchemaForLength(OTP_LENGTH);
 export const OTP_LIFETIME_SECONDS = 180;
 export const OTP_RESEND_SECONDS = 60;
 export const OTP_MAX_ATTEMPTS = 5;

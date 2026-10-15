@@ -4,6 +4,7 @@ import { z } from 'zod';
 import {
   otpRequestSchema,
   otpVerifySchema,
+  otpVerifySchemaForLength,
   addressInputSchema,
   checkoutInputSchema,
   createOrderInputSchema,
@@ -95,7 +96,10 @@ const operations = {
     document: RequestOtpDocument,
     schema: z.object({ input: otpRequestSchema }).strict(),
   },
-  VerifyOtp: { document: VerifyOtpDocument, schema: z.object({ input: otpVerifySchema }).strict() },
+  VerifyOtp: {
+    document: VerifyOtpDocument,
+    schema: z.object({ input: z.union([otpVerifySchema, otpVerifySchemaForLength(6)]) }).strict(),
+  },
   RefreshUserSession: { document: RefreshUserSessionDocument, schema: empty },
   LogoutUser: { document: LogoutUserDocument, schema: empty },
   MyAddresses: { document: MyAddressesDocument, schema: empty },

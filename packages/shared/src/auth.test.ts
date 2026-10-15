@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { otpRequestSchema, otpVerifySchema, safeReturnPath } from './index.js';
+import {
+  otpRequestSchema,
+  otpVerifySchema,
+  otpVerifySchemaForLength,
+  safeReturnPath,
+} from './index.js';
 describe('auth input and return paths', () => {
   it('normalizes Persian and Arabic digits while preserving leading zeroes', () => {
     expect(otpRequestSchema.parse({ phone: '۰۹۰۰۰۰۰۰۰۰۱' }).phone).toBe('09000000001');
@@ -13,6 +18,16 @@ describe('auth input and return paths', () => {
     expect(
       otpVerifySchema.safeParse({ challengeId: 'no', phone: '09000000001', code: '12345' }).success,
     ).toBe(false);
+  });
+  it('validates six digits only when the payment-test schema is selected', () => {
+    const input = {
+      challengeId: 'e872f995-6d7e-47b6-a73c-6550357763c3',
+      phone: '09000000001',
+      code: '۱۲۳۴۵۶',
+    };
+    expect(otpVerifySchemaForLength(6).parse(input).code).toBe('123456');
+    expect(otpVerifySchemaForLength(6).safeParse({ ...input, code: '12345' }).success).toBe(false);
+    expect(otpVerifySchema.safeParse(input).success).toBe(false);
   });
   it.each(['1234', '123456'])('rejects codes with the wrong length: %s', (code) => {
     expect(

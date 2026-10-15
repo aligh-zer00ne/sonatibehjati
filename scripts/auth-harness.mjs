@@ -21,7 +21,7 @@ export function phone() {
 }
 export const keys = {
   request:
-    'mutation($input:RequestOtpInput!){requestOtp(input:$input){challengeId phone expiresAt resendAt}}',
+    'mutation($input:RequestOtpInput!){requestOtp(input:$input){challengeId phone expiresAt resendAt codeLength testMode}}',
   verify:
     'mutation($input:VerifyOtpInput!){verifyOtp(input:$input){user{id phone} accessToken accessExpiresAt}}',
   refresh: 'mutation{refreshToken{user{id phone} accessToken accessExpiresAt}}',

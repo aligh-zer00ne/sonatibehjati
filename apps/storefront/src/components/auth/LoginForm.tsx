@@ -10,7 +10,13 @@ import { RequestOtpDocument } from '@/generated/graphql';
 import { authRequest, AuthRequestError } from '@/lib/auth/client';
 import { saveChallenge } from '@/lib/auth/challenge';
 import { useAuth } from './AuthProvider';
-export default function LoginForm({ returnTo }: { returnTo: string }) {
+export default function LoginForm({
+  returnTo,
+  testing = false,
+}: {
+  returnTo: string;
+  testing?: boolean;
+}) {
   const router = useRouter();
   const next = safeReturnPath(returnTo);
   const { user, loading } = useAuth();
@@ -77,7 +83,9 @@ export default function LoginForm({ returnTo }: { returnTo: string }) {
           autoFocus
         />
         <p id="phone-help" className="mt-2 text-xs text-muted-foreground">
-          کد ورود به این شماره ارسال می‌شود.
+          {testing
+            ? 'ورود آزمایشی با کد ۱۲۳۴۵۶؛ پیامکی ارسال نمی‌شود.'
+            : 'کد ورود به این شماره ارسال می‌شود.'}
         </p>
       </div>
       {error && (

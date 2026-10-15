@@ -46,3 +46,11 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 - Local development startup was repaired: `npm run dev` starts the dedicated MySQL on 3307, applies local migrations, then starts storefront on 3000, admin on 3001 and API on 4000. Check live state before reusing these addresses.
 - The old MySQL data directory was under `/tmp` and was missing on 2026-10-12. Data was recovered from the available local 2026-10-05 backup, with migrations applied and the previously requested development admin credentials restored. The new data directory is `~/tmp/sonatibehjati-dev-mysql/data`, which persists across reboots. Existing databases are not reseeded by the development runner.
 - Commit/push had been omitted before recovering this workflow; remedy that and report the result.
+
+## Latest correction: main-storefront checkout test (2026-10-15)
+
+- The user explicitly rejected a separate release / owner-only test route as their requested workflow. They want the same storefront customer login and normal checkout with fixed OTP **123456 (six digits)**, no SMS, and real SEP payments until MeliPayamak is ready.
+- Use `payments:checkout-test` on the production server and the existing `payment-live.conf` Nginx configuration to open `/api/auth`. `CHECKOUT_PAYMENT_TEST_ENABLED=true` is an explicit temporary setting, default false; production security/cookies remain enabled. Normal real SMS retains five digits. `--activate` clears the test flag and requires real SMS settings.
+- Payment testing through the normal storefront creates normal orders and successful real payments are retained (unlike owner-only auto-reversal). No actual charge was made during local verification.
+- The user's last explicit publishing preference was local commits only (“فعلاً فقط کامیت محلی بماند”). Do not silently publish pending history or conversation notes; distinguish committed, pushed and deployed state.
+- Verification: lint, all-workspace typecheck/build, 133 unit tests, auth API/UI, fixed-code storefront checkout/payment browser tests and production profile/fresh local migration checks passed. Browser bank requests were simulated. Private development env remains unchanged; server activation commands are in `docs/payments.md`.

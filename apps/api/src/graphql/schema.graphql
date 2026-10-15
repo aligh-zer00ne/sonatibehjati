@@ -97,6 +97,8 @@ type AuthUser {
   email: String
 }
 type OtpChallenge {
+  codeLength: Int!
+  testMode: Boolean!
   challengeId: ID!
   phone: String!
   expiresAt: String!

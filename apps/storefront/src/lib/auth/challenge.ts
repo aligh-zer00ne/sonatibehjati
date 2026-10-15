@@ -5,6 +5,8 @@ import { phoneSchema } from '@behjati/shared';
 export type Challenge = RequestOtpMutation['requestOtp'];
 const schema = z.object({
   challengeId: z.string().uuid(),
+  codeLength: z.union([z.literal(5), z.literal(6)]).default(5),
+  testMode: z.boolean().default(false),
   phone: phoneSchema,
   expiresAt: z.iso.datetime(),
   resendAt: z.iso.datetime(),

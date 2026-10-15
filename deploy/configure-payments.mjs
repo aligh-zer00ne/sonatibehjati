@@ -7,8 +7,10 @@ const original = await readFile(apiPath, 'utf8');
 const api = parse(original);
 const activate = process.argv.includes('--activate');
 const review = process.argv.includes('--review');
-if (activate && review) throw new Error('Choose --review or --activate, not both.');
-const serverProfile = activate || review;
+const checkoutTest = process.argv.includes('--checkout-test');
+if ([activate, review, checkoutTest].filter(Boolean).length > 1)
+  throw new Error('Choose exactly one payment profile.');
+const serverProfile = activate || review || checkoutTest;
 const terminal = (
   process.argv.find((arg) => arg.startsWith('--terminal-id='))?.split('=')[1] ??
   api.SEP_TERMINAL_ID ??
@@ -23,6 +25,7 @@ const fields = {
   SEP_CALLBACK_ORIGIN: 'https://sonatibehjati.ir',
   PAYMENT_PROVIDER: serverProfile ? 'sep' : 'disabled',
   ADMIN_PAYMENT_TEST_ENABLED: review ? 'true' : 'false',
+  CHECKOUT_PAYMENT_TEST_ENABLED: checkoutTest ? 'true' : 'false',
   ...(serverProfile ? { CUSTOMER_AUTH_ENABLED: review ? 'false' : 'true' } : {}),
 };
 if (serverProfile) {
@@ -46,7 +49,7 @@ if (serverProfile) {
   if (secrets.some((value) => value.length < 32) || new Set(secrets).size !== secrets.length)
     throw new Error('Configure independent production authentication secrets.');
   Object.assign(fields, {
-    ...(review ? { SMS_PROVIDER: 'mock' } : {}),
+    ...(review || checkoutTest ? { SMS_PROVIDER: 'mock' } : {}),
     NODE_ENV: 'production',
     PORT: '4100',
     STOREFRONT_ORIGIN: 'https://sonatibehjati.ir',
@@ -75,6 +78,7 @@ if (serverProfile) {
     NEXT_PUBLIC_SITE_URL: 'https://sonatibehjati.ir',
     API_URL: 'http://127.0.0.1:4100/graphql',
     CATALOG_SOURCE: 'api',
+    CHECKOUT_PAYMENT_TEST_ENABLED: checkoutTest ? 'true' : 'false',
     STOREFRONT_ORIGIN: 'https://sonatibehjati.ir',
     ADMIN_ORIGIN: 'https://admin.sonatibehjati.ir',
     AUTH_PROXY_SECRET: api.AUTH_PROXY_SECRET,
@@ -85,6 +89,7 @@ if (serverProfile) {
     const higher = parse(await readFile(root + 'apps/storefront/' + name, 'utf8').catch(() => ''));
     for (const key of [
       'API_URL',
+      'CHECKOUT_PAYMENT_TEST_ENABLED',
       'STOREFRONT_ORIGIN',
       'AUTH_PROXY_SECRET',
       'CATALOG_SOURCE',
@@ -104,9 +109,11 @@ for (const [key, value] of Object.entries(fields))
 await writeFile(apiPath, backend, { mode: 0o600 });
 if (frontend) await writeFile(frontendPath, frontend, { mode: 0o600 });
 console.log(
-  review
-    ? 'Owner-only real gateway test is configured. Customer authentication is disabled; no SMS is sent. Deploy normally and keep payment-review.conf.'
-    : activate
-      ? 'Production payment configuration saved. Deploy using the normal script, then install deploy/nginx/payment-live.conf and reload Nginx.'
-      : 'Terminal and callback settings saved privately. Public payment remains disabled until real SMS is ready.',
+  checkoutTest
+    ? 'Main storefront checkout test configured: fixed login code 123456, no SMS, real SEP payments. Deploy normally, then install payment-live.conf and reload Nginx.'
+    : review
+      ? 'Owner-only real gateway test is configured. Customer authentication is disabled; no SMS is sent. Deploy normally and keep payment-review.conf.'
+      : activate
+        ? 'Production payment configuration saved. Deploy using the normal script, then install deploy/nginx/payment-live.conf and reload Nginx.'
+        : 'Terminal and callback settings saved privately. Public payment remains disabled until real SMS is ready.',
 );

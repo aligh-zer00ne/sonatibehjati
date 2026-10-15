@@ -7,7 +7,13 @@ vi.mock('node:crypto', async (importOriginal) => ({
   randomInt: vi.fn(() => 42),
 }));
 
-describe('temporary development OTP', () => {
+describe('OTP modes', () => {
+  it('uses six digits in production only for explicit checkout payment testing', () => {
+    vi.mocked(randomInt).mockClear();
+    expect(createOtpCode('production', undefined, true)).toBe('123456');
+    expect(randomInt).not.toHaveBeenCalled();
+    expect(createOtpCode('production', '123456', false)).toBe('00042');
+  });
   it('uses the configured code only in development', () => {
     vi.mocked(randomInt).mockClear();
     expect(createOtpCode('development', '12345')).toBe('12345');

@@ -14,12 +14,17 @@ export default async function LoginPage({
   searchParams: Promise<CatalogParams>;
 }) {
   const params = await searchParams;
+  const testing = process.env.CHECKOUT_PAYMENT_TEST_ENABLED === 'true';
   return (
     <AuthFrame
       title="ورود به سنتی بهجتی"
-      description="با شماره موبایل وارد شوید؛ رمز یک‌بارمصرف برای شما ارسال می‌شود."
+      description={
+        testing
+          ? 'برای تست پرداخت، با شماره موبایل و کد ثابت ۱۲۳۴۵۶ وارد شوید.'
+          : 'با شماره موبایل وارد شوید؛ رمز یک‌بارمصرف برای شما ارسال می‌شود.'
+      }
     >
-      <LoginForm returnTo={safeReturnPath(param(params.next))} />
+      <LoginForm testing={testing} returnTo={safeReturnPath(param(params.next))} />
     </AuthFrame>
   );
 }

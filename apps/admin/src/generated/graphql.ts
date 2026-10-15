@@ -826,9 +826,11 @@ export type OrderStatusEvent = {
 export type OtpChallenge = {
   __typename?: 'OtpChallenge';
   challengeId: Scalars['ID']['output'];
+  codeLength: Scalars['Int']['output'];
   expiresAt: Scalars['String']['output'];
   phone: Scalars['String']['output'];
   resendAt: Scalars['String']['output'];
+  testMode: Scalars['Boolean']['output'];
 };
 
 export type PaymentInfo = {

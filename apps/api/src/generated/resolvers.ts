@@ -828,9 +828,11 @@ export type OrderStatusEvent = {
 export type OtpChallenge = {
   __typename?: 'OtpChallenge';
   challengeId: Scalars['ID']['output'];
+  codeLength: Scalars['Int']['output'];
   expiresAt: Scalars['String']['output'];
   phone: Scalars['String']['output'];
   resendAt: Scalars['String']['output'];
+  testMode: Scalars['Boolean']['output'];
 };
 
 export type PaymentInfo = {
@@ -1841,9 +1843,11 @@ export type OrderStatusEventResolvers<ContextType = AuthContext, ParentType exte
 
 export type OtpChallengeResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OtpChallenge'] = ResolversParentTypes['OtpChallenge']> = {
   challengeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  codeLength?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   expiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   resendAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  testMode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type PaymentInfoResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['PaymentInfo'] = ResolversParentTypes['PaymentInfo']> = {

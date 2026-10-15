@@ -5,6 +5,7 @@ export function createSMSService(
   environment: string,
   config: SmsConfig,
   enabled = true,
+  checkoutPaymentTest = false,
 ): SMSService {
   if (!enabled)
     return {
@@ -12,6 +13,7 @@ export function createSMSService(
         throw new Error('Customer authentication is disabled.');
       },
     };
+  if (checkoutPaymentTest) return { async sendOTP() {} };
   return environment === 'production'
     ? new MeliPayamakSMSService(config)
     : new DevelopmentSMSService();

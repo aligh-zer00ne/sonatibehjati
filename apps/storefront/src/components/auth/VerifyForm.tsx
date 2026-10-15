@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LoaderCircle, RefreshCw } from 'lucide-react';
 import {
-  otpVerifySchema,
+  otpVerifySchemaForLength,
   normalizeDigits,
   safeReturnPath,
   formatNumber,
@@ -62,6 +62,7 @@ export default function VerifyForm({
       </div>
     );
   const phone = challenge.phone;
+  const codeLength = challenge.codeLength === 6 ? 6 : OTP_LENGTH;
   const expiry = Math.max(0, Math.ceil((Date.parse(challenge.expiresAt) - now) / 1000));
   const resendIn = Math.max(
     0,
@@ -75,9 +76,13 @@ export default function VerifyForm({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!challenge || pending || !expiry) return;
-    const parsed = otpVerifySchema.safeParse({ challengeId: challenge.challengeId, phone, code });
+    const parsed = otpVerifySchemaForLength(codeLength).safeParse({
+      challengeId: challenge.challengeId,
+      phone,
+      code,
+    });
     if (!parsed.success) {
-      setError('کد پنج‌رقمی را وارد کنید.');
+      setError(codeLength === 6 ? 'کد شش‌رقمی را وارد کنید.' : 'کد پنج‌رقمی را وارد کنید.');
       return;
     }
     setPending('verify');
@@ -115,7 +120,8 @@ export default function VerifyForm({
   return (
     <form onSubmit={submit} className="space-y-5" aria-busy={pending !== null}>
       <p className="text-center text-sm text-earth">
-        کد ارسال‌شده به <b dir="ltr">{phone}</b> را وارد کنید.
+        {challenge.testMode ? 'ورود آزمایشی برای' : 'کد ارسال‌شده به'} <b dir="ltr">{phone}</b>
+        {challenge.testMode ? '؛ پیامکی ارسال نمی‌شود. کد ۱۲۳۴۵۶ را وارد کنید.' : ' را وارد کنید.'}
       </p>
       <div>
         <label htmlFor="otp-code" className="mb-2 block text-sm font-bold">
@@ -127,11 +133,11 @@ export default function VerifyForm({
           dir="ltr"
           inputMode="numeric"
           autoComplete="one-time-code"
-          pattern={`[0-9]{${OTP_LENGTH}}`}
-          maxLength={OTP_LENGTH}
+          pattern={`[0-9]{${codeLength}}`}
+          maxLength={codeLength}
           value={code}
           onChange={(event) => {
-            setCode(normalizeDigits(event.target.value).replace(/\D/g, '').slice(0, OTP_LENGTH));
+            setCode(normalizeDigits(event.target.value).replace(/\D/g, '').slice(0, codeLength));
             setError('');
           }}
           className="text-center text-2xl tracking-[0.5em]"

@@ -13,6 +13,8 @@ query CurrentUser {
 mutation RequestOtp($input: RequestOtpInput!) {
   requestOtp(input: $input) {
     challengeId
+    codeLength
+    testMode
     phone
     expiresAt
     resendAt

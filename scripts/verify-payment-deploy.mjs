@@ -87,17 +87,56 @@ try {
   assert.equal(production.code, 0, production.output);
   assert.ok(production.output.includes('GATEWAY_REVIEW_PRODUCTION_OK'));
   assert.ok(!production.output.includes('[Development SMS]'));
+  const checkout = await run([fixture + '/deploy/configure-payments.mjs', '--checkout-test']);
+  assert.equal(checkout.code, 0, checkout.output);
+  const checkoutContent = await readFile(fixture + '/apps/api/.env', 'utf8');
+  const checkoutApi = parse(checkoutContent);
+  assert.equal(checkoutApi.NODE_ENV, 'production');
+  assert.equal(checkoutApi.CUSTOMER_AUTH_ENABLED, 'true');
+  assert.equal(checkoutApi.CHECKOUT_PAYMENT_TEST_ENABLED, 'true');
+  assert.equal(checkoutApi.ADMIN_PAYMENT_TEST_ENABLED, 'false');
+  assert.equal(checkoutApi.PAYMENT_PROVIDER, 'sep');
+  assert.equal(checkoutApi.SMS_PROVIDER, 'mock');
+  for (const key of secretNames) assert.equal(checkoutApi[key], config[key]);
+  assert.equal(checkoutApi.DATABASE_URL, config.DATABASE_URL);
+  assert.equal(
+    parse(await readFile(fixture + '/apps/storefront/.env.production', 'utf8'))
+      .CHECKOUT_PAYMENT_TEST_ENABLED,
+    'true',
+  );
+  const checkoutRuntime = await run(
+    [
+      '-e',
+      `
+    const { smsService } = await import('./apps/api/src/modules/auth/runtime.ts');
+    const { createOtpCode } = await import('./apps/api/src/modules/auth/otp-code.ts');
+    globalThis.fetch = () => { throw new Error('SMS network call forbidden'); };
+    if (createOtpCode('production', undefined, true) !== '123456') throw new Error('Incorrect fixed code');
+    await smsService.sendOTP('09000000001', '123456');
+    console.log('CHECKOUT_PRODUCTION_OK');
+  `,
+    ],
+    { env: { ...process.env, ...checkoutApi } },
+  );
+  assert.equal(checkoutRuntime.code, 0, checkoutRuntime.output);
+  assert.ok(checkoutRuntime.output.includes('CHECKOUT_PRODUCTION_OK'));
+  assert.ok(!checkoutRuntime.output.includes('[Development SMS]'));
+  const mockWithoutFlag = await run(['-e', "await import('./apps/api/src/config/env.ts')"], {
+    env: { ...process.env, ...checkoutApi, CHECKOUT_PAYMENT_TEST_ENABLED: 'false' },
+  });
+  assert.notEqual(mockWithoutFlag.code, 0);
+  assert.ok(mockWithoutFlag.output.includes('real SMS'));
   const blocked = await run([fixture + '/deploy/configure-payments.mjs', '--activate']);
   assert.notEqual(blocked.code, 0);
   assert.ok(blocked.output.includes('real SMS'));
-  assert.equal(await readFile(fixture + '/apps/api/.env', 'utf8'), content);
+  assert.equal(await readFile(fixture + '/apps/api/.env', 'utf8'), checkoutContent);
   await writeFile(
     fixture + '/apps/storefront/.env.local',
     'API_URL=http://conflicting.invalid/graphql\n',
   );
   const conflicting = await run([fixture + '/deploy/configure-payments.mjs', '--review']);
   assert.notEqual(conflicting.code, 0);
-  assert.equal(await readFile(fixture + '/apps/api/.env', 'utf8'), content);
+  assert.equal(await readFile(fixture + '/apps/api/.env', 'utf8'), checkoutContent);
   await db.$executeRawUnsafe('CREATE DATABASE `' + databaseName + '` CHARACTER SET utf8mb4');
   created = true;
   target.pathname = '/' + databaseName;
@@ -116,7 +155,7 @@ try {
   assert.equal(fields.length, 2);
   assert.ok(fields.every((field) => field.nullable === 'YES'));
   console.log(
-    'Payment deployment checks passed: real production review mode starts without SMS credentials, private secrets/database preserved, customer auth closed, live activation guarded, conflicting env refused and all migrations applied successfully to a fresh empty local database.',
+    'Payment deployment checks passed: real production review mode starts without SMS credentials, private secrets/database preserved, main-storefront fixed-code production login without SMS, normal production SMS guard, live activation guarded, conflicting env refused and all migrations applied successfully to a fresh empty local database.',
   );
 } finally {
   if (created) await db.$executeRawUnsafe('DROP DATABASE `' + databaseName + '`');

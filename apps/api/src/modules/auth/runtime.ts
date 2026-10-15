@@ -18,4 +18,5 @@ export const smsService = createSMSService(
     bodyId: env.MELI_PAYAMAK_OTP_BODY_ID ?? 0,
   },
   env.CUSTOMER_AUTH_ENABLED === 'true',
+  env.CHECKOUT_PAYMENT_TEST_ENABLED === 'true',
 );

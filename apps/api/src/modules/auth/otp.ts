@@ -2,7 +2,8 @@ import { requireCustomerAuth } from './availability.js';
 import { randomUUID } from 'node:crypto';
 import {
   otpRequestSchema,
-  otpVerifySchema,
+  otpVerifySchemaForLength,
+  OTP_LENGTH,
   OTP_LIFETIME_SECONDS,
   OTP_RESEND_SECONDS,
   OTP_MAX_ATTEMPTS,
@@ -15,6 +16,9 @@ import { authError } from './errors.js';
 import { createSession } from './sessions.js';
 import { env } from '../../config/env.js';
 import { createOtpCode } from './otp-code.js';
+const checkoutPaymentTest = env.CHECKOUT_PAYMENT_TEST_ENABLED === 'true';
+const codeLength = checkoutPaymentTest ? 6 : OTP_LENGTH;
+const verifySchema = otpVerifySchemaForLength(codeLength);
 export async function requestOtp(raw: unknown, ip: string) {
   requireCustomerAuth();
   const parsed = otpRequestSchema.safeParse(raw);
@@ -24,7 +28,7 @@ export async function requestOtp(raw: unknown, ip: string) {
   await consumeAuthLimit(`otp-resend:${phone}`, 1, OTP_RESEND_SECONDS);
   await consumeAuthLimit(`otp-phone:${phone}`, 5, 3600);
   const id = randomUUID();
-  const code = createOtpCode(env.NODE_ENV, env.DEV_OTP_CODE);
+  const code = createOtpCode(env.NODE_ENV, env.DEV_OTP_CODE, checkoutPaymentTest);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + OTP_LIFETIME_SECONDS * 1000);
   await db.$transaction(async (tx) => {
@@ -46,6 +50,8 @@ export async function requestOtp(raw: unknown, ip: string) {
   }
   return {
     challengeId: id,
+    codeLength,
+    testMode: checkoutPaymentTest,
     phone,
     expiresAt: expiresAt.toISOString(),
     resendAt: new Date(now.getTime() + OTP_RESEND_SECONDS * 1000).toISOString(),
@@ -53,9 +59,14 @@ export async function requestOtp(raw: unknown, ip: string) {
 }
 export async function verifyOtp(raw: unknown, ip: string) {
   requireCustomerAuth();
-  const parsed = otpVerifySchema.safeParse(raw);
+  const parsed = verifySchema.safeParse(raw);
   if (!parsed.success)
-    throw authError('شماره موبایل و کد پنج‌رقمی را بررسی کنید.', 'BAD_USER_INPUT');
+    throw authError(
+      checkoutPaymentTest
+        ? 'شماره موبایل و کد شش‌رقمی را بررسی کنید.'
+        : 'شماره موبایل و کد پنج‌رقمی را بررسی کنید.',
+      'BAD_USER_INPUT',
+    );
   await consumeAuthLimit(`otp-verify-ip:${ip}`, 50, 900);
   const { challengeId: id, phone, code } = parsed.data;
   const result = await db.$transaction(async (tx) => {

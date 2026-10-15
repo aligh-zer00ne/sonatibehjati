@@ -15,6 +15,18 @@ afterEach(() => {
 });
 
 describe('SMS environment boundary', () => {
+  it('sends no SMS and logs no code in explicit production checkout testing', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    const logger = vi.spyOn(console, 'info');
+    await createSMSService('production', { ...config, apiKey: '', bodyId: 0 }, true, true).sendOTP(
+      '09000000001',
+      '123456',
+    );
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(logger).not.toHaveBeenCalled();
+  });
   it.each(['development', 'test'])('never contacts the real provider in %s', async (mode) => {
     vi.stubEnv('NODE_ENV', mode);
     const fetcher = vi.fn();
