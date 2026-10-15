@@ -63,7 +63,7 @@ export class SepGateway {
       Amount: Number(input.amount),
       ResNum: input.id,
       RedirectUrl: input.callback,
-      CellNumber: input.phone,
+      ...(input.phone ? { CellNumber: input.phone } : {}),
       TxnRandomSessionKey: input.sessionKey,
       TokenExpiryInMin: 20,
     });

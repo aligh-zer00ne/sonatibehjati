@@ -49,7 +49,8 @@ paymentRoutes.post('/payments/sep/:action', async (req, res) => {
     else if (req.params.action === 'redirect') {
       const p = await findPayment(input.id, input.key);
       res.json({
-        token: p.status === 'READY' && p.expiresAt > new Date() && !p.order.paidAt ? p.token : null,
+        token:
+          p.status === 'READY' && p.expiresAt > new Date() && !p.order?.paidAt ? p.token : null,
         resultUrl: resultPath(p),
         redirectUrl: redirectPath(p),
       });

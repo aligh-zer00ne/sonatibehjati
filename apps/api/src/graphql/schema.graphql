@@ -784,3 +784,22 @@ extend type Mutation {
   startOrderPayment(orderId: ID!): PaymentRedirect!
   retryAdminPayment(paymentId: ID!): PaymentInfo!
 }
+
+
+type AdminGatewayTestPayment {
+  payment: PaymentInfo!
+  redirectUrl: String
+  resultUrl: String!
+}
+type AdminGatewayTestState {
+  enabled: Boolean!
+  amount: Int!
+  terminalId: String
+  payments: [AdminGatewayTestPayment!]!
+}
+extend type Query {
+  adminGatewayTest: AdminGatewayTestState!
+}
+extend type Mutation {
+  startAdminGatewayTest: PaymentRedirect!
+}

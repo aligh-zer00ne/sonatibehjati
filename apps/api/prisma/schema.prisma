@@ -152,8 +152,9 @@ enum PaymentMode {
 model Payment {
  mode PaymentMode @default(LIVE)
  id String @id
- orderId String
- order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+ orderId String?
+ order Order? @relation(fields:[orderId],references:[id],onDelete:Cascade)
+ gatewayTestAdminId String?
  status PaymentStatus @default(CREATING)
  amountRials BigInt
  terminalId String @db.VarChar(20)
@@ -175,6 +176,7 @@ model Payment {
  updatedAt DateTime @updatedAt
  reference PaymentReference?
  @@index([orderId,createdAt])
+ @@index([gatewayTestAdminId,createdAt])
  @@index([status,retryAt])
  @@index([refNum])
 }

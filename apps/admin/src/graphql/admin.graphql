@@ -500,3 +500,19 @@ mutation RetryAdminPayment($paymentId: ID!) {
     ...AdminPaymentFields
   }
 }
+
+query AdminGatewayTest {
+  adminGatewayTest {
+    enabled
+    amount
+    terminalId
+    payments {
+      payment { ...AdminPaymentFields }
+      redirectUrl
+      resultUrl
+    }
+  }
+}
+mutation StartAdminGatewayTest {
+  startAdminGatewayTest { redirectUrl }
+}

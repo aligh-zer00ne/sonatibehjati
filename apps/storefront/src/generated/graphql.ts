@@ -121,6 +121,21 @@ export type AdminDashboard = {
   topProducts: Array<AdminTopProduct>;
 };
 
+export type AdminGatewayTestPayment = {
+  __typename?: 'AdminGatewayTestPayment';
+  payment: PaymentInfo;
+  redirectUrl?: Maybe<Scalars['String']['output']>;
+  resultUrl: Scalars['String']['output'];
+};
+
+export type AdminGatewayTestState = {
+  __typename?: 'AdminGatewayTestState';
+  amount: Scalars['Int']['output'];
+  enabled: Scalars['Boolean']['output'];
+  payments: Array<AdminGatewayTestPayment>;
+  terminalId?: Maybe<Scalars['String']['output']>;
+};
+
 export type AdminIdentity = {
   __typename?: 'AdminIdentity';
   email: Scalars['String']['output'];
@@ -577,6 +592,7 @@ export type Mutation = {
   setAdminTicketStatus: SupportTicket;
   setStaffActive: AdminIdentity;
   setStaffPermissions: AdminIdentity;
+  startAdminGatewayTest: PaymentRedirect;
   startOrderPayment: PaymentRedirect;
   submitProductReview: ProductReview;
   updateAdminOrderStatus: AdminOrder;
@@ -922,6 +938,7 @@ export type Query = {
   adminCoupons: Array<AdminCoupon>;
   adminCustomerExport: CustomerExport;
   adminDashboard: AdminDashboard;
+  adminGatewayTest: AdminGatewayTestState;
   adminHomepageContent: HomepageContent;
   adminMe?: Maybe<AdminIdentity>;
   adminOrder: AdminOrder;

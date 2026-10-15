@@ -23,6 +23,20 @@ describe('SMS environment boundary', () => {
     await createSMSService(mode, config).sendOTP('09000000001', '12345');
     expect(fetcher).not.toHaveBeenCalled();
   });
+  it('disables SMS entirely in production gateway review without provider credentials', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    const logger = vi.spyOn(console, 'info');
+    await expect(
+      createSMSService('production', { ...config, apiKey: '', bodyId: 0 }, false).sendOTP(
+        '09000000001',
+        '12345',
+      ),
+    ).rejects.toThrow('disabled');
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(logger).not.toHaveBeenCalled();
+  });
   it('uses the real provider in production without logging the OTP', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ recId: 123 })));

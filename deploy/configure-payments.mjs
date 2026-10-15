@@ -6,6 +6,9 @@ const apiPath = root + 'apps/api/.env';
 const original = await readFile(apiPath, 'utf8');
 const api = parse(original);
 const activate = process.argv.includes('--activate');
+const review = process.argv.includes('--review');
+if (activate && review) throw new Error('Choose --review or --activate, not both.');
+const serverProfile = activate || review;
 const terminal = (
   process.argv.find((arg) => arg.startsWith('--terminal-id='))?.split('=')[1] ??
   api.SEP_TERMINAL_ID ??
@@ -18,14 +21,17 @@ if (!/^\d{1,10}$/.test(terminal) || Number(terminal) <= 0)
 const fields = {
   SEP_TERMINAL_ID: terminal,
   SEP_CALLBACK_ORIGIN: 'https://sonatibehjati.ir',
-  PAYMENT_PROVIDER: activate ? 'sep' : 'disabled',
+  PAYMENT_PROVIDER: serverProfile ? 'sep' : 'disabled',
+  ADMIN_PAYMENT_TEST_ENABLED: review ? 'true' : 'false',
+  ...(serverProfile ? { CUSTOMER_AUTH_ENABLED: review ? 'false' : 'true' } : {}),
 };
-if (activate) {
+if (serverProfile) {
   if (
-    api.SMS_PROVIDER !== 'melipayamak' ||
-    !api.MELI_PAYAMAK_API_KEY ||
-    !Number.isInteger(Number(api.MELI_PAYAMAK_OTP_BODY_ID)) ||
-    Number(api.MELI_PAYAMAK_OTP_BODY_ID) <= 0
+    activate &&
+    (api.SMS_PROVIDER !== 'melipayamak' ||
+      !api.MELI_PAYAMAK_API_KEY ||
+      !Number.isInteger(Number(api.MELI_PAYAMAK_OTP_BODY_ID)) ||
+      Number(api.MELI_PAYAMAK_OTP_BODY_ID) <= 0)
   )
     throw new Error('Configure real SMS before enabling public payments.');
   const names = [
@@ -40,6 +46,7 @@ if (activate) {
   if (secrets.some((value) => value.length < 32) || new Set(secrets).size !== secrets.length)
     throw new Error('Configure independent production authentication secrets.');
   Object.assign(fields, {
+    ...(review ? { SMS_PROVIDER: 'mock' } : {}),
     NODE_ENV: 'production',
     PORT: '4100',
     STOREFRONT_ORIGIN: 'https://sonatibehjati.ir',
@@ -62,7 +69,7 @@ function update(text, values) {
 const backend = update(original, fields);
 let frontend;
 const frontendPath = root + 'apps/storefront/.env.production';
-if (activate) {
+if (serverProfile) {
   const base = await readFile(frontendPath, 'utf8').catch(() => '');
   frontend = update(base, {
     NEXT_PUBLIC_SITE_URL: 'https://sonatibehjati.ir',
@@ -97,7 +104,9 @@ for (const [key, value] of Object.entries(fields))
 await writeFile(apiPath, backend, { mode: 0o600 });
 if (frontend) await writeFile(frontendPath, frontend, { mode: 0o600 });
 console.log(
-  activate
-    ? 'Production payment configuration saved. Deploy using the normal script, then install deploy/nginx/payment-live.conf and reload Nginx.'
-    : 'Terminal and callback settings saved privately. Public payment remains disabled until real SMS is ready.',
+  review
+    ? 'Owner-only real gateway test is configured. Customer authentication is disabled; no SMS is sent. Deploy normally and keep payment-review.conf.'
+    : activate
+      ? 'Production payment configuration saved. Deploy using the normal script, then install deploy/nginx/payment-live.conf and reload Nginx.'
+      : 'Terminal and callback settings saved privately. Public payment remains disabled until real SMS is ready.',
 );

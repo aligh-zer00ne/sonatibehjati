@@ -123,6 +123,21 @@ export type AdminDashboard = {
   topProducts: Array<AdminTopProduct>;
 };
 
+export type AdminGatewayTestPayment = {
+  __typename?: 'AdminGatewayTestPayment';
+  payment: PaymentInfo;
+  redirectUrl?: Maybe<Scalars['String']['output']>;
+  resultUrl: Scalars['String']['output'];
+};
+
+export type AdminGatewayTestState = {
+  __typename?: 'AdminGatewayTestState';
+  amount: Scalars['Int']['output'];
+  enabled: Scalars['Boolean']['output'];
+  payments: Array<AdminGatewayTestPayment>;
+  terminalId?: Maybe<Scalars['String']['output']>;
+};
+
 export type AdminIdentity = {
   __typename?: 'AdminIdentity';
   email: Scalars['String']['output'];
@@ -579,6 +594,7 @@ export type Mutation = {
   setAdminTicketStatus: SupportTicket;
   setStaffActive: AdminIdentity;
   setStaffPermissions: AdminIdentity;
+  startAdminGatewayTest: PaymentRedirect;
   startOrderPayment: PaymentRedirect;
   submitProductReview: ProductReview;
   updateAdminOrderStatus: AdminOrder;
@@ -924,6 +940,7 @@ export type Query = {
   adminCoupons: Array<AdminCoupon>;
   adminCustomerExport: CustomerExport;
   adminDashboard: AdminDashboard;
+  adminGatewayTest: AdminGatewayTestState;
   adminHomepageContent: HomepageContent;
   adminMe?: Maybe<AdminIdentity>;
   adminOrder: AdminOrder;
@@ -1259,6 +1276,8 @@ export type ResolversTypes = {
   AdminCouponInput: AdminCouponInput;
   AdminDailyMetric: ResolverTypeWrapper<AdminDailyMetric>;
   AdminDashboard: ResolverTypeWrapper<AdminDashboard>;
+  AdminGatewayTestPayment: ResolverTypeWrapper<AdminGatewayTestPayment>;
+  AdminGatewayTestState: ResolverTypeWrapper<AdminGatewayTestState>;
   AdminIdentity: ResolverTypeWrapper<AdminIdentity>;
   AdminLoginInput: AdminLoginInput;
   AdminOrder: ResolverTypeWrapper<AdminOrderSource>;
@@ -1356,6 +1375,8 @@ export type ResolversParentTypes = {
   AdminCouponInput: AdminCouponInput;
   AdminDailyMetric: AdminDailyMetric;
   AdminDashboard: AdminDashboard;
+  AdminGatewayTestPayment: AdminGatewayTestPayment;
+  AdminGatewayTestState: AdminGatewayTestState;
   AdminIdentity: AdminIdentity;
   AdminLoginInput: AdminLoginInput;
   AdminOrder: AdminOrderSource;
@@ -1505,6 +1526,19 @@ export type AdminDashboardResolvers<ContextType = AuthContext, ParentType extend
   report?: Resolver<ResolversTypes['AdminReport'], ParentType, ContextType>;
   revenue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   topProducts?: Resolver<Array<ResolversTypes['AdminTopProduct']>, ParentType, ContextType>;
+};
+
+export type AdminGatewayTestPaymentResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminGatewayTestPayment'] = ResolversParentTypes['AdminGatewayTestPayment']> = {
+  payment?: Resolver<ResolversTypes['PaymentInfo'], ParentType, ContextType>;
+  redirectUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  resultUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type AdminGatewayTestStateResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminGatewayTestState'] = ResolversParentTypes['AdminGatewayTestState']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  payments?: Resolver<Array<ResolversTypes['AdminGatewayTestPayment']>, ParentType, ContextType>;
+  terminalId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
 export type AdminIdentityResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminIdentity'] = ResolversParentTypes['AdminIdentity']> = {
@@ -1746,6 +1780,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   setAdminTicketStatus?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationSetAdminTicketStatusArgs, 'expectedUpdatedAt' | 'id' | 'status'>>;
   setStaffActive?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType, RequireFields<MutationSetStaffActiveArgs, 'id' | 'isActive'>>;
   setStaffPermissions?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType, RequireFields<MutationSetStaffPermissionsArgs, 'id' | 'permissions'>>;
+  startAdminGatewayTest?: Resolver<ResolversTypes['PaymentRedirect'], ParentType, ContextType>;
   startOrderPayment?: Resolver<ResolversTypes['PaymentRedirect'], ParentType, ContextType, RequireFields<MutationStartOrderPaymentArgs, 'orderId'>>;
   submitProductReview?: Resolver<ResolversTypes['ProductReview'], ParentType, ContextType, RequireFields<MutationSubmitProductReviewArgs, 'input'>>;
   updateAdminOrderStatus?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationUpdateAdminOrderStatusArgs, 'input'>>;
@@ -1883,6 +1918,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminCoupons?: Resolver<Array<ResolversTypes['AdminCoupon']>, ParentType, ContextType>;
   adminCustomerExport?: Resolver<ResolversTypes['CustomerExport'], ParentType, ContextType, Partial<QueryAdminCustomerExportArgs>>;
   adminDashboard?: Resolver<ResolversTypes['AdminDashboard'], ParentType, ContextType>;
+  adminGatewayTest?: Resolver<ResolversTypes['AdminGatewayTestState'], ParentType, ContextType>;
   adminHomepageContent?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType>;
   adminMe?: Resolver<Maybe<ResolversTypes['AdminIdentity']>, ParentType, ContextType>;
   adminOrder?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<QueryAdminOrderArgs, 'id'>>;
@@ -1957,6 +1993,8 @@ export type Resolvers<ContextType = AuthContext> = {
   AdminCoupon?: AdminCouponResolvers<ContextType>;
   AdminDailyMetric?: AdminDailyMetricResolvers<ContextType>;
   AdminDashboard?: AdminDashboardResolvers<ContextType>;
+  AdminGatewayTestPayment?: AdminGatewayTestPaymentResolvers<ContextType>;
+  AdminGatewayTestState?: AdminGatewayTestStateResolvers<ContextType>;
   AdminIdentity?: AdminIdentityResolvers<ContextType>;
   AdminOrder?: AdminOrderResolvers<ContextType>;
   AdminOrderSummary?: AdminOrderSummaryResolvers<ContextType>;

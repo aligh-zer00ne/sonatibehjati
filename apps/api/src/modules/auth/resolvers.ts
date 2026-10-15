@@ -1,3 +1,4 @@
+import { requireCustomerAuth } from './availability.js';
 import type { Resolvers } from '../../generated/resolvers.js';
 import { env } from '../../config/env.js';
 import { requireAuthOrigin } from '../../graphql/context.js';
@@ -15,7 +16,9 @@ const secure = env.NODE_ENV === 'production';
 export const authResolvers: Resolvers = {
   Query: {
     me: (_parent, _args, context) =>
-      currentUser(readBearer(context.request.headers.get('authorization'))),
+      env.CUSTOMER_AUTH_ENABLED === 'true'
+        ? currentUser(readBearer(context.request.headers.get('authorization')))
+        : null,
   },
   Mutation: {
     requestOtp: (_parent, { input }, context) => {
@@ -34,6 +37,7 @@ export const authResolvers: Resolvers = {
     },
     refreshToken: async (_parent, _args, context) => {
       requireAuthOrigin(context);
+      requireCustomerAuth();
       await consumeAuthLimit(`refresh-ip:${context.ip}`, 120, 900);
       try {
         const result = await rotateSession(

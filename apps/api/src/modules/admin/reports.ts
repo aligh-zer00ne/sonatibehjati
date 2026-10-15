@@ -50,6 +50,7 @@ export async function adminReport(raw: Record<string, unknown>) {
     db.payment.aggregate({
       where: {
         status: 'SUCCEEDED',
+        orderId: { not: null },
         mode: paymentMode,
         acceptedAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
         ...(input.status ? { order: { status: input.status } } : {}),
@@ -105,7 +106,7 @@ export async function adminDashboard() {
       _avg: { total: true },
     }),
     db.payment.aggregate({
-      where: { status: 'SUCCEEDED', mode: paymentMode },
+      where: { status: 'SUCCEEDED', mode: paymentMode, orderId: { not: null } },
       _sum: { amountRials: true },
     }),
     adminOrders({ page: 1, pageSize: 5 }),

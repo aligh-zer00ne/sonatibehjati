@@ -149,6 +149,9 @@ export async function startAdmin() {
   await ready(adminOrigin + '/login');
 }
 export async function cleanupAdmin() {
+  await db.payment.deleteMany({
+    where: { gatewayTestAdminId: { in: admins.map((a) => a.id) }, mode: 'TEST' },
+  });
   await cleanup();
   await db.admin.deleteMany({ where: { id: { in: admins.map((admin) => admin.id) } } });
   await db.product.deleteMany({ where: { id: { in: [...products] } } });
@@ -159,6 +162,7 @@ export async function cleanupAdmin() {
     `export:${admin.id}`,
     `support:${admin.id}`,
     `payment-check:${admin.id}`,
+    `gateway-test:${admin.id}`,
   ]);
   for (const ip of [
     '127.0.0.1',

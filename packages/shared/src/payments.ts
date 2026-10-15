@@ -40,8 +40,10 @@ export interface PaymentResultData {
   createdAt: string;
   verifiedAt: string | null;
   reversedAt: string | null;
-  orderId: string;
-  orderNumber: number;
+  orderId: string | null;
+  orderNumber: number | null;
+  gatewayTest: boolean;
+  adminTestUrl: string | null;
   paidAt: string | null;
   redirectUrl: string | null;
   canRetry: boolean;

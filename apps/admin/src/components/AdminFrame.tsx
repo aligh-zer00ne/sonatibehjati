@@ -16,6 +16,7 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin/tickets', label: 'پشتیبانی و تیکت‌ها', icon: 'support' },
   { href: '/admin/reviews', label: 'نظرات محصولات', icon: 'review' },
   { href: '/admin/homepage', label: 'هیروسکشن و درباره ما', icon: 'home' },
+  { href: '/admin/payment-test', label: 'تست درگاه پرداخت', icon: 'shield' },
   { href: '/admin/accounts', label: 'کاربران پنل', icon: 'shield' },
   { href: '/admin/settings', label: 'تنظیمات حساب', icon: 'settings' },
 ];

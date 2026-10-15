@@ -17,6 +17,8 @@ const schema = z.object({
   OTP_HASH_SECRET: optionalSecret,
   AUTH_PROXY_SECRET: optionalSecret,
   AUTH_TRUST_PROXY_HEADERS: z.enum(['true', 'false']).default('false'),
+  CUSTOMER_AUTH_ENABLED: z.enum(['true', 'false']).default('true'),
+  ADMIN_PAYMENT_TEST_ENABLED: z.enum(['true', 'false']).default('false'),
   SMS_PROVIDER: z.enum(['mock', 'melipayamak']).default('mock'),
   DEV_OTP_CODE: z.preprocess(
     (value) => (value === '' ? undefined : value),
@@ -74,7 +76,8 @@ if (env.NODE_ENV === 'production') {
     throw new Error('Production admin must use HTTPS.');
   if (new URL(env.STOREFRONT_ORIGIN).protocol !== 'https:')
     throw new Error('Production storefront must use HTTPS.');
-  if (env.SMS_PROVIDER === 'mock') throw new Error('Production requires a real SMS provider.');
+  if (env.CUSTOMER_AUTH_ENABLED === 'true' && env.SMS_PROVIDER === 'mock')
+    throw new Error('Production requires a real SMS provider.');
   z.string().min(32).parse(env.AUTH_PROXY_SECRET);
   const secrets = keys.map((key) => z.string().min(32).parse(process.env[key]));
   if (new Set(secrets).size !== keys.length)
@@ -114,3 +117,6 @@ if (env.PAYMENT_PROVIDER === 'sep') {
     throw new Error('Real SEP callbacks require HTTPS.');
   z.string().min(32).parse(env.AUTH_PROXY_SECRET);
 }
+
+if (env.ADMIN_PAYMENT_TEST_ENABLED === 'true' && env.PAYMENT_PROVIDER !== 'sep')
+  throw new Error('Admin gateway tests require the SEP provider.');

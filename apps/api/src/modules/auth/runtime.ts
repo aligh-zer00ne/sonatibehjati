@@ -8,10 +8,14 @@ export const authConfig = {
   otpSecret: env.OTP_HASH_SECRET ?? randomBytes(48).toString('base64url'),
 };
 export const userTokens = new UserTokens(authConfig.accessSecret, authConfig.refreshSecret);
-export const smsService = createSMSService(env.NODE_ENV, {
-  hostname: env.MELI_PAYAMAK_HOSTNAME,
-  port: 443,
-  path: env.MELI_PAYAMAK_PATH ?? process.env.MELI_PAYMAK_PATH ?? '/api/send/shared/{apiKey}',
-  apiKey: env.MELI_PAYAMAK_API_KEY ?? process.env.MELI_PAYMAK_API_KEY ?? '',
-  bodyId: env.MELI_PAYAMAK_OTP_BODY_ID ?? 0,
-});
+export const smsService = createSMSService(
+  env.NODE_ENV,
+  {
+    hostname: env.MELI_PAYAMAK_HOSTNAME,
+    port: 443,
+    path: env.MELI_PAYAMAK_PATH ?? process.env.MELI_PAYMAK_PATH ?? '/api/send/shared/{apiKey}',
+    apiKey: env.MELI_PAYAMAK_API_KEY ?? process.env.MELI_PAYMAK_API_KEY ?? '',
+    bodyId: env.MELI_PAYAMAK_OTP_BODY_ID ?? 0,
+  },
+  env.CUSTOMER_AUTH_ENABLED === 'true',
+);

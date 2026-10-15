@@ -53,6 +53,9 @@ async function send<T, V extends Record<string, unknown>>(
       'RATE_LIMITED',
       'NOT_FOUND',
       'REQUEST_CONFLICT',
+      'PAYMENT_DISABLED',
+      'PAYMENT_UNAVAILABLE',
+      'PAYMENT_PENDING',
     ];
     throw new AdminRequestError(
       known.includes(code) ? error!.message : 'سرویس مدیریت در دسترس نیست. دوباره تلاش کنید.',

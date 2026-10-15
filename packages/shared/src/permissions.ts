@@ -34,6 +34,8 @@ export function canOpenAdminPath(
   path: string,
 ) {
   if (path === '/admin/settings' || path.startsWith('/admin/settings/')) return true;
+  if (path === '/admin/payment-test' || path.startsWith('/admin/payment-test/'))
+    return admin.role === 'OWNER';
   if (path === '/admin/accounts' || path.startsWith('/admin/accounts/'))
     return admin.role === 'OWNER';
   if (path.startsWith('/admin/promotions')) return hasPermission(admin, 'PRODUCTS');

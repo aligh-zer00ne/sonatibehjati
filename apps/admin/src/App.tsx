@@ -20,6 +20,7 @@ const OrdersMap = lazy(() => import('./pages/OrdersMap'));
 const Users = lazy(() => import('./pages/Users'));
 const Reports = lazy(() => import('./pages/Reports'));
 const ProductEdit = lazy(() => import('./pages/ProductEdit'));
+const PaymentTest = lazy(() => import('./pages/PaymentTest'));
 const Settings = lazy(() => import('./pages/Settings'));
 export default function App() {
   return (
@@ -69,6 +70,7 @@ export default function App() {
                     <Route path="homepage" element={<Homepage />} />
                     <Route element={<OwnerOnly />}>
                       <Route path="accounts" element={<Accounts />} />
+                      <Route path="payment-test" element={<PaymentTest />} />
                     </Route>
                     <Route path="products" element={<Products />} />
                     <Route path="products/new" element={<ProductEdit />} />

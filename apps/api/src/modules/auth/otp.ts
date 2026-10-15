@@ -1,3 +1,4 @@
+import { requireCustomerAuth } from './availability.js';
 import { randomUUID } from 'node:crypto';
 import {
   otpRequestSchema,
@@ -15,6 +16,7 @@ import { createSession } from './sessions.js';
 import { env } from '../../config/env.js';
 import { createOtpCode } from './otp-code.js';
 export async function requestOtp(raw: unknown, ip: string) {
+  requireCustomerAuth();
   const parsed = otpRequestSchema.safeParse(raw);
   if (!parsed.success) throw authError('شماره موبایل معتبر وارد کنید.', 'BAD_USER_INPUT');
   const { phone } = parsed.data;
@@ -50,6 +52,7 @@ export async function requestOtp(raw: unknown, ip: string) {
   };
 }
 export async function verifyOtp(raw: unknown, ip: string) {
+  requireCustomerAuth();
   const parsed = otpVerifySchema.safeParse(raw);
   if (!parsed.success)
     throw authError('شماره موبایل و کد پنج‌رقمی را بررسی کنید.', 'BAD_USER_INPUT');

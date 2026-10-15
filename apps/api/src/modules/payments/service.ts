@@ -15,7 +15,8 @@ const retryDelay = (p: Payment) =>
       : 30000;
 const terminalStates = ['SUCCEEDED', 'REVERSED', 'REVIEW_REQUIRED', 'REFUND_PENDING', 'REFUNDING'];
 const terminalFailure = ['TOKEN_FAILED', 'CANCELED', 'FAILED', 'EXPIRED'];
-export const paymentAvailable = () => env.PAYMENT_PROVIDER === 'sep';
+export const gatewayAvailable = () => env.PAYMENT_PROVIDER === 'sep';
+export const paymentAvailable = () => gatewayAvailable() && env.CUSTOMER_AUTH_ENABLED === 'true';
 export const paymentInfo = (p: Payment) => ({
   id: p.id,
   status: p.status,
@@ -46,6 +47,7 @@ export async function findPayment(id: string, key: string) {
   });
   if (
     !p ||
+    (!p.orderId && !p.gatewayTestAdminId) ||
     p.mode !== paymentMode ||
     !timingSafeEqual(Buffer.from(key), Buffer.from(p.callbackKey))
   )
@@ -59,7 +61,8 @@ async function lockPayment<T>(
   const row = await db.payment.findUniqueOrThrow({ where: { id }, select: { orderId: true } });
   return db.$transaction(
     async (tx) => {
-      await tx.$queryRaw`SELECT id FROM \`Order\` WHERE id = ${row.orderId} FOR UPDATE`;
+      if (row.orderId)
+        await tx.$queryRaw`SELECT id FROM \`Order\` WHERE id = ${row.orderId} FOR UPDATE`;
       await tx.$queryRaw`SELECT id FROM Payment WHERE id = ${id} FOR UPDATE`;
       return action(tx, await tx.payment.findUniqueOrThrow({ where: { id } }));
     },
@@ -124,14 +127,16 @@ export async function startOrderPayment(userId: string, orderId: string) {
     return { payment, phone: order.user.phone, create: true };
   });
   if (!reserved.create) return { redirectUrl: redirectPath(reserved.payment) };
-  const p = reserved.payment;
+  return preparePayment(reserved.payment, reserved.phone);
+}
+export async function preparePayment(p: Payment, phone: string) {
   try {
     const token = await sepGateway.token({
       terminal: p.terminalId,
       amount: p.amountRials,
       id: p.id,
       callback: callbackUrl(p),
-      phone: reserved.phone,
+      phone,
       sessionKey: p.sessionKey,
     });
     const updated = await db.payment.updateMany({
@@ -260,15 +265,19 @@ export async function verifyPayment(id: string) {
             await tx.paymentReference.create({
               data: { refNum: detail.refNum, paymentId: id, amountRials: detail.amount },
             });
-          const order = await tx.order.findUniqueOrThrow({ where: { id: p.orderId } });
+          const order = p.orderId
+            ? await tx.order.findUniqueOrThrow({ where: { id: p.orderId } })
+            : null;
           const reason =
             detail.amount !== p.amountRials
               ? 'AMOUNT_MISMATCH'
-              : order.paidAt
-                ? 'DUPLICATE_PAYMENT'
-                : !['CREATED', 'PENDING_PAYMENT'].includes(order.status)
-                  ? 'ORDER_NOT_PAYABLE'
-                  : null;
+              : !order
+                ? 'ADMIN_GATEWAY_TEST'
+                : order.paidAt
+                  ? 'DUPLICATE_PAYMENT'
+                  : !['CREATED', 'PENDING_PAYMENT'].includes(order.status)
+                    ? 'ORDER_NOT_PAYABLE'
+                    : null;
           await tx.payment.update({
             where: { id },
             data: {
@@ -283,7 +292,7 @@ export async function verifyPayment(id: string) {
               leaseUntil: null,
             },
           });
-          if (!reason)
+          if (!reason && order)
             await tx.order.update({
               where: { id: order.id },
               data: { paidAt: new Date(), status: 'PROCESSING' },
@@ -367,7 +376,7 @@ export async function reversePayment(id: string) {
   return db.payment.findUniqueOrThrow({ where: { id } });
 }
 export async function reconcilePayments() {
-  if (!paymentAvailable()) return;
+  if (!gatewayAvailable()) return;
   await db.payment.updateMany({
     where: { mode: paymentMode, status: 'READY', expiresAt: { lt: new Date() } },
     data: { status: 'EXPIRED', reason: 'EXPIRED' },
@@ -430,10 +439,13 @@ export async function publicPayment(id: string, key: string) {
   return {
     ...paymentInfo(p),
     orderId: p.orderId,
-    orderNumber: p.order.number,
-    paidAt: p.order.paidAt?.toISOString() ?? null,
+    orderNumber: p.order?.number ?? null,
+    gatewayTest: !p.orderId,
+    adminTestUrl: !p.orderId ? `${env.ADMIN_ORIGIN}/admin/payment-test` : null,
+    paidAt: p.order?.paidAt?.toISOString() ?? null,
     redirectUrl: p.status === 'READY' ? redirectPath(p) : null,
     canRetry:
+      !!p.order &&
       !p.order.paidAt &&
       ['CREATED', 'PENDING_PAYMENT'].includes(p.order.status) &&
       terminalFailure.includes(p.status),

@@ -1,7 +1,17 @@
 import type { SMSService } from './contracts.js';
 import { MeliPayamakSMSService, type SmsConfig } from './meliPayamakSms.js';
 
-export function createSMSService(environment: string, config: SmsConfig): SMSService {
+export function createSMSService(
+  environment: string,
+  config: SmsConfig,
+  enabled = true,
+): SMSService {
+  if (!enabled)
+    return {
+      async sendOTP() {
+        throw new Error('Customer authentication is disabled.');
+      },
+    };
   return environment === 'production'
     ? new MeliPayamakSMSService(config)
     : new DevelopmentSMSService();

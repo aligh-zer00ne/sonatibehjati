@@ -1,6 +1,6 @@
-import { reconcilePayments, paymentAvailable } from './service.js';
+import { reconcilePayments, gatewayAvailable } from './service.js';
 export function startPaymentWorker() {
-  if (!paymentAvailable()) return () => {};
+  if (!gatewayAvailable()) return () => {};
   let running = false;
   const run = async () => {
     if (running) return;
