@@ -88,6 +88,9 @@ try {
   ).toHaveCount(0);
   await menuButton.click();
   await expect(accountMenu).toBeVisible();
+  await expect(accountMenu.getByText('حساب شما در سنتی بهجتی', { exact: true })).toHaveCount(0);
+  await expect(accountMenu.getByText('همراه سنتی بهجتی', { exact: true })).toHaveCount(0);
+  await expect(accountMenu.getByText('علی غفوری', { exact: true })).toHaveCount(0);
   await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
   for (const title of ['نمای کلی', 'سفارش‌ها', 'نشانی‌ها', 'پروفایل', 'پشتیبانی و تیکت‌ها'])
     await expect(accountMenu.getByRole('link', { name: title, exact: true })).toBeVisible();

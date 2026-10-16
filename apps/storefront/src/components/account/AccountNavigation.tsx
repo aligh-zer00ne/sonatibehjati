@@ -171,7 +171,6 @@ export default function AccountNavigation() {
         description="سفارش‌ها، نشانی‌ها و اطلاعات شخصی شما"
         closeLabel="بستن منوی حساب کاربری"
       >
-        {identity}
         <AccountLinks onNavigate={() => setOpen(false)} />
         <div className="mt-auto pt-6">
           <Link
