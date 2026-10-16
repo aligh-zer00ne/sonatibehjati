@@ -1,9 +1,11 @@
 import { proxyAuth, proxyInputSchema } from '@/lib/auth/proxy';
+import { hasAllowedAuthOrigin } from '@/lib/auth/origin';
 export async function POST(request: Request) {
-  const origin = request.headers.get('origin');
   if (
-    origin !== new URL(request.url).origin ||
-    request.headers.get('sec-fetch-site') === 'cross-site'
+    !hasAllowedAuthOrigin(
+      request,
+      process.env.STOREFRONT_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL,
+    )
   )
     return Response.json(
       { errors: [{ message: 'درخواست مجاز نیست.', extensions: { code: 'FORBIDDEN' } }] },

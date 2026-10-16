@@ -14,7 +14,8 @@ let browser;
 try {
   const development = process.env.AUTH_VERIFY_DEVELOPMENT === 'true';
   await startAPI({ environment: development ? 'development' : 'test', developmentCode: '12345' });
-  await startStorefront();
+  // Match PM2: the internal listener differs from the storefront's configured public host.
+  await startStorefront({ hostname: '127.0.0.1' });
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
     headless: true,
@@ -178,6 +179,27 @@ try {
     data: { operation: 'LogoutUser', variables: {} },
   });
   assert.equal(csrf.status(), 403);
+  const proxied = await page.request.post(`${origin}/api/auth`, {
+    headers: {
+      Origin: origin,
+      Host: 'sonatibehjati.ir',
+      'X-Forwarded-Host': 'sonatibehjati.ir',
+      'X-Forwarded-Proto': 'https',
+    },
+    data: { operation: 'LogoutUser', variables: {} },
+  });
+  assert.equal(proxied.status(), 200, 'Configured origin must work behind the HTTPS proxy');
+  assert.equal((await proxied.json()).data.logout, true);
+  const spoofed = await page.request.post(`${origin}/api/auth`, {
+    headers: {
+      Origin: 'https://other.example',
+      Host: 'other.example',
+      'X-Forwarded-Host': 'other.example',
+      'X-Forwarded-Proto': 'https',
+    },
+    data: { operation: 'LogoutUser', variables: {} },
+  });
+  assert.equal(spoofed.status(), 403, 'Forwarded headers must not authorize a foreign origin');
   const invalid = await page.request.post(`${origin}/api/auth`, {
     headers: { Origin: origin },
     data: { operation: 'AdminLogin', variables: {} },
@@ -216,7 +238,7 @@ try {
   await staticContext.close();
   assert.deepEqual(errors, []);
   console.log(
-    'Auth UI checks passed: guest route protection, Persian phone/code input, SMS error retry, persisted challenge, incorrect code and resend countdown, automatic login/return path, cart retention, HttpOnly cookies, reload and multi-tab refresh/logout, CSRF and operation allowlist, missing challenge, responsive 320/390/768/1440 and no runtime errors.',
+    'Auth UI checks passed: guest route protection, Persian phone/code input, SMS error retry, persisted challenge, incorrect code and resend countdown, automatic login/return path, cart retention, HttpOnly cookies, reload and multi-tab refresh/logout, Nginx loopback listener / HTTPS forwarding, spoofed-origin rejection, CSRF and operation allowlist, missing challenge, responsive 320/390/768/1440 and no runtime errors.',
   );
 } finally {
   await browser?.close();

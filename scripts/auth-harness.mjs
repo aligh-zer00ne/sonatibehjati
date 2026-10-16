@@ -76,11 +76,11 @@ export async function startAPI({ environment = 'test', developmentCode = '' } = 
   });
   await ready(`${apiURL}/health`);
 }
-export async function startStorefront() {
+export async function startStorefront({ hostname = 'localhost' } = {}) {
   const rootRequire = createRequire(import.meta.url);
   const server = spawn(
     process.execPath,
-    [rootRequire.resolve('next/dist/bin/next'), 'start', '--port', '3004'],
+    [rootRequire.resolve('next/dist/bin/next'), 'start', '--hostname', hostname, '--port', '3004'],
     {
       cwd: 'apps/storefront',
       env: {

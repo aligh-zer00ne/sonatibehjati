@@ -14,7 +14,7 @@ if (checkoutTest) process.env.CHECKOUT_PAYMENT_TEST_ENABLED = 'true';
 let browser;
 try {
   await startAPI();
-  await startStorefront();
+  await startStorefront({ hostname: '127.0.0.1' });
   await startAdmin();
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
