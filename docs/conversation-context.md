@@ -72,3 +72,9 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 
 - The user requested removing the entire “همراه سنتی بهجتی” identity section from the account hamburger menu. Remove its avatar, customer name/fallback and subtitle together, including for customers with saved profile names. Keep the desktop sidebar identity and dashboard profile card.
 - Lint, all-workspace typecheck, storefront build and full account browser checks passed, including absence of this section in the drawer and existing navigation/focus/profile/address/order behavior.
+
+## Latest correction: supplied navy QR landing page (2026-10-16)
+
+- Replace the independent `/QR` landing page with the user's `sonati-behjati-navy (1).html`: embedded brand logo, navy sky/day-night themes, online shop, Instagram, Neshan navigation, phone and creator credit links. Keep the supplied content, styling and scripts rather than reinterpreting the design as the commerce shell.
+- `public/qr.html` is served by the existing `/QR` route. Optional local-only font faces keep the file's declared fallbacks; omit requests for the unprovided IranNastaliq / BTitr font files to avoid broken asset URLs. Revalidate the page on subsequent requests instead of caching it for an hour.
+- Lint/typecheck/build passed; live browser verification compared the served HTML to the supplied file (only the optional missing font references/comment adapted), checked links/logo, 320–1440px layouts, all four sky themes and absence of missing local assets/runtime errors. The printed branded QR still decodes to `https://sonatibehjati.ir/QR` at 128–720px in color and grayscale; existing labels/invoices need no QR regeneration. Screenshots were visually inspected. No production config or migration is required.
