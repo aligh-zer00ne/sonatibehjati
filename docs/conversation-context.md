@@ -83,3 +83,8 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 
 - The user requested the online-order arrow point left. Replace the bidi-mirrored text glyph with a decorative SVG arrow, with explicit stroke and centering. The rendered arrow must remain left-facing in RTL layouts.
 - Lint, all-workspace typecheck, storefront production build and browser checks at 320–1440px passed; SVG screen coordinates confirm the arrow points left.
+
+## QR refinements: Instagram handle typography (2026-10-16)
+
+- Match the Instagram handle to the existing Vazirmatn font family with weight 600, preserving its LTR isolation and an adaptive font size that fits mobile cards. Keep the actual Instagram URL and handle unchanged.
+- Browser checks confirmed the handle inherits the page font, remains LTR and fits one line at 320/390/768/1440px; lint, typecheck and storefront build passed with the full QR refinements.
