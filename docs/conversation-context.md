@@ -88,3 +88,9 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 
 - Match the Instagram handle to the existing Vazirmatn font family with weight 600, preserving its LTR isolation and an adaptive font size that fits mobile cards. Keep the actual Instagram URL and handle unchanged.
 - Browser checks confirmed the handle inherits the page font, remains LTR and fits one line at 320/390/768/1440px; lint, typecheck and storefront build passed with the full QR refinements.
+
+## QR refinements: Ardakan skyline (2026-10-16)
+
+- Redesign the lower skyline as layered navy architecture with stepped four-sided windcatchers, recessed ventilation slats, side faces, arched roofs and entrances, soft blue depth and subtle champagne trim/window lights. Keep it decorative and non-interactive; retain the supplied page's sky themes, branding and links.
+- Add a Next.js rewrite so lowercase `/qr` serves the same landing page as the existing printed `/QR` URL. Both paths were verified with HTTP 200 on a temporary production Next server, without redirects or API/database dependencies.
+- Lint/typecheck/build and browser checks passed: responsive 320–1440px including a short 320x480 viewport, four sky themes, working logo/links, unchanged CTA touch areas, and no runtime errors or missing local assets. Mobile and desktop screenshots were visually reviewed. No server config or migration change is required.

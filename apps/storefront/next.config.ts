@@ -2,6 +2,9 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   transpilePackages: ['@behjati/shared', '@behjati/graphql'],
   poweredByHeader: false,
+  rewrites() {
+    return [{ source: '/qr', destination: '/QR' }];
+  },
   headers() {
     const adminOrigin = new URL(
       process.env.ADMIN_ORIGIN ??
