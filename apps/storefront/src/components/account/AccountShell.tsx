@@ -24,7 +24,7 @@ export default function AccountShell({ children }: { children: ReactNode }) {
   if (loading || !user)
     return <Skeleton className="h-96 rounded-3xl" aria-label="در حال دریافت حساب" />;
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[240px_1fr]">
+    <div className="grid items-start gap-5 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-7">
       <AccountNavigation />
       <div
         key={user.id}

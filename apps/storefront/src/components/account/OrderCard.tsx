@@ -7,29 +7,36 @@ import { Button } from '@/components/ui/button';
 import OrderStatusBadge from './OrderStatusBadge';
 export default function OrderCard({ order }: { order: AccountOrderSummaryFieldsFragment }) {
   return (
-    <Card className="rounded-3xl bg-card/85 p-5 transition duration-300 hover:border-clay/50 hover:shadow-lg motion-safe:hover:-translate-y-1">
+    <Card className="rounded-[22px] bg-card p-4 shadow-none transition-colors hover:border-clay/50 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="flex items-center gap-2 font-extrabold">
-          <Package size={20} className="text-clay" />
-          سفارش {formatNumber(order.number)}
-        </h3>
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-[14px] bg-surface/70 text-clay">
+            <Package size={20} aria-hidden="true" />
+          </span>
+          <div>
+            <h3 className="text-sm font-extrabold">سفارش {formatNumber(order.number)}</h3>
+            <time
+              dateTime={order.createdAt}
+              className="mt-1 block text-[11px] text-muted-foreground"
+            >
+              {formatDate(order.createdAt)}
+            </time>
+          </div>
+        </div>
         <OrderStatusBadge status={order.status} />
       </div>
-      <div className="my-4 flex flex-wrap justify-between gap-2 text-sm">
-        <time dateTime={order.createdAt} className="text-muted-foreground">
-          {formatDate(order.createdAt)}
-        </time>
-        <b>{formatPrice(order.total)}</b>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-3">
+        <b className="text-sm text-earth">{formatPrice(order.total)}</b>
+        <Button asChild variant="ghost" size="sm" className="gap-2 rounded-xl px-2 text-xs">
+          <Link
+            href={`/account/orders/${order.id}`}
+            aria-label={`جزئیات سفارش ${formatNumber(order.number)}`}
+          >
+            جزئیات سفارش
+            <ArrowLeft size={15} aria-hidden="true" />
+          </Link>
+        </Button>
       </div>
-      <Button asChild variant="outline" className="w-full sm:w-auto">
-        <Link
-          href={`/account/orders/${order.id}`}
-          aria-label={`جزئیات سفارش ${formatNumber(order.number)}`}
-        >
-          جزئیات سفارش
-          <ArrowLeft size={16} />
-        </Link>
-      </Button>
     </Card>
   );
 }

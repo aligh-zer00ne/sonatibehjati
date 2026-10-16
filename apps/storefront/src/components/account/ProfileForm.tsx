@@ -40,7 +40,7 @@ export default function ProfileForm() {
     }
   }
   return (
-    <Card className="rounded-3xl bg-card/85 p-5 sm:p-7">
+    <Card className="rounded-[22px] bg-card p-4 shadow-none sm:p-7">
       <form onSubmit={submit} aria-busy={pending} className="space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           {(
@@ -96,7 +96,7 @@ export default function ProfileForm() {
             پروفایل ذخیره شد.
           </p>
         )}
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={pending} className="w-full sm:w-auto">
           {pending ? 'در حال ذخیره...' : 'ذخیره پروفایل'}
         </Button>
       </form>

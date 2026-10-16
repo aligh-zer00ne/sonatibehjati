@@ -68,7 +68,7 @@ export default function Addresses() {
   if (!query.data) return <AccountDataState error={query.error} retry={query.refresh} />;
   if (form)
     return (
-      <Card className="rounded-3xl bg-card/85 p-5 sm:p-7">
+      <Card className="rounded-[22px] bg-card p-4 shadow-none sm:p-7">
         <AddressForm
           key={form === 'new' ? 'new' : form.id}
           phone={user?.phone ?? ''}
@@ -116,7 +116,7 @@ export default function Addresses() {
       )}
       <div className="grid gap-4 xl:grid-cols-2">
         {addresses.map((address) => (
-          <Card key={address.id} className="rounded-3xl bg-card/85 p-5">
+          <Card key={address.id} className="rounded-[22px] bg-card p-4 shadow-none sm:p-5">
             <h2 className="mb-3 flex flex-wrap items-center gap-2 font-extrabold">
               <MapPin size={18} className="text-clay" />
               {address.title}
@@ -126,7 +126,7 @@ export default function Addresses() {
                 </span>
               )}
             </h2>
-            <p className="text-sm leading-8">
+            <p className="text-sm leading-8 break-words">
               {address.province}، {address.city}، {address.postalAddress}
             </p>
             <p className="mt-2 text-sm text-muted-foreground">

@@ -14,8 +14,9 @@ export default async function Page() {
     redirect('/login?next=' + encodeURIComponent('/account'));
   return (
     <>
-      <Breadcrumbs items={[{ title: 'حساب کاربری' }]} />
-      <h1 className="mb-6 text-2xl font-extrabold">حساب کاربری</h1>
+      <div className="hidden lg:block">
+        <Breadcrumbs items={[{ title: 'حساب کاربری' }]} />
+      </div>
       <AccountOverview />
     </>
   );

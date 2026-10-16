@@ -161,7 +161,11 @@ try {
   );
   const user = await db.user.findUniqueOrThrow({ where: { phone: mobile } });
   assert.equal(await db.userSession.count({ where: { userId: user.id, revokedAt: null } }), 1);
-  await page.getByRole('button', { name: 'خروج از حساب', exact: true }).click();
+  await page.getByRole('button', { name: 'باز کردن منوی حساب کاربری', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'حساب کاربری', exact: true })
+    .getByRole('button', { name: 'خروج از حساب', exact: true })
+    .click();
   await expect(page).toHaveURL(/\/login/);
   await expect(tab).toHaveURL(/\/login/);
   assert.equal(

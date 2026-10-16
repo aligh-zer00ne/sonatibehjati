@@ -77,8 +77,21 @@ try {
     .getByRole('button', { name: 'مشاهده و پاسخ', exact: true })
     .click();
   await manager.getByLabel('پاسخ پشتیبانی', { exact: true }).fill('سفارش شما آمادهٔ ارسال است.');
-  await manager.getByRole('button', { name: 'ارسال پاسخ', exact: true }).click();
-  await expect(manager.getByText('سفارش شما آمادهٔ ارسال است.', { exact: true })).toBeVisible();
+  const [replyResponse] = await Promise.all([
+    manager.waitForResponse((response) => {
+      const request = response.request();
+      return (
+        request.method() === 'POST' &&
+        request.postDataJSON()?.query?.includes('mutation ReplyAdminTicket')
+      );
+    }),
+    manager.getByRole('button', { name: 'ارسال پاسخ', exact: true }).click(),
+  ]);
+  assert.equal((await replyResponse.json()).errors, undefined);
+  // A textarea's entered value also matches getByText. Wait for the saved message paragraph.
+  await expect(
+    manager.locator('p').filter({ hasText: /^سفارش شما آمادهٔ ارسال است\.$/ }),
+  ).toBeVisible();
   await shop.getByRole('button', { name: 'تازه‌سازی گفتگو', exact: true }).click();
   await expect(shop.getByText('سفارش شما آمادهٔ ارسال است.', { exact: true })).toBeVisible();
   assert.equal(

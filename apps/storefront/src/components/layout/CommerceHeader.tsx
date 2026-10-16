@@ -29,6 +29,7 @@ export default function CommerceHeader() {
                 : path === '/search'
                   ? 'جستجو'
                   : 'فروشگاه';
+  if (path === '/account' || path.startsWith('/account/')) return null;
   return (
     <header className="flex h-[72px] items-center justify-between border-b border-border bg-background/70 px-4 md:hidden">
       {path === '/shop' ? (

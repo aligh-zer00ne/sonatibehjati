@@ -4,7 +4,7 @@ import { startAPI, startStorefront, origin, phone, db, cleanup } from './auth-ha
 let browser;
 try {
   await startAPI({ environment: 'development', developmentCode: '12345' });
-  await startStorefront();
+  await startStorefront({ hostname: '127.0.0.1' });
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
     headless: true,
@@ -80,7 +80,39 @@ try {
   const user = await db.user.findUniqueOrThrow({ where: { phone: mobile } });
   assert.equal(user.email, null);
   assert.equal(user.phone, mobile);
-  await goto('/account/orders');
+  const menuButton = page.locator('button[aria-label="باز کردن منوی حساب کاربری"]');
+  const accountMenu = page.getByRole('dialog', { name: 'حساب کاربری', exact: true });
+  await expect(menuButton).toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: 'بخش‌های حساب کاربری', exact: true }),
+  ).toHaveCount(0);
+  await menuButton.click();
+  await expect(accountMenu).toBeVisible();
+  await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+  for (const title of ['نمای کلی', 'سفارش‌ها', 'نشانی‌ها', 'پروفایل', 'پشتیبانی و تیکت‌ها'])
+    await expect(accountMenu.getByRole('link', { name: title, exact: true })).toBeVisible();
+  await expect(accountMenu.getByRole('link', { name: 'پروفایل', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  for (let index = 0; index < 12; index++) {
+    await page.keyboard.press('Tab');
+    assert.ok(
+      await accountMenu.evaluate((element) => element.contains(document.activeElement)),
+      'Focus remains inside the account drawer',
+    );
+  }
+  await page.keyboard.press('Escape');
+  await expect(accountMenu).toHaveCount(0);
+  await expect(menuButton).toBeFocused();
+  await menuButton.click();
+  await page.mouse.click(10, 340);
+  await expect(accountMenu).toHaveCount(0);
+  await menuButton.click();
+  await accountMenu.getByRole('link', { name: 'سفارش‌ها', exact: true }).click();
+  await expect(page).toHaveURL(origin + '/account/orders');
+  await expect(accountMenu).toHaveCount(0);
+  await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
   await expect(page.getByRole('heading', { name: 'هنوز سفارشی ثبت نکرده‌اید' })).toBeVisible();
   await goto('/account/addresses');
   await expect(page.getByRole('heading', { name: 'هنوز نشانی ندارید' })).toBeVisible();
@@ -185,7 +217,7 @@ try {
   await expect(page.getByText('۲۵۰٬۰۰۰ تومان', { exact: true })).toBeVisible();
   await expect(page.getByText('۱۰۰٬۰۰۰ تومان', { exact: false })).toBeVisible();
   await expect(
-    page.getByText('این سفارش در انتظار پرداخت است؛ پرداخت آنلاین هنوز فعال نیست.', {
+    page.getByText('پرداخت آنلاین هنوز فعال نشده است؛ سفارش شما محفوظ است.', {
       exact: true,
     }),
   ).toBeVisible();
@@ -199,11 +231,14 @@ try {
     '/account/addresses',
     '/account/orders',
     `/account/orders/${latest.id}`,
+    '/account/support',
   ]) {
     await goto(path);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(
-      page.locator('nav[aria-label="ناوبری موبایل"] a[href="/account"]'),
+      page.locator(
+        `nav[aria-label="ناوبری موبایل"] a[href="${path === '/account/support' ? '/support' : '/account'}"]`,
+      ),
     ).toHaveAttribute('aria-current', 'page');
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
@@ -217,18 +252,66 @@ try {
   await page.screenshot({ path: '/tmp/behjati-phase7-account-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: '/tmp/behjati-phase7-account-mobile.png', fullPage: true });
+  await menuButton.click();
+  await expect(accountMenu).toBeVisible();
+  await expect
+    .poll(
+      async () => {
+        const box = await accountMenu.boundingBox();
+        return Math.abs(box.x + box.width - 390);
+      },
+      { message: 'RTL drawer opens from the right' },
+    )
+    .toBeLessThanOrEqual(1);
+  await page.screenshot({ path: '/tmp/behjati-account-drawer-mobile.png' });
+  await page.getByRole('button', { name: 'بستن منوی حساب کاربری', exact: true }).click();
+  await expect(menuButton).toBeFocused();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await menuButton.click();
+  assert.equal(
+    await accountMenu.evaluate((element) => getComputedStyle(element).animationName),
+    'none',
+  );
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect(accountMenu).toHaveCount(0);
+  await expect(menuButton).not.toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: 'بخش‌های حساب کاربری', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole('navigation', { name: 'بخش‌های حساب کاربری', exact: true })
+      .getByRole('link', { name: 'نمای کلی', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
+  await page.setViewportSize({ width: 320, height: 480 });
+  await menuButton.click();
+  const shortMenuBox = await accountMenu.boundingBox();
+  assert.ok(
+    shortMenuBox.width <= 320 && shortMenuBox.height <= 480,
+    'Drawer fits narrow, short screens',
+  );
+  await accountMenu
+    .getByRole('button', { name: 'خروج از حساب', exact: true })
+    .scrollIntoViewIfNeeded();
+  await expect(
+    accountMenu.getByRole('button', { name: 'خروج از حساب', exact: true }),
+  ).toBeInViewport();
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({ width: 390, height: 844 });
+
   const tab = await context.newPage();
   tab.on('pageerror', (error) => errors.push(error.message));
   await tab.goto(origin + '/account', { waitUntil: 'networkidle' });
   await expect(tab.getByText('علی غفوری،', { exact: true })).toBeVisible();
   await goto('/account/orders/not-owned');
   await expect(page.locator('main [role="alert"]')).toContainText('سفارش یافت نشد');
-  await page.getByRole('button', { name: 'خروج از حساب', exact: true }).click();
+  await menuButton.click();
+  await accountMenu.getByRole('button', { name: 'خروج از حساب', exact: true }).click();
   await expect(page).toHaveURL(/\/login/);
   await expect(tab).toHaveURL(/\/login/);
   assert.deepEqual(errors, []);
   console.log(
-    'Account UI passed: private routes and login return, profile save/error/retry/reload and verified phone, address CRUD/defaults/map reuse/used restriction, order pagination/status/empty/error/retry, immutable snapshot detail/reload, noindex, responsive 320/390/768/1440, multi-tab logout and no runtime errors.',
+    'Account UI passed: private routes and login return, profile save/error/retry/reload and verified phone, address CRUD/defaults/map reuse/used restriction, order pagination/status/empty/error/retry, immutable snapshot detail/reload, noindex, responsive 320/390/768/1440, right-side hamburger drawer, active routes, Escape/outside/link close, focus trapping/return, desktop resize, short screens, reduced motion, support navigation, multi-tab logout and no runtime errors.',
   );
 } finally {
   await browser?.close();

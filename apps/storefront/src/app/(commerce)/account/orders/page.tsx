@@ -14,8 +14,10 @@ export default async function Page() {
     redirect('/login?next=' + encodeURIComponent('/account/orders'));
   return (
     <>
-      <Breadcrumbs items={[{ title: 'حساب کاربری', href: '/account' }, { title: 'سفارش‌ها' }]} />
-      <h1 className="mb-6 text-2xl font-extrabold">سفارش‌ها</h1>
+      <div className="hidden lg:block">
+        <Breadcrumbs items={[{ title: 'حساب کاربری', href: '/account' }, { title: 'سفارش‌ها' }]} />
+      </div>
+      <h1 className="mb-5 text-xl font-extrabold sm:text-2xl">سفارش‌ها</h1>
       <Orders />
     </>
   );

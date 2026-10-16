@@ -19,8 +19,8 @@ export default function Orders() {
   const orders = query.data?.myOrders;
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3 text-sm font-bold">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-3 sm:p-4">
+        <div className="flex min-w-0 flex-1 items-center gap-3 text-sm font-bold">
           <label htmlFor="orders-status">وضعیت</label>
           <select
             id="orders-status"
@@ -29,7 +29,7 @@ export default function Orders() {
               setStatus(event.target.value as OrderStatus | '');
               setPage(1);
             }}
-            className="h-11 rounded-xl border border-border bg-card px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-card px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <option value="">همهٔ سفارش‌ها</option>
             {orderStatuses.map((value) => (
