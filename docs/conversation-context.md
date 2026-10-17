@@ -94,3 +94,11 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 - Redesign the lower skyline as layered navy architecture with stepped four-sided windcatchers, recessed ventilation slats, side faces, arched roofs and entrances, soft blue depth and subtle champagne trim/window lights. Keep it decorative and non-interactive; retain the supplied page's sky themes, branding and links.
 - Add a Next.js rewrite so lowercase `/qr` serves the same landing page as the existing printed `/QR` URL. Both paths were verified with HTTP 200 on a temporary production Next server, without redirects or API/database dependencies.
 - Lint/typecheck/build and browser checks passed: responsive 320–1440px including a short 320x480 viewport, four sky themes, working logo/links, unchanged CTA touch areas, and no runtime errors or missing local assets. Mobile and desktop screenshots were visually reviewed. No server config or migration change is required.
+
+
+## Latest correction: restore the accepted QR design (2026-10-17)
+
+- The user rejected the latest QR redesign and requested restoring the QR page to the third-most-recent commit, which was `38c49fb` (`fix(qr): keep the order arrow pointing left in RTL`) when the request arrived. Restore `public/qr.html` byte-for-byte from that commit in a new commit; preserve subsequent unrelated project changes and Git history.
+- This supersedes the Instagram typography and Ardakan skyline refinements above. Preserve the original supplied page typography and overall design. Future requested changes to windcatchers and traditional decoration must stay confined to those lower decorative elements; do not change page fonts or reinterpret the whole design. No new decorative redesign is part of this restoration.
+- Keep the working lowercase `/qr` alias alongside the printed `/QR` URL.
+- Verification: exact source/served-HTML comparison against `38c49fb`, lint, all-workspace typecheck, storefront production build and browser checks at 320–1440px passed. Original fonts and skyline, left arrow, action links/logo and all sky themes were retained; mobile/desktop screenshots were reviewed. No production configuration or migration change is required.

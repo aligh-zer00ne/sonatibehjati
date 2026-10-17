@@ -21,8 +21,9 @@ body{margin:0;min-height:100vh;color:var(--ice);font-family:"Vazirmatn",Tahoma,s
 .stars i{position:absolute;border-radius:50%;background:#d6ebff;box-shadow:0 0 6px 1px rgba(159,208,245,.6);opacity:.15;animation:tw 4s ease-in-out infinite}
 @keyframes tw{50%{opacity:.9}}
 .mn{position:fixed;right:36px;top:calc(40px + env(safe-area-inset-top,0px));width:26px;height:26px;z-index:0;filter:drop-shadow(0 0 8px rgba(230,203,142,.5));pointer-events:none}
-.sk{position:fixed;inset:auto 0 0;width:100%;height:clamp(110px,20svh,205px);z-index:0;pointer-events:none;overflow:hidden;opacity:.92;-webkit-mask-image:linear-gradient(transparent,#000 22%);mask-image:linear-gradient(transparent,#000 22%)}
-.sk>svg{display:block;width:100%;height:100%}
+.sk{position:fixed;left:0;bottom:0;width:100%;height:min(24svh,210px);z-index:0;pointer-events:none;display:flex;justify-content:center;align-items:flex-end;overflow:hidden}
+.sk svg{flex:none;height:100%;width:auto;aspect-ratio:400/130;display:block}
+.sk svg:nth-child(odd){transform:scaleX(-1)}
 .frame{position:fixed;inset:calc(8px + env(safe-area-inset-top,0px)) 8px calc(8px + env(safe-area-inset-bottom,0px));border:1px solid var(--line);border-radius:28px;pointer-events:none;z-index:3;box-shadow:inset 0 0 0 5px rgba(5,13,34,.6),inset 0 0 0 6px rgba(159,208,245,.16)}
 .wrap{overflow-x:clip;position:relative;z-index:1;max-width:460px;min-height:100svh;margin:0 auto;padding:16px 20px 20px;display:flex;flex-direction:column;justify-content:center}
 .hero{text-align:center}
@@ -58,7 +59,6 @@ h1{margin:12px 0 0;font-weight:400}
 .tile:hover{border-color:var(--sky)}
 .tile .t{font-weight:800;font-size:.92rem;line-height:1.4}
 .tile .d{font-size:.68rem;color:var(--sky);line-height:1.5}
-.tile .d.social-handle{font-family:inherit;font-weight:600;font-size:clamp(.62rem,2.85vw,.76rem);letter-spacing:0}
 .num{direction:ltr;unicode-bidi:isolate;display:inline-block}
 .end{text-align:center;margin-top:14px;font-size:.75rem;color:var(--sky)}
 .end .b{margin-top:6px;font-family:var(--nas);font-size:1.05rem;line-height:2.1;color:var(--ice)}
@@ -204,63 +204,9 @@ h1{font-weight:400;position:relative;z-index:2}
 <div class="stars"><i style="left:9.3%;top:37.0%;width:2px;height:2px;animation-delay:0.4s;animation-duration:4.5s"></i><i style="left:9.4%;top:40.9%;width:2px;height:2px;animation-delay:3.2s;animation-duration:5.0s"></i><i style="left:9.7%;top:42.2%;width:2px;height:2px;animation-delay:4.9s;animation-duration:3.2s"></i><i style="left:83.0%;top:22.4%;width:2px;height:2px;animation-delay:2.7s;animation-duration:5.0s"></i><i style="left:55.5%;top:48.7%;width:2px;height:2px;animation-delay:2.9s;animation-duration:5.2s"></i><i style="left:9.8%;top:7.0%;width:2px;height:2px;animation-delay:2.5s;animation-duration:4.9s"></i><i style="left:89.0%;top:27.2%;width:2px;height:2px;animation-delay:4.0s;animation-duration:5.4s"></i><i style="left:52.3%;top:61.6%;width:3px;height:3px;animation-delay:2.2s;animation-duration:5.1s"></i><i style="left:10.7%;top:37.3%;width:2px;height:2px;animation-delay:3.8s;animation-duration:3.5s"></i><i style="left:65.5%;top:54.2%;width:3px;height:3px;animation-delay:3.9s;animation-duration:5.9s"></i><i style="left:49.7%;top:56.4%;width:2px;height:2px;animation-delay:4.2s;animation-duration:6.3s"></i><i style="left:47.6%;top:47.5%;width:2px;height:2px;animation-delay:3.7s;animation-duration:4.1s"></i><i style="left:57.2%;top:48.6%;width:2px;height:2px;animation-delay:1.4s;animation-duration:4.4s"></i><i style="left:14.8%;top:6.9%;width:2px;height:2px;animation-delay:0.6s;animation-duration:3.9s"></i><i style="left:40.0%;top:61.4%;width:2px;height:2px;animation-delay:0.8s;animation-duration:4.4s"></i><i style="left:69.0%;top:69.1%;width:3px;height:3px;animation-delay:4.4s;animation-duration:6.4s"></i><i style="left:17.9%;top:14.8%;width:2px;height:2px;animation-delay:3.3s;animation-duration:3.0s"></i><i style="left:80.5%;top:15.2%;width:2px;height:2px;animation-delay:0.0s;animation-duration:4.5s"></i><i style="left:91.7%;top:49.3%;width:3px;height:3px;animation-delay:4.8s;animation-duration:5.3s"></i><i style="left:84.1%;top:66.8%;width:3px;height:3px;animation-delay:4.0s;animation-duration:4.4s"></i><i style="left:10.2%;top:17.0%;width:2px;height:2px;animation-delay:0.5s;animation-duration:5.1s"></i><i style="left:13.4%;top:41.0%;width:3px;height:3px;animation-delay:0.5s;animation-duration:4.3s"></i><i style="left:6.3%;top:61.6%;width:3px;height:3px;animation-delay:1.9s;animation-duration:5.2s"></i><i style="left:91.9%;top:43.4%;width:2px;height:2px;animation-delay:0.6s;animation-duration:6.0s"></i><i style="left:95.4%;top:34.2%;width:2px;height:2px;animation-delay:1.6s;animation-duration:3.5s"></i><i style="left:73.0%;top:52.6%;width:2px;height:2px;animation-delay:4.1s;animation-duration:3.6s"></i><i style="left:6.1%;top:66.7%;width:3px;height:3px;animation-delay:1.8s;animation-duration:5.4s"></i><i style="left:88.1%;top:53.8%;width:2px;height:2px;animation-delay:4.9s;animation-duration:6.0s"></i><i style="left:24.5%;top:57.4%;width:2px;height:2px;animation-delay:4.0s;animation-duration:5.9s"></i><i style="left:6.7%;top:4.9%;width:2px;height:2px;animation-delay:2.4s;animation-duration:3.7s"></i><i style="left:78.4%;top:51.4%;width:2px;height:2px;animation-delay:4.8s;animation-duration:4.3s"></i><i style="left:22.1%;top:16.7%;width:3px;height:3px;animation-delay:4.9s;animation-duration:5.1s"></i><i style="left:4.2%;top:63.9%;width:2px;height:2px;animation-delay:4.0s;animation-duration:3.3s"></i><i style="left:64.8%;top:64.0%;width:3px;height:3px;animation-delay:3.8s;animation-duration:4.7s"></i><i style="left:20.4%;top:55.9%;width:2px;height:2px;animation-delay:0.4s;animation-duration:6.3s"></i><i style="left:18.6%;top:69.5%;width:2px;height:2px;animation-delay:0.8s;animation-duration:6.2s"></i><i style="left:78.2%;top:12.8%;width:3px;height:3px;animation-delay:4.9s;animation-duration:5.3s"></i><i style="left:16.1%;top:4.0%;width:3px;height:3px;animation-delay:3.2s;animation-duration:4.8s"></i></div>
 <div class="sn"></div>
 <svg class="mn" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3.5A9 9 0 1 0 20.500 15 7.500 7.500 0 0 1 17 3.500Z" fill="#e6cb8e" fill-opacity=".9"/></svg>
-<div class="sk" aria-hidden="true">
-  <svg viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" focusable="false">
-    <defs>
-      <linearGradient id="qr-sky-wall" x2="0" y2="1">
-        <stop stop-color="var(--sb)"/><stop offset="1" stop-color="var(--sf)"/>
-      </linearGradient>
-      <linearGradient id="qr-sky-front" x2="0" y2="1">
-        <stop stop-color="var(--sf)"/><stop offset="1" stop-color="var(--g1)"/>
-      </linearGradient>
-      <linearGradient id="qr-sky-edge" x2="0" y2="1">
-        <stop stop-color="var(--sky)" stop-opacity=".5"/><stop offset="1" stop-color="var(--sky)" stop-opacity=".04"/>
-      </linearGradient>
-      <g id="qr-windcatcher">
-        <path d="M12 174V25h43l12 8v141Z" fill="url(#qr-sky-wall)"/>
-        <path d="m55 25 12 8v141H55Z" fill="var(--sf)"/>
-        <path d="M8 19h49l14 8v7H8Z" fill="var(--sb)"/>
-        <path d="M13 12h41l12 7H13Z" fill="var(--sb)"/>
-        <path d="M17 7h33l9 5H17Z" fill="var(--sb)"/>
-        <path d="M8 19h49l14 8M13 12h41M17 7h33" fill="none" stroke="var(--champ)" stroke-opacity=".55" stroke-width="1"/>
-        <path d="M17 35h33v45H17Zm42 2 4 3v41l-4-2Z" fill="#07182f" fill-opacity=".75"/>
-        <path d="M23 37v41m8-41v41m8-41v41m8-41v41" stroke="var(--sky)" stroke-opacity=".45" stroke-width="2.5"/>
-        <path d="M13 84h42l12 5v5H13Z" fill="var(--sb)"/>
-        <path d="M13 84h42l12 5M14 98h39M14 104h39M14 167h39M55 34v139" fill="none" stroke="url(#qr-sky-edge)" stroke-width="1"/>
-        <path d="M23 174v-32c0-16 22-16 22 0v32Z" fill="#07182f" fill-opacity=".6"/>
-        <path d="M22 169v-28c0-17 24-17 24 0v28" fill="none" stroke="var(--sky)" stroke-opacity=".22"/>
-        <g class="wn" fill="var(--champ)"><rect x="18" y="112" width="3" height="5" rx="1"/><rect x="47" y="112" width="3" height="5" rx="1"/></g>
-      </g>
-    </defs>
-    <g fill="var(--sb)" opacity=".28">
-      <path d="M0 240V146h68v-15h46v30h51v-21h72v100Zm197 0v-67h18c0-52 82-52 82 0h38v67Zm136 0V147h50v-17h48v36h42v74Zm143 0v-90h56v-14h37v35h77v69Zm164 0v-66h38c0-44 74-44 74 0h39v66Zm149 0v-82h68v-24h39v20h57v86Zm161 0v-77h49c0-52 84-52 84 0h39v77Zm170 0v-95h51v-14h51v23h118v86Z"/>
-    </g>
-    <g opacity=".78">
-      <use href="#qr-windcatcher" x="92" y="74"/>
-      <use href="#qr-windcatcher" transform="translate(338 110) scale(.74)"/>
-      <use href="#qr-windcatcher" transform="translate(512 60) scale(1.04)"/>
-      <use href="#qr-windcatcher" transform="translate(854 30) scale(1.2)"/>
-      <use href="#qr-windcatcher" transform="translate(1134 100) scale(.8)"/>
-      <use href="#qr-windcatcher" transform="translate(1310 61) scale(1.04)"/>
-    </g>
-    <path d="M0 240v-54h49v-11h44v14h58v-24h24c0-48 72-48 72 0h23v40h42v-24h50v12h49v-19h55v19h51v-22h59v22h41v-26h22c0-43 76-43 76 0h23v39h43v-18h53v-18h61v25h45v-34h29c0-54 84-54 84 0h27v29h56v-17h59v17h43v-25h63v21h48v-13h61v10h64v44Z" fill="url(#qr-sky-wall)"/>
-    <path d="M175 165h72m432 2h76m279-6h84M49 180h44m326 0h55m345 13h53m292 2h59" fill="none" stroke="var(--sky)" stroke-opacity=".3" stroke-width="1.2"/>
-    <path d="M0 240v-19h100v-12h62v12h38v-19h25c0-28 44-28 44 0h25v19h81v-14h91v14h85v-23h51v23h83v-13h80v13h68v-18h74v18h45v-14h28c0-34 52-34 52 0h26v14h77v-16h61v16h72v-11h73v11h85v-18h77v18h77v19Z" fill="url(#qr-sky-front)"/>
-    <g fill="#08172f" fill-opacity=".65">
-      <path d="M192 223v-21c0-24 28-24 28 0v21Zm463 0v-29c0-32 36-32 36 0v29Zm373 0v-27c0-28 32-28 32 0v27Z"/>
-      <path d="M19 201h6v12h-6Zm94-1h6v10h-6Zm201 1h6v12h-6Zm145 2h6v10h-6Zm333-8h6v13h-6Zm404 0h6v14h-6Zm106 7h6v11h-6Z"/>
-    </g>
-    <g class="wn" fill="var(--champ)" opacity=".85">
-      <rect x="51" y="195" width="3" height="6" rx="1"/><rect x="141" y="198" width="3" height="6" rx="1"/>
-      <rect x="288" y="210" width="3" height="5" rx="1"/><rect x="383" y="197" width="3" height="6" rx="1"/>
-      <rect x="491" y="202" width="3" height="6" rx="1"/><rect x="599" y="190" width="3" height="6" rx="1"/>
-      <rect x="720" y="185" width="3" height="6" rx="1"/><rect x="825" y="204" width="3" height="6" rx="1"/>
-      <rect x="956" y="195" width="3" height="6" rx="1"/><rect x="1107" y="198" width="3" height="6" rx="1"/>
-      <rect x="1265" y="200" width="3" height="6" rx="1"/><rect x="1385" y="194" width="3" height="6" rx="1"/>
-    </g>
-  </svg>
-</div>
+<div class="sk" aria-hidden="true"><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg><svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMax meet"><use href="#city"/></svg></div>
 <svg width="0" height="0" style="position:absolute"><defs>
+<g id="city"><path class="sb" d="M0 92h40v38H0ZM40 84h34v46H40ZM80 130v-30a18 18 0 0 1 36 0v30ZM116 88h30v42h-30ZM150 56h16v74h-16ZM147 56h22l-11-10ZM166 96h40v34h-40ZM212 64h5v66h-5ZM210 64a4.5 4.5 0 0 1 9 0ZM206 100h44v30h-44ZM250 130v-38a22 22 0 0 1 44 0v38ZM294 86h28v44h-28ZM326 64h14v66h-14ZM323 64h20l-10-9ZM340 94h34v36h-34ZM372 84h28v46h-28Z"/><path class="sf" d="M0 108h56v22H0ZM56 100h30v30H56ZM96 84h12v46H96ZM93 84h18l-9-8ZM108 104h50v26h-50ZM170 130v-18a14 14 0 0 1 28 0v18ZM198 100h36v30h-36ZM234 108h44v22h-44ZM278 96h26v34h-26ZM304 130v-22a16 16 0 0 1 32 0v22ZM336 102h28v28h-28ZM364 110h36v20h-36Z"/><g class="wn" fill="#f0d79a"><rect x="20" y="100" width="2.2" height="3.2" rx=".4"/><rect x="52" y="96" width="2.2" height="3.2" rx=".4"/><rect x="124" y="100" width="2.2" height="3.2" rx=".4"/><rect x="184" y="108" width="2.2" height="3.2" rx=".4"/><rect x="262" y="112" width="2.2" height="3.2" rx=".4"/><rect x="300" y="98" width="2.2" height="3.2" rx=".4"/><rect x="350" y="106" width="2.2" height="3.2" rx=".4"/><rect x="86" y="108" width="2.2" height="3.2" rx=".4"/><rect x="246" y="114" width="2.2" height="3.2" rx=".4"/><rect x="380" y="96" width="2.2" height="3.2" rx=".4"/></g><g stroke="#0a1f4d" stroke-opacity=".6" stroke-width="1"><path d="M154 64v22M158 64v22M162 64v22M330 72v22M334 72v22"/></g></g>
 <linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7fbdf2"/></linearGradient>
 <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9ff"/><stop offset="1" stop-color="#4f8fd0"/></linearGradient>
 <linearGradient id="af" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4396"/><stop offset="1" stop-color="#081634"/></linearGradient>
@@ -287,7 +233,7 @@ h1{font-weight:400;position:relative;z-index:2}
   </a>
 
   <div class="grid">
-    <a class="tile" style="--i:0" href="https://www.instagram.com/sonatibehjati.ir/" target="_blank" rel="noopener"><span class="oct"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></span><span class="t">اینستاگرام</span><span class="d num social-handle">@sonatibehjati.ir</span></a>
+    <a class="tile" style="--i:0" href="https://www.instagram.com/sonatibehjati.ir/" target="_blank" rel="noopener"><span class="oct"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></span><span class="t">اینستاگرام</span><span class="d num">@sonatibehjati.ir</span></a>
     <a class="tile" style="--i:1" href="https://nshn.ir/7f_bZEYENGX9qg" target="_blank" rel="noopener"><span class="oct"><svg viewBox="0 0 24 24"><path d="M19 9.5c0 5.2-7 10.5-7 10.5S5 14.7 5 9.5a7 7 0 0 1 14 0Z"/><circle cx="12" cy="9.5" r="2.6"/><path d="M8 22h8"/></svg></span><span class="t">مسیریابی</span><span class="d">تا فروشگاه اردکان</span></a>
     <a class="tile" style="--i:2" href="tel:+989131564876"><span class="oct"><svg viewBox="0 0 24 24"><path d="M20.5 16.4v2.7a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.8 17.3 17.3 0 0 1-5.3-5.3A17.6 17.6 0 0 1 2.7 5.1a1.8 1.8 0 0 1 1.8-2h2.7a1.8 1.8 0 0 1 1.8 1.5c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8 10.2a14.4 14.4 0 0 0 5.3 5.3l1.2-1.2a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.5 1.9Z"/></svg></span><span class="t">تماس بگیرید</span><span class="d num">0913 156 4876</span></a>
   </div>
