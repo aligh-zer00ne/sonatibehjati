@@ -14,6 +14,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product/ProductGrid';
 import { Badge } from '@/components/ui/badge';
+import { pageMetadata, productPath } from '@/lib/seo';
+import { productSchema, organizationSchema, breadcrumbSchema } from '@/lib/structured-data';
+import JsonLd from '@/components/seo/JsonLd';
 export async function generateMetadata({
   params,
 }: {
@@ -21,21 +24,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
-  return {
-    title: product?.title ?? 'محصول پیدا نشد',
-    description: product?.shortDescription,
-    alternates: { canonical: `/product/${encodeURIComponent(slug)}` },
-    openGraph: product
-      ? {
-          title: product.title,
-          description: product.shortDescription,
-          images: product.images.map((image) => ({
-            url: productPhotoUrl(image.url),
-            alt: image.alt,
-          })),
-        }
-      : undefined,
-  };
+  if (!product) notFound();
+  return pageMetadata({
+    title: product.title,
+    description: product.shortDescription,
+    path: productPath(product.slug),
+    image: product.images[0] ? productPhotoUrl(product.images[0].url) : undefined,
+  });
 }
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -49,6 +44,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   });
   return (
     <>
+      <JsonLd
+        data={[
+          organizationSchema(),
+          productSchema(product),
+          breadcrumbSchema([
+            { title: 'فروشگاه', path: '/shop' },
+            { title: product.category.title, path: `/category/${product.category.slug}` },
+            { title: product.title, path: productPath(product.slug) },
+          ]),
+        ]}
+      />
       <Breadcrumbs
         items={[
           { title: 'فروشگاه', href: '/shop' },

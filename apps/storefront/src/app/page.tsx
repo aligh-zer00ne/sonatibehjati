@@ -11,6 +11,11 @@ import DiscountSection from '@/components/promotion/DiscountSection';
 import BrandStory from '@/components/home/BrandStory';
 import { getHomepageCatalog, getHomepageContent } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
+import { pageMetadata } from '@/lib/seo';
+import { organizationSchema, websiteSchema } from '@/lib/structured-data';
+import JsonLd from '@/components/seo/JsonLd';
+import Link from 'next/link';
+export const metadata = pageMetadata({ title: 'خرید ارده و حلواارده اردکان', path: '/' });
 export default async function Home() {
   const [{ products, categories, promotionalProducts }, content] = await Promise.all([
     getHomepageCatalog(),
@@ -35,6 +40,7 @@ export default async function Home() {
     .slice(0, 4);
   return (
     <>
+      <JsonLd data={[organizationSchema(content.story.description), websiteSchema()]} />
       <AnnouncementBar />
       <Header />
       <SearchBar />
@@ -71,9 +77,28 @@ export default async function Home() {
             ) : null;
           })}
         </div>
-        <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
-          محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
-        </p>
+        <nav
+          aria-label="راهنمای خرید و معرفی فروشگاه"
+          className="flex flex-wrap justify-center gap-3 py-6 text-sm text-primary"
+        >
+          <Link
+            className="inline-flex min-h-11 items-center underline underline-offset-4"
+            href="/about"
+          >
+            دربارهٔ سنتی بهجتی و راه‌های تماس
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center underline underline-offset-4"
+            href="/faq"
+          >
+            پرسش‌های متداول خرید
+          </Link>
+        </nav>
+        {process.env.CATALOG_SOURCE !== 'api' && (
+          <p className="pt-3.5 pb-8 text-center text-[11px] text-muted-foreground">
+            محصولات و قیمت‌های این نسخه نمونه‌اند؛ فروش آنلاین هنوز فعال نیست.
+          </p>
+        )}
       </main>
       <Footer />
       <MobileBottomNav />

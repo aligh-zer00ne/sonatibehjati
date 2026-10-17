@@ -13,6 +13,29 @@ const config: NextConfig = {
           : 'http://localhost:3001'),
     ).origin;
     return [
+      ...[
+        '/account/:path*',
+        '/checkout/:path*',
+        '/payment/:path*',
+        '/api/:path*',
+        '/login',
+        '/verify',
+        '/cart',
+        '/favorites',
+        '/search',
+        '/support',
+        '/admin/:path*',
+      ].map((source) => ({
+        source,
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      })),
+      ...['/QR', '/qr', '/qr.html'].map((source) => ({
+        source,
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, follow' },
+          { key: 'Link', value: '<https://sonatibehjati.ir/QR>; rel="canonical"' },
+        ],
+      })),
       {
         source: '/product/:slug',
         headers: [

@@ -10,7 +10,11 @@ import Breadcrumbs from '@/components/layout/Breadcrumbs';
 import CategoryChips from './CategoryChips';
 import CatalogControls from './CatalogControls';
 import CatalogResults from './CatalogResults';
+import JsonLd from '@/components/seo/JsonLd';
+import { breadcrumbSchema, collectionSchema } from '@/lib/structured-data';
+import { catalogURL } from '@/lib/catalog/params';
 import CatalogPagination from './CatalogPagination';
+import { notFound } from 'next/navigation';
 export default async function CatalogPage({
   path,
   params,
@@ -25,9 +29,21 @@ export default async function CatalogPage({
   const parsed = parseCatalogParams(params, category);
   const filters = parsed.success ? parsed.data : undefined;
   const { catalog, categories } = await getCatalogPage(filters ?? {});
+  if (parsed.success && catalog.page > 1 && catalog.page > catalog.totalPages) notFound();
   const effectiveParams = category ? { ...params, category: undefined } : params;
   return (
     <>
+      {parsed.success && (
+        <JsonLd
+          data={[
+            collectionSchema(catalogURL(path, effectiveParams, {}), title, catalog.items),
+            breadcrumbSchema([
+              { title: 'فروشگاه', path: '/shop' },
+              ...(path === '/shop' ? [] : [{ title, path }]),
+            ]),
+          ]}
+        />
+      )}
       <Breadcrumbs
         items={[
           { title: 'فروشگاه', href: path === '/shop' ? undefined : '/shop' },

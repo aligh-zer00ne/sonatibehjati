@@ -6,19 +6,19 @@ import { BRAND_NAME } from '@behjati/shared';
 import AuthProvider from '@/components/auth/AuthProvider';
 import ClientRuntime from '@/components/layout/ClientRuntime';
 import StorefrontBackdrop from '@/components/decoration/storefront-backdrop';
+import { pageMetadata, SITE_URL } from '@/lib/seo';
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  ...pageMetadata({ title: 'خرید ارده و حلواارده اردکان', path: '/' }),
+  metadataBase: new URL(SITE_URL),
+  alternates: undefined,
   title: { default: BRAND_NAME, template: `%s | ${BRAND_NAME}` },
-  description: 'آشنایی با ارده، حلواارده و فرآورده‌های کنجدی حلواارده سنتی بهجتی اردکان.',
-  alternates: { canonical: '/' },
-  openGraph: {
-    title: BRAND_NAME,
-    description: 'طعم اصیل اردکان، از دل کنجد',
-    locale: 'fa_IR',
-    type: 'website',
-    images: [{ url: '/images/home/tahini-family.webp', width: 1536, height: 1024 }],
+  applicationName: BRAND_NAME,
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { 'msvalidate.01': process.env.BING_SITE_VERIFICATION }
+      : undefined,
   },
-  twitter: { card: 'summary', title: BRAND_NAME },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
