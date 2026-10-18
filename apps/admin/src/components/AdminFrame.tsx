@@ -52,8 +52,20 @@ export default function AdminFrame() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
-  const navigation = (compact = false) => (
-    <nav aria-label="منوی مدیریت" className="relative z-10 space-y-1.5 px-3">
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 992px)');
+    const closeDrawer = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+    desktop.addEventListener('change', closeDrawer);
+    return () => desktop.removeEventListener('change', closeDrawer);
+  }, []);
+  const navigation = (compact = false, desktop = false) => (
+    <nav
+      id={desktop ? 'admin-desktop-navigation' : undefined}
+      aria-label="منوی مدیریت"
+      className={`relative z-10 space-y-1 px-3 ${desktop ? '[@media(max-height:799px)]:space-y-0.5' : ''}`}
+    >
       {visibleLinks.map(({ href, label, icon }) => (
         <Tooltip key={href} title={compact ? label : undefined} placement="left">
           <Link
@@ -61,10 +73,10 @@ export default function AdminFrame() {
             aria-label={label}
             aria-current={selected === href ? 'page' : undefined}
             onClick={() => setMenuOpen(false)}
-            className={`flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${compact ? 'justify-center' : ''} ${selected === href ? '!bg-[#b16b66] font-bold' : ''}`}
+            className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${desktop ? '[@media(max-height:799px)]:min-h-10' : ''} ${compact ? 'justify-center' : ''} ${selected === href ? '!bg-[#b16b66] font-bold' : ''}`}
           >
             <AdminIcon name={icon} className="shrink-0" />
-            {!compact && <span>{label}</span>}
+            {!compact && <span className="whitespace-nowrap">{label}</span>}
           </Link>
         </Tooltip>
       ))}
@@ -74,43 +86,26 @@ export default function AdminFrame() {
     <div dir="rtl" className="flex min-h-dvh bg-[#f6f1e9] text-[#34251e]">
       <aside
         data-admin-sidebar
-        className={`sticky top-0 hidden h-dvh shrink-0 overflow-hidden bg-[radial-gradient(ellipse_at_bottom_left,#8f1425_0%,#660311_55%,#420009_100%)] shadow-[-6px_0_24px_rgba(74,8,15,0.08)] transition-[width] duration-300 motion-reduce:transition-none min-[992px]:flex min-[992px]:flex-col print:!hidden ${collapsed ? 'w-20' : 'w-[204px] xl:w-[220px]'}`}
+        className={`relative isolate hidden min-h-dvh shrink-0 self-start bg-[radial-gradient(ellipse_at_bottom_left,#8f1425_0%,#660311_55%,#420009_100%)] shadow-[-6px_0_24px_rgba(74,8,15,0.08)] transition-[width] duration-300 motion-reduce:transition-none min-[992px]:flex min-[992px]:flex-col [@media(min-height:700px)]:sticky [@media(min-height:700px)]:top-0 print:!hidden ${collapsed ? 'w-20' : 'w-[248px] xl:w-[264px]'}`}
       >
-        <div className="relative z-10 flex min-h-[110px] items-center justify-center gap-4 px-3">
+        <div className="relative z-10 flex h-20 shrink-0 items-center justify-center px-3 [@media(max-height:799px)]:h-[72px]">
           <Link to={admin ? adminLanding(admin) : '/login'} aria-label="مدیریت سنتی بهجتی">
             <img
               src="/images/logo-footer.svg"
               alt="سنتی بهجتی"
-              className={collapsed ? 'h-16 w-12 object-contain' : 'h-[92px] w-20 object-contain'}
+              className="h-16 w-12 object-contain"
             />
           </Link>
-          {!collapsed && (
-            <Button
-              type="text"
-              aria-label="جمع کردن منوی مدیریت"
-              onClick={() => setCollapsed(true)}
-              className="!text-[#fff7eb]"
-              icon={<AdminIcon name="menu" />}
-            />
-          )}
         </div>
-        {collapsed && (
-          <Button
-            type="text"
-            className="mx-auto mb-3 !text-white"
-            aria-label="باز کردن منوی کناری"
-            onClick={() => setCollapsed(false)}
-            icon={<AdminIcon name="menu" />}
-          />
-        )}
-        <div className="relative z-10 min-h-0 flex-1 overflow-y-auto pb-4 [--admin-scrollbar-track:#4f0915] [--admin-scrollbar-thumb:#d8b97b] [--admin-scrollbar-hover:#f2d4a0]">
-          {navigation(collapsed)}
-        </div>
-        <div className="relative h-48 shrink-0 opacity-65">
+        <div className="relative z-10 flex-1 py-2">{navigation(collapsed, true)}</div>
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 overflow-hidden opacity-40"
+          aria-hidden="true"
+        >
           <AdminSkyline />
         </div>
         {!collapsed && (
-          <p className="relative z-10 px-3 pb-5 text-center text-xs text-[#e5bb71]">
+          <p className="relative z-10 shrink-0 px-3 py-3 text-center text-xs text-[#e5bb71]">
             طعم اصالت، از دل کویر
           </p>
         )}
@@ -131,9 +126,24 @@ export default function AdminFrame() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex min-h-[82px] flex-wrap items-center justify-between gap-3 border-b border-[#e8ded1] bg-[#fffdf9]/85 px-4 py-3 sm:px-6 lg:px-8 print:!hidden">
           <div className="flex min-w-0 items-center gap-3">
+            <Tooltip
+              title={collapsed ? 'باز کردن منوی کناری' : 'جمع کردن منوی مدیریت'}
+              placement="bottom"
+            >
+              <Button
+                data-admin-menu-toggle
+                type="text"
+                className="!hidden !size-11 shrink-0 !rounded-xl !border !border-[#e8ded1] !bg-[#fffaf2] !text-[#810c20] min-[992px]:!inline-flex"
+                aria-label={collapsed ? 'باز کردن منوی کناری' : 'جمع کردن منوی مدیریت'}
+                aria-expanded={!collapsed}
+                aria-controls="admin-desktop-navigation"
+                onClick={() => setCollapsed((value) => !value)}
+                icon={<AdminIcon name="menu" />}
+              />
+            </Tooltip>
             <Button
               type="text"
-              className="shrink-0 min-[992px]:!hidden"
+              className="!size-11 shrink-0 min-[992px]:!hidden"
               aria-label="باز کردن منوی مدیریت"
               aria-haspopup="dialog"
               aria-expanded={menuOpen}
