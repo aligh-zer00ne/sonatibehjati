@@ -19,9 +19,11 @@ import { useAuth } from './AuthProvider';
 export default function VerifyForm({
   challengeId,
   returnTo,
+  testing = false,
 }: {
   challengeId: string;
   returnTo: string;
+  testing?: boolean;
 }) {
   const router = useRouter();
   const next = safeReturnPath(returnTo);
@@ -34,11 +36,15 @@ export default function VerifyForm({
   const [now, setNow] = useState(0);
   const [blockedUntil, setBlockedUntil] = useState(0);
   useEffect(() => {
-    setChallenge(loadChallenge(challengeId));
+    const stored = loadChallenge(challengeId);
+    if (stored && stored.testMode !== testing) {
+      clearChallenge();
+      setChallenge(null);
+    } else setChallenge(stored);
     setReady(true);
     setCode('');
     setNow(Date.now());
-  }, [challengeId]);
+  }, [challengeId, testing]);
   useEffect(() => {
     if (!loading && user) router.replace(next);
   }, [user, loading, router, next]);

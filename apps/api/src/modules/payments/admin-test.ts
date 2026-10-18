@@ -22,6 +22,8 @@ const finished = [
 ] as const;
 const enabled = () => gatewayAvailable() && env.ADMIN_PAYMENT_TEST_ENABLED === 'true';
 export async function adminGatewayTest(adminId: string) {
+  if (!enabled())
+    return { enabled: false, amount: GATEWAY_TEST_AMOUNT, terminalId: null, payments: [] };
   await db.payment.updateMany({
     where: {
       gatewayTestAdminId: adminId,

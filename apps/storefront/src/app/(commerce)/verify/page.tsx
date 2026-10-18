@@ -17,6 +17,7 @@ export default async function VerifyPage({
   return (
     <AuthFrame title="کد ورود را وارد کنید" description="یک قدم تا ورود به حساب شما">
       <VerifyForm
+        testing={process.env.CHECKOUT_PAYMENT_TEST_ENABLED === 'true'}
         challengeId={param(params.challenge)}
         returnTo={safeReturnPath(param(params.next))}
       />

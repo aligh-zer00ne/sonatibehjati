@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ArdakanOutline from '@/components/decoration/ardakan-outline';
 import EnamadBadge from './EnamadBadge';
+import { BUSINESS } from '@/lib/seo';
 
 const links = [
   ['/', 'خانه'],
@@ -11,10 +12,7 @@ const links = [
 ] as const;
 
 const socialMarks = [
-  { name: 'ایتا', image: '/images/eitaa-social.svg' },
-  { name: 'تلگرام', image: '/images/telegram-social.svg' },
-  { name: 'واتساپ', image: '/images/whatsapp-social.svg' },
-  { name: 'اینستاگرام', image: '/images/instagram-social.svg' },
+  { name: 'اینستاگرام', image: '/images/instagram-social.svg', href: BUSINESS.instagram },
 ] as const;
 
 export default function Footer() {
@@ -67,12 +65,15 @@ export default function Footer() {
               className="order-1 flex items-center justify-start gap-1 md:gap-3"
               aria-label="شبکه‌های اجتماعی سنتی بهجتی"
             >
-              {socialMarks.map(({ name, image }) => (
-                <span
+              {socialMarks.map(({ name, image, href }) => (
+                <a
                   key={name}
-                  title={`${name}؛ نشانی رسمی به‌زودی افزوده می‌شود`}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`${name} رسمی سنتی بهجتی`}
                   aria-label={name}
-                  className="grid size-8 place-items-center md:size-9"
+                  className="grid size-11 place-items-center"
                 >
                   <Image
                     src={image}
@@ -81,7 +82,7 @@ export default function Footer() {
                     height={22}
                     className="size-[22px] opacity-85 brightness-0 invert"
                   />
-                </span>
+                </a>
               ))}
             </div>
           </div>

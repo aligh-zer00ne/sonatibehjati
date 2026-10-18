@@ -1,9 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import { randomBytes } from 'node:crypto';
-import { UserTokens, hashToken, ACCESS_SECONDS, REFRESH_SECONDS } from './tokens.js';
+import {
+  UserTokens,
+  USER_TOKEN_POLICY,
+  hashToken,
+  ACCESS_SECONDS,
+  REFRESH_SECONDS,
+} from './tokens.js';
 import { hashOtp, matchesOtp } from './crypto.js';
 import { readCookie, serializeCookie } from './cookies.js';
 describe('user session cryptography', () => {
+  it('rejects pre-release access and refresh tokens after switching to SMS and preserves new SMS sessions', async () => {
+    const access = randomBytes(48).toString('hex');
+    const refresh = randomBytes(48).toString('hex');
+    const trial = new UserTokens(access, refresh);
+    const production = () =>
+      new UserTokens(access, refresh, undefined, {
+        ...USER_TOKEN_POLICY,
+        authenticationMethod: 'sms',
+      });
+    const previous = await trial.issue('existing-customer');
+    await expect(production().verify(previous.access, 'access')).rejects.toThrow();
+    await expect(production().verify(previous.refresh, 'refresh')).rejects.toThrow();
+    const current = await production().issue('existing-customer');
+    expect(await production().verify(current.access, 'access')).toMatchObject({
+      userId: 'existing-customer',
+    });
+    expect(await production().verify(current.refresh, 'refresh')).toMatchObject({
+      familyId: current.familyId,
+    });
+  });
   it('separates access and refresh tokens and enforces expiry and tamper checks', async () => {
     let now = new Date('2026-10-02T00:00:00Z');
     const tokens = new UserTokens(

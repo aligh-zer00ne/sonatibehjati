@@ -42,6 +42,24 @@ try {
   );
   await goto('/account');
   await expect(page).toHaveURL(/\/login\?next=/);
+  const oldChallenge = crypto.randomUUID();
+  await page.evaluate((challengeId) => {
+    sessionStorage.setItem(
+      'behjati-otp-challenge',
+      JSON.stringify({
+        challengeId,
+        phone: '09000000001',
+        codeLength: 6,
+        testMode: true,
+        expiresAt: new Date(Date.now() + 300000).toISOString(),
+        resendAt: new Date().toISOString(),
+      }),
+    );
+  }, oldChallenge);
+  await goto('/verify?challenge=' + oldChallenge);
+  await expect(page.getByRole('link', { name: 'ورود با شماره موبایل', exact: true })).toBeVisible();
+  assert.equal(await page.evaluate(() => sessionStorage.getItem('behjati-otp-challenge')), null);
+  assert.ok(!(await page.locator('main').textContent()).includes('۱۲۳۴۵۶'));
   await goto('/login?next=%2Fcart');
   await page.getByLabel('شماره موبایل', { exact: true }).fill('123');
   await page.getByRole('button', { name: 'دریافت کد ورود' }).click();

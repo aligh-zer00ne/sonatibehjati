@@ -55,6 +55,8 @@
     "verify:checkout-payment-test": "bun --env-file=apps/api/.env scripts/verify-payments-ui.mjs --checkout-test",
     "payments:checkout-test": "node deploy/configure-payments.mjs --checkout-test",
     "payments:configure": "node deploy/configure-payments.mjs",
+    "production:configure": "node deploy/configure-payments.mjs --activate",
+    "verify:production-release": "bun scripts/verify-production-release.mjs",
     "verify:gateway-review": "bun --env-file=apps/api/.env scripts/verify-gateway-review.mjs",
     "payments:review": "node deploy/configure-payments.mjs --review",
     "verify:payment-deploy": "bun --env-file=apps/api/.env scripts/verify-payment-deploy.mjs",

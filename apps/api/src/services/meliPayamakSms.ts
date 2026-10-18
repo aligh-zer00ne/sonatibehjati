@@ -1,5 +1,5 @@
 import type { SMSService } from './contracts.js';
-import { phoneSchema } from '@behjati/shared';
+import { phoneSchema, OTP_LENGTH } from '@behjati/shared';
 export interface SmsConfig {
   hostname: string;
   port: number;
@@ -42,6 +42,7 @@ export class MeliPayamakSMSService implements SMSService {
       throw new SMSError();
   }
   async sendOTP(phoneNumber: string, code: string) {
+    if (!new RegExp(`^\\d{${OTP_LENGTH}}$`).test(code)) throw new SMSError();
     await this.send({ to: phoneNumber, bodyId: this.config.bodyId, args: [code] });
   }
   async send(request: SmsRequest): Promise<SmsResponse> {

@@ -141,6 +141,7 @@ export type AdminGatewayTestState = {
 export type AdminIdentity = {
   __typename?: 'AdminIdentity';
   email: Scalars['String']['output'];
+  gatewayTestEnabled?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
   permissions: Array<AdminPermission>;
@@ -1545,6 +1546,7 @@ export type AdminGatewayTestStateResolvers<ContextType = AuthContext, ParentType
 
 export type AdminIdentityResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminIdentity'] = ResolversParentTypes['AdminIdentity']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  gatewayTestEnabled?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   permissions?: Resolver<Array<ResolversTypes['AdminPermission']>, ParentType, ContextType>;

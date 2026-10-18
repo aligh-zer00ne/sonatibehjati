@@ -1,4 +1,5 @@
 fragment AdminIdentityFields on AdminIdentity {
+  gatewayTestEnabled
   permissions
   role
   isActive
@@ -483,7 +484,7 @@ mutation SaveHomepageContent($input: HomepageContentInput!, $expectedUpdatedAt: 
 }
 
 fragment AdminPaymentFields on PaymentInfo {
- bankCode
+  bankCode
   id
   status
   amount
@@ -507,12 +508,16 @@ query AdminGatewayTest {
     amount
     terminalId
     payments {
-      payment { ...AdminPaymentFields }
+      payment {
+        ...AdminPaymentFields
+      }
       redirectUrl
       resultUrl
     }
   }
 }
 mutation StartAdminGatewayTest {
-  startAdminGatewayTest { redirectUrl }
+  startAdminGatewayTest {
+    redirectUrl
+  }
 }

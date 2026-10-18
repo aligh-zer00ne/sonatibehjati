@@ -139,6 +139,7 @@ export type AdminGatewayTestState = {
 export type AdminIdentity = {
   __typename?: 'AdminIdentity';
   email: Scalars['String']['output'];
+  gatewayTestEnabled?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
   permissions: Array<AdminPermission>;

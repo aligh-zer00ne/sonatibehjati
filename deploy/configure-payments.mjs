@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, chmod } from 'node:fs/promises';
 import { parse } from 'dotenv';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -11,6 +11,16 @@ const checkoutTest = process.argv.includes('--checkout-test');
 if ([activate, review, checkoutTest].filter(Boolean).length > 1)
   throw new Error('Choose exactly one payment profile.');
 const serverProfile = activate || review || checkoutTest;
+const normalizeDigits = (value) =>
+  value.replace(/[۰-۹٠-٩]/g, (digit) => {
+    const persian = '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit);
+    return String(persian >= 0 ? persian : '٠١٢٣٤٥٦٧٨٩'.indexOf(digit));
+  });
+const bodyId = normalizeDigits(
+  process.argv.find((arg) => arg.startsWith('--body-id='))?.slice('--body-id='.length) ??
+    api.MELI_PAYAMAK_OTP_BODY_ID ??
+    '',
+);
 const terminal = (
   process.argv.find((arg) => arg.startsWith('--terminal-id='))?.split('=')[1] ??
   api.SEP_TERMINAL_ID ??
@@ -21,6 +31,14 @@ if (!/^\d{1,10}$/.test(terminal) || Number(terminal) <= 0)
     'Supply the issued terminal using --terminal-id=... or the private SEP_TERMINAL_ID setting.',
   );
 const fields = {
+  ...(activate
+    ? {
+        SMS_PROVIDER: 'melipayamak',
+        MELI_PAYAMAK_OTP_BODY_ID: bodyId,
+        MELI_PAYAMAK_HOSTNAME: 'console.melipayamak.com',
+        MELI_PAYAMAK_PATH: '/api/send/shared/{apiKey}',
+      }
+    : {}),
   SEP_TERMINAL_ID: terminal,
   SEP_CALLBACK_ORIGIN: 'https://sonatibehjati.ir',
   PAYMENT_PROVIDER: serverProfile ? 'sep' : 'disabled',
@@ -31,12 +49,14 @@ const fields = {
 if (serverProfile) {
   if (
     activate &&
-    (api.SMS_PROVIDER !== 'melipayamak' ||
-      !api.MELI_PAYAMAK_API_KEY ||
-      !Number.isInteger(Number(api.MELI_PAYAMAK_OTP_BODY_ID)) ||
-      Number(api.MELI_PAYAMAK_OTP_BODY_ID) <= 0)
+    (!api.MELI_PAYAMAK_API_KEY?.trim() ||
+      !/^\d+$/.test(bodyId) ||
+      !Number.isSafeInteger(Number(bodyId)) ||
+      Number(bodyId) <= 0)
   )
-    throw new Error('Configure real SMS before enabling public payments.');
+    throw new Error(
+      'Configure real SMS: MELI_PAYAMAK_API_KEY in apps/api/.env and a positive numeric --body-id=... before activation.',
+    );
   const names = [
     'USER_ACCESS_TOKEN_SECRET',
     'USER_REFRESH_TOKEN_SECRET',
@@ -62,7 +82,7 @@ if (serverProfile) {
 function update(text, values) {
   for (const [key, value] of Object.entries(values)) {
     const line = `${key}=${JSON.stringify(value)}`;
-    const pattern = new RegExp('^' + key + '=.*$', 'm');
+    const pattern = new RegExp('^' + key + '=.*$', 'gm');
     text = pattern.test(text)
       ? text.replace(pattern, () => line)
       : text.trimEnd() + '\n' + line + '\n';
@@ -71,6 +91,7 @@ function update(text, values) {
 }
 const backend = update(original, fields);
 let frontend;
+const higherUpdates = [];
 const frontendPath = root + 'apps/storefront/.env.production';
 if (serverProfile) {
   const base = await readFile(frontendPath, 'utf8').catch(() => '');
@@ -79,6 +100,7 @@ if (serverProfile) {
     API_URL: 'http://127.0.0.1:4100/graphql',
     CATALOG_SOURCE: 'api',
     CHECKOUT_PAYMENT_TEST_ENABLED: checkoutTest ? 'true' : 'false',
+    ...(activate ? { SEO_INDEXING_ENABLED: 'true' } : {}),
     STOREFRONT_ORIGIN: 'https://sonatibehjati.ir',
     ADMIN_ORIGIN: 'https://admin.sonatibehjati.ir',
     AUTH_PROXY_SECRET: api.AUTH_PROXY_SECRET,
@@ -86,7 +108,15 @@ if (serverProfile) {
   });
   const parsed = parse(frontend);
   for (const name of ['.env.local', '.env.production.local']) {
-    const higher = parse(await readFile(root + 'apps/storefront/' + name, 'utf8').catch(() => ''));
+    const path = root + 'apps/storefront/' + name;
+    const text = await readFile(path, 'utf8').catch(() => '');
+    let reconciled = text;
+    const existing = parse(text);
+    if (activate) {
+      for (const key of ['CHECKOUT_PAYMENT_TEST_ENABLED', 'SEO_INDEXING_ENABLED'])
+        if (existing[key] !== undefined) reconciled = update(reconciled, { [key]: parsed[key] });
+    }
+    const higher = parse(reconciled);
     for (const key of [
       'API_URL',
       'CHECKOUT_PAYMENT_TEST_ENABLED',
@@ -95,11 +125,13 @@ if (serverProfile) {
       'CATALOG_SOURCE',
       'NEXT_PUBLIC_SITE_URL',
       'AUTH_TRUST_PROXY_HEADERS',
+      ...(activate ? ['SEO_INDEXING_ENABLED'] : []),
     ])
       if (higher[key] && higher[key] !== parsed[key])
         throw new Error(
           `${name} overrides the prepared production setting ${key}; reconcile that file first.`,
         );
+    if (reconciled !== text) higherUpdates.push({ path, text: reconciled });
   }
 }
 for (const [key, value] of Object.entries(fields))
@@ -107,13 +139,21 @@ for (const [key, value] of Object.entries(fields))
     throw new Error(`Private configuration has conflicting entries for ${key}.`);
 // All validation completes before private configuration is changed.
 await writeFile(apiPath, backend, { mode: 0o600 });
-if (frontend) await writeFile(frontendPath, frontend, { mode: 0o600 });
+await chmod(apiPath, 0o600);
+if (frontend) {
+  await writeFile(frontendPath, frontend, { mode: 0o600 });
+  await chmod(frontendPath, 0o600);
+}
+for (const file of higherUpdates) {
+  await writeFile(file.path, file.text, { mode: 0o600 });
+  await chmod(file.path, 0o600);
+}
 console.log(
   checkoutTest
     ? 'Main storefront checkout test configured: fixed login code 123456, no SMS, real SEP payments. Deploy normally, then install payment-live.conf and reload Nginx.'
     : review
       ? 'Owner-only real gateway test is configured. Customer authentication is disabled; no SMS is sent. Deploy normally and keep payment-review.conf.'
       : activate
-        ? 'Production payment configuration saved. Deploy using the normal script, then install deploy/nginx/payment-live.conf and reload Nginx.'
+        ? 'Production configured: real MeliPayamak five-digit OTP, fixed-code/admin payment testing disabled, real SEP checkout and SEO enabled. Deploy using the normal script. Keep the existing payment-live.conf.'
         : 'Terminal and callback settings saved privately. Public payment remains disabled until real SMS is ready.',
 );

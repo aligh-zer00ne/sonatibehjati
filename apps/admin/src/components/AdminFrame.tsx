@@ -23,7 +23,12 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
 export default function AdminFrame() {
   const { logout, admin } = useAdmin();
   const owner = admin?.role === 'OWNER';
-  const visibleLinks = links.filter((link) => admin && canOpenAdminPath(admin, link.href));
+  const visibleLinks = links.filter(
+    (link) =>
+      admin &&
+      canOpenAdminPath(admin, link.href) &&
+      (link.href !== '/admin/payment-test' || admin.gatewayTestEnabled === true),
+  );
   const searchOptions = [
     { value: 'products', label: 'محصولات', permission: 'PRODUCTS' },
     { value: 'orders', label: 'سفارش‌ها', permission: 'ORDERS' },

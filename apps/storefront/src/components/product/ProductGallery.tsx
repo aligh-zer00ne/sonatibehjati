@@ -23,7 +23,7 @@ export default function ProductGallery({
   if (!images.length)
     return (
       <div className="grid aspect-square place-items-center rounded-3xl border border-border bg-surface text-sm text-muted-foreground">
-        تصویر این محصول به‌زودی اضافه می‌شود
+        تصویری برای این محصول ثبت نشده است
       </div>
     );
   const image = images[selected] ?? images[0]!;

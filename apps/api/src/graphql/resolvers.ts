@@ -8,8 +8,16 @@ import type { Resolvers } from '../generated/resolvers.js';
 import { productRepository } from '../modules/products/repository.js';
 import { catalogRepository } from '../modules/products/catalog.js';
 import { serializeProduct as serialize } from '../modules/products/presentation.js';
+import { env } from '../config/env.js';
+import { gatewayAvailable } from '../modules/payments/service.js';
 export const resolvers: Resolvers = {
-  OrderReceipt: paymentResolvers.OrderReceipt, AccountOrder: paymentResolvers.AccountOrder, AdminOrder: paymentResolvers.AdminOrder,
+  AdminIdentity: {
+    gatewayTestEnabled: (admin) =>
+      admin.role === 'OWNER' && env.ADMIN_PAYMENT_TEST_ENABLED === 'true' && gatewayAvailable(),
+  },
+  OrderReceipt: paymentResolvers.OrderReceipt,
+  AccountOrder: paymentResolvers.AccountOrder,
+  AdminOrder: paymentResolvers.AdminOrder,
   Mutation: {
     ...paymentResolvers.Mutation,
     ...authResolvers.Mutation,

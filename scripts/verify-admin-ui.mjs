@@ -99,6 +99,9 @@ try {
   await page.getByRole('button', { name: 'ورود به پنل', exact: true }).click();
   await expect(page).toHaveURL(adminOrigin + '/admin');
   await expect(page.getByRole('heading', { name: 'داشبورد مدیریت' })).toBeVisible();
+  await goto('/admin/payment-test');
+  await expect(page).toHaveURL(adminOrigin + '/admin');
+  await expect(page.getByRole('link', { name: 'تست درگاه پرداخت', exact: true })).toHaveCount(0);
   await expect(page.locator('.recharts-surface').first()).toBeVisible();
   await expect(page.getByRole('columnheader', { name: 'ردیف', exact: true })).toBeVisible();
   const recentRows = page.locator('[data-admin-dashboard] .ant-table-tbody tr.ant-table-row');
@@ -363,7 +366,15 @@ try {
     '/admin/products/new',
     `/admin/products/${product.id}/edit`,
   ]) {
-    await goto(path);
+    // Layout coverage uses client navigation, like the actual admin menu.
+    // Full reload/session persistence is checked separately below and above.
+    await page.evaluate(async (target) => {
+      history.pushState(null, '', target);
+      dispatchEvent(new PopStateEvent('popstate'));
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }, path);
+    await page.waitForLoadState('networkidle');
+    await page.locator('[data-admin-page]').waitFor({ state: 'visible', timeout: 10000 });
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
       await expect

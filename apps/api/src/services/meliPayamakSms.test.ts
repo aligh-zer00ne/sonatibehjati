@@ -10,6 +10,16 @@ const config = {
 };
 afterEach(() => vi.unstubAllEnvs());
 describe('user-supplied SMS adapter', () => {
+  it.each(['123456', '1234', '12a45', '۱۲۳۴۵'])(
+    'rejects an invalid production OTP before contacting the provider: %s',
+    async (code) => {
+      const fetcher = vi.fn<typeof fetch>();
+      await expect(
+        new MeliPayamakSMSService(config, fetcher).sendOTP('09000000001', code),
+      ).rejects.toThrow();
+      expect(fetcher).not.toHaveBeenCalled();
+    },
+  );
   it('sends the template to the configured path and accepts a positive recId', async () => {
     const fetcher = vi
       .fn<typeof fetch>()

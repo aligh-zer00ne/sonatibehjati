@@ -300,6 +300,7 @@ enum AdminPermission {
   HOMEPAGE
 }
 type AdminIdentity {
+  gatewayTestEnabled: Boolean
   permissions: [AdminPermission!]!
   role: AdminRole!
   isActive: Boolean!
@@ -764,7 +765,7 @@ enum PaymentStatus {
   REVIEW_REQUIRED
 }
 type PaymentInfo {
- bankCode: Int
+  bankCode: Int
   id: ID!
   status: PaymentStatus!
   amount: Int!
@@ -786,7 +787,6 @@ extend type Mutation {
   startOrderPayment(orderId: ID!): PaymentRedirect!
   retryAdminPayment(paymentId: ID!): PaymentInfo!
 }
-
 
 type AdminGatewayTestPayment {
   payment: PaymentInfo!

@@ -1,13 +1,25 @@
 import { randomBytes } from 'node:crypto';
 import { env } from '../../config/env.js';
-import { UserTokens } from './tokens.js';
+import { UserTokens, USER_TOKEN_POLICY } from './tokens.js';
 import { createSMSService } from '../../services/smsService.js';
 export const authConfig = {
   accessSecret: env.USER_ACCESS_TOKEN_SECRET ?? randomBytes(48).toString('base64url'),
   refreshSecret: env.USER_REFRESH_TOKEN_SECRET ?? randomBytes(48).toString('base64url'),
   otpSecret: env.OTP_HASH_SECRET ?? randomBytes(48).toString('base64url'),
 };
-export const userTokens = new UserTokens(authConfig.accessSecret, authConfig.refreshSecret);
+// Fixed-code sessions from the payment trial cannot survive the switch to SMS.
+// This changes neither signing secrets nor stored customer/order data.
+export const userTokens = new UserTokens(
+  authConfig.accessSecret,
+  authConfig.refreshSecret,
+  undefined,
+  {
+    ...USER_TOKEN_POLICY,
+    ...(env.NODE_ENV === 'production' && env.CHECKOUT_PAYMENT_TEST_ENABLED !== 'true'
+      ? { authenticationMethod: 'sms' as const }
+      : {}),
+  },
+);
 export const smsService = createSMSService(
   env.NODE_ENV,
   {

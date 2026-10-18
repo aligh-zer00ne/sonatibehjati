@@ -20,6 +20,7 @@ type TokenPolicy = {
   audience: string;
   accessSeconds: number;
   refreshSeconds: number;
+  authenticationMethod?: 'sms';
 };
 export class RoleTokens {
   constructor(
@@ -39,7 +40,11 @@ export class RoleTokens {
       Math.min((issuedAt + this.policy.accessSeconds) * 1000, expiresAt.getTime()),
     );
     const sign = (kind: 'access' | 'refresh', id: string, expiry: Date, secret: string) =>
-      new SignJWT({ kind: `${this.policy.role}_${kind}`, fid: familyId })
+      new SignJWT({
+        kind: `${this.policy.role}_${kind}`,
+        fid: familyId,
+        ...(this.policy.authenticationMethod ? { amr: [this.policy.authenticationMethod] } : {}),
+      })
         .setProtectedHeader({ alg: 'HS256', typ: `behjati-${this.policy.role}-${kind}+jwt` })
         .setIssuer('behjati-api')
         .setAudience(this.policy.audience)
@@ -72,7 +77,9 @@ export class RoleTokens {
       payload.kind !== `${this.policy.role}_${kind}` ||
       typeof payload.sub !== 'string' ||
       typeof payload.fid !== 'string' ||
-      typeof payload.jti !== 'string'
+      typeof payload.jti !== 'string' ||
+      (this.policy.authenticationMethod &&
+        (!Array.isArray(payload.amr) || !payload.amr.includes(this.policy.authenticationMethod)))
     )
       throw new Error('Invalid token');
     return { subjectId: payload.sub, familyId: payload.fid, id: payload.jti };

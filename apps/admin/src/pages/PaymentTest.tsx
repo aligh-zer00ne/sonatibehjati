@@ -11,6 +11,7 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 import { formatDateTime } from '../lib/format';
+import { Navigate } from 'react-router-dom';
 
 export default function PaymentTest() {
   const query = useAdminQuery(AdminGatewayTestDocument, {});
@@ -24,6 +25,7 @@ export default function PaymentTest() {
   }, [rows, query.refresh]);
   if (!query.data) return <DataState error={query.error} retry={query.refresh} />;
   const state = query.data.adminGatewayTest;
+  if (!state.enabled) return <Navigate to="/admin" replace />;
   const active = state.payments.some((row) => pendingPaymentStates.includes(row.payment.status));
   return (
     <>

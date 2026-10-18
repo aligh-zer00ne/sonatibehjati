@@ -1,8 +1,18 @@
 import { activeProductPromotion, type PromotionSource } from '@behjati/shared/promotions';
-export const serializeProduct = <T extends PromotionSource & { createdAt: Date; updatedAt: Date }>(
+import { productDescription } from '@behjati/shared/photo-catalog';
+export const serializeProduct = <
+  T extends PromotionSource & {
+    createdAt: Date;
+    updatedAt: Date;
+    title: string;
+    weight: string;
+    description: string;
+  },
+>(
   product: T,
 ) => ({
   ...product,
+  description: productDescription(product),
   createdAt: product.createdAt.toISOString(),
   updatedAt: product.updatedAt.toISOString(),
   discountPercent: product.discountPercent ?? null,

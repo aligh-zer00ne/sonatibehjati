@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import ProductReviews from './ProductReviews';
 import { cn } from '@/lib/utils';
+import { productDescription } from '@behjati/shared/photo-catalog';
 const tabs = ['توضیحات', 'مشخصات', 'نظرات'];
 export default function ProductTabs({
   product,
@@ -64,7 +65,7 @@ export default function ProductTabs({
           className="py-5 text-sm leading-8 text-earth outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {index === 0 ? (
-            <p className="whitespace-pre-line">{product.description}</p>
+            <p className="whitespace-pre-line">{productDescription(product)}</p>
           ) : index === 1 ? (
             <dl className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-3 rounded-xl bg-surface/60 p-4">
               <dt>نام محصول</dt>

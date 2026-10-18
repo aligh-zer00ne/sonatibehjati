@@ -19,7 +19,7 @@ export default function ProductGrid({
     return (
       <EmptyState
         title="محصولی برای نمایش وجود ندارد"
-        description="به‌زودی محصولات این بخش معرفی می‌شوند."
+        description="در حال حاضر محصولی در این بخش موجود نیست."
       />
     );
   return (

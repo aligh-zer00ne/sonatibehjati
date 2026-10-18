@@ -137,6 +137,18 @@ export const photoProducts = [
 export const temporaryPhotoDescription =
   'تصویر واقعی محصول سنتی بهجتی. وزن و قیمت این نسخه موقت‌اند و توسط مدیر فروشگاه اصلاح خواهند شد.';
 
+export function productDescription(product: {
+  title: string;
+  weight: string;
+  description: string;
+}) {
+  // Replace only the exact legacy import placeholder when presenting data.
+  // Custom descriptions, stored records and all prices remain untouched.
+  return product.description.trim() === temporaryPhotoDescription
+    ? `${product.title} از محصولات سنتی بهجتی اردکان. وزن / حجم بسته‌بندی: ${product.weight}.`
+    : product.description;
+}
+
 const galleryDetails: Record<(typeof photoProducts)[number]['photo'], readonly [string, string]> = {
   'halva-classic': ['نمای پشت بسته‌بندی', 'نمای درِ بسته‌بندی'],
   'tahini-blue': ['نمای نزدیک جزئیات بسته‌بندی', 'بافت ارده در کاسه و قاشق'],
