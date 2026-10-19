@@ -23,6 +23,9 @@ export const userTokens = new UserTokens(
 export const smsService = createSMSService(
   env.NODE_ENV,
   {
+    transport: env.MELI_PAYAMAK_TRANSPORT,
+    username: env.MELI_PAYAMAK_USERNAME,
+    password: env.MELI_PAYAMAK_PASSWORD,
     hostname: env.MELI_PAYAMAK_HOSTNAME,
     port: 443,
     path: env.MELI_PAYAMAK_PATH ?? process.env.MELI_PAYMAK_PATH ?? '/api/send/shared/{apiKey}',

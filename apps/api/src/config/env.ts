@@ -30,6 +30,9 @@ const schema = z.object({
       .optional(),
   ),
   MELI_PAYAMAK_HOSTNAME: z.string().default('console.melipayamak.com'),
+  MELI_PAYAMAK_TRANSPORT: z.enum(['console', 'soap']).default('console'),
+  MELI_PAYAMAK_USERNAME: z.string().optional(),
+  MELI_PAYAMAK_PASSWORD: z.string().optional(),
   MELI_PAYAMAK_PATH: z.preprocess(
     (value) => (value === '' ? undefined : value),
     z.string().optional(),

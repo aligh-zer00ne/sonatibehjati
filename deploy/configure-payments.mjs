@@ -13,9 +13,13 @@ if ([activate, review, checkoutTest].filter(Boolean).length > 1)
 const serverProfile = activate || review || checkoutTest;
 const smsMode =
   process.argv.find((arg) => arg.startsWith('--sms-mode='))?.slice('--sms-mode='.length) ??
-  (api.MELI_PAYAMAK_PATH === '/api/send/otp/{apiKey}' ? 'otp' : 'shared');
-if (!['otp', 'shared'].includes(smsMode))
-  throw new Error('Choose --sms-mode=otp or --sms-mode=shared.');
+  (api.MELI_PAYAMAK_TRANSPORT === 'soap'
+    ? 'soap'
+    : api.MELI_PAYAMAK_PATH === '/api/send/otp/{apiKey}'
+      ? 'otp'
+      : 'shared');
+if (!['otp', 'shared', 'soap'].includes(smsMode))
+  throw new Error('Choose --sms-mode=soap, --sms-mode=otp or --sms-mode=shared.');
 const normalizeDigits = (value) =>
   value.replace(/[۰-۹٠-٩]/g, (digit) => {
     const persian = '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit);
@@ -39,9 +43,14 @@ const fields = {
   ...(activate
     ? {
         SMS_PROVIDER: 'melipayamak',
+        MELI_PAYAMAK_TRANSPORT: smsMode === 'soap' ? 'soap' : 'console',
         MELI_PAYAMAK_OTP_BODY_ID: bodyId,
-        MELI_PAYAMAK_HOSTNAME: 'console.melipayamak.com',
-        MELI_PAYAMAK_PATH: `/api/send/${smsMode}/{apiKey}`,
+        ...(smsMode === 'soap'
+          ? {}
+          : {
+              MELI_PAYAMAK_HOSTNAME: 'console.melipayamak.com',
+              MELI_PAYAMAK_PATH: `/api/send/${smsMode}/{apiKey}`,
+            }),
       }
     : {}),
   SEP_TERMINAL_ID: terminal,
@@ -54,12 +63,19 @@ const fields = {
 if (serverProfile) {
   if (
     activate &&
-    (!api.MELI_PAYAMAK_API_KEY?.trim() ||
-      ((smsMode === 'shared' || bodyId !== '') &&
-        (!/^\d+$/.test(bodyId) || !Number.isSafeInteger(Number(bodyId)) || Number(bodyId) <= 0)))
+    ((smsMode === 'soap'
+      ? !api.MELI_PAYAMAK_USERNAME?.trim() || !api.MELI_PAYAMAK_PASSWORD?.trim()
+      : !api.MELI_PAYAMAK_API_KEY?.trim()) ||
+      ((smsMode !== 'otp' || bodyId !== '') &&
+        (!/^\d+$/.test(bodyId) ||
+          !Number.isSafeInteger(Number(bodyId)) ||
+          Number(bodyId) <= 0 ||
+          (smsMode === 'soap' && Number(bodyId) > 2147483647))))
   )
     throw new Error(
-      'Configure real SMS: MELI_PAYAMAK_API_KEY in apps/api/.env; shared mode also requires a positive numeric --body-id=... . Console OTP length must be five digits.',
+      smsMode === 'soap'
+        ? 'SOAP requires MELI_PAYAMAK_USERNAME and MELI_PAYAMAK_PASSWORD in apps/api/.env and a positive 32-bit --body-id=... . Use panel web-service credentials, not a console token.'
+        : 'Configure real SMS: MELI_PAYAMAK_API_KEY in apps/api/.env; shared mode also requires a positive numeric --body-id=... . Console OTP length must be five digits.',
     );
   const names = [
     'USER_ACCESS_TOKEN_SECRET',
@@ -158,6 +174,6 @@ console.log(
     : review
       ? 'Owner-only real gateway test is configured. Customer authentication is disabled; no SMS is sent. Deploy normally and keep payment-review.conf.'
       : activate
-        ? 'Production configured: real MeliPayamak five-digit OTP, fixed-code/admin payment testing disabled, real SEP checkout and SEO enabled. Deploy using the normal script. Keep the existing payment-live.conf.'
+        ? `Production configured: MeliPayamak ${smsMode}, five-digit OTP, fixed-code/admin payment testing disabled, real SEP checkout and SEO enabled. Deploy using the normal script. Keep the existing payment-live.conf.`
         : 'Terminal and callback settings saved privately. Public payment remains disabled until real SMS is ready.',
 );

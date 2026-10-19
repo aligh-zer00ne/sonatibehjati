@@ -6,6 +6,9 @@ export interface SmsConfig {
   path: string;
   apiKey: string;
   bodyId?: number;
+  transport?: 'console' | 'soap';
+  username?: string;
+  password?: string;
 }
 export interface SmsRequest {
   to: string;
@@ -26,6 +29,7 @@ type SmsFailure = {
     | 'provider_rejected'
     | 'invalid_response'
     | 'invalid_otp'
+    | 'soap_fault'
     | 'network_error'
     | 'timeout';
   httpStatus?: number;
@@ -38,6 +42,30 @@ export class SMSError extends Error {
   constructor(readonly diagnostic: SmsFailure = { reason: 'configuration' }) {
     super('ارسال پیامک انجام نشد؛ دوباره تلاش کنید.');
   }
+}
+export function classifySmsError(error: unknown): SMSError {
+  if (error instanceof SMSError) return error;
+  const cause = error instanceof Error ? error.cause : undefined;
+  const code =
+    typeof cause === 'object' && cause !== null && 'code' in cause ? cause.code : undefined;
+  const knownCodes = [
+    'ENOTFOUND',
+    'EAI_AGAIN',
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ETIMEDOUT',
+    'UND_ERR_CONNECT_TIMEOUT',
+    'CERT_HAS_EXPIRED',
+    'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+    'DEPTH_ZERO_SELF_SIGNED_CERT',
+  ];
+  return new SMSError({
+    reason:
+      error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name)
+        ? 'timeout'
+        : 'network_error',
+    ...(typeof code === 'string' && knownCodes.includes(code) ? { transportCode: code } : {}),
+  });
 }
 // Adapted from the user's SmsService.ts; Express uses this provider through SMSService.
 export class MeliPayamakSMSService implements SMSService {
@@ -149,32 +177,7 @@ export class MeliPayamakSMSService implements SMSService {
         ...(consoleOtp ? { code: deliveredCode } : {}),
       };
     } catch (error) {
-      const cause = error instanceof Error ? error.cause : undefined;
-      const code =
-        typeof cause === 'object' && cause !== null && 'code' in cause ? cause.code : undefined;
-      const knownCodes = [
-        'ENOTFOUND',
-        'EAI_AGAIN',
-        'ECONNREFUSED',
-        'ECONNRESET',
-        'ETIMEDOUT',
-        'UND_ERR_CONNECT_TIMEOUT',
-        'CERT_HAS_EXPIRED',
-        'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-        'DEPTH_ZERO_SELF_SIGNED_CERT',
-      ];
-      const failure =
-        error instanceof SMSError
-          ? error
-          : new SMSError({
-              reason:
-                error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name)
-                  ? 'timeout'
-                  : 'network_error',
-              ...(typeof code === 'string' && knownCodes.includes(code)
-                ? { transportCode: code }
-                : {}),
-            });
+      const failure = classifySmsError(error);
       console.warn('[SMS delivery failed]', {
         provider: 'melipayamak',
         ...(consoleOtp ? { mode: 'otp' } : { bodyId: this.config.bodyId }),

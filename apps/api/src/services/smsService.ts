@@ -1,5 +1,6 @@
 import type { SMSService } from './contracts.js';
 import { MeliPayamakSMSService, type SmsConfig } from './meliPayamakSms.js';
+import { MeliPayamakSoapService } from './meliPayamakSoap.js';
 
 export function createSMSService(
   environment: string,
@@ -14,9 +15,14 @@ export function createSMSService(
       },
     };
   if (checkoutPaymentTest) return { async sendOTP() {} };
-  return environment === 'production'
-    ? new MeliPayamakSMSService(config)
-    : new DevelopmentSMSService();
+  if (environment !== 'production') return new DevelopmentSMSService();
+  return config.transport === 'soap'
+    ? new MeliPayamakSoapService({
+        username: config.username ?? '',
+        password: config.password ?? '',
+        bodyId: config.bodyId ?? 0,
+      })
+    : new MeliPayamakSMSService(config);
 }
 
 export class DevelopmentSMSService implements SMSService {

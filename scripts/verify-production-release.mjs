@@ -193,8 +193,75 @@ try {
   const preserveMode = await run([fixture + '/deploy/configure-payments.mjs', '--activate']);
   assert.equal(preserveMode.code, 0, preserveMode.output);
   assert.equal(parse(await readFile(apiPath, 'utf8')).MELI_PAYAMAK_PATH, '/api/send/otp/{apiKey}');
+  const beforeSoap = await readFile(apiPath, 'utf8');
+  const missingSoap = await run([
+    fixture + '/deploy/configure-payments.mjs',
+    '--activate',
+    '--sms-mode=soap',
+    '--body-id=559650',
+  ]);
+  assert.notEqual(missingSoap.code, 0);
+  assert.equal(
+    await readFile(apiPath, 'utf8'),
+    beforeSoap,
+    'Missing panel credentials must not partially switch providers',
+  );
+  await writeFile(
+    apiPath,
+    encode({
+      ...parse(beforeSoap),
+      MELI_PAYAMAK_API_KEY: '',
+      MELI_PAYAMAK_USERNAME: 'fixture-panel-user',
+      MELI_PAYAMAK_PASSWORD: 'fixture-panel-secret',
+    }),
+  );
+  const soapProfile = await run([
+    fixture + '/deploy/configure-payments.mjs',
+    '--activate',
+    '--sms-mode=soap',
+    '--body-id=559650',
+  ]);
+  assert.equal(soapProfile.code, 0, soapProfile.output);
+  const soapApi = parse(await readFile(apiPath, 'utf8'));
+  assert.equal(soapApi.MELI_PAYAMAK_TRANSPORT, 'soap');
+  assert.equal(soapApi.MELI_PAYAMAK_OTP_BODY_ID, '559650');
+  assert.equal(soapApi.MELI_PAYAMAK_API_KEY, '');
+  assert.equal(soapApi.MELI_PAYAMAK_USERNAME, 'fixture-panel-user');
+  assert.equal(soapApi.MELI_PAYAMAK_PASSWORD, 'fixture-panel-secret');
+  for (const [key, value] of Object.entries(secrets)) assert.equal(soapApi[key], value);
+  const soapRuntime = await run(
+    [
+      '-e',
+      `
+    import assert from 'node:assert/strict';
+    const calls = [], logs = [];
+    console.info = (...args) => logs.push(args);
+    console.warn = (...args) => logs.push(args);
+    globalThis.fetch = async (url, options) => {
+      calls.push({url,options});
+      return new Response('<Envelope><Body><SendByBaseNumberResponse><SendByBaseNumberResult>1234567890123456789</SendByBaseNumberResult></SendByBaseNumberResponse></Body></Envelope>');
+    };
+    const {smsService} = await import('./apps/api/src/modules/auth/runtime.ts');
+    assert.equal(await smsService.sendOTP('09000000001', '00042'), undefined);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, 'https://api.payamak-panel.com/post/send.asmx');
+    assert.equal(calls[0].options.headers.SOAPAction, '"http://tempuri.org/SendByBaseNumber"');
+    assert.ok(calls[0].options.body.includes('<text><string>00042</string></text>'));
+    assert.ok(calls[0].options.body.includes('<bodyId>559650</bodyId>'));
+    assert.ok(calls[0].options.body.includes('<username>fixture-panel-user</username>'));
+    assert.deepEqual(logs, []);
+    console.log('SOAP_PATTERN_RUNTIME_VERIFIED');
+  `,
+    ],
+    { ...process.env, ...soapApi },
+  );
+  assert.equal(soapRuntime.code, 0, soapRuntime.output);
+  assert.match(soapRuntime.output, /SOAP_PATTERN_RUNTIME_VERIFIED/);
+  const preserveSoap = await run([fixture + '/deploy/configure-payments.mjs', '--activate']);
+  assert.equal(preserveSoap.code, 0, preserveSoap.output);
+  assert.equal(parse(await readFile(apiPath, 'utf8')).MELI_PAYAMAK_TRANSPORT, 'soap');
   console.log(
-    'Production release verified: shared-template and console OTP contracts, five-digit returned code with leading zeros, preserved mode/private settings, no fixed login, old sessions rejected, override conflicts handled, SEO enabled. Provider traffic was mocked; no SMS, bank or database request was sent.',
+    'Production release verified: SOAP pattern with panel credentials, shared-template and console OTP contracts, five-digit code with leading zeros, preserved mode/private settings, no fixed login, old sessions rejected, override conflicts handled, SEO enabled. Provider traffic was mocked; no SMS, bank or database request was sent.',
   );
 } finally {
   await rm(fixture, { recursive: true, force: true });
