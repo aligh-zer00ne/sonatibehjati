@@ -11,6 +11,11 @@ const checkoutTest = process.argv.includes('--checkout-test');
 if ([activate, review, checkoutTest].filter(Boolean).length > 1)
   throw new Error('Choose exactly one payment profile.');
 const serverProfile = activate || review || checkoutTest;
+const smsMode =
+  process.argv.find((arg) => arg.startsWith('--sms-mode='))?.slice('--sms-mode='.length) ??
+  (api.MELI_PAYAMAK_PATH === '/api/send/otp/{apiKey}' ? 'otp' : 'shared');
+if (!['otp', 'shared'].includes(smsMode))
+  throw new Error('Choose --sms-mode=otp or --sms-mode=shared.');
 const normalizeDigits = (value) =>
   value.replace(/[۰-۹٠-٩]/g, (digit) => {
     const persian = '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit);
@@ -36,7 +41,7 @@ const fields = {
         SMS_PROVIDER: 'melipayamak',
         MELI_PAYAMAK_OTP_BODY_ID: bodyId,
         MELI_PAYAMAK_HOSTNAME: 'console.melipayamak.com',
-        MELI_PAYAMAK_PATH: '/api/send/shared/{apiKey}',
+        MELI_PAYAMAK_PATH: `/api/send/${smsMode}/{apiKey}`,
       }
     : {}),
   SEP_TERMINAL_ID: terminal,
@@ -50,12 +55,11 @@ if (serverProfile) {
   if (
     activate &&
     (!api.MELI_PAYAMAK_API_KEY?.trim() ||
-      !/^\d+$/.test(bodyId) ||
-      !Number.isSafeInteger(Number(bodyId)) ||
-      Number(bodyId) <= 0)
+      ((smsMode === 'shared' || bodyId !== '') &&
+        (!/^\d+$/.test(bodyId) || !Number.isSafeInteger(Number(bodyId)) || Number(bodyId) <= 0)))
   )
     throw new Error(
-      'Configure real SMS: MELI_PAYAMAK_API_KEY in apps/api/.env and a positive numeric --body-id=... before activation.',
+      'Configure real SMS: MELI_PAYAMAK_API_KEY in apps/api/.env; shared mode also requires a positive numeric --body-id=... . Console OTP length must be five digits.',
     );
   const names = [
     'USER_ACCESS_TOKEN_SECRET',

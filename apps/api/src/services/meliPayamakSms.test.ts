@@ -14,6 +14,69 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe('user-supplied SMS adapter', () => {
+  it('uses the console OTP contract and returns its five-digit code without a bodyId', async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response(JSON.stringify({ code: '00042', status: 'عملیات موفق' })));
+    const service = new MeliPayamakSMSService(
+      { ...config, path: '/api/send/otp/{apiKey}', bodyId: undefined },
+      fetcher,
+    );
+    expect(await service.sendOTP('۰۹۰۰۰۰۰۰۰۰۱', '98765')).toBe('00042');
+    expect(fetcher).toHaveBeenCalledOnce();
+    expect(fetcher.mock.calls[0]?.[0]).toBe(
+      'https://console.melipayamak.com:443/api/send/otp/test%2Fkey',
+    );
+    expect(JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body))).toEqual({ to: '09000000001' });
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+  it.each([
+    {},
+    { recId: 12345 },
+    { code: '123456' },
+    { code: '1234' },
+    { code: 12345 },
+    { code: '12a45' },
+    { code: '۱۲۳۴۵' },
+  ])(
+    'rejects ambiguous or incorrectly sized console OTP results %j without a fallback send',
+    async (payload) => {
+      const fetcher = vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(new Response(JSON.stringify(payload)));
+      await expect(
+        new MeliPayamakSMSService({ ...config, path: '/api/send/otp/{apiKey}' }, fetcher).sendOTP(
+          '09000000001',
+          '98765',
+        ),
+      ).rejects.toThrow('ارسال پیامک انجام نشد');
+      expect(fetcher).toHaveBeenCalledOnce();
+      if (typeof payload.code === 'string')
+        expect(JSON.stringify(vi.mocked(console.warn).mock.calls)).not.toContain(payload.code);
+    },
+  );
+  it('redacts even a malformed provider-generated code and never accepts an HTTP failure', async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ code: '123', status: 'Rejected 123 test/key' }), {
+          status: 400,
+        }),
+      );
+    await expect(
+      new MeliPayamakSMSService({ ...config, path: '/api/send/otp/{apiKey}' }, fetcher).sendOTP(
+        '09000000001',
+        '98765',
+      ),
+    ).rejects.toThrow();
+    const log = JSON.stringify(vi.mocked(console.warn).mock.calls);
+    expect(log).not.toContain('123');
+    expect(log).not.toContain('test/key');
+    expect(console.warn).toHaveBeenLastCalledWith(
+      '[SMS delivery failed]',
+      expect.objectContaining({ reason: 'http_error', httpStatus: 400, otpCodeLength: 3 }),
+    );
+  });
   it.each(['123456', '1234', '12a45', '۱۲۳۴۵'])(
     'rejects an invalid production OTP before contacting the provider: %s',
     async (code) => {

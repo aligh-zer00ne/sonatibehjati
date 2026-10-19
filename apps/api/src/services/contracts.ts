@@ -1,5 +1,6 @@
 export interface SMSService {
-  sendOTP(phoneNumber: string, code: string): Promise<void>;
+  // Console OTP generates its own code; shared templates deliver the supplied code.
+  sendOTP(phoneNumber: string, code: string): Promise<string | void>;
 }
 export interface ShippingAddress {
   province: string;

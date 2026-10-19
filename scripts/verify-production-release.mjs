@@ -144,8 +144,57 @@ try {
   );
   assert.equal(runtime.code, 0, runtime.output);
   assert.match(runtime.output, /REAL_SMS_RUNTIME_VERIFIED/);
+  const beforeOtp = await readFile(apiPath, 'utf8');
+  const invalidMode = await run([
+    fixture + '/deploy/configure-payments.mjs',
+    '--activate',
+    '--sms-mode=unknown',
+  ]);
+  assert.notEqual(invalidMode.code, 0);
+  assert.equal(await readFile(apiPath, 'utf8'), beforeOtp);
+  const otpProfile = await run([
+    fixture + '/deploy/configure-payments.mjs',
+    '--activate',
+    '--sms-mode=otp',
+    '--body-id=',
+  ]);
+  assert.equal(otpProfile.code, 0, otpProfile.output);
+  const otpApi = parse(await readFile(apiPath, 'utf8'));
+  assert.equal(otpApi.MELI_PAYAMAK_PATH, '/api/send/otp/{apiKey}');
+  assert.equal(otpApi.MELI_PAYAMAK_OTP_BODY_ID, '');
+  assert.equal(otpApi.MELI_PAYAMAK_API_KEY, original.MELI_PAYAMAK_API_KEY);
+  assert.equal(otpApi.DATABASE_URL, original.DATABASE_URL);
+  for (const [key, value] of Object.entries(secrets)) assert.equal(otpApi[key], value);
+  const otpRuntime = await run(
+    [
+      '-e',
+      `
+    import assert from 'node:assert/strict';
+    const calls = [], logs = [];
+    console.info = (...args) => logs.push(args);
+    console.warn = (...args) => logs.push(args);
+    globalThis.fetch = async (url, options) => {
+      calls.push({url, body: JSON.parse(options.body)});
+      return new Response(JSON.stringify({ code: '00042', status: 'accepted' }));
+    };
+    const {smsService} = await import('./apps/api/src/modules/auth/runtime.ts');
+    assert.equal(await smsService.sendOTP('09000000001', '98765'), '00042');
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, 'https://console.melipayamak.com:443/api/send/otp/fixture-only-key');
+    assert.deepEqual(calls[0].body, {to:'09000000001'});
+    assert.deepEqual(logs, []);
+    console.log('CONSOLE_OTP_RUNTIME_VERIFIED');
+  `,
+    ],
+    { ...process.env, ...otpApi },
+  );
+  assert.equal(otpRuntime.code, 0, otpRuntime.output);
+  assert.match(otpRuntime.output, /CONSOLE_OTP_RUNTIME_VERIFIED/);
+  const preserveMode = await run([fixture + '/deploy/configure-payments.mjs', '--activate']);
+  assert.equal(preserveMode.code, 0, preserveMode.output);
+  assert.equal(parse(await readFile(apiPath, 'utf8')).MELI_PAYAMAK_PATH, '/api/send/otp/{apiKey}');
   console.log(
-    'Production release verified: template configuration, real-provider request with one five-digit argument, no fixed login, old sessions rejected, private settings preserved, override conflicts handled, SEO enabled. Provider traffic was mocked; no SMS, bank or database request was sent.',
+    'Production release verified: shared-template and console OTP contracts, five-digit returned code with leading zeros, preserved mode/private settings, no fixed login, old sessions rejected, override conflicts handled, SEO enabled. Provider traffic was mocked; no SMS, bank or database request was sent.',
   );
 } finally {
   await rm(fixture, { recursive: true, force: true });

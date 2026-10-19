@@ -38,8 +38,21 @@ export async function requestOtp(raw: unknown, ip: string) {
     });
   });
   try {
-    await smsService.sendOTP(phone, code);
-    await db.otpCode.update({ where: { id }, data: { sentAt: new Date() } });
+    const deliveredCode = await smsService.sendOTP(phone, code);
+    if (
+      deliveredCode !== undefined &&
+      (typeof deliveredCode !== 'string' || !new RegExp(`^\\d{${codeLength}}$`).test(deliveredCode))
+    )
+      throw new Error('Invalid provider OTP format');
+    await db.otpCode.update({
+      where: { id },
+      data: {
+        sentAt: new Date(),
+        ...(deliveredCode !== undefined
+          ? { codeHash: hashOtp(authConfig.otpSecret, id, phone, deliveredCode) }
+          : {}),
+      },
+    });
   } catch {
     await db.otpCode.update({ where: { id }, data: { consumedAt: new Date() } });
     throw authError(

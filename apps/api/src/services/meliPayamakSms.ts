@@ -5,7 +5,7 @@ export interface SmsConfig {
   port: number;
   path: string;
   apiKey: string;
-  bodyId: number;
+  bodyId?: number;
 }
 export interface SmsRequest {
   to: string;
@@ -16,6 +16,7 @@ export interface SmsResponse {
   success: true;
   message: string;
   statusCode: number;
+  code?: string;
 }
 type SmsFailure = {
   reason:
@@ -24,12 +25,14 @@ type SmsFailure = {
     | 'http_error'
     | 'provider_rejected'
     | 'invalid_response'
+    | 'invalid_otp'
     | 'network_error'
     | 'timeout';
   httpStatus?: number;
   providerCode?: number;
   providerStatus?: string;
   transportCode?: string;
+  otpCodeLength?: number;
 };
 export class SMSError extends Error {
   constructor(readonly diagnostic: SmsFailure = { reason: 'configuration' }) {
@@ -50,27 +53,33 @@ export class MeliPayamakSMSService implements SMSService {
       !Number.isSafeInteger(config.port) ||
       config.port < 1 ||
       config.port > 65535 ||
-      !Number.isSafeInteger(config.bodyId) ||
-      config.bodyId <= 0
+      (config.path !== '/api/send/otp/{apiKey}' &&
+        (!Number.isSafeInteger(config.bodyId) || (config.bodyId ?? 0) <= 0))
     )
       throw new SMSError();
   }
   async sendOTP(phoneNumber: string, code: string) {
     if (!new RegExp(`^\\d{${OTP_LENGTH}}$`).test(code))
       throw new SMSError({ reason: 'invalid_request' });
-    await this.send({ to: phoneNumber, bodyId: this.config.bodyId, args: [code] });
+    const result = await this.send({
+      to: phoneNumber,
+      bodyId: this.config.bodyId ?? 0,
+      args: [code],
+    });
+    return result.code;
   }
   async send(request: SmsRequest): Promise<SmsResponse> {
     const parsed = phoneSchema.safeParse(request.to);
     if (!parsed.success) throw new SMSError({ reason: 'invalid_request' });
     const path = this.config.path.replace('{apiKey}', encodeURIComponent(this.config.apiKey));
+    const consoleOtp = this.config.path === '/api/send/otp/{apiKey}';
     try {
       const response = await this.fetcher(
         `https://${this.config.hostname}:${this.config.port}${path}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json; charset=utf-8' },
-          body: JSON.stringify({ ...request, to: parsed.data }),
+          body: JSON.stringify(consoleOtp ? { to: parsed.data } : { ...request, to: parsed.data }),
           signal: AbortSignal.timeout(10000),
           redirect: 'error',
         },
@@ -81,7 +90,17 @@ export class MeliPayamakSMSService implements SMSService {
           ? result.recId
           : undefined;
       const recId = typeof rawId === 'string' || typeof rawId === 'number' ? Number(rawId) : 0;
-      if (!response.ok || !Number.isSafeInteger(recId) || recId <= 0) {
+      const rawCode =
+        typeof result === 'object' && result !== null && 'code' in result ? result.code : undefined;
+      // The OTP endpoint returns the secret code, not a message receipt ID.
+      const deliveredCode =
+        typeof rawCode === 'string' && new RegExp(`^\\d{${OTP_LENGTH}}$`).test(rawCode)
+          ? rawCode
+          : undefined;
+      const accepted = consoleOtp
+        ? deliveredCode !== undefined
+        : Number.isSafeInteger(recId) && recId > 0;
+      if (!response.ok || !accepted) {
         const status =
           typeof result === 'object' && result !== null && 'status' in result
             ? result.status
@@ -95,6 +114,9 @@ export class MeliPayamakSMSService implements SMSService {
           request.to,
           parsed.data,
           ...request.args,
+          ...(consoleOtp && (typeof rawCode === 'string' || typeof rawCode === 'number')
+            ? [String(rawCode)]
+            : []),
         ])
           if (secret) providerStatus = providerStatus.split(secret).join('[redacted]');
         providerStatus = providerStatus
@@ -107,15 +129,25 @@ export class MeliPayamakSMSService implements SMSService {
             ? 'http_error'
             : result === undefined
               ? 'invalid_response'
-              : 'provider_rejected',
+              : consoleOtp && typeof rawCode === 'string' && /^\d+$/.test(rawCode)
+                ? 'invalid_otp'
+                : 'provider_rejected',
           httpStatus: response.status,
           ...(Number.isSafeInteger(recId) && recId < 0 && recId >= -9999
             ? { providerCode: recId }
             : {}),
           ...(providerStatus ? { providerStatus } : {}),
+          ...(consoleOtp && typeof rawCode === 'string' && /^\d+$/.test(rawCode)
+            ? { otpCodeLength: rawCode.length }
+            : {}),
         });
       }
-      return { success: true, message: 'SMS accepted', statusCode: response.status };
+      return {
+        success: true,
+        message: 'SMS accepted',
+        statusCode: response.status,
+        ...(consoleOtp ? { code: deliveredCode } : {}),
+      };
     } catch (error) {
       const cause = error instanceof Error ? error.cause : undefined;
       const code =
@@ -145,7 +177,7 @@ export class MeliPayamakSMSService implements SMSService {
             });
       console.warn('[SMS delivery failed]', {
         provider: 'melipayamak',
-        bodyId: this.config.bodyId,
+        ...(consoleOtp ? { mode: 'otp' } : { bodyId: this.config.bodyId }),
         ...failure.diagnostic,
       });
       throw failure;
