@@ -4,10 +4,13 @@ import { addressInputSchema, checkoutInputSchema, createOrderInputSchema } from 
 import { db } from '../../database/client.js';
 import { env } from '../../config/env.js';
 import { authError } from '../auth/errors.js';
-import { FixedShippingService } from '../../services/shipping.js';
+import {
+  calculatePackageShipping,
+  parseShippingWeight,
+  type ShippingMethod,
+} from '@behjati/shared/sales';
 import { activeProductPromotion } from '@behjati/shared/promotions';
 import { discountAmount } from './pricing.js';
-const shipping = new FixedShippingService(env.SHIPPING_COST);
 const invalid = () => authError('اطلاعات سفارش را بررسی کنید.', 'BAD_USER_INPUT');
 export async function saveAddress(userId: string, raw: unknown, id?: string | null) {
   const parsed = addressInputSchema.safeParse(raw);
@@ -48,10 +51,15 @@ export async function deleteAddress(userId: string, id: string) {
   });
 }
 type CheckoutInput = ReturnType<typeof checkoutInputSchema.parse>;
-async function calculate(tx: Prisma.TransactionClient, userId: string, input: CheckoutInput) {
-  await tx.$queryRaw`SELECT id FROM Address WHERE id = ${input.addressId} FOR UPDATE`;
-  const address = await tx.address.findFirst({ where: { id: input.addressId, userId } });
-  if (!address) throw authError('نشانی خود را انتخاب کنید.', 'NOT_FOUND');
+export async function priceCart(
+  tx: Prisma.TransactionClient,
+  input: {
+    items: CheckoutInput['items'];
+    discountCode: string;
+    shippingMethod: ShippingMethod;
+    pickup?: boolean;
+  },
+) {
   const ids = input.items.map((line) => line.productId).sort();
   await tx.$queryRaw(
     Prisma.sql`SELECT id FROM Product WHERE id IN (${Prisma.join(ids)}) ORDER BY id FOR UPDATE`,
@@ -74,6 +82,7 @@ async function calculate(tx: Prisma.TransactionClient, userId: string, input: Ch
       title: product.title,
       weight: product.weight,
       imageUrl: product.images[0]?.url ?? null,
+      shippingWeightGrams: product.shippingWeightGrams ?? parseShippingWeight(product.weight),
       quantity: line.quantity,
       unitPrice,
       lineTotal: unitPrice * line.quantity,
@@ -88,7 +97,23 @@ async function calculate(tx: Prisma.TransactionClient, userId: string, input: Ch
     if (!coupon) throw authError('کد تخفیف معتبر نیست.', 'INVALID_DISCOUNT');
     discount = discountAmount(subtotal, coupon);
   }
-  const shippingCost = await shipping.calculateShipping();
+  let tariff;
+  try {
+    tariff = calculatePackageShipping(
+      input.items.map((line) => ({
+        ...products.find((product) => product.id === line.productId)!,
+        quantity: line.quantity,
+        ...(input.pickup ? { shippingBaseCost: 0, shippingAdditionalKgCost: 0 } : {}),
+      })),
+      input.pickup ? 0 : env.SHIPPING_COST,
+    );
+  } catch {
+    throw authError(
+      'اطلاعات ارسال برخی محصولات کامل نیست؛ با پشتیبانی فروشگاه تماس بگیرید.',
+      'SHIPPING_UNAVAILABLE',
+    );
+  }
+  const shippingCost = input.pickup ? 0 : tariff.cost;
   const total = subtotal - discount + shippingCost;
   if (
     ![subtotal, total, ...items.map((line) => line.lineTotal)].every(
@@ -97,11 +122,27 @@ async function calculate(tx: Prisma.TransactionClient, userId: string, input: Ch
   )
     throw authError('مبلغ سبد از سقف مجاز بیشتر است.', 'BAD_USER_INPUT');
   return {
-    address,
     coupon,
-    quote: { addressId: address.id, items, subtotal, discount, shipping: shippingCost, total },
+    quote: {
+      items,
+      subtotal,
+      discount,
+      shipping: shippingCost,
+      total,
+      shippingMethod: input.pickup ? null : input.shippingMethod,
+      shippingWeightGrams: tariff.weightGrams,
+    },
+    tariff,
   };
 }
+async function calculate(tx: Prisma.TransactionClient, userId: string, input: CheckoutInput) {
+  await tx.$queryRaw`SELECT id FROM Address WHERE id = ${input.addressId} FOR UPDATE`;
+  const address = await tx.address.findFirst({ where: { id: input.addressId, userId } });
+  if (!address) throw authError('نشانی خود را انتخاب کنید.', 'NOT_FOUND');
+  const priced = await priceCart(tx, input);
+  return { ...priced, address, quote: { ...priced.quote, addressId: address.id } };
+}
+
 export async function quoteCheckout(userId: string, raw: unknown) {
   const parsed = checkoutInputSchema.safeParse(raw);
   if (!parsed.success) throw invalid();
@@ -135,7 +176,7 @@ export async function createOrder(userId: string, raw: unknown) {
           );
         return previous;
       }
-      const { address, coupon, quote } = await calculate(tx, userId, input);
+      const { address, coupon, quote, tariff } = await calculate(tx, userId, input);
       if (quote.total !== input.expectedTotal)
         throw authError('مبلغ سفارش تغییر کرده است؛ خلاصه را دوباره بررسی کنید.', 'PRICE_CHANGED');
       if (coupon) {
@@ -169,6 +210,10 @@ export async function createOrder(userId: string, raw: unknown) {
           clientRequestId: input.requestId,
           requestHash,
           status: 'PENDING_PAYMENT',
+          shippingMethod: input.shippingMethod,
+          shippingWeightGrams: quote.shippingWeightGrams,
+          shippingBaseCost: tariff.baseCost,
+          shippingAdditionalKgCost: tariff.additionalKgCost,
           subtotal: quote.subtotal,
           discount: quote.discount,
           shipping: quote.shipping,
@@ -179,6 +224,7 @@ export async function createOrder(userId: string, raw: unknown) {
               productId: line.productId,
               productTitle: line.title,
               productWeight: line.weight,
+              shippingWeightGrams: line.shippingWeightGrams,
               unitPrice: line.unitPrice,
               quantity: line.quantity,
               lineTotal: line.lineTotal,

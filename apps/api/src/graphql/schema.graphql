@@ -19,6 +19,9 @@ type ProductPromotion {
   endsAt: String!
 }
 type Product {
+  shippingWeightGrams: Int
+  shippingBaseCost: Int!
+  shippingAdditionalKgCost: Int!
   id: ID!
   slug: String!
   title: String!
@@ -175,11 +178,13 @@ input CheckoutLineInput {
   quantity: Int!
 }
 input CheckoutInput {
+  shippingMethod: ShippingMethod = POST
   addressId: ID!
   items: [CheckoutLineInput!]!
   discountCode: String!
 }
 input CreateOrderInput {
+  shippingMethod: ShippingMethod = POST
   addressId: ID!
   items: [CheckoutLineInput!]!
   discountCode: String!
@@ -187,6 +192,7 @@ input CreateOrderInput {
   expectedTotal: Int!
 }
 type CheckoutLine {
+  shippingWeightGrams: Int
   productId: ID!
   title: String!
   weight: String!
@@ -196,6 +202,8 @@ type CheckoutLine {
   lineTotal: Int!
 }
 type CheckoutQuote {
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
   addressId: ID!
   items: [CheckoutLine!]!
   subtotal: Int!
@@ -204,6 +212,10 @@ type CheckoutQuote {
   total: Int!
 }
 type OrderReceipt {
+  salesChannel: SalesChannel!
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
+  offlinePaidAmount: Int!
   paidAt: String
   payments: [PaymentInfo!]!
   id: ID!
@@ -242,6 +254,10 @@ type MyOrdersPage {
   totalPages: Int!
 }
 type AccountOrderSummary {
+  salesChannel: SalesChannel!
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
+  offlinePaidAmount: Int!
   id: ID!
   number: Int!
   status: OrderStatus!
@@ -249,6 +265,10 @@ type AccountOrderSummary {
   createdAt: String!
 }
 type AccountOrder {
+  salesChannel: SalesChannel!
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
+  offlinePaidAmount: Int!
   paidAt: String
   payments: [PaymentInfo!]!
   id: ID!
@@ -378,6 +398,9 @@ input AdminProductImageInput {
   alt: String!
 }
 input AdminProductInput {
+  shippingWeightGrams: Int
+  shippingBaseCost: Int
+  shippingAdditionalKgCost: Int
   title: String!
   slug: String!
   shortDescription: String!
@@ -404,6 +427,8 @@ enum AdminOrderSort {
   TOTAL_DESC
 }
 input AdminOrdersInput {
+  salesChannel: SalesChannel
+  shippingMethod: ShippingMethod
   page: Int
   pageSize: Int
   search: String
@@ -423,6 +448,10 @@ type AdminOrdersPage {
   totalPages: Int!
 }
 type AdminOrderSummary {
+  salesChannel: SalesChannel!
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
+  offlinePaidAmount: Int!
   id: ID!
   number: Int!
   status: OrderStatus!
@@ -432,6 +461,10 @@ type AdminOrderSummary {
   address: OrderAddressSnapshot!
 }
 type AdminOrder {
+  salesChannel: SalesChannel!
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
+  offlinePaidAmount: Int!
   paidAt: String
   payments: [PaymentInfo!]!
   shippingLabel: AdminShippingLabel
@@ -462,6 +495,7 @@ input AdminOrderStatusInput {
   expectedStatus: OrderStatus!
 }
 input AdminUsersInput {
+  salesChannel: SalesChannel
   page: Int
   pageSize: Int
   search: String
@@ -484,6 +518,8 @@ type AdminUsersPage {
   totalPages: Int!
 }
 input AdminReportInput {
+  salesChannel: SalesChannel
+  shippingMethod: ShippingMethod
   from: String!
   to: String!
   status: OrderStatus
@@ -817,4 +853,20 @@ input AnnouncementInput {
 }
 extend type Mutation {
   saveAnnouncement(input: AnnouncementInput!, expectedUpdatedAt: String): HomepageContent!
+}
+
+enum SalesChannel {
+  WEBSITE
+  INSTAGRAM
+  IN_PERSON
+}
+enum ShippingMethod {
+  POST
+  TIPAX
+  COURIER
+}
+enum OfflinePaymentMethod {
+  CASH
+  POS
+  CARD_TRANSFER
 }

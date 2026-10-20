@@ -1,3 +1,4 @@
+import { shippingMethodLabels } from '@behjati/shared/sales';
 import { useState } from 'react';
 import { Alert, App, Button, Card, Form, Input, Select, Modal } from 'antd';
 import { BRAND_NAME, formatNumber } from '@behjati/shared';
@@ -22,7 +23,7 @@ function defaults(order: AdminOrderFieldsFragment): ShippingLabelValues {
     recipientPhone: a.recipientPhone ?? order.user.phone,
     recipientAddress: [a.province, a.city, a.postalAddress].filter(Boolean).join('، '),
     recipientPostalCode: a.postalCode ?? '',
-    carrier: 'پست',
+    carrier: order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری',
     trackingNumber: '',
     packageWeight: '',
     packageContent: order.items

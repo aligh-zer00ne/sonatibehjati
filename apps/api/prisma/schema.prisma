@@ -1,360 +1,451 @@
 generator client {
- provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
+
 datasource db {
- provider = "mysql"
- url = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
+
 enum OrderStatus {
- CREATED
- PENDING_PAYMENT
- PROCESSING
- SHIPPED
- DELIVERED
- CANCELED
+  CREATED
+  PENDING_PAYMENT
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
 }
+
 enum DiscountType {
- PERCENT
- FIXED
+  PERCENT
+  FIXED
 }
+
 enum AdminRole {
- OWNER
- STAFF
+  OWNER
+  STAFF
 }
+
 enum TicketStatus {
- OPEN
- IN_PROGRESS
- CLOSED
+  OPEN
+  IN_PROGRESS
+  CLOSED
 }
+
 enum ReviewStatus {
- PENDING
- APPROVED
- REJECTED
+  PENDING
+  APPROVED
+  REJECTED
 }
+
 model User {
- id String @id @default(cuid())
- phone String @unique
- firstName String?
- lastName String?
- email String?
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
- tickets SupportTicket[]
- reviews ProductReview[]
- addresses Address[]
- orders Order[]
- refreshTokens RefreshToken[]
- sessions UserSession[]
+  acquisitionSource SalesChannel    @default(WEBSITE)
+  createdByAdminId  String?
+  id                String          @id @default(cuid())
+  phone             String          @unique
+  firstName         String?
+  lastName          String?
+  email             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  tickets           SupportTicket[]
+  reviews           ProductReview[]
+  addresses         Address[]
+  orders            Order[]
+  refreshTokens     RefreshToken[]
+  sessions          UserSession[]
 }
+
 model Address {
- id String @id @default(cuid())
- userId String
- user User @relation(fields:[userId],references:[id],onDelete:Cascade)
- title String
- recipientName String
- recipientPhone String
- province String
- city String
- postalAddress String @db.Text
- postalCode String
- latitude Float?
- longitude Float?
- isDefault Boolean @default(false)
- orders Order[]
- @@index([userId])
+  id             String  @id @default(cuid())
+  userId         String
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  recipientName  String
+  recipientPhone String
+  province       String
+  city           String
+  postalAddress  String  @db.Text
+  postalCode     String
+  latitude       Float?
+  longitude      Float?
+  isDefault      Boolean @default(false)
+  orders         Order[]
+
+  @@index([userId])
 }
+
 model Admin {
- id String @id @default(cuid())
- email String @unique
- passwordHash String
- role AdminRole @default(OWNER)
- permissions Json?
- isActive Boolean @default(true)
- createdAt DateTime @default(now())
- refreshTokens AdminRefreshToken[]
- sessions AdminSession[]
- statusEvents OrderStatusEvent[]
+  id            String              @id @default(cuid())
+  email         String              @unique
+  passwordHash  String
+  role          AdminRole           @default(OWNER)
+  permissions   Json?
+  isActive      Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  refreshTokens AdminRefreshToken[]
+  sessions      AdminSession[]
+  statusEvents  OrderStatusEvent[]
 }
+
 model Category {
- id String @id @default(cuid())
- slug String @unique
- title String
- image String
- products Product[]
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  title    String
+  image    String
+  products Product[]
 }
+
 model Product {
- id String @id @default(cuid())
- slug String @unique
- title String
- shortDescription String @db.Text
- description String @db.Text
- categoryId String
- category Category @relation(fields:[categoryId],references:[id],onDelete:Restrict)
- price Int
- weight String
- discountPercent Int?
- discountTitle String?
- discountStartsAt DateTime?
- discountEndsAt DateTime?
- images ProductImage[]
- isActive Boolean @default(true)
- badge String?
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
- reviews ProductReview[]
- orderItems OrderItem[]
- @@index([categoryId,isActive])
+  shippingWeightGrams      Int?
+  shippingBaseCost         Int?
+  shippingAdditionalKgCost Int?
+  id                       String          @id @default(cuid())
+  slug                     String          @unique
+  title                    String
+  shortDescription         String          @db.Text
+  description              String          @db.Text
+  categoryId               String
+  category                 Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  price                    Int
+  weight                   String
+  discountPercent          Int?
+  discountTitle            String?
+  discountStartsAt         DateTime?
+  discountEndsAt           DateTime?
+  images                   ProductImage[]
+  isActive                 Boolean         @default(true)
+  badge                    String?
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+  reviews                  ProductReview[]
+  orderItems               OrderItem[]
+
+  @@index([categoryId, isActive])
 }
+
 model ProductImage {
- id String @id @default(cuid())
- productId String
- product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
- url String
- alt String
- position Int @default(0)
- @@index([productId])
- @@index([productId,position])
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  position  Int     @default(0)
+
+  @@index([productId])
+  @@index([productId, position])
 }
+
 model DiscountCode {
- id String @id @default(cuid())
- code String @unique
- type DiscountType
- value Int
- minOrderAmount Int @default(0)
- maxDiscountAmount Int?
- startsAt DateTime
- expiresAt DateTime
- usageLimit Int?
- usageCount Int @default(0)
- updatedAt DateTime @updatedAt
- isActive Boolean @default(true)
- orders Order[]
+  id                String       @id @default(cuid())
+  code              String       @unique
+  type              DiscountType
+  value             Int
+  minOrderAmount    Int          @default(0)
+  maxDiscountAmount Int?
+  startsAt          DateTime
+  expiresAt         DateTime
+  usageLimit        Int?
+  usageCount        Int          @default(0)
+  updatedAt         DateTime     @updatedAt
+  isActive          Boolean      @default(true)
+  orders            Order[]
 }
+
 enum PaymentStatus {
- CREATING
- READY
- TOKEN_FAILED
- CANCELED
- FAILED
- EXPIRED
- VERIFYING
- VERIFY_PENDING
- SUCCEEDED
- REFUND_PENDING
- REFUNDING
- REVERSED
- REVIEW_REQUIRED
+  CREATING
+  READY
+  TOKEN_FAILED
+  CANCELED
+  FAILED
+  EXPIRED
+  VERIFYING
+  VERIFY_PENDING
+  SUCCEEDED
+  REFUND_PENDING
+  REFUNDING
+  REVERSED
+  REVIEW_REQUIRED
 }
+
 enum PaymentMode {
- TEST
- LIVE
+  TEST
+  LIVE
 }
+
 model Payment {
- mode PaymentMode @default(LIVE)
- id String @id
- orderId String?
- order Order? @relation(fields:[orderId],references:[id],onDelete:Cascade)
- gatewayTestAdminId String?
- status PaymentStatus @default(CREATING)
- amountRials BigInt
- terminalId String @db.VarChar(20)
- callbackKey String @db.VarChar(64)
- sessionKey Int
- token String? @db.VarChar(512)
- refNum String? @db.VarChar(100)
- traceNumber String? @db.VarChar(100)
- rrn String? @db.VarChar(100)
- resultCode Int?
- reason String? @db.VarChar(50)
- expiresAt DateTime
- leaseUntil DateTime?
- retryAt DateTime?
- verifiedAt DateTime?
- acceptedAt DateTime?
- reversedAt DateTime?
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
- reference PaymentReference?
- @@index([orderId,createdAt])
- @@index([gatewayTestAdminId,createdAt])
- @@index([status,retryAt])
- @@index([refNum])
+  mode               PaymentMode       @default(LIVE)
+  id                 String            @id
+  orderId            String?
+  order              Order?            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  gatewayTestAdminId String?
+  status             PaymentStatus     @default(CREATING)
+  amountRials        BigInt
+  terminalId         String            @db.VarChar(20)
+  callbackKey        String            @db.VarChar(64)
+  sessionKey         Int
+  token              String?           @db.VarChar(512)
+  refNum             String?           @db.VarChar(100)
+  traceNumber        String?           @db.VarChar(100)
+  rrn                String?           @db.VarChar(100)
+  resultCode         Int?
+  reason             String?           @db.VarChar(50)
+  expiresAt          DateTime
+  leaseUntil         DateTime?
+  retryAt            DateTime?
+  verifiedAt         DateTime?
+  acceptedAt         DateTime?
+  reversedAt         DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  reference          PaymentReference?
+
+  @@index([orderId, createdAt])
+  @@index([gatewayTestAdminId, createdAt])
+  @@index([status, retryAt])
+  @@index([refNum])
 }
+
 model PaymentReference {
- refNum String @id @db.VarChar(100)
- paymentId String @unique
- payment Payment @relation(fields:[paymentId],references:[id],onDelete:Cascade)
- amountRials BigInt
- createdAt DateTime @default(now())
+  refNum      String   @id @db.VarChar(100)
+  paymentId   String   @unique
+  payment     Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  amountRials BigInt
+  createdAt   DateTime @default(now())
 }
+
 model Order {
- paidAt DateTime?
- payments Payment[]
- id String @id @default(cuid())
- number Int @unique @default(autoincrement())
- clientRequestId String? @db.VarChar(36)
- requestHash String? @db.VarChar(64)
- userId String
- user User @relation(fields:[userId],references:[id],onDelete:Restrict)
- addressId String
- address Address @relation(fields:[addressId],references:[id],onDelete:Restrict)
- addressSnapshot Json
- status OrderStatus @default(PENDING_PAYMENT)
- subtotal Int
- discount Int @default(0)
- shipping Int
- total Int
- discountCodeId String?
- discountCode DiscountCode? @relation(fields:[discountCodeId],references:[id],onDelete:Restrict)
- items OrderItem[]
- statusEvents OrderStatusEvent[]
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
- tickets SupportTicket[]
- shippingLabel OrderShippingLabel?
- @@index([userId,createdAt])
- @@index([status,createdAt])
- @@unique([userId,clientRequestId])
+  salesChannel             SalesChannel        @default(WEBSITE)
+  shippingMethod           ShippingMethod?     @default(POST)
+  shippingWeightGrams      Int?
+  shippingBaseCost         Int?
+  shippingAdditionalKgCost Int?
+  offlinePaidAmount        Int                 @default(0)
+  createdByAdminId         String?
+  createdByAdminEmail      String?
+  offlinePayments          OfflinePayment[]
+  paidAt                   DateTime?
+  payments                 Payment[]
+  id                       String              @id @default(cuid())
+  number                   Int                 @unique @default(autoincrement())
+  clientRequestId          String?             @db.VarChar(36)
+  requestHash              String?             @db.VarChar(64)
+  userId                   String
+  user                     User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  addressId                String?
+  address                  Address?            @relation(fields: [addressId], references: [id], onDelete: Restrict)
+  addressSnapshot          Json
+  status                   OrderStatus         @default(PENDING_PAYMENT)
+  subtotal                 Int
+  discount                 Int                 @default(0)
+  shipping                 Int
+  total                    Int
+  discountCodeId           String?
+  discountCode             DiscountCode?       @relation(fields: [discountCodeId], references: [id], onDelete: Restrict)
+  items                    OrderItem[]
+  statusEvents             OrderStatusEvent[]
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  tickets                  SupportTicket[]
+  shippingLabel            OrderShippingLabel?
+
+  @@unique([userId, clientRequestId])
+  @@index([userId, createdAt])
+  @@index([salesChannel, createdAt])
+  @@index([shippingMethod, createdAt])
+  @@index([status, createdAt])
 }
+
 model OrderShippingLabel {
- orderId String @id
- order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
- data Json
- updatedAt DateTime @updatedAt
+  orderId   String   @id
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  data      Json
+  updatedAt DateTime @updatedAt
 }
+
 model OrderItem {
- id String @id @default(cuid())
- orderId String
- order Order @relation(fields:[orderId],references:[id],onDelete:Restrict)
- productId String
- product Product @relation(fields:[productId],references:[id],onDelete:Restrict)
- productTitle String
- productWeight String
- unitPrice Int
- quantity Int
- lineTotal Int
- @@index([orderId])
- @@index([productId])
+  shippingWeightGrams Int?
+  id                  String  @id @default(cuid())
+  orderId             String
+  order               Order   @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  productId           String
+  product             Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productTitle        String
+  productWeight       String
+  unitPrice           Int
+  quantity            Int
+  lineTotal           Int
+
+  @@index([orderId])
+  @@index([productId])
 }
+
 model OtpCode {
- id String @id @default(cuid())
- phone String
- codeHash String
- sentAt DateTime?
- expiresAt DateTime
- attempts Int @default(0)
- consumedAt DateTime?
- createdAt DateTime @default(now())
- @@index([phone,createdAt])
+  id         String    @id @default(cuid())
+  phone      String
+  codeHash   String
+  sentAt     DateTime?
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone, createdAt])
 }
+
 model RefreshToken {
- id String @id @default(cuid())
- userId String
- user User @relation(fields:[userId],references:[id],onDelete:Cascade)
- tokenHash String @unique
- familyId String
- session UserSession @relation(fields:[familyId],references:[id],onDelete:Cascade)
- expiresAt DateTime
- revokedAt DateTime?
- createdAt DateTime @default(now())
- @@index([userId])
- @@index([familyId])
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String      @unique
+  familyId  String
+  session   UserSession @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime    @default(now())
+
+  @@index([userId])
+  @@index([familyId])
 }
+
 model AdminRefreshToken {
- id String @id @default(cuid())
- adminId String
- admin Admin @relation(fields:[adminId],references:[id],onDelete:Cascade)
- tokenHash String @unique
- familyId String
- expiresAt DateTime
- revokedAt DateTime?
- createdAt DateTime @default(now())
- @@index([adminId])
- @@index([familyId])
+  id        String    @id @default(cuid())
+  adminId   String
+  admin     Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  familyId  String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([adminId])
+  @@index([familyId])
 }
 
 model AuthThrottle {
- key String @id @db.VarChar(64)
- count Int @default(0)
- expiresAt DateTime
- @@index([expiresAt])
+  key       String   @id @db.VarChar(64)
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@index([expiresAt])
 }
 
 model UserSession {
- id String @id
- userId String
- user User @relation(fields:[userId],references:[id],onDelete:Cascade)
- expiresAt DateTime
- revokedAt DateTime?
- createdAt DateTime @default(now())
- refreshTokens RefreshToken[]
- @@index([userId])
- @@index([expiresAt])
+  id            String         @id
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  createdAt     DateTime       @default(now())
+  refreshTokens RefreshToken[]
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model AdminSession {
- id String @id
- adminId String
- admin Admin @relation(fields:[adminId],references:[id],onDelete:Cascade)
- expiresAt DateTime
- revokedAt DateTime?
- createdAt DateTime @default(now())
- @@index([adminId])
- @@index([expiresAt])
+  id        String    @id
+  adminId   String
+  admin     Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([adminId])
+  @@index([expiresAt])
 }
+
 model OrderStatusEvent {
- id String @id @default(cuid())
- orderId String
- order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
- adminId String
- admin Admin @relation(fields:[adminId],references:[id],onDelete:Restrict)
- fromStatus OrderStatus
- toStatus OrderStatus
- createdAt DateTime @default(now())
- @@index([orderId,createdAt])
+  id         String      @id @default(cuid())
+  orderId    String
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  adminId    String
+  admin      Admin       @relation(fields: [adminId], references: [id], onDelete: Restrict)
+  fromStatus OrderStatus
+  toStatus   OrderStatus
+  createdAt  DateTime    @default(now())
+
+  @@index([orderId, createdAt])
 }
 
 model SupportTicket {
- id String @id @default(cuid())
- userId String
- user User @relation(fields:[userId],references:[id],onDelete:Cascade)
- orderId String?
- order Order? @relation(fields:[orderId],references:[id],onDelete:Restrict)
- subject String @db.VarChar(150)
- status TicketStatus @default(OPEN)
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
- messages TicketMessage[]
- @@index([userId,updatedAt])
- @@index([status,updatedAt])
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId   String?
+  order     Order?          @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  subject   String          @db.VarChar(150)
+  status    TicketStatus    @default(OPEN)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  messages  TicketMessage[]
+
+  @@index([userId, updatedAt])
+  @@index([status, updatedAt])
 }
+
 model TicketMessage {
- id String @id @default(cuid())
- ticketId String
- ticket SupportTicket @relation(fields:[ticketId],references:[id],onDelete:Cascade)
- body String @db.Text
- fromSupport Boolean @default(false)
- createdAt DateTime @default(now())
- @@index([ticketId,createdAt])
+  id          String        @id @default(cuid())
+  ticketId    String
+  ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  body        String        @db.Text
+  fromSupport Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+
+  @@index([ticketId, createdAt])
 }
+
 model ProductReview {
- id String @id @default(cuid())
- userId String
- user User @relation(fields:[userId],references:[id],onDelete:Cascade)
- productId String
- product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
- rating Int
- body String @db.Text
- status ReviewStatus @default(PENDING)
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
- @@unique([userId,productId])
- @@index([productId,status,createdAt])
- @@index([status,createdAt])
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Int
+  body      String       @db.Text
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([userId, productId])
+  @@index([productId, status, createdAt])
+  @@index([status, createdAt])
 }
 
 model HomepageContent {
- id String @id
- data Json
- updatedAt DateTime @updatedAt
+  id        String   @id
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+enum SalesChannel {
+  WEBSITE
+  INSTAGRAM
+  IN_PERSON
+}
+
+enum ShippingMethod {
+  POST
+  TIPAX
+  COURIER
+}
+
+enum OfflinePaymentMethod {
+  CASH
+  POS
+  CARD_TRANSFER
+}
+
+model OfflinePayment {
+  id         String               @id @db.VarChar(36)
+  orderId    String
+  order      Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount     Int
+  method     OfflinePaymentMethod
+  adminId    String
+  adminEmail String
+  createdAt  DateTime             @default(now())
+
+  @@index([orderId, createdAt])
+  @@index([createdAt])
 }

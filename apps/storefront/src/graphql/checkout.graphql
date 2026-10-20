@@ -34,6 +34,8 @@ mutation DeleteCheckoutAddress($id: ID!) {
 }
 query CheckoutQuote($input: CheckoutInput!) {
   checkoutQuote(input: $input) {
+    shippingMethod
+    shippingWeightGrams
     addressId
     subtotal
     discount
@@ -51,6 +53,10 @@ query CheckoutQuote($input: CheckoutInput!) {
   }
 }
 fragment Receipt on OrderReceipt {
+  salesChannel
+  shippingMethod
+  shippingWeightGrams
+  offlinePaidAmount
   paidAt
   payments {
     ...PaymentFields

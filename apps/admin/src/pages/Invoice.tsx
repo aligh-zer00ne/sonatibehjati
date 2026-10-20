@@ -1,3 +1,4 @@
+import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import DesignCredit from '../components/DesignCredit';
 import { Money } from '../components/Money';
 import { useState } from 'react';
@@ -31,6 +32,10 @@ export default function Invoice({
       </header>
       <section className="mb-4 print:mb-2 break-inside-avoid">
         <h2 className="font-bold">مشخصات مشتری و گیرنده</h2>
+        <p>
+          محل خرید: {salesChannelLabels[order.salesChannel ?? 'WEBSITE']} · روش تحویل:{' '}
+          {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
+        </p>
         <p>
           مشتری: {customerName(order.user)} · موبایل: <bdi>{persianDigits(order.user.phone)}</bdi>
         </p>

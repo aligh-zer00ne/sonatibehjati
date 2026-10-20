@@ -30,6 +30,8 @@ export async function adminOrders(raw: Record<string, unknown>) {
   const { page, pageSize } = input;
   const searchedNumber = /^\d+$/.test(input.search) ? Number(input.search) : 0;
   const where: Prisma.OrderWhereInput = {
+    ...(input.salesChannel ? { salesChannel: input.salesChannel } : {}),
+    ...(input.shippingMethod ? { shippingMethod: input.shippingMethod } : {}),
     ...(input.status ? { status: input.status } : {}),
     ...(input.userId ? { userId: input.userId } : {}),
     ...(input.number ? { number: input.number } : {}),

@@ -1,3 +1,4 @@
+import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import { Button } from 'antd';
 import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
@@ -43,7 +44,9 @@ export default function OrderSummaryCard({
                 {customerName(order.user)}
               </h3>
               <p className="mt-0.5 text-[12px] text-[#76685d]">
-                {compact ? `سفارش ${formatNumber(order.number)}` : 'سفارش فروشگاه سنتی بهجتی'}
+                {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}
+                {salesChannelLabels[order.salesChannel ?? 'WEBSITE']} ·{' '}
+                {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
               </p>
             </div>
           </div>

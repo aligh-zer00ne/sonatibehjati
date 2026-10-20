@@ -1,3 +1,4 @@
+import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import { lazy, Suspense, useId, useState, type ReactNode } from 'react';
 import { Alert, App, Button, Popconfirm, Select } from 'antd';
 import { formatNumber, formatPrice, orderStatusLabels } from '@behjati/shared';
@@ -223,6 +224,14 @@ export default function OrderDetailsCard({
                 icon: <AdminIcon name="truck" width={16} height={16} />,
                 children: (
                   <dl className="grid gap-2 sm:grid-cols-2">
+                    <Field label="محل خرید" icon="orders">
+                      {salesChannelLabels[order.salesChannel ?? 'WEBSITE']}
+                    </Field>
+                    <Field label="روش تحویل" icon="truck">
+                      {order.shippingMethod
+                        ? shippingMethodLabels[order.shippingMethod]
+                        : 'تحویل حضوری'}
+                    </Field>
                     <Field label="مشتری" icon="person">
                       {customerName(order.user)}
                     </Field>

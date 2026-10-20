@@ -26,9 +26,13 @@ export type AccountOrder = {
   id: Scalars['ID']['output'];
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
   paidAt?: Maybe<Scalars['String']['output']>;
   payments: Array<PaymentInfo>;
+  salesChannel: SalesChannel;
   shipping: Scalars['Int']['output'];
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   status: OrderStatus;
   subtotal: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
@@ -39,6 +43,10 @@ export type AccountOrderSummary = {
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
+  salesChannel: SalesChannel;
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   status: OrderStatus;
   total: Scalars['Int']['output'];
 };
@@ -161,10 +169,14 @@ export type AdminOrder = {
   id: Scalars['ID']['output'];
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
   paidAt?: Maybe<Scalars['String']['output']>;
   payments: Array<PaymentInfo>;
+  salesChannel: SalesChannel;
   shipping: Scalars['Int']['output'];
   shippingLabel?: Maybe<AdminShippingLabel>;
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   status: OrderStatus;
   statusEvents: Array<OrderStatusEvent>;
   subtotal: Scalars['Int']['output'];
@@ -191,6 +203,10 @@ export type AdminOrderSummary = {
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
+  salesChannel: SalesChannel;
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   status: OrderStatus;
   total: Scalars['Int']['output'];
   user: AuthUser;
@@ -202,7 +218,9 @@ export type AdminOrdersInput = {
   number?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   pageSize?: InputMaybe<Scalars['Int']['input']>;
+  salesChannel?: InputMaybe<SalesChannel>;
   search?: InputMaybe<Scalars['String']['input']>;
+  shippingMethod?: InputMaybe<ShippingMethod>;
   sort?: InputMaybe<AdminOrderSort>;
   status?: InputMaybe<OrderStatus>;
   to?: InputMaybe<Scalars['String']['input']>;
@@ -257,6 +275,9 @@ export type AdminProductInput = {
   images: Array<AdminProductImageInput>;
   isActive: Scalars['Boolean']['input'];
   price: Scalars['Int']['input'];
+  shippingAdditionalKgCost?: InputMaybe<Scalars['Int']['input']>;
+  shippingBaseCost?: InputMaybe<Scalars['Int']['input']>;
+  shippingWeightGrams?: InputMaybe<Scalars['Int']['input']>;
   shortDescription: Scalars['String']['input'];
   slug: Scalars['String']['input'];
   title: Scalars['String']['input'];
@@ -307,6 +328,8 @@ export type AdminReport = {
 
 export type AdminReportInput = {
   from: Scalars['String']['input'];
+  salesChannel?: InputMaybe<SalesChannel>;
+  shippingMethod?: InputMaybe<ShippingMethod>;
   status?: InputMaybe<OrderStatus>;
   to: Scalars['String']['input'];
 };
@@ -388,6 +411,7 @@ export type AdminUser = {
 export type AdminUsersInput = {
   page?: InputMaybe<Scalars['Int']['input']>;
   pageSize?: InputMaybe<Scalars['Int']['input']>;
+  salesChannel?: InputMaybe<SalesChannel>;
   search?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -486,6 +510,7 @@ export type CheckoutInput = {
   addressId: Scalars['ID']['input'];
   discountCode: Scalars['String']['input'];
   items: Array<CheckoutLineInput>;
+  shippingMethod?: InputMaybe<ShippingMethod>;
 };
 
 export type CheckoutLine = {
@@ -494,6 +519,7 @@ export type CheckoutLine = {
   lineTotal: Scalars['Int']['output'];
   productId: Scalars['ID']['output'];
   quantity: Scalars['Int']['output'];
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   title: Scalars['String']['output'];
   unitPrice: Scalars['Int']['output'];
   weight: Scalars['String']['output'];
@@ -510,6 +536,8 @@ export type CheckoutQuote = {
   discount: Scalars['Int']['output'];
   items: Array<CheckoutLine>;
   shipping: Scalars['Int']['output'];
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   subtotal: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
 };
@@ -520,6 +548,7 @@ export type CreateOrderInput = {
   expectedTotal: Scalars['Int']['input'];
   items: Array<CheckoutLineInput>;
   requestId: Scalars['ID']['input'];
+  shippingMethod?: InputMaybe<ShippingMethod>;
 };
 
 export type CustomerExport = {
@@ -790,6 +819,11 @@ export type MyOrdersPage = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type OfflinePaymentMethod =
+  | 'CARD_TRANSFER'
+  | 'CASH'
+  | 'POS';
+
 export type OrderAddressSnapshot = {
   __typename?: 'OrderAddressSnapshot';
   city?: Maybe<Scalars['String']['output']>;
@@ -820,9 +854,13 @@ export type OrderReceipt = {
   discount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
   paidAt?: Maybe<Scalars['String']['output']>;
   payments: Array<PaymentInfo>;
+  salesChannel: SalesChannel;
   shipping: Scalars['Int']['output'];
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   status: Scalars['String']['output'];
   subtotal: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
@@ -905,6 +943,9 @@ export type Product = {
   isActive: Scalars['Boolean']['output'];
   price: Scalars['Int']['output'];
   promotion?: Maybe<ProductPromotion>;
+  shippingAdditionalKgCost: Scalars['Int']['output'];
+  shippingBaseCost: Scalars['Int']['output'];
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   shortDescription: Scalars['String']['output'];
   slug: Scalars['String']['output'];
   title: Scalars['String']['output'];
@@ -1155,6 +1196,16 @@ export type ReviewStatus =
   | 'PENDING'
   | 'REJECTED';
 
+export type SalesChannel =
+  | 'INSTAGRAM'
+  | 'IN_PERSON'
+  | 'WEBSITE';
+
+export type ShippingMethod =
+  | 'COURIER'
+  | 'POST'
+  | 'TIPAX';
+
 export type StaffInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -1356,6 +1407,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   MyOrdersInput: MyOrdersInput;
   MyOrdersPage: ResolverTypeWrapper<MyOrdersPage>;
+  OfflinePaymentMethod: OfflinePaymentMethod;
   OrderAddressSnapshot: ResolverTypeWrapper<OrderAddressSnapshot>;
   OrderItemSnapshot: ResolverTypeWrapper<OrderItemSnapshot>;
   OrderReceipt: ResolverTypeWrapper<ReceiptSource>;
@@ -1377,6 +1429,8 @@ export type ResolversTypes = {
   ReviewInput: ReviewInput;
   ReviewPage: ResolverTypeWrapper<ReviewPage>;
   ReviewStatus: ReviewStatus;
+  SalesChannel: SalesChannel;
+  ShippingMethod: ShippingMethod;
   StaffInput: StaffInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   SupportTicket: ResolverTypeWrapper<SupportTicket>;
@@ -1487,9 +1541,13 @@ export type AccountOrderResolvers<ContextType = AuthContext, ParentType extends 
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes['OrderItemSnapshot']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offlinePaidAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
+  salesChannel?: Resolver<ResolversTypes['SalesChannel'], ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1499,6 +1557,10 @@ export type AccountOrderSummaryResolvers<ContextType = AuthContext, ParentType e
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offlinePaidAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  salesChannel?: Resolver<ResolversTypes['SalesChannel'], ParentType, ContextType>;
+  shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
@@ -1583,10 +1645,14 @@ export type AdminOrderResolvers<ContextType = AuthContext, ParentType extends Re
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes['OrderItemSnapshot']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offlinePaidAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
+  salesChannel?: Resolver<ResolversTypes['SalesChannel'], ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   shippingLabel?: Resolver<Maybe<ResolversTypes['AdminShippingLabel']>, ParentType, ContextType>;
+  shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   statusEvents?: Resolver<Array<ResolversTypes['OrderStatusEvent']>, ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1600,6 +1666,10 @@ export type AdminOrderSummaryResolvers<ContextType = AuthContext, ParentType ext
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offlinePaidAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  salesChannel?: Resolver<ResolversTypes['SalesChannel'], ParentType, ContextType>;
+  shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType>;
@@ -1745,6 +1815,7 @@ export type CheckoutLineResolvers<ContextType = AuthContext, ParentType extends 
   lineTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   unitPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   weight?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1755,6 +1826,8 @@ export type CheckoutQuoteResolvers<ContextType = AuthContext, ParentType extends
   discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes['CheckoutLine']>, ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
@@ -1857,9 +1930,13 @@ export type OrderReceiptResolvers<ContextType = AuthContext, ParentType extends 
   discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offlinePaidAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
+  salesChannel?: Resolver<ResolversTypes['SalesChannel'], ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1914,6 +1991,9 @@ export type ProductResolvers<ContextType = AuthContext, ParentType extends Resol
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   promotion?: Resolver<Maybe<ResolversTypes['ProductPromotion']>, ParentType, ContextType>;
+  shippingAdditionalKgCost?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingBaseCost?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   shortDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

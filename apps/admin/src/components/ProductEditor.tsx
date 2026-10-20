@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, Switch, Select, Button, Alert, App } from 'antd';
+import { Card, Tabs, Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
+import { parseShippingWeight } from '@behjati/shared/sales';
 import { adminProductInputSchema } from '@behjati/shared/admin';
 import {
   SaveAdminProductDocument,
@@ -50,22 +51,28 @@ export default function ProductEditor({
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
   }, [dirty]);
-  const initial = draft?.values ?? {
-    ...(product
-      ? {
-          ...product,
-          categoryId: product.category.id,
-          images: product.images.map(({ url, alt }) => ({ url, alt })),
-        }
-      : {
-          isActive: true,
-          price: 0,
-          badge: '',
-          shortDescription: '',
-          description: '',
-          images: [{ url: '', alt: '' }],
-        }),
-    ...promotionFormValues(product),
+  const initial = {
+    shippingWeightGrams:
+      product?.shippingWeightGrams ?? (product ? parseShippingWeight(product.weight) : undefined),
+    shippingBaseCost: product?.shippingBaseCost ?? 0,
+    shippingAdditionalKgCost: product?.shippingAdditionalKgCost ?? 0,
+    ...(draft?.values ?? {
+      ...(product
+        ? {
+            ...product,
+            categoryId: product.category.id,
+            images: product.images.map(({ url, alt }) => ({ url, alt })),
+          }
+        : {
+            isActive: true,
+            price: 0,
+            badge: '',
+            shortDescription: '',
+            description: '',
+            images: [{ url: '', alt: '' }],
+          }),
+      ...promotionFormValues(product),
+    }),
   };
   const price = Form.useWatch('price', form);
   const percent = Form.useWatch('discountPercent', form);
@@ -167,7 +174,13 @@ export default function ProductEditor({
         onFinishFailed={({ errorFields }) => {
           const name = String(errorFields[0]?.name[0] ?? '');
           setTab(
-            name === 'images' ? 'images' : name.startsWith('discount') ? 'discount' : 'general',
+            name === 'images'
+              ? 'images'
+              : name.startsWith('shipping')
+                ? 'shipping'
+                : name.startsWith('discount')
+                  ? 'discount'
+                  : 'general',
           );
         }}
         onFinish={async (raw) => {
@@ -178,6 +191,9 @@ export default function ProductEditor({
             slug,
             price,
             weight,
+            shippingWeightGrams,
+            shippingBaseCost,
+            shippingAdditionalKgCost,
             shortDescription,
             description,
             categoryId,
@@ -187,6 +203,9 @@ export default function ProductEditor({
           } = raw;
           const parsed = adminProductInputSchema.safeParse({
             ...promotionFormInput(raw),
+            shippingWeightGrams,
+            shippingBaseCost,
+            shippingAdditionalKgCost,
             title,
             slug,
             price,
@@ -257,6 +276,45 @@ export default function ProductEditor({
                       <Money amount={Math.max(1, Math.floor((price * (100 - percent)) / 100))} />
                     </div>
                   )}
+                </>
+              ),
+            },
+            {
+              key: 'shipping',
+              label: 'هزینه و وزن ارسال',
+              forceRender: true,
+              children: (
+                <>
+                  <Alert
+                    type="info"
+                    showIcon
+                    className="!mb-5"
+                    title="قیمت پایه شامل یک کیلو اول بسته است. برای هر کیلو اضافهٔ شروع‌شده، نرخ اضافه محاسبه می‌شود. در سبد چندمحصولی، بیشترین تعرفه برای وزن کل بسته اعمال می‌شود."
+                  />
+                  <div className="grid gap-x-5 sm:grid-cols-2">
+                    <Form.Item
+                      name="shippingWeightGrams"
+                      label="وزن بسته برای ارسال (گرم)"
+                      rules={[{ required: true, type: 'number', min: 1, max: 1000000 }]}
+                      extra="وزن واقعی محصول همراه بسته‌بندی؛ برای یک کیلو، ۱۰۰۰ وارد کنید."
+                    >
+                      <InputNumber min={1} max={1000000} precision={0} className="!w-full" />
+                    </Form.Item>
+                    <Form.Item
+                      name="shippingBaseCost"
+                      label="هزینهٔ پایهٔ ارسال (تومان)"
+                      rules={[{ required: true, type: 'number', min: 0 }]}
+                    >
+                      <MoneyInput disabled={pending} />
+                    </Form.Item>
+                    <Form.Item
+                      name="shippingAdditionalKgCost"
+                      label="هزینهٔ هر کیلو اضافه (تومان)"
+                      rules={[{ required: true, type: 'number', min: 0 }]}
+                    >
+                      <MoneyInput disabled={pending} />
+                    </Form.Item>
+                  </div>
                 </>
               ),
             },

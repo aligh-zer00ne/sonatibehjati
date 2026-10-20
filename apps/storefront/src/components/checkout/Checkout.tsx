@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin, Plus, Pencil, Trash2, ShoppingBag, RefreshCw } from 'lucide-react';
 import { formatPrice, formatNumber, createOrderInputSchema } from '@behjati/shared';
+import { shippingMethods, shippingMethodLabels, type ShippingMethod } from '@behjati/shared/sales';
 import {
   MyAddressesDocument,
   DeleteCheckoutAddressDocument,
@@ -46,6 +47,7 @@ export default function Checkout() {
   );
   const [addresses, setAddresses] = useState<CheckoutAddressFragment[]>([]);
   const [addressId, setAddressId] = useState('');
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>('POST');
   const [editing, setEditing] = useState<CheckoutAddressFragment | null | undefined>(undefined);
   const [addressLoading, setAddressLoading] = useState(true);
   const [error, setError] = useState('');
@@ -57,6 +59,7 @@ export default function Checkout() {
   const [retry, setRetry] = useState(0);
   const [pending, setPending] = useState(false);
   const inputKey = JSON.stringify({
+    shippingMethod,
     addressId,
     items: JSON.parse(itemsKey),
     discountCode: appliedDiscount,
@@ -314,6 +317,30 @@ export default function Checkout() {
             }}
           />
         )}
+        <fieldset className="space-y-3 border-t border-border pt-5" disabled={pending}>
+          <legend className="px-1 text-base font-bold">روش ارسال سفارش</legend>
+          <div className="grid grid-cols-3 gap-2">
+            {shippingMethods.map((method) => (
+              <label
+                key={method}
+                className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-xl border px-2 py-3 text-sm font-semibold ${shippingMethod === method ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-surface/30'}`}
+              >
+                <input
+                  type="radio"
+                  name="shipping-method"
+                  value={method}
+                  checked={shippingMethod === method}
+                  onChange={() => setShippingMethod(method)}
+                  className="size-4 shrink-0 accent-primary"
+                />
+                {shippingMethodLabels[method]}
+              </label>
+            ))}
+          </div>
+          <p className="text-xs leading-6 text-muted-foreground">
+            هزینهٔ ارسال بر اساس وزن کل بسته و تعرفهٔ محصولات، در خلاصهٔ سفارش محاسبه می‌شود.
+          </p>
+        </fieldset>
       </Card>
       <Card className="space-y-5 rounded-3xl bg-card/90 p-5 sm:p-7 lg:sticky lg:top-6">
         <h2 className="text-xl font-extrabold">۲. خلاصهٔ سفارش</h2>
@@ -377,6 +404,10 @@ export default function Checkout() {
               ))}
             </ul>
             <dl className="space-y-3 text-sm">
+              <div className="flex justify-between gap-3">
+                <dt>روش ارسال</dt>
+                <dd>{shippingMethodLabels[shippingMethod]}</dd>
+              </div>
               {[
                 ['جمع محصولات', currentQuote.subtotal],
                 ['تخفیف', currentQuote.discount],

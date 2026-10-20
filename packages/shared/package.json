@@ -10,7 +10,8 @@
     "./payments": "./src/payments.ts",
     "./permissions": "./src/permissions.ts",
     "./homepage": "./src/homepage.ts",
-    "./operations": "./src/operations.ts"
+    "./operations": "./src/operations.ts",
+    "./sales": "./src/sales.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { shippingMethods, salesChannels } from '@behjati/shared/sales';
 import { orderStatuses, normalizeDigits, catalogSorts } from '@behjati/shared';
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
 export const adminPasswordChangeSchema = z
@@ -116,6 +117,9 @@ export const adminProductInputSchema = z
     slug: text(1, 150).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     price: z.number().int().min(0).max(2147483647),
     weight: text(1, 100),
+    shippingWeightGrams: z.number().int().positive().max(1000000).optional(),
+    shippingBaseCost: z.number().int().min(0).max(2147483647).optional(),
+    shippingAdditionalKgCost: z.number().int().min(0).max(2147483647).optional(),
     shortDescription: text(0, 500),
     description: text(0, 10000),
     categoryId: text(1, 100),
@@ -137,6 +141,8 @@ export const adminOrdersFilterSchema = z
     search,
     status: z.enum(orderStatuses).nullish(),
     userId: text(1, 100).nullish(),
+    salesChannel: z.enum(salesChannels).nullish(),
+    shippingMethod: z.enum(shippingMethods).nullish(),
     number: z.number().int().positive().max(2147483647).nullish(),
     city: text(0, 80).default(''),
     from: z.iso.date().nullish(),
@@ -147,9 +153,17 @@ export const adminOrdersFilterSchema = z
   .refine((value) => !value.from || !value.to || value.from <= value.to, {
     message: 'بازه تاریخ معتبر نیست.',
   });
-export const adminUsersFilterSchema = z.object({ ...page, search }).strict();
+export const adminUsersFilterSchema = z
+  .object({ ...page, search, salesChannel: z.enum(salesChannels).nullish() })
+  .strict();
 export const adminReportFilterSchema = z
-  .object({ from: z.iso.date(), to: z.iso.date(), status: z.enum(orderStatuses).nullish() })
+  .object({
+    from: z.iso.date(),
+    to: z.iso.date(),
+    status: z.enum(orderStatuses).nullish(),
+    salesChannel: z.enum(salesChannels).nullish(),
+    shippingMethod: z.enum(shippingMethods).nullish(),
+  })
   .strict()
   .refine(
     (value) => {

@@ -4,6 +4,9 @@ mutation UpdateAccountProfile($input: ProfileInput!) {
   }
 }
 fragment AccountOrderSummaryFields on AccountOrderSummary {
+  salesChannel
+  shippingMethod
+  offlinePaidAmount
   id
   number
   status
@@ -23,6 +26,9 @@ query AccountOrders($input: MyOrdersInput!) {
 }
 query AccountOrderDetails($id: ID!) {
   myOrder(id: $id) {
+    salesChannel
+    shippingMethod
+    offlinePaidAmount
     paidAt
     payments {
       ...PaymentFields

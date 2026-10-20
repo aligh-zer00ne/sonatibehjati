@@ -63,7 +63,8 @@
     "verify:gateway-review": "bun --env-file=apps/api/.env scripts/verify-gateway-review.mjs",
     "payments:review": "node deploy/configure-payments.mjs --review",
     "verify:payment-deploy": "bun --env-file=apps/api/.env scripts/verify-payment-deploy.mjs",
-    "payments:package": "node deploy/package-gateway-review.mjs"
+    "payments:package": "node deploy/package-gateway-review.mjs",
+    "verify:retail-shipping": "node --env-file=apps/api/.env scripts/verify-retail-shipping.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

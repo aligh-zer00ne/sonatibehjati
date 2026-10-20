@@ -33,6 +33,9 @@ query AdminMe {
   }
 }
 fragment AdminProductFields on Product {
+  shippingWeightGrams
+  shippingBaseCost
+  shippingAdditionalKgCost
   id
   slug
   title
@@ -120,6 +123,10 @@ fragment AdminCustomerFields on AuthUser {
   email
 }
 fragment AdminOrderSummaryFields on AdminOrderSummary {
+  salesChannel
+  shippingMethod
+  shippingWeightGrams
+  offlinePaidAmount
   id
   number
   status
@@ -133,6 +140,10 @@ fragment AdminOrderSummaryFields on AdminOrderSummary {
   }
 }
 fragment AdminOrderFields on AdminOrder {
+  salesChannel
+  shippingMethod
+  shippingWeightGrams
+  offlinePaidAmount
   paidAt
   payments {
     ...AdminPaymentFields
