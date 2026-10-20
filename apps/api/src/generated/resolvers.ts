@@ -400,6 +400,17 @@ export type AdminUsersPage = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type Announcement = {
+  __typename?: 'Announcement';
+  enabled: Scalars['Boolean']['output'];
+  text: Scalars['String']['output'];
+};
+
+export type AnnouncementInput = {
+  enabled: Scalars['Boolean']['input'];
+  text: Scalars['String']['input'];
+};
+
 export type AuthSession = {
   __typename?: 'AuthSession';
   accessExpiresAt: Scalars['String']['output'];
@@ -553,6 +564,7 @@ export type HeroSlideInput = {
 
 export type HomepageContent = {
   __typename?: 'HomepageContent';
+  announcement: Announcement;
   slides: Array<HeroSlide>;
   story: BrandStoryContent;
   updatedAt?: Maybe<Scalars['String']['output']>;
@@ -589,6 +601,7 @@ export type Mutation = {
   saveAdminCoupon: AdminCoupon;
   saveAdminProduct: Product;
   saveAdminShippingLabel: AdminShippingLabel;
+  saveAnnouncement: HomepageContent;
   saveHomepageContent: HomepageContent;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
@@ -691,6 +704,12 @@ export type MutationSaveAdminShippingLabelArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   input: AdminShippingLabelInput;
   orderId: Scalars['ID']['input'];
+};
+
+
+export type MutationSaveAnnouncementArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  input: AnnouncementInput;
 };
 
 
@@ -1309,6 +1328,8 @@ export type ResolversTypes = {
   AdminUser: ResolverTypeWrapper<AdminUser>;
   AdminUsersInput: AdminUsersInput;
   AdminUsersPage: ResolverTypeWrapper<AdminUsersPage>;
+  Announcement: ResolverTypeWrapper<Announcement>;
+  AnnouncementInput: AnnouncementInput;
   AuthSession: ResolverTypeWrapper<AuthSession>;
   AuthUser: ResolverTypeWrapper<AuthUser>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
@@ -1405,6 +1426,8 @@ export type ResolversParentTypes = {
   AdminUser: AdminUser;
   AdminUsersInput: AdminUsersInput;
   AdminUsersPage: AdminUsersPage;
+  Announcement: Announcement;
+  AnnouncementInput: AnnouncementInput;
   AuthSession: AuthSession;
   AuthUser: AuthUser;
   Boolean: Scalars['Boolean']['output'];
@@ -1670,6 +1693,11 @@ export type AdminUsersPageResolvers<ContextType = AuthContext, ParentType extend
   totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type AnnouncementResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Announcement'] = ResolversParentTypes['Announcement']> = {
+  enabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
 export type AuthSessionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AuthSession'] = ResolversParentTypes['AuthSession']> = {
   accessExpiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1752,6 +1780,7 @@ export type HeroSlideResolvers<ContextType = AuthContext, ParentType extends Res
 };
 
 export type HomepageContentResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['HomepageContent'] = ResolversParentTypes['HomepageContent']> = {
+  announcement?: Resolver<ResolversTypes['Announcement'], ParentType, ContextType>;
   slides?: Resolver<Array<ResolversTypes['HeroSlide']>, ParentType, ContextType>;
   story?: Resolver<ResolversTypes['BrandStoryContent'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1778,6 +1807,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   saveAdminCoupon?: Resolver<ResolversTypes['AdminCoupon'], ParentType, ContextType, RequireFields<MutationSaveAdminCouponArgs, 'input'>>;
   saveAdminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSaveAdminProductArgs, 'input'>>;
   saveAdminShippingLabel?: Resolver<ResolversTypes['AdminShippingLabel'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingLabelArgs, 'input' | 'orderId'>>;
+  saveAnnouncement?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType, RequireFields<MutationSaveAnnouncementArgs, 'input'>>;
   saveHomepageContent?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType, RequireFields<MutationSaveHomepageContentArgs, 'input'>>;
   setAdminProductActive?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSetAdminProductActiveArgs, 'expectedUpdatedAt' | 'id' | 'isActive'>>;
   setAdminPromotion?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationSetAdminPromotionArgs, 'input' | 'products'>>;
@@ -2014,6 +2044,7 @@ export type Resolvers<ContextType = AuthContext> = {
   AdminTopProduct?: AdminTopProductResolvers<ContextType>;
   AdminUser?: AdminUserResolvers<ContextType>;
   AdminUsersPage?: AdminUsersPageResolvers<ContextType>;
+  Announcement?: AnnouncementResolvers<ContextType>;
   AuthSession?: AuthSessionResolvers<ContextType>;
   AuthUser?: AuthUserResolvers<ContextType>;
   BrandStoryContent?: BrandStoryContentResolvers<ContextType>;

@@ -6,7 +6,7 @@ import AdminProvider from './auth/AdminProvider';
 import ProtectedAdmin from './auth/ProtectedAdmin';
 import OwnerOnly from './auth/OwnerOnly';
 import AdminFrame from './components/AdminFrame';
-const Homepage = lazy(() => import('./pages/Homepage'));
+const Announcement = lazy(() => import('./pages/Announcement'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Coupons = lazy(() => import('./pages/Coupons'));
 const Tickets = lazy(() => import('./pages/Tickets'));
@@ -30,9 +30,11 @@ export default function App() {
       theme={{
         token: {
           fontFamily: 'Vazirmatn Variable, sans-serif',
-          colorPrimary: '#930d25',
+          fontSize: 14,
+          fontWeightStrong: 700,
+          colorPrimary: '#96140d',
           colorText: '#34251e',
-          colorTextSecondary: '#7d746a',
+          colorTextSecondary: '#6c5a4c',
           colorBgLayout: '#f6f1e9',
           colorBgContainer: '#fffdf9',
           colorBorder: '#e8ded1',
@@ -67,7 +69,11 @@ export default function App() {
                     <Route path="users" element={<Users />} />
                     <Route path="reports" element={<Reports />} />
                     <Route path="coupons" element={<Coupons />} />
-                    <Route path="homepage" element={<Homepage />} />
+                    <Route
+                      path="homepage"
+                      element={<Navigate to="/admin/announcement" replace />}
+                    />
+                    <Route path="announcement" element={<Announcement />} />
                     <Route element={<OwnerOnly />}>
                       <Route path="accounts" element={<Accounts />} />
                       <Route path="payment-test" element={<PaymentTest />} />

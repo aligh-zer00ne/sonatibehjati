@@ -1,7 +1,8 @@
+import DesignCredit from './DesignCredit';
 import { canOpenAdminPath, hasPermission, adminLanding } from '@behjati/shared/permissions';
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Alert, Drawer, Input, Select, Tooltip } from 'antd';
+import { Button, Alert, Drawer, Input, Select, Tooltip, Dropdown } from 'antd';
 import { useAdmin } from '../auth/AdminProvider';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
 import AdminSkyline from './AdminSkyline';
@@ -15,7 +16,7 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin/coupons', label: 'کدهای تخفیف', icon: 'discount' },
   { href: '/admin/tickets', label: 'پشتیبانی و تیکت‌ها', icon: 'support' },
   { href: '/admin/reviews', label: 'نظرات محصولات', icon: 'review' },
-  { href: '/admin/homepage', label: 'هیروسکشن و درباره ما', icon: 'home' },
+  { href: '/admin/announcement', label: 'نوار اطلاع‌رسانی سایت', icon: 'review' },
   { href: '/admin/payment-test', label: 'تست درگاه پرداخت', icon: 'shield' },
   { href: '/admin/accounts', label: 'کاربران پنل', icon: 'shield' },
   { href: '/admin/settings', label: 'تنظیمات حساب', icon: 'settings' },
@@ -43,6 +44,7 @@ export default function AdminFrame() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [searchScope, setSearchScope] = useState('products');
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const activeSearch = searchOptions.some((option) => option.value === searchScope)
     ? searchScope
     : searchOptions[0]?.value;
@@ -51,6 +53,7 @@ export default function AdminFrame() {
     : (links.slice(1).find(({ href }) => pathname.startsWith(href))?.href ?? '/admin');
   useEffect(() => {
     setMenuOpen(false);
+    setOpenGroups({});
   }, [pathname]);
   useEffect(() => {
     const desktop = window.matchMedia('(min-width: 992px)');
@@ -60,28 +63,143 @@ export default function AdminFrame() {
     desktop.addEventListener('change', closeDrawer);
     return () => desktop.removeEventListener('change', closeDrawer);
   }, []);
+  const groups: Array<{ id: string; label: string; icon: AdminIconName; paths: string[] }> = [
+    {
+      id: 'sales',
+      label: 'فروش و مشتریان',
+      icon: 'orders',
+      paths: ['/admin/orders', '/admin/orders/map', '/admin/users', '/admin/reports'],
+    },
+    {
+      id: 'catalog',
+      label: 'محصولات و تخفیف‌ها',
+      icon: 'products',
+      paths: ['/admin/products', '/admin/coupons'],
+    },
+    {
+      id: 'communication',
+      label: 'ارتباط با مشتری',
+      icon: 'support',
+      paths: ['/admin/tickets', '/admin/reviews'],
+    },
+    {
+      id: 'settings',
+      label: 'تنظیمات مدیریت',
+      icon: 'settings',
+      paths: ['/admin/announcement', '/admin/accounts', '/admin/settings', '/admin/payment-test'],
+    },
+  ];
+  const navLink = ({ href, label, icon }: (typeof links)[number], nested = false) => (
+    <Link
+      key={href}
+      to={href}
+      aria-label={label}
+      aria-current={selected === href ? 'page' : undefined}
+      onClick={() => setMenuOpen(false)}
+      className={`flex min-h-11 min-w-0 items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${nested ? 'ms-3 border-s border-[#d8b97b]/30' : ''} ${selected === href ? '!bg-[#b16b66] font-bold' : ''}`}
+    >
+      <AdminIcon
+        name={icon}
+        width={nested ? 18 : 22}
+        height={nested ? 18 : 22}
+        className="shrink-0"
+      />
+      <span className="whitespace-nowrap">{label}</span>
+    </Link>
+  );
   const navigation = (compact = false, desktop = false) => (
     <nav
       id={desktop ? 'admin-desktop-navigation' : undefined}
       aria-label="منوی مدیریت"
-      className={`relative z-10 space-y-1 px-3 ${desktop ? '[@media(max-height:799px)]:space-y-0.5' : ''}`}
+      className="relative z-10 space-y-1.5 px-3"
     >
-      {visibleLinks.map(({ href, label, icon }) => (
-        <Tooltip key={href} title={compact ? label : undefined} placement="left">
-          <Link
-            to={href}
-            aria-label={label}
-            aria-current={selected === href ? 'page' : undefined}
-            onClick={() => setMenuOpen(false)}
-            className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-[13px] !text-[#fff7eb] transition-colors hover:!bg-[#ad5360] focus-visible:!bg-[#ad5360] ${desktop ? '[@media(max-height:799px)]:min-h-10' : ''} ${compact ? 'justify-center' : ''} ${selected === href ? '!bg-[#b16b66] font-bold' : ''}`}
-          >
-            <AdminIcon name={icon} className="shrink-0" />
-            {!compact && <span className="whitespace-nowrap">{label}</span>}
-          </Link>
-        </Tooltip>
-      ))}
+      {visibleLinks
+        .filter((link) => link.href === '/admin')
+        .map((link) =>
+          compact ? (
+            <Tooltip key={link.href} title={link.label} placement="left">
+              <Link
+                to={link.href}
+                aria-label={link.label}
+                className="flex min-h-11 items-center justify-center rounded-lg !text-[#fff7eb] hover:!bg-[#ad5360]"
+              >
+                <AdminIcon name={link.icon} />
+              </Link>
+            </Tooltip>
+          ) : (
+            navLink(link)
+          ),
+        )}
+      {groups.map((group) => {
+        const children = group.paths.flatMap((path) =>
+          visibleLinks.filter((link) => link.href === path),
+        );
+        if (!children.length) return null;
+        const active = children.some((link) => link.href === selected);
+        const open = openGroups[group.id] ?? active;
+        const id = `admin-${desktop ? 'desktop' : 'mobile'}-${group.id}`;
+        if (compact)
+          return (
+            <Dropdown
+              key={group.id}
+              trigger={['click']}
+              placement="bottomLeft"
+              menu={{
+                items: children.map((link) => ({
+                  key: link.href,
+                  label: (
+                    <Link to={link.href} onClick={() => setMenuOpen(false)}>
+                      {link.label}
+                    </Link>
+                  ),
+                  icon: <AdminIcon name={link.icon} width={18} height={18} />,
+                })),
+                selectedKeys: [selected],
+              }}
+            >
+              <button
+                type="button"
+                aria-label={group.label}
+                aria-haspopup="menu"
+                className={`flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg text-[#fff7eb] hover:bg-[#ad5360] ${active ? 'bg-[#b16b66]' : ''}`}
+              >
+                <AdminIcon name={group.icon} />
+              </button>
+            </Dropdown>
+          );
+        return (
+          <div key={group.id}>
+            <button
+              type="button"
+              aria-expanded={open}
+              aria-controls={id}
+              onClick={() =>
+                setOpenGroups(
+                  Object.fromEntries(
+                    groups.map((value) => [value.id, value.id === group.id && !open]),
+                  ),
+                )
+              }
+              className={`flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-semibold text-[#fff7eb] hover:bg-[#ad5360] ${active ? 'bg-[#a34a55]/40' : ''}`}
+            >
+              <AdminIcon name={group.icon} className="shrink-0" />
+              <span className="min-w-0 flex-1 text-start whitespace-nowrap">{group.label}</span>
+              <AdminIcon
+                name="chevron"
+                width={16}
+                height={16}
+                className={`shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+              />
+            </button>
+            <div id={id} hidden={!open} className="mt-1 space-y-0.5">
+              {children.map((link) => navLink(link, true))}
+            </div>
+          </div>
+        );
+      })}
     </nav>
   );
+
   return (
     <div dir="rtl" className="flex min-h-dvh bg-[#f6f1e9] text-[#34251e]">
       <aside
@@ -155,7 +273,7 @@ export default function AdminFrame() {
               <p className="text-sm font-bold text-[#810c20] sm:text-lg">
                 فروشگاه اینترنتی سنتی بهجتی
               </p>
-              <p className="mt-0.5 text-[11px] text-[#7d746a]">مدیریت فرآورده‌های کنجدی اردکان</p>
+              <p className="mt-0.5 text-[12px] text-[#7d746a]">مدیریت فرآورده‌های کنجدی اردکان</p>
             </div>
           </div>
           {activeSearch && (
@@ -210,8 +328,11 @@ export default function AdminFrame() {
             <Outlet />
           </div>
         </main>
-        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ded1] bg-[#fffdf9]/70 px-4 py-3 text-[10px] text-[#7d746a] sm:px-6 lg:px-8 print:!hidden">
-          <span>پنل مدیریت سنتی بهجتی اردکان</span>
+        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ded1] bg-[#fffdf9]/70 px-4 py-3 text-[12px] text-[#7d746a] sm:px-6 lg:px-8 print:!hidden">
+          <div>
+            <span>پنل مدیریت سنتی بهجتی اردکان</span>
+            <DesignCredit className="mt-1 text-[12px] text-[#76685d]" />
+          </div>
           <span className="flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-[#17977e]" />
             {owner ? 'دسترسی مدیر' : 'دسترسی همکار'}

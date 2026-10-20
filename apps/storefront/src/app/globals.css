@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 :root {
+  font-weight: 500;
   --background: #fbf7ee;
   --foreground: #2e251e;
   --card: #fcf9f3;

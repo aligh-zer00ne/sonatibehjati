@@ -1,3 +1,4 @@
+import DesignCredit from './DesignCredit';
 import type { ShippingLabelValues } from '@behjati/shared/admin';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import { formatNumber } from '@behjati/shared';
@@ -170,6 +171,7 @@ export default function ShippingLabelSheet({
           {values.note}
         </p>
       )}
+      <DesignCredit className="mt-2 border-t border-black/20 pt-1 text-center text-[10px] print:mt-[1mm] print:text-[8px]" />
     </article>
   );
 }

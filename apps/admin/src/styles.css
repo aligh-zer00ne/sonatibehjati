@@ -1,10 +1,13 @@
 @import 'tailwindcss';
 @theme {
   --font-sans: 'Vazirmatn Variable', sans-serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
 }
 @layer base {
   html {
     font-family: var(--font-sans);
+    font-weight: 500;
     background: #f6f1e9;
     color: #34251e;
   }

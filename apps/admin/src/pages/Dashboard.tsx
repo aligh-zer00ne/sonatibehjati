@@ -75,7 +75,7 @@ export default function Dashboard() {
     <div className="flex items-center justify-between gap-2">
       <span>{label}</span>
       {admin && canOpenAdminPath(admin, href) && (
-        <Link to={href} className="flex items-center gap-1 text-[10px] !text-[#786044]">
+        <Link to={href} className="flex items-center gap-1 text-[12px] !text-[#786044]">
           مشاهده همه
           <AdminIcon name="arrow" width={14} height={14} />
         </Link>
@@ -100,7 +100,7 @@ export default function Dashboard() {
             </b>
             {metric.icon === 'wallet' && <AmountInWords amount={metric.value} />}
             <p className="mt-1 text-xs font-medium">{metric.label}</p>
-            <p className="mt-4 text-[10px] text-[#8b8277]">{metric.detail}</p>
+            <p className="mt-4 text-[12px] text-[#8b8277]">{metric.detail}</p>
           </div>
         ))}
       </div>
@@ -140,7 +140,7 @@ export default function Dashboard() {
                     height={25}
                     className="text-[#930d25] transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none"
                   />
-                  <span className="text-[11px]">{item.label}</span>
+                  <span className="text-[12px]">{item.label}</span>
                 </Link>
               ))}
           </div>
@@ -162,11 +162,11 @@ export default function Dashboard() {
                   <DashboardProductImage src={product.image} title={product.title} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-bold">{product.title}</p>
-                    <p className="mt-1 text-[10px] text-[#8c8176]">
+                    <p className="mt-1 text-[12px] text-[#8c8176]">
                       {<Money amount={product.orderValue} />}
                     </p>
                   </div>
-                  <span className="rounded-full bg-[#fff0ef] px-2 py-1 text-[10px] whitespace-nowrap text-[#a51432]">
+                  <span className="rounded-full bg-[#fff0ef] px-2 py-1 text-[12px] whitespace-nowrap text-[#a51432]">
                     {formatNumber(product.quantity)} عدد
                   </span>
                 </li>
@@ -191,7 +191,7 @@ export default function Dashboard() {
                   </span>
                   <div className="min-w-0">
                     <p className="truncate text-xs font-bold">{customerName(user)}</p>
-                    <p className="mt-1 text-[10px] text-[#8c8176]">
+                    <p className="mt-1 text-[12px] text-[#8c8176]">
                       عضویت: {formatDate(user.createdAt)}
                     </p>
                   </div>

@@ -132,7 +132,7 @@ export default function RecordCards<T extends object>({
                     </span>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="mb-1 text-[10px] text-[#76685d]">{titleField?.title ?? label}</p>
+                    <p className="mb-1 text-[12px] text-[#76685d]">{titleField?.title ?? label}</p>
                     <h3 className="[overflow-wrap:anywhere] text-sm leading-6 font-bold text-[#76100b]">
                       {title}
                     </h3>
@@ -157,7 +157,7 @@ export default function RecordCards<T extends object>({
                 </header>
                 {featured && (
                   <div className="mb-3 rounded-2xl border border-[#e5d1aa] bg-gradient-to-l from-[#f4e8d3] to-[#fcf9f3] px-3 py-2.5">
-                    <p className="mb-1 flex items-center gap-1.5 text-[10px] text-[#76685d]">
+                    <p className="mb-1 flex items-center gap-1.5 text-[12px] text-[#76685d]">
                       <AdminIcon name={fieldIcon(featured.title)} width={14} height={14} />
                       {featured.title}
                     </p>
@@ -172,7 +172,7 @@ export default function RecordCards<T extends object>({
                       key={field.title}
                       className={`min-w-0 rounded-xl bg-[#f4e8d3] p-3 ${isWide(field) || (narrowFields.length % 2 === 1 && field === narrowFields.at(-1)) ? 'col-span-2' : ''}`}
                     >
-                      <dt className="mb-1.5 flex items-center gap-1.5 text-[10px] text-[#76685d]">
+                      <dt className="mb-1.5 flex items-center gap-1.5 text-[12px] text-[#76685d]">
                         <AdminIcon
                           name={field.icon ?? fieldIcon(field.title)}
                           width={14}

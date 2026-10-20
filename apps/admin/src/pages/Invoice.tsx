@@ -1,3 +1,4 @@
+import DesignCredit from '../components/DesignCredit';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Button, Alert, Modal } from 'antd';
@@ -107,6 +108,7 @@ export default function Invoice({
         </div>
         <BrandQr className="w-[30mm] print:w-[25mm]" />
       </footer>
+      <DesignCredit className="mt-2 border-t border-black/20 pt-1 text-center text-[10px] print:mt-[1mm] print:text-[8px]" />
     </article>
   );
   return (

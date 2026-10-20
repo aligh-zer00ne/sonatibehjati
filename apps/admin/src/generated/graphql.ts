@@ -398,6 +398,17 @@ export type AdminUsersPage = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type Announcement = {
+  __typename?: 'Announcement';
+  enabled: Scalars['Boolean']['output'];
+  text: Scalars['String']['output'];
+};
+
+export type AnnouncementInput = {
+  enabled: Scalars['Boolean']['input'];
+  text: Scalars['String']['input'];
+};
+
 export type AuthSession = {
   __typename?: 'AuthSession';
   accessExpiresAt: Scalars['String']['output'];
@@ -551,6 +562,7 @@ export type HeroSlideInput = {
 
 export type HomepageContent = {
   __typename?: 'HomepageContent';
+  announcement: Announcement;
   slides: Array<HeroSlide>;
   story: BrandStoryContent;
   updatedAt?: Maybe<Scalars['String']['output']>;
@@ -587,6 +599,7 @@ export type Mutation = {
   saveAdminCoupon: AdminCoupon;
   saveAdminProduct: Product;
   saveAdminShippingLabel: AdminShippingLabel;
+  saveAnnouncement: HomepageContent;
   saveHomepageContent: HomepageContent;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
@@ -689,6 +702,12 @@ export type MutationSaveAdminShippingLabelArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   input: AdminShippingLabelInput;
   orderId: Scalars['ID']['input'];
+};
+
+
+export type MutationSaveAnnouncementArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  input: AnnouncementInput;
 };
 
 
@@ -1478,6 +1497,19 @@ export type StartAdminGatewayTestMutationVariables = Exact<{ [key: string]: neve
 
 export type StartAdminGatewayTestMutation = { __typename?: 'Mutation', startAdminGatewayTest: { __typename?: 'PaymentRedirect', redirectUrl: string } };
 
+export type AdminAnnouncementQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AdminAnnouncementQuery = { __typename?: 'Query', adminHomepageContent: { __typename?: 'HomepageContent', updatedAt?: string | null, announcement: { __typename?: 'Announcement', enabled: boolean, text: string } } };
+
+export type SaveAnnouncementMutationVariables = Exact<{
+  input: AnnouncementInput;
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type SaveAnnouncementMutation = { __typename?: 'Mutation', saveAnnouncement: { __typename?: 'HomepageContent', updatedAt?: string | null, announcement: { __typename?: 'Announcement', enabled: boolean, text: string } } };
+
 export const AdminProductFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminProductFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Product"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discountPercent"}},{"kind":"Field","name":{"kind":"Name","value":"discountTitle"}},{"kind":"Field","name":{"kind":"Name","value":"discountStartsAt"}},{"kind":"Field","name":{"kind":"Name","value":"discountEndsAt"}},{"kind":"Field","name":{"kind":"Name","value":"weight"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"badge"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"alt"}}]}}]}}]} as unknown as DocumentNode<AdminProductFieldsFragment, unknown>;
 export const AdminCustomerFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminCustomerFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]} as unknown as DocumentNode<AdminCustomerFieldsFragment, unknown>;
 export const AdminOrderAddressFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminOrderAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderAddressSnapshot"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recipientName"}},{"kind":"Field","name":{"kind":"Name","value":"recipientPhone"}},{"kind":"Field","name":{"kind":"Name","value":"province"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"postalAddress"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}}]} as unknown as DocumentNode<AdminOrderAddressFieldsFragment, unknown>;
@@ -1527,3 +1559,5 @@ export const SaveHomepageContentDocument = {"kind":"Document","definitions":[{"k
 export const RetryAdminPaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryAdminPayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paymentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryAdminPayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paymentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paymentId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminPaymentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminPaymentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bankCode"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"reference"}},{"kind":"Field","name":{"kind":"Name","value":"traceNumber"}},{"kind":"Field","name":{"kind":"Name","value":"rrn"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"verifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"reversedAt"}}]}}]} as unknown as DocumentNode<RetryAdminPaymentMutation, RetryAdminPaymentMutationVariables>;
 export const AdminGatewayTestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AdminGatewayTest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminGatewayTest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"terminalId"}},{"kind":"Field","name":{"kind":"Name","value":"payments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"payment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminPaymentFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"redirectUrl"}},{"kind":"Field","name":{"kind":"Name","value":"resultUrl"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminPaymentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bankCode"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"reference"}},{"kind":"Field","name":{"kind":"Name","value":"traceNumber"}},{"kind":"Field","name":{"kind":"Name","value":"rrn"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"verifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"reversedAt"}}]}}]} as unknown as DocumentNode<AdminGatewayTestQuery, AdminGatewayTestQueryVariables>;
 export const StartAdminGatewayTestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartAdminGatewayTest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startAdminGatewayTest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redirectUrl"}}]}}]}}]} as unknown as DocumentNode<StartAdminGatewayTestMutation, StartAdminGatewayTestMutationVariables>;
+export const AdminAnnouncementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AdminAnnouncement"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminHomepageContent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"announcement"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"text"}}]}}]}}]}}]} as unknown as DocumentNode<AdminAnnouncementQuery, AdminAnnouncementQueryVariables>;
+export const SaveAnnouncementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveAnnouncement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnnouncementInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"expectedUpdatedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"saveAnnouncement"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}},{"kind":"Argument","name":{"kind":"Name","value":"expectedUpdatedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"expectedUpdatedAt"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"announcement"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"text"}}]}}]}}]}}]} as unknown as DocumentNode<SaveAnnouncementMutation, SaveAnnouncementMutationVariables>;

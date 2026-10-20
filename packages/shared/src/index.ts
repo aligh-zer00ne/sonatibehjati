@@ -1,4 +1,6 @@
 import { z } from 'zod';
+export const DESIGNER_DOMAIN = 'nexoraict.ir';
+export const DESIGNER_URL = 'https://nexoraict.ir';
 export const BRAND_NAME = 'حلواارده سنتی بهجتی اردکان';
 export const formatNumber = (value: number) => new Intl.NumberFormat('fa-IR').format(value);
 export const formatPrice = (value: number) => `${formatNumber(value)} تومان`;

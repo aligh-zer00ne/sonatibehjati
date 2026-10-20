@@ -80,7 +80,7 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <p className="mt-2 text-[10px] text-[#8c8176]">
+        <p className="mt-2 text-[12px] text-[#8c8176]">
           ارزش سفارش‌های غیرلغوشده؛ این مبلغ معادل درآمد دریافت‌شده نیست.
         </p>
       </Card>
@@ -106,10 +106,10 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 grid place-content-center text-center">
                 <b className="text-xl">{formatNumber(report.ordersCount)}</b>
-                <span className="text-[10px] text-[#7d746a]">سفارش در ۳۰ روز اخیر</span>
+                <span className="text-[12px] text-[#7d746a]">سفارش در ۳۰ روز اخیر</span>
               </div>
             </div>
-            <ul className="mt-2 grid gap-2 text-[11px]">
+            <ul className="mt-2 grid gap-2 text-[12px]">
               {statuses.map((item) => (
                 <li key={item.status} className="flex items-center justify-between gap-2">
                   <span className="flex items-center gap-2">

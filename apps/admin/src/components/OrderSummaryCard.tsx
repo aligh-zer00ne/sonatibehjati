@@ -42,7 +42,7 @@ export default function OrderSummaryCard({
               <h3 className="break-words text-sm leading-6 font-bold text-[#62452f]">
                 {customerName(order.user)}
               </h3>
-              <p className="mt-0.5 text-[11px] text-[#76685d]">
+              <p className="mt-0.5 text-[12px] text-[#76685d]">
                 {compact ? `سفارش ${formatNumber(order.number)}` : 'سفارش فروشگاه سنتی بهجتی'}
               </p>
             </div>
@@ -58,7 +58,7 @@ export default function OrderSummaryCard({
         </header>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#e5d1aa] bg-gradient-to-l from-[#f4e8d3] to-[#fcf9f3] px-3 py-2.5 sm:px-4">
           <div>
-            <p className="mb-0.5 text-[10px] text-[#76685d]">مبلغ سفارش</p>
+            <p className="mb-0.5 text-[12px] text-[#76685d]">مبلغ سفارش</p>
             <p className="text-lg leading-8 font-bold text-[#96140d] sm:text-xl">
               {formatPrice(order.total)}
             </p>
@@ -71,7 +71,7 @@ export default function OrderSummaryCard({
           <div className="flex min-w-0 items-center gap-2 rounded-xl bg-[#f4e8d3] px-3 py-2.5">
             <AdminIcon name="phone" className="shrink-0 text-[#b7825b]" width={17} height={17} />
             <div>
-              <dt className="text-[10px] leading-5 text-[#76685d]">موبایل مشتری</dt>
+              <dt className="text-[12px] leading-5 text-[#76685d]">موبایل مشتری</dt>
               <dd className="font-medium text-[#62452f]">
                 <bdi>{persianDigits(order.user.phone)}</bdi>
               </dd>
@@ -81,7 +81,7 @@ export default function OrderSummaryCard({
             <div className="flex min-w-0 items-center gap-2 rounded-xl bg-[#f4e8d3] px-3 py-2.5">
               <AdminIcon name="pin" className="shrink-0 text-[#b7825b]" width={17} height={17} />
               <div className="min-w-0">
-                <dt className="text-[10px] leading-5 text-[#76685d]">شهر مقصد</dt>
+                <dt className="text-[12px] leading-5 text-[#76685d]">شهر مقصد</dt>
                 <dd className="break-words font-medium text-[#62452f]">
                   {order.address.city || 'ثبت نشده'}
                 </dd>
@@ -93,7 +93,7 @@ export default function OrderSummaryCard({
           >
             <AdminIcon name="calendar" className="shrink-0 text-[#b7825b]" width={17} height={17} />
             <div>
-              <dt className="text-[10px] leading-5 text-[#76685d]">تاریخ ثبت</dt>
+              <dt className="text-[12px] leading-5 text-[#76685d]">تاریخ ثبت</dt>
               <dd className="font-medium text-[#62452f]">
                 <time dateTime={order.createdAt}>{formatDate(order.createdAt)}</time>
               </dd>

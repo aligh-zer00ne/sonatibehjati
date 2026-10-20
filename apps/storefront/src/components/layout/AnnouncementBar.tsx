@@ -1,9 +1,12 @@
 import { Truck } from 'lucide-react';
-export default function AnnouncementBar() {
+import { getHomepageContent } from '@/lib/catalog/service';
+export default async function AnnouncementBar() {
+  const { announcement } = await getHomepageContent();
+  if (!announcement.enabled) return null;
   return (
-    <div className="flex h-[34px] items-center justify-center gap-2 bg-primary text-[11px] text-primary-foreground xl:h-9 xl:text-xs">
-      <Truck size={17} />
-      <span>طعم اردکان، همراه شما در سراسر ایران</span>
+    <div className="flex min-h-[34px] items-center justify-center gap-2 bg-primary px-4 py-1.5 text-center text-xs font-medium leading-5 text-primary-foreground xl:min-h-9">
+      <Truck size={17} className="shrink-0" />
+      <span className="break-words [overflow-wrap:anywhere]">{announcement.text}</span>
     </div>
   );
 }

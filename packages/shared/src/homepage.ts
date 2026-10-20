@@ -1,4 +1,8 @@
 import { z } from 'zod';
+export const defaultAnnouncement = { enabled: true, text: 'طعم اردکان، همراه شما در سراسر ایران' };
+export const announcementSchema = z
+  .object({ enabled: z.boolean(), text: z.string().trim().min(1).max(180) })
+  .strict();
 const image = z
   .string()
   .regex(
@@ -38,6 +42,7 @@ export const storySchema = z.object({
   location: z.string().trim().max(100),
 });
 export const homepageSchema = z.object({
+  announcement: announcementSchema.default(defaultAnnouncement),
   slides: z.array(heroSlideSchema).min(1).max(8),
   story: storySchema,
 });
@@ -86,6 +91,7 @@ const defaultSlides = [
   },
 ];
 export const defaultHomepage: HomepageValues = {
+  announcement: defaultAnnouncement,
   slides: defaultSlides,
   story: {
     src: '/images/home/story-desktop-v6.webp',

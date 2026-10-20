@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { homepageSchema, defaultHomepage } from '@behjati/shared/homepage';
+import { homepageSchema, defaultHomepage, announcementSchema } from '@behjati/shared/homepage';
 import { db } from '../../database/client.js';
 import { validate } from './validation.js';
 import { authError } from '../auth/errors.js';
@@ -33,4 +33,9 @@ export async function saveHomepageContent(raw: unknown, expectedUpdatedAt?: stri
       throw conflict();
     throw error;
   }
+}
+export async function saveAnnouncement(raw: unknown, expectedUpdatedAt?: string | null) {
+  const announcement = validate(announcementSchema, raw);
+  const current = await homepageContent();
+  return saveHomepageContent({ ...current, announcement }, expectedUpdatedAt);
 }

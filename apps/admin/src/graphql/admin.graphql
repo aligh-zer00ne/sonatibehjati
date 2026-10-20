@@ -521,3 +521,22 @@ mutation StartAdminGatewayTest {
     redirectUrl
   }
 }
+
+query AdminAnnouncement {
+  adminHomepageContent {
+    updatedAt
+    announcement {
+      enabled
+      text
+    }
+  }
+}
+mutation SaveAnnouncement($input: AnnouncementInput!, $expectedUpdatedAt: String) {
+  saveAnnouncement(input: $input, expectedUpdatedAt: $expectedUpdatedAt) {
+    updatedAt
+    announcement {
+      enabled
+      text
+    }
+  }
+}

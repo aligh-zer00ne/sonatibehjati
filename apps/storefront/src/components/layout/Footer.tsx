@@ -1,3 +1,4 @@
+import DesignCredit from './DesignCredit';
 import Link from 'next/link';
 import Image from 'next/image';
 import ArdakanOutline from '@/components/decoration/ardakan-outline';
@@ -114,6 +115,7 @@ export default function Footer() {
           />
         </div>
       </div>
+      <DesignCredit />
     </footer>
   );
 }

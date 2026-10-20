@@ -21,7 +21,7 @@ import { adminUsers, adminUser } from './users.js';
 import { adminReport, adminDashboard } from './reports.js';
 import { saveShippingLabel } from './shipping-labels.js';
 import { serializeProduct as serializeDates } from '../products/presentation.js';
-import { homepageContent, saveHomepageContent } from './homepage.js';
+import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepage.js';
 export const adminResolvers: Resolvers = {
   Query: {
     homepageContent: () => homepageContent(),
@@ -65,6 +65,11 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    saveAnnouncement: async (_, { input, expectedUpdatedAt }, ctx) => {
+      requireAdminOrigin(ctx);
+      await requirePermission(ctx, 'HOMEPAGE');
+      return saveAnnouncement(input, expectedUpdatedAt);
+    },
     saveHomepageContent: async (_, { input, expectedUpdatedAt }, ctx) => {
       requireAdminOrigin(ctx);
       await requirePermission(ctx, 'HOMEPAGE');

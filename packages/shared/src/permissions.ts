@@ -9,7 +9,7 @@ export const adminSections = [
   { permission: 'COUPONS', label: 'کدهای تخفیف', href: '/admin/coupons' },
   { permission: 'TICKETS', label: 'پشتیبانی و تیکت‌ها', href: '/admin/tickets' },
   { permission: 'REVIEWS', label: 'نظرات محصولات', href: '/admin/reviews' },
-  { permission: 'HOMEPAGE', label: 'هیروسکشن و درباره ما', href: '/admin/homepage' },
+  { permission: 'HOMEPAGE', label: 'نوار اطلاع‌رسانی سایت', href: '/admin/announcement' },
 ] as const;
 export type AdminPermission = (typeof adminSections)[number]['permission'];
 export const permissionsSchema = z

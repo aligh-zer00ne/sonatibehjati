@@ -733,6 +733,7 @@ input BrandStoryContentInput {
 }
 
 type HomepageContent {
+  announcement: Announcement!
   slides: [HeroSlide!]!
   story: BrandStoryContent!
   updatedAt: String
@@ -804,4 +805,16 @@ extend type Query {
 }
 extend type Mutation {
   startAdminGatewayTest: PaymentRedirect!
+}
+
+type Announcement {
+  enabled: Boolean!
+  text: String!
+}
+input AnnouncementInput {
+  enabled: Boolean!
+  text: String!
+}
+extend type Mutation {
+  saveAnnouncement(input: AnnouncementInput!, expectedUpdatedAt: String): HomepageContent!
 }

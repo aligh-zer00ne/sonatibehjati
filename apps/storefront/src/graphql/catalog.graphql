@@ -89,6 +89,10 @@ fragment HomepageContentFields on HomepageContent {
 }
 query HomepageContent {
   homepageContent {
+    announcement {
+      enabled
+      text
+    }
     ...HomepageContentFields
   }
 }
