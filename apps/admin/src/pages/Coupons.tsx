@@ -1,16 +1,16 @@
+import AdminIcon from '../components/AdminIcon';
+import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
 import {
   Alert,
   App,
   Button,
-  Card,
   Form,
   Input,
   InputNumber,
   Modal,
   Select,
   Switch,
-  Table,
   Tag,
   Typography,
 } from 'antd';
@@ -66,67 +66,74 @@ export default function Coupons() {
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
-        <Card>
-          <Table
-            rowKey="id"
-            dataSource={query.data.adminCoupons}
-            scroll={{ x: 900 }}
-            columns={[
-              { title: 'کد', render: (_, row) => <bdi className="font-bold">{row.code}</bdi> },
-              {
-                title: 'تخفیف',
-                render: (_, row) =>
-                  row.type === 'PERCENT' ? (
-                    `${formatNumber(row.value)}٪`
-                  ) : (
-                    <Money amount={row.value} />
-                  ),
-              },
-              { title: 'حداقل خرید', render: (_, row) => <Money amount={row.minOrderAmount} /> },
-              {
-                title: 'شروع / پایان',
-                render: (_, row) => (
-                  <span>
-                    {formatDate(row.startsAt)}
-                    <br />
-                    {formatDate(row.expiresAt)}
-                  </span>
+        <RecordCards
+          rowKey="id"
+          icon="discount"
+          label="فهرست کدهای تخفیف"
+          featuredField="تخفیف"
+          dataSource={query.data.adminCoupons}
+          columns={[
+            { title: 'کد', render: (_, row) => <bdi className="font-bold">{row.code}</bdi> },
+            {
+              title: 'تخفیف',
+              render: (_, row) =>
+                row.type === 'PERCENT' ? (
+                  `${formatNumber(row.value)}٪`
+                ) : (
+                  <Money amount={row.value} />
                 ),
-              },
-              {
-                title: 'استفاده',
-                render: (_, row) =>
-                  `${formatNumber(row.usageCount)} / ${row.usageLimit ? formatNumber(row.usageLimit) : 'نامحدود'}`,
-              },
-              {
-                title: 'وضعیت',
-                render: (_, row) => (
-                  <Tag
-                    color={
-                      !row.isActive
-                        ? 'default'
-                        : Date.parse(row.expiresAt) <= Date.now()
-                          ? 'orange'
-                          : 'green'
-                    }
-                  >
-                    {!row.isActive
-                      ? 'غیرفعال'
+            },
+            { title: 'حداقل خرید', render: (_, row) => <Money amount={row.minOrderAmount} /> },
+            {
+              title: 'شروع / پایان',
+              render: (_, row) => (
+                <span>
+                  {formatDate(row.startsAt)}
+                  <br />
+                  {formatDate(row.expiresAt)}
+                </span>
+              ),
+            },
+            {
+              title: 'استفاده',
+              render: (_, row) =>
+                `${formatNumber(row.usageCount)} / ${row.usageLimit ? formatNumber(row.usageLimit) : 'نامحدود'}`,
+            },
+            {
+              title: 'وضعیت',
+              render: (_, row) => (
+                <Tag
+                  color={
+                    !row.isActive
+                      ? 'default'
                       : Date.parse(row.expiresAt) <= Date.now()
-                        ? 'منقضی'
-                        : Date.parse(row.startsAt) > Date.now()
-                          ? 'زمان‌بندی‌شده'
-                          : 'فعال'}
-                  </Tag>
-                ),
-              },
-              {
-                title: 'عملیات',
-                render: (_, row) => <Button onClick={() => edit(row)}>ویرایش</Button>,
-              },
-            ]}
-          />
-        </Card>
+                        ? 'orange'
+                        : 'green'
+                  }
+                >
+                  {!row.isActive
+                    ? 'غیرفعال'
+                    : Date.parse(row.expiresAt) <= Date.now()
+                      ? 'منقضی'
+                      : Date.parse(row.startsAt) > Date.now()
+                        ? 'زمان‌بندی‌شده'
+                        : 'فعال'}
+                </Tag>
+              ),
+            },
+            {
+              title: 'عملیات',
+              render: (_, row) => (
+                <Button
+                  icon={<AdminIcon name="edit" width={17} height={17} />}
+                  onClick={() => edit(row)}
+                >
+                  ویرایش
+                </Button>
+              ),
+            },
+          ]}
+        />
       )}
       <Modal
         title={editing ? 'ویرایش کد تخفیف' : 'کد تخفیف جدید'}

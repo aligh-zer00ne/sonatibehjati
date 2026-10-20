@@ -1,9 +1,11 @@
+import AdminIcon from '../components/AdminIcon';
+import RecordCards from '../components/RecordCards';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Typography, Card, Input, Table, Button, Alert } from 'antd';
+import { Typography, Card, Input, Button, Alert } from 'antd';
 import { formatNumber, formatDate } from '@behjati/shared';
 import {
   AdminUsersDocument,
@@ -77,39 +79,41 @@ export default function Users() {
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
-        <Card>
-          <Table<AdminUsersQuery['adminUsers']['items'][number]>
-            rowKey="id"
-            dataSource={query.data.adminUsers.items}
-            scroll={{ x: 900 }}
-            pagination={{
-              current: page,
-              pageSize: 20,
-              total: query.data.adminUsers.total,
-              showSizeChanger: false,
-              onChange: setPage,
-            }}
-            columns={[
-              { title: 'نام', render: (_, user) => customerName(user) },
-              { title: 'موبایل', render: (_, user) => <bdi>{persianDigits(user.phone)}</bdi> },
-              { title: 'تاریخ عضویت', render: (_, user) => formatDate(user.createdAt) },
-              { title: 'تعداد سفارش', render: (_, user) => formatNumber(user.ordersCount) },
-              {
-                title: 'ارزش سفارش‌های غیرلغوشده',
-                render: (_, user) => <Money amount={user.totalOrdersValue} />,
-              },
-              {
-                title: 'عملیات',
-                render: (_, user) =>
-                  hasPermission(admin, 'ORDERS') && (
-                    <Link to={`/admin/orders?userId=${user.id}`}>
-                      <Button>سفارش‌های کاربر</Button>
-                    </Link>
-                  ),
-              },
-            ]}
-          />
-        </Card>
+        <RecordCards<AdminUsersQuery['adminUsers']['items'][number]>
+          rowKey="id"
+          icon="users"
+          label="فهرست مشتریان"
+          featuredField="ارزش سفارش‌های غیرلغوشده"
+          dataSource={query.data.adminUsers.items}
+          pagination={{
+            current: page,
+            pageSize: 20,
+            total: query.data.adminUsers.total,
+            showSizeChanger: false,
+            onChange: setPage,
+          }}
+          columns={[
+            { title: 'نام', render: (_, user) => customerName(user) },
+            { title: 'موبایل', render: (_, user) => <bdi>{persianDigits(user.phone)}</bdi> },
+            { title: 'تاریخ عضویت', render: (_, user) => formatDate(user.createdAt) },
+            { title: 'تعداد سفارش', render: (_, user) => formatNumber(user.ordersCount) },
+            {
+              title: 'ارزش سفارش‌های غیرلغوشده',
+              render: (_, user) => <Money amount={user.totalOrdersValue} />,
+            },
+            {
+              title: 'عملیات',
+              render: (_, user) =>
+                hasPermission(admin, 'ORDERS') && (
+                  <Link to={`/admin/orders?userId=${user.id}`}>
+                    <Button icon={<AdminIcon name="orders" width={17} height={17} />}>
+                      سفارش‌های کاربر
+                    </Button>
+                  </Link>
+                ),
+            },
+          ]}
+        />
       )}
     </>
   );

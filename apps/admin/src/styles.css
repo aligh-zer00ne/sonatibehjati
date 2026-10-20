@@ -23,6 +23,11 @@
     outline-offset: 3px;
   }
 }
+/* Ant Design retains this invisible autosize helper after a dialog closes.
+   Clamp its stale desktop width when the viewport becomes narrower. */
+body > textarea[name='hiddenTextarea'][aria-hidden='true'] {
+  max-width: 100vw;
+}
 @page {
   size: A5 portrait;
   margin: 10mm;

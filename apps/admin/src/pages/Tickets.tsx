@@ -1,5 +1,7 @@
+import AdminIcon from '../components/AdminIcon';
+import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import { Alert, Button, Card, Form, Input, Modal, Select, Table, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Form, Input, Modal, Select, Tag, Typography } from 'antd';
 import { formatDate } from '@behjati/shared';
 import {
   AdminTicketsDocument,
@@ -65,52 +67,52 @@ export default function Tickets() {
       {!list.data ? (
         <DataState error={list.error} retry={list.refresh} />
       ) : (
-        <Card>
-          <Table
-            rowKey="id"
-            dataSource={list.data.adminTickets.items}
-            scroll={{ x: 750 }}
-            pagination={{
-              current: page,
-              pageSize: 20,
-              total: list.data.adminTickets.total,
-              showSizeChanger: false,
-              onChange: setPage,
-            }}
-            columns={[
-              { title: 'موضوع', dataIndex: 'subject' },
-              { title: 'مشتری', dataIndex: 'customerName' },
-              { title: 'سفارش', dataIndex: 'orderNumber' },
-              {
-                title: 'وضعیت',
-                render: (_, row) => (
-                  <Tag
-                    color={
-                      row.status === 'OPEN' ? 'red' : row.status === 'CLOSED' ? 'default' : 'blue'
-                    }
-                  >
-                    {statuses.find((s) => s.value === row.status)?.label}
-                  </Tag>
-                ),
-              },
-              { title: 'آخرین تغییر', render: (_, row) => formatDate(row.updatedAt) },
-              {
-                title: 'عملیات',
-                render: (_, row) => (
-                  <Button
-                    onClick={() => {
-                      setId(row.id);
-                      setError('');
-                      form.resetFields();
-                    }}
-                  >
-                    مشاهده و پاسخ
-                  </Button>
-                ),
-              },
-            ]}
-          />
-        </Card>
+        <RecordCards
+          rowKey="id"
+          icon="support"
+          label="فهرست تیکت‌ها"
+          dataSource={list.data.adminTickets.items}
+          pagination={{
+            current: page,
+            pageSize: 20,
+            total: list.data.adminTickets.total,
+            showSizeChanger: false,
+            onChange: setPage,
+          }}
+          columns={[
+            { title: 'موضوع', dataIndex: 'subject' },
+            { title: 'مشتری', dataIndex: 'customerName' },
+            { title: 'سفارش', dataIndex: 'orderNumber' },
+            {
+              title: 'وضعیت',
+              render: (_, row) => (
+                <Tag
+                  color={
+                    row.status === 'OPEN' ? 'red' : row.status === 'CLOSED' ? 'default' : 'blue'
+                  }
+                >
+                  {statuses.find((s) => s.value === row.status)?.label}
+                </Tag>
+              ),
+            },
+            { title: 'آخرین تغییر', render: (_, row) => formatDate(row.updatedAt) },
+            {
+              title: 'عملیات',
+              render: (_, row) => (
+                <Button
+                  icon={<AdminIcon name="support" width={17} height={17} />}
+                  onClick={() => {
+                    setId(row.id);
+                    setError('');
+                    form.resetFields();
+                  }}
+                >
+                  مشاهده و پاسخ
+                </Button>
+              ),
+            },
+          ]}
+        />
       )}
       <Modal
         title={ticket?.subject ?? 'تیکت'}

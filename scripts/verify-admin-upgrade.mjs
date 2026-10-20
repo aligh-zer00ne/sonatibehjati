@@ -156,7 +156,7 @@ try {
   await page.getByLabel('جستجوی پنل مدیریت', { exact: true }).fill(suffix);
   await page.getByLabel('جستجوی پنل مدیریت', { exact: true }).press('Enter');
   await expect(page).toHaveURL(new RegExp('/admin/products\\?search=' + suffix));
-  await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(1);
+  await expect(page.locator('[data-admin-record]')).toHaveCount(1);
   await goto(`/admin/orders/${order.id}`);
   await page.getByRole('button', { name: 'لیبل پستی / چاپ' }).click();
   await expect(page.getByLabel('نام گیرنده', { exact: true })).toHaveValue(input.recipientName);

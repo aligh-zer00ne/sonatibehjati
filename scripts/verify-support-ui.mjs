@@ -72,7 +72,7 @@ try {
   await expect(manager).toHaveURL(adminOrigin + '/admin');
   await manager.goto(adminOrigin + '/admin/tickets');
   await manager
-    .getByRole('row')
+    .getByRole('article')
     .filter({ hasText: 'پیگیری از صفحه پشتیبانی' })
     .getByRole('button', { name: 'مشاهده و پاسخ', exact: true })
     .click();

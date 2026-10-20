@@ -42,6 +42,8 @@
     "verify:admin-auth": "node scripts/verify-admin-auth.mjs",
     "verify:admin": "node scripts/verify-admin-commerce.mjs",
     "verify:admin-ui": "node scripts/verify-admin-ui.mjs",
+    "verify:admin-orders-ui": "node scripts/verify-admin-orders-ui.mjs",
+    "verify:admin-cards-ui": "node scripts/verify-admin-cards-ui.mjs",
     "verify:admin-upgrade": "bun scripts/verify-admin-upgrade.mjs",
     "verify:admin-uploads": "bun scripts/verify-admin-uploads.mjs",
     "deploy:production": "bash deploy/update-production.sh",

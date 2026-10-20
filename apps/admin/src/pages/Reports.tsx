@@ -1,6 +1,7 @@
+import RecordCards from '../components/RecordCards';
 import { Money } from '../components/Money';
 import { useState } from 'react';
-import { Typography, Card, Select, Button, Alert, Table } from 'antd';
+import { Typography, Card, Select, Button, Alert } from 'antd';
 import CalendarPicker from '../components/CalendarPicker';
 import { orderStatuses, orderStatusLabels, formatNumber } from '@behjati/shared';
 import { defaultReportRange, adminReportFilterSchema } from '@behjati/shared/admin';
@@ -108,11 +109,13 @@ export default function Reports() {
           />
           <ReportCharts report={report} />
           <Card title="داده‌های روزانه">
-            <Table<AdminReportFieldsFragment['daily'][number]>
+            <RecordCards<AdminReportFieldsFragment['daily'][number]>
               rowKey="date"
+              icon="reports"
+              label="گزارش‌های روزانه"
+              featuredField="ارزش سفارش"
               dataSource={[...report.daily].sort((a, b) => b.date.localeCompare(a.date))}
               pagination={{ pageSize: 15, showSizeChanger: false }}
-              scroll={{ x: 650 }}
               columns={[
                 { title: 'روز', render: (_, day) => chartDate(day.date) },
                 { title: 'تعداد سفارش', render: (_, day) => formatNumber(day.ordersCount) },

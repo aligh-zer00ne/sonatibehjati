@@ -84,9 +84,9 @@ try {
   await page.goto(adminOrigin + '/admin/products', { waitUntil: 'networkidle' });
   await page.getByLabel('جستجوی محصول', { exact: true }).fill(suffix);
   await page.getByLabel('جستجوی محصول', { exact: true }).press('Enter');
-  await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(2);
-  await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(2);
-  for (const row of await page.locator('tbody tr.ant-table-row').all())
+  await expect(page.locator('[data-admin-record]')).toHaveCount(2);
+  await expect(page.locator('[data-admin-record]')).toHaveCount(2);
+  for (const row of await page.locator('[data-admin-record]').all())
     await row.getByRole('checkbox').check();
   await expect(page.getByRole('button', { name: /تخفیف \/ جشنواره/ })).toBeEnabled();
   await page.getByRole('button', { name: /تخفیف \/ جشنواره/ }).click();
@@ -120,6 +120,8 @@ try {
   await page.getByRole('tab', { name: 'تخفیف', exact: true }).click();
   await page.getByRole('spinbutton', { name: 'درصد تخفیف', exact: true }).fill('');
   await page.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
+  await expect(page.getByText('محصول ذخیره شد.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'بازگشت به محصولات', exact: true }).click();
   await expect(page).toHaveURL(adminOrigin + '/admin/products');
   await page.getByLabel('جستجوی محصول', { exact: true }).fill(suffix);
   await page.getByLabel('جستجوی محصول', { exact: true }).press('Enter');
@@ -127,8 +129,8 @@ try {
     (await db.product.findUniqueOrThrow({ where: { id: fixtures[0].id } })).discountPercent,
     null,
   );
-  await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(2);
-  for (const row of await page.locator('tbody tr.ant-table-row').all())
+  await expect(page.locator('[data-admin-record]')).toHaveCount(2);
+  for (const row of await page.locator('[data-admin-record]').all())
     await row.getByRole('checkbox').check();
   await expect(page.getByRole('button', { name: /تخفیف \/ جشنواره/ })).toBeEnabled();
   await page.getByRole('button', { name: /تخفیف \/ جشنواره/ }).click();

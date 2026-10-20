@@ -1,8 +1,11 @@
+import AdminIcon from '../components/AdminIcon';
+import DashboardProductImage from '../components/DashboardProductImage';
+import RecordCards from '../components/RecordCards';
 import ProductPreview from '../components/ProductPreview';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Card, Input, Select, Button, Table, Tag, Space, Popconfirm, App, Typography } from 'antd';
+import { Card, Input, Select, Button, Tag, Space, Popconfirm, App, Typography } from 'antd';
 import { formatNumber } from '@behjati/shared';
 import {
   AdminProductsDocument,
@@ -151,85 +154,95 @@ export default function Products() {
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
-        <Card>
-          <Table<AdminProductFieldsFragment>
-            rowKey="id"
-            rowSelection={{
-              selectedRowKeys: selected.map((product) => product.id),
-              onChange: (_, rows) => setSelected(rows),
-            }}
-            dataSource={query.data.adminProducts.items}
-            scroll={{ x: 800 }}
-            pagination={{
-              current: page,
-              pageSize: 20,
-              total: query.data.adminProducts.total,
-              showSizeChanger: false,
-              onChange: (value) => {
-                setPage(value);
-                setSelected([]);
-              },
-            }}
-            columns={[
-              { title: 'محصول', dataIndex: 'title' },
-              { title: 'دسته', render: (_, product) => product.category.title },
-              { title: 'وزن', dataIndex: 'weight' },
-              { title: 'قیمت اصلی', render: (_, product) => <Money amount={product.price} /> },
-              {
-                title: 'تخفیف',
-                render: (_, product) =>
-                  product.discountPercent ? (
-                    <Tag color="gold">
-                      {product.discountTitle || 'تخفیف'}؛ {formatNumber(product.discountPercent)}٪
-                    </Tag>
-                  ) : (
-                    '—'
-                  ),
-              },
-              {
-                title: 'وضعیت',
-                render: (_, product) => (
-                  <Tag color={product.isActive ? 'green' : 'default'}>
-                    {product.isActive ? 'فعال' : 'غیرفعال'}
+        <RecordCards<AdminProductFieldsFragment>
+          rowKey="id"
+          icon="products"
+          label="فهرست محصولات"
+          avatar={(product) => (
+            <DashboardProductImage src={product.images[0]?.url} title={product.title} />
+          )}
+          featuredField="قیمت اصلی"
+          rowSelection={{
+            selectedRowKeys: selected.map((product) => product.id),
+            onChange: (_, rows) => setSelected(rows),
+          }}
+          dataSource={query.data.adminProducts.items}
+          pagination={{
+            current: page,
+            pageSize: 20,
+            total: query.data.adminProducts.total,
+            showSizeChanger: false,
+            onChange: (value) => {
+              setPage(value);
+              setSelected([]);
+            },
+          }}
+          columns={[
+            { title: 'محصول', dataIndex: 'title' },
+            { title: 'دسته', render: (_, product) => product.category.title },
+            { title: 'وزن', dataIndex: 'weight' },
+            { title: 'قیمت اصلی', render: (_, product) => <Money amount={product.price} /> },
+            {
+              title: 'تخفیف',
+              render: (_, product) =>
+                product.discountPercent ? (
+                  <Tag color="gold">
+                    {product.discountTitle || 'تخفیف'}؛ {formatNumber(product.discountPercent)}٪
                   </Tag>
+                ) : (
+                  '—'
                 ),
-              },
-              {
-                title: 'عملیات',
-                render: (_, product) => (
-                  <Space wrap>
-                    <ProductPreview slug={product.slug} isActive={product.isActive} />
+            },
+            {
+              title: 'وضعیت',
+              render: (_, product) => (
+                <Tag color={product.isActive ? 'green' : 'default'}>
+                  {product.isActive ? 'فعال' : 'غیرفعال'}
+                </Tag>
+              ),
+            },
+            {
+              title: 'عملیات',
+              render: (_, product) => (
+                <Space wrap>
+                  <ProductPreview slug={product.slug} isActive={product.isActive} />
+                  <Button
+                    disabled={pending}
+                    onClick={() => navigate(`/admin/products/${product.id}/edit`)}
+                    aria-label={`ویرایش ${product.title}`}
+                    icon={<AdminIcon name="edit" width={17} height={17} />}
+                  >
+                    ویرایش
+                  </Button>
+                  <Button
+                    disabled={pending}
+                    onClick={() => void change(product, false)}
+                    aria-label={`${product.isActive ? 'غیرفعال' : 'فعال'} کردن ${product.title}`}
+                    icon={<AdminIcon name="shield" width={17} height={17} />}
+                  >
+                    {product.isActive ? 'غیرفعال' : 'فعال'}
+                  </Button>
+                  <Popconfirm
+                    title="حذف محصول"
+                    description="محصول استفاده‌شده در سفارش غیرفعال می‌شود."
+                    onConfirm={() => change(product, true)}
+                    okText="تأیید"
+                    cancelText="انصراف"
+                  >
                     <Button
+                      danger
                       disabled={pending}
-                      onClick={() => navigate(`/admin/products/${product.id}/edit`)}
-                      aria-label={`ویرایش ${product.title}`}
+                      aria-label={`حذف ${product.title}`}
+                      icon={<AdminIcon name="trash" width={17} height={17} />}
                     >
-                      ویرایش
+                      حذف
                     </Button>
-                    <Button
-                      disabled={pending}
-                      onClick={() => void change(product, false)}
-                      aria-label={`${product.isActive ? 'غیرفعال' : 'فعال'} کردن ${product.title}`}
-                    >
-                      {product.isActive ? 'غیرفعال' : 'فعال'}
-                    </Button>
-                    <Popconfirm
-                      title="حذف محصول"
-                      description="محصول استفاده‌شده در سفارش غیرفعال می‌شود."
-                      onConfirm={() => change(product, true)}
-                      okText="تأیید"
-                      cancelText="انصراف"
-                    >
-                      <Button danger disabled={pending} aria-label={`حذف ${product.title}`}>
-                        حذف
-                      </Button>
-                    </Popconfirm>
-                  </Space>
-                ),
-              },
-            ]}
-          />
-        </Card>
+                  </Popconfirm>
+                </Space>
+              ),
+            },
+          ]}
+        />
       )}
       {promotionOpen && selected.length > 0 && (
         <PromotionEditor

@@ -20,6 +20,18 @@ const paths = {
   plus: 'M12 5v14M5 12h14',
   print: 'M6 9V3h12v6M6 17H3V9h18v8h-3M6 14h12v7H6v-7ZM17 12h.01',
   shield: 'M12 3 3 7v6c0 5 9 9 9 9s9-4 9-9V7l-9-4ZM8 12l3 3 5-6',
+  person: 'M20 21v-2a6 6 0 0 0-6-6h-4a6 6 0 0 0-6 6v2M16 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
+  phone: 'M7 3H3c0 10 8 18 18 18v-4l-5-2-2 2a14 14 0 0 1-7-7l2-2-2-5Z',
+  pin: 'M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
+  chevron: 'm6 9 6 6 6-6',
+  close: 'm6 6 12 12M6 18 18 6',
+  history: 'M3 11a9 9 0 1 1 2 7M3 4v7h7M12 7v5l3 2',
+  truck:
+    'M3 5h12v12H3V5ZM15 9h4l3 4v4h-7M8 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM21 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0',
+  edit: 'm15 4 5 5M3 21l5-1L21 7l-5-5L3 15v6Z',
+  receipt: 'M5 3h14v19l-3-2-4 2-4-2-3 2V3ZM9 7h6M9 11h6M9 15h3',
+  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
+  trash: 'M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7',
 } as const;
 export type AdminIconName = keyof typeof paths;
 export default function AdminIcon({

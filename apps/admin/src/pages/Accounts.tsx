@@ -1,3 +1,5 @@
+import AdminIcon from '../components/AdminIcon';
+import RecordCards from '../components/RecordCards';
 import { adminSections, type AdminPermission } from '@behjati/shared/permissions';
 import { useState } from 'react';
 import {
@@ -7,7 +9,6 @@ import {
   Form,
   Input,
   Switch,
-  Table,
   Tag,
   Typography,
   App,
@@ -108,66 +109,67 @@ export default function Accounts() {
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
-        <Card>
-          <Table
-            rowKey="id"
-            dataSource={query.data.adminAccounts}
-            scroll={{ x: 520 }}
-            pagination={false}
-            columns={[
-              { title: 'ایمیل', dataIndex: 'email' },
-              {
-                title: 'بخش‌های مجاز',
-                render: (_, row) =>
-                  row.role === 'OWNER' ? (
-                    'همه بخش‌ها'
-                  ) : (
-                    <div className="flex flex-wrap gap-1">
-                      {row.permissions.length
-                        ? row.permissions.map((permission) => (
-                            <Tag key={permission}>
-                              {options.find((option) => option.value === permission)?.label}
-                            </Tag>
-                          ))
-                        : 'هنوز بخشی انتخاب نشده'}
-                    </div>
-                  ),
-              },
-              {
-                title: 'ویرایش دسترسی',
-                render: (_, row) =>
-                  row.role === 'STAFF' && (
-                    <Button
-                      onClick={() => {
-                        setEditing(row);
-                        setPermissions(row.permissions);
-                      }}
-                    >
-                      تعیین دسترسی‌ها
-                    </Button>
-                  ),
-              },
-              {
-                title: 'دسترسی',
-                render: (_, row) => (
-                  <Tag color={row.role === 'OWNER' ? 'red' : 'blue'}>
-                    {row.role === 'OWNER' ? 'مدیر' : 'همکار'}
-                  </Tag>
+        <RecordCards
+          rowKey="id"
+          icon="shield"
+          label="فهرست کاربران پنل"
+          dataSource={query.data.adminAccounts}
+          pagination={false}
+          columns={[
+            { title: 'ایمیل', dataIndex: 'email' },
+            {
+              title: 'بخش‌های مجاز',
+              render: (_, row) =>
+                row.role === 'OWNER' ? (
+                  'همه بخش‌ها'
+                ) : (
+                  <div className="flex flex-wrap gap-1">
+                    {row.permissions.length
+                      ? row.permissions.map((permission) => (
+                          <Tag key={permission}>
+                            {options.find((option) => option.value === permission)?.label}
+                          </Tag>
+                        ))
+                      : 'هنوز بخشی انتخاب نشده'}
+                  </div>
                 ),
-              },
-              {
-                title: 'فعال',
-                render: (_, row) => (
-                  <Switch
-                    checked={row.isActive}
-                    disabled={pending || row.role === 'OWNER'}
-                    onChange={(value) => void active(row, value)}
-                  />
+            },
+            {
+              title: 'ویرایش دسترسی',
+              render: (_, row) =>
+                row.role === 'STAFF' && (
+                  <Button
+                    icon={<AdminIcon name="shield" width={17} height={17} />}
+                    onClick={() => {
+                      setEditing(row);
+                      setPermissions(row.permissions);
+                    }}
+                  >
+                    تعیین دسترسی‌ها
+                  </Button>
                 ),
-              },
-            ]}
-          />
-        </Card>
+            },
+            {
+              title: 'دسترسی',
+              render: (_, row) => (
+                <Tag color={row.role === 'OWNER' ? 'red' : 'blue'}>
+                  {row.role === 'OWNER' ? 'مدیر' : 'همکار'}
+                </Tag>
+              ),
+            },
+            {
+              title: 'فعال',
+              render: (_, row) => (
+                <Switch
+                  aria-label={`فعال بودن ${row.email}`}
+                  checked={row.isActive}
+                  disabled={pending || row.role === 'OWNER'}
+                  onChange={(value) => void active(row, value)}
+                />
+              ),
+            },
+          ]}
+        />
       )}
       <Modal
         open={!!editing}

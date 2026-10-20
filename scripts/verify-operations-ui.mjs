@@ -142,7 +142,7 @@ try {
     await expect(staffPage).toHaveURL(adminOrigin + '/admin/orders');
   }
   await staffPage.goto(adminOrigin + '/admin/tickets');
-  const row = staffPage.getByRole('row').filter({ hasText: 'پیگیری سفارش مرورگر' });
+  const row = staffPage.getByRole('article').filter({ hasText: 'پیگیری سفارش مرورگر' });
   await row.getByRole('button', { name: 'مشاهده و پاسخ', exact: true }).click();
   await staffPage.getByLabel('پاسخ پشتیبانی', { exact: true }).fill('سفارش شما آمادهٔ ارسال است.');
   await staffPage.getByRole('button', { name: 'ارسال پاسخ', exact: true }).click();
@@ -165,7 +165,7 @@ try {
   await staffPage.getByRole('dialog').locator('.ant-modal-close').click();
   await staffPage.goto(adminOrigin + '/admin/reviews');
   const reviewRow = staffPage
-    .getByRole('row')
+    .getByRole('article')
     .filter({ hasText: 'نظر مشتری برای تأیید در مرورگر' });
   await reviewRow.getByRole('button', { name: 'تأیید', exact: true }).click();
   await expect(reviewRow).toHaveCount(0);

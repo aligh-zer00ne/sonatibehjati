@@ -103,12 +103,12 @@ try {
   await expect(page).toHaveURL(adminOrigin + '/admin');
   await expect(page.getByRole('link', { name: 'تست درگاه پرداخت', exact: true })).toHaveCount(0);
   await expect(page.locator('.recharts-surface').first()).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'ردیف', exact: true })).toBeVisible();
-  const recentRows = page.locator('[data-admin-dashboard] .ant-table-tbody tr.ant-table-row');
+  await expect(page.getByText('آخرین سفارش‌ها', { exact: true })).toBeVisible();
+  const recentRows = page.locator('[data-admin-dashboard] [data-admin-record]');
   const recentCount = await recentRows.count();
   assert.ok(recentCount > 0);
   for (let index = 0; index < recentCount; index++) {
-    await expect(recentRows.nth(index).locator('td').first()).toHaveText(
+    await expect(recentRows.nth(index).locator('[data-record-number]')).toHaveText(
       new Intl.NumberFormat('fa-IR').format(index + 1),
     );
   }
@@ -227,14 +227,30 @@ try {
   await expect(page.getByText(title, { exact: true })).not.toBeVisible();
   assert.equal(await db.product.findUnique({ where: { id: created.id } }), null);
   await goto(`/admin/orders?userId=${customer.user.id}`);
-  await expect(page.locator(`a[href="/admin/orders/${order.id}"]`)).toBeVisible();
-  await page.locator(`a[href="/admin/orders/${order.id}"]`).click();
+  await page
+    .getByRole('button', {
+      name: `جزئیات سفارش ${new Intl.NumberFormat('fa-IR').format(order.number)}`,
+      exact: true,
+    })
+    .click();
+  await expect(page).toHaveURL(adminOrigin + `/admin/orders?userId=${customer.user.id}`);
   await expect(page.getByText('عنوان تاریخی آزمون', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'مشتری و ارسال', exact: true }).click();
   await expect(page.getByText('یزد، اردکان، خیابان آزمون، پلاک ۱۰', { exact: true })).toBeVisible();
   await page.getByLabel('وضعیت جدید سفارش', { exact: true }).click();
   await page.locator('.ant-select-item-option').filter({ hasText: 'در حال آماده‌سازی' }).click();
   await page.getByRole('button', { name: 'ثبت وضعیت', exact: true }).click();
   await page.getByRole('button', { name: 'تأیید', exact: true }).click();
+  await expect(
+    page
+      .getByRole('article', {
+        name: `سفارش ${new Intl.NumberFormat('fa-IR').format(order.number)}`,
+        exact: true,
+      })
+      .locator('.ant-tag')
+      .first(),
+  ).toHaveText('در حال آماده‌سازی');
+  await page.getByRole('tab', { name: 'تاریخچه', exact: true }).click();
   await expect(page.getByText(admin.email, { exact: true })).toHaveCount(1);
   assert.equal(
     (await db.order.findUniqueOrThrow({ where: { id: order.id } })).status,
@@ -310,7 +326,7 @@ try {
   await goto('/admin/users');
   await page.getByLabel('جستجوی کاربر').fill(customer.user.phone);
   await page.getByLabel('جستجوی کاربر').press('Enter');
-  await expect(page.locator('tbody tr.ant-table-row')).toHaveCount(1);
+  await expect(page.locator('[data-admin-record]')).toHaveCount(1);
   await goto('/admin/reports');
   await expect(page.getByRole('button', { name: 'خروجی CSV', exact: true })).toBeEnabled();
   const reportTo = await page.locator('#report-to').inputValue();
@@ -321,10 +337,9 @@ try {
   await page.getByRole('heading', { name: 'گزارش سفارش‌ها' }).click();
   await expect(page.locator('#report-to')).toHaveValue(reportTo);
   const dailyFirst = await page
-    .locator('.ant-table-tbody tr.ant-table-row')
+    .locator('[data-admin-record]')
     .first()
-    .locator('td')
-    .first()
+    .getByRole('heading', { level: 3 })
     .innerText();
   const todayLabel = new Intl.DateTimeFormat('fa-IR', {
     timeZone: 'Asia/Tehran',

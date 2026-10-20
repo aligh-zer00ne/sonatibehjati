@@ -152,7 +152,7 @@ export default function Dashboard() {
           title={panelTitle('آخرین سفارش‌ها', '/admin/orders')}
           className="min-w-0 xl:col-span-2"
         >
-          <OrdersTable items={data.recentOrders} compact />
+          <OrdersTable items={data.recentOrders} compact onUpdated={query.refresh} />
         </Card>
         <Card title={panelTitle('محصولات پرسفارش', '/admin/products')} className="min-w-0">
           {data.topProducts.length ? (

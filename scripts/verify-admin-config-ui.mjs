@@ -58,7 +58,7 @@ try {
     await colleague.goto(adminOrigin + '/admin/' + path);
     await expect(colleague).toHaveURL(adminOrigin + '/admin/tickets');
   }
-  const row = page.getByRole('row').filter({ hasText: staffEmail });
+  const row = page.getByRole('article').filter({ hasText: staffEmail });
   await row.getByRole('button', { name: 'تعیین دسترسی‌ها', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('checkbox', { name: 'پشتیبانی و تیکت‌ها', exact: true }).uncheck();
