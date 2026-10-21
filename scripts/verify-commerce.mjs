@@ -101,7 +101,7 @@ try {
   await expect(cards).toHaveCount(1);
   await expect(
     page.getByRole('navigation', { name: 'ناوبری موبایل' }).locator('[aria-current="page"]'),
-  ).toHaveText('دسته‌بندی');
+  ).toHaveText('فروشگاه');
   await cards.first().getByRole('link', { name: 'مشاهده روغن ارده' }).click();
   await expect(page).toHaveURL(`${baseURL}/product/sesame-oil-250`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('روغن ارده');

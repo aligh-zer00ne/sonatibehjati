@@ -10,8 +10,9 @@ import { formatNumber, BRAND_NAME } from '@behjati/shared';
 export default function Header() {
   const pathname = usePathname();
   const shopActive =
-    ['/shop', '/search', '/favorites'].includes(pathname) || pathname.startsWith('/product/');
-  const categoryActive = pathname.startsWith('/category/');
+    ['/shop', '/search', '/favorites'].includes(pathname) ||
+    pathname.startsWith('/product/') ||
+    pathname.startsWith('/category/');
   const count = useCart((state) => Object.values(state.items).reduce((a, b) => a + b, 0));
   const open = useUI((state) => state.setPanel);
   return (
@@ -56,13 +57,6 @@ export default function Header() {
           href="/shop"
         >
           محصولات
-        </Link>
-        <Link
-          className={`py-3 ${categoryActive ? 'text-primary' : ''}`}
-          aria-current={categoryActive ? 'page' : undefined}
-          href="/shop#categories"
-        >
-          دسته‌بندی‌ها
         </Link>
         <Link className="py-3" href="/#story">
           درباره ما

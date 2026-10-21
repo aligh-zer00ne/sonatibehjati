@@ -20,7 +20,7 @@ export default function EnamadBadge({
       data-enamad-badge
       className={cn(
         'flex h-[80px] w-[76px] flex-col items-center justify-center gap-1 rounded-md border border-earth/10 bg-white/65 p-1 text-center',
-        compact && 'size-20 shrink-0 gap-0 rounded p-0.5 md:size-11',
+        compact && 'size-16 shrink-0 gap-0 rounded p-0.5 md:size-11',
         className,
       )}
       role="region"
@@ -34,7 +34,7 @@ export default function EnamadBadge({
         aria-label="مشاهده اعتبار نماد اعتماد الکترونیکی سنتی بهجتی در تب جدید"
         className={cn(
           'inline-flex size-[46px] cursor-pointer items-center justify-center rounded-lg transition-transform duration-300 motion-safe:hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none',
-          compact && 'size-[72px] md:size-10',
+          compact && 'size-14 md:size-10',
         )}
       >
         {imageFailed ? (
@@ -57,14 +57,14 @@ export default function EnamadBadge({
             src={`https://trustseal.enamad.ir/logo.aspx?${sealQuery}`}
             referrerPolicy="origin"
             alt="نماد اعتماد الکترونیکی سنتی بهجتی"
-            width={compact ? 72 : 46}
-            height={compact ? 72 : 46}
+            width={compact ? 56 : 46}
+            height={compact ? 56 : 46}
             loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
             className={cn(
               'size-[46px] cursor-pointer object-contain',
-              compact && 'size-[72px] md:size-10',
+              compact && 'size-14 md:size-10',
             )}
             {...{ code: sealCode }}
           />

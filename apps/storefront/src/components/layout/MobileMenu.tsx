@@ -1,13 +1,12 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { House, Store, LayoutGrid, BookOpen, MessagesSquare } from 'lucide-react';
+import { House, Store, BookOpen, MessagesSquare } from 'lucide-react';
 import { useUI } from '@/stores/ui';
 import { BRAND_NAME } from '@behjati/shared';
 const links = [
   { href: '/', label: 'خانه', icon: House },
   { href: '/shop', label: 'محصولات', icon: Store },
-  { href: '/shop#categories', label: 'دسته‌بندی محصولات', icon: LayoutGrid },
   { href: '/#story', label: 'درباره ما', icon: BookOpen },
   { href: '/support', label: 'پشتیبانی و تیکت‌ها', icon: MessagesSquare },
 ];
