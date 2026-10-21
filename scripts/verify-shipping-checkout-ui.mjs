@@ -6,7 +6,7 @@ const browser = await chromium.launch({
   args: ['--no-sandbox'],
 });
 try {
-  const page = await browser.newPage({ viewport: { width: 390, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 390, height: 900 }, hasTouch: true });
   page.setDefaultNavigationTimeout(30000);
   await page
     .context()
@@ -115,14 +115,38 @@ try {
   ]) {
     await page.getByRole('radio', { name: label, exact: true }).check();
     await expect(page.getByRole('radio', { name: label, exact: true })).toBeChecked();
+    assert.ok(
+      await page
+        .getByRole('radio', { name: label, exact: true })
+        .locator('..')
+        .locator('svg')
+        .count(),
+    );
     await expect.poll(() => methods.at(-1)).toBe(method);
     await expect(page.getByText('۲۷۰٬۰۰۰ تومان', { exact: true })).toBeVisible();
   }
+  const picker = page.getByRole('group', { name: 'روش ارسال سفارش', exact: true });
+  await page.getByRole('radio', { name: 'پست', exact: true }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(picker.locator('input:checked')).toHaveCount(1);
+  assert.notEqual(await picker.locator('input:checked').inputValue(), 'POST');
+  await expect.poll(() => methods.at(-1)).toBe(await picker.locator('input:checked').inputValue());
+  await page.getByRole('radio', { name: 'پیک', exact: true }).tap();
+  await expect(page.getByRole('radio', { name: 'پیک', exact: true })).toBeChecked();
+  await expect.poll(() => methods.at(-1)).toBe('COURIER');
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
       .toBeLessThanOrEqual(1);
+    assert.ok((await picker.boundingBox()).width <= width);
+    for (const radio of await picker.getByRole('radio').all()) {
+      const box = await radio.boundingBox();
+      assert.ok(
+        box.width >= 44 && box.height >= 44,
+        'Each method retains a comfortable touch target',
+      );
+    }
   }
   await page.setViewportSize({ width: 390, height: 900 });
   await page.screenshot({ path: '/tmp/behjati-shipping-checkout-mobile.png', fullPage: true });

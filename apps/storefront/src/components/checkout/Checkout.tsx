@@ -2,7 +2,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MapPin, Plus, Pencil, Trash2, ShoppingBag, RefreshCw } from 'lucide-react';
+import {
+  MapPin,
+  Plus,
+  Pencil,
+  Trash2,
+  ShoppingBag,
+  RefreshCw,
+  Mailbox,
+  Truck,
+  Bike,
+  Check,
+} from 'lucide-react';
 import { formatPrice, formatNumber, createOrderInputSchema } from '@behjati/shared';
 import { shippingMethods, shippingMethodLabels, type ShippingMethod } from '@behjati/shared/sales';
 import {
@@ -25,6 +36,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import AddressForm from './AddressForm';
 type Quote = CheckoutQuoteQuery['checkoutQuote'];
+const shippingIcons = { POST: Mailbox, TIPAX: Truck, COURIER: Bike };
 function removeOrderedItems(items: { productId: string; quantity: number }[]) {
   const purchased = Object.fromEntries(items.map((item) => [item.productId, item.quantity]));
   useCart.setState((state) => ({
@@ -317,28 +329,44 @@ export default function Checkout() {
             }}
           />
         )}
-        <fieldset className="space-y-3 border-t border-border pt-5" disabled={pending}>
-          <legend className="px-1 text-base font-bold">روش ارسال سفارش</legend>
-          <div className="grid grid-cols-3 gap-2">
-            {shippingMethods.map((method) => (
-              <label
-                key={method}
-                className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-xl border px-2 py-3 text-sm font-semibold ${shippingMethod === method ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-surface/30'}`}
-              >
-                <input
-                  type="radio"
-                  name="shipping-method"
-                  value={method}
-                  checked={shippingMethod === method}
-                  onChange={() => setShippingMethod(method)}
-                  className="size-4 shrink-0 accent-primary"
-                />
-                {shippingMethodLabels[method]}
-              </label>
-            ))}
+        <fieldset className="space-y-2.5 border-t border-border pt-4" disabled={pending}>
+          <legend className="px-1 text-sm font-bold">روش ارسال سفارش</legend>
+          <div className="grid grid-cols-3 gap-1 rounded-2xl bg-surface/70 p-1">
+            {shippingMethods.map((method) => {
+              const Icon = shippingIcons[method];
+              return (
+                <label key={method} className="relative min-w-0 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="shipping-method"
+                    value={method}
+                    checked={shippingMethod === method}
+                    onChange={() => setShippingMethod(method)}
+                    aria-describedby="shipping-cost-note"
+                    className="peer absolute inset-0 z-10 size-full cursor-pointer opacity-0 disabled:cursor-wait"
+                  />
+                  <span className="relative flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-transparent px-2 py-2 text-muted-foreground transition-colors peer-checked:border-primary/20 peer-checked:bg-card peer-checked:text-primary peer-checked:shadow-sm peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-enabled:peer-hover:bg-card/70 peer-disabled:opacity-50 motion-reduce:transition-none">
+                    <Icon className="size-5 shrink-0" strokeWidth={1.7} aria-hidden="true" />
+                    <span className="text-xs font-semibold sm:text-sm">
+                      {shippingMethodLabels[method]}
+                    </span>
+                    {shippingMethod === method && (
+                      <Check
+                        className="absolute left-1.5 top-1.5 size-3 text-primary"
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </span>
+                </label>
+              );
+            })}
           </div>
-          <p className="text-xs leading-6 text-muted-foreground">
-            هزینهٔ ارسال بر اساس وزن کل بسته و تعرفهٔ محصولات، در خلاصهٔ سفارش محاسبه می‌شود.
+          <p
+            id="shipping-cost-note"
+            className="text-[11px] leading-6 text-muted-foreground sm:text-xs"
+          >
+            هزینهٔ ارسال با توجه به وزن بسته، در خلاصهٔ سفارش نمایش داده می‌شود.
           </p>
         </fieldset>
       </Card>
