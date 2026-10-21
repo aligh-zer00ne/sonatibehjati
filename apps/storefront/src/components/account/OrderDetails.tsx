@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import PayOrderButton from '@/components/payment/PayOrderButton';
 import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
 import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
@@ -28,18 +29,21 @@ export default function OrderDetails({ id }: { id: string }) {
         </time>
         <div className="mt-4 space-y-3">
           <p className="text-sm font-bold text-primary">
-            {order.paidAt
-              ? 'پرداخت تأییدشده'
-              : order.payments[0]
-                ? paymentStatusLabels[order.payments[0].status]
-                : 'پرداخت تأیید نشده'}
+            {order.salesChannel !== 'WEBSITE'
+              ? `دریافت فروشگاه: ${formatPrice(order.offlinePaidAmount)} · مانده: ${formatPrice(order.total - order.offlinePaidAmount)}`
+              : order.paidAt
+                ? 'پرداخت تأییدشده'
+                : order.payments[0]
+                  ? paymentStatusLabels[order.payments[0].status]
+                  : 'پرداخت تأیید نشده'}
           </p>
           {order.payments[0]?.rrn && (
             <p className="text-sm">
               شماره پیگیری: <bdi>{order.payments[0].rrn}</bdi>
             </p>
           )}
-          {!order.paidAt &&
+          {order.salesChannel === 'WEBSITE' &&
+            !order.paidAt &&
             ['CREATED', 'PENDING_PAYMENT'].includes(order.status) &&
             !pendingPaymentStates.includes(order.payments[0]?.status ?? '') && (
               <PayOrderButton orderId={id} />
@@ -77,6 +81,13 @@ export default function OrderDetails({ id }: { id: string }) {
               'ثبت نشده'}
           </p>
           <dl className="mt-4 space-y-3 text-sm">
+            <div>
+              <dt className="text-muted-foreground">محل خرید و شیوه تحویل</dt>
+              <dd className="mt-1">
+                {salesChannelLabels[order.salesChannel]} ·{' '}
+                {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
+              </dd>
+            </div>
             <div>
               <dt className="text-muted-foreground">گیرنده</dt>
               <dd className="mt-1">{address.recipientName || 'ثبت نشده'}</dd>

@@ -1,7 +1,7 @@
 import type { AdminReportFieldsFragment } from '../generated/graphql';
 export function reportCSV(report: AdminReportFieldsFragment) {
   const rows = [
-    ['تاریخ میلادی', 'تعداد سفارش', 'ارزش سفارش‌های غیرلغوشده (تومان)', 'درآمد تأییدشده (تومان)'],
+    ['تاریخ میلادی', 'تعداد سفارش', 'ارزش سفارش‌های غیرلغوشده (تومان)', 'کل دریافتی (تومان)'],
     ...[...report.daily]
       .sort((a, b) => b.date.localeCompare(a.date))
       .map((day) => [day.date, day.ordersCount, day.orderValue, day.revenue]),

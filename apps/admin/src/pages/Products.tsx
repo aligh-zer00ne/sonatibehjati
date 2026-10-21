@@ -1,3 +1,4 @@
+import { FilterButton } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import DashboardProductImage from '../components/DashboardProductImage';
 import RecordCards from '../components/RecordCards';
@@ -89,66 +90,74 @@ export default function Products() {
         >
           تخفیف / جشنواره ({formatNumber(selected.length)} محصول)
         </Button>
-        <div className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Input.Search
-            aria-label="جستجوی محصول"
-            placeholder="عنوان یا نامک"
-            maxLength={100}
-            allowClear
-            onSearch={(value) => {
-              setParams(value ? { search: value } : {});
-              setPage(1);
-              setSelected([]);
-            }}
-          />
-          <Select
-            aria-label="فیلتر دسته‌بندی"
-            className="w-full"
-            value={categoryId}
-            onChange={(value) => {
-              setCategoryId(value);
-              setPage(1);
-              setSelected([]);
-            }}
-            options={[
-              { value: '', label: 'همه دسته‌ها' },
-              ...(query.data?.categories ?? []).map((category) => ({
-                value: category.id,
-                label: category.title,
-              })),
-            ]}
-          />
-          <Select
-            aria-label="فیلتر فعال بودن"
-            className="w-full"
-            value={active}
-            onChange={(value) => {
-              setActive(value);
-              setPage(1);
-              setSelected([]);
-            }}
-            options={[
-              { value: 'all', label: 'همه محصولات' },
-              { value: 'active', label: 'فعال' },
-              { value: 'inactive', label: 'غیرفعال' },
-            ]}
-          />
-          <Select
-            aria-label="مرتب‌سازی محصولات"
-            className="w-full"
-            value={sort}
-            onChange={(value) => {
-              setSort(value);
-              setPage(1);
-              setSelected([]);
-            }}
-            options={[
-              { value: 'NEWEST', label: 'جدیدترین' },
-              { value: 'PRICE_ASC', label: 'قیمت کمتر' },
-              { value: 'PRICE_DESC', label: 'قیمت بیشتر' },
-              { value: 'NAME_ASC', label: 'نام محصول' },
-            ]}
-          />
+        <div className="flex flex-wrap gap-2">
+          <FilterButton label="جستجوی محصول" active={!!search}>
+            <Input.Search
+              aria-label="جستجوی محصول"
+              placeholder="عنوان یا نامک"
+              maxLength={100}
+              allowClear
+              onSearch={(value) => {
+                setParams(value ? { search: value } : {});
+                setPage(1);
+                setSelected([]);
+              }}
+            />
+          </FilterButton>
+          <FilterButton label="دسته‌بندی" active={!!categoryId}>
+            <Select
+              aria-label="فیلتر دسته‌بندی"
+              className="w-full"
+              value={categoryId}
+              onChange={(value) => {
+                setCategoryId(value);
+                setPage(1);
+                setSelected([]);
+              }}
+              options={[
+                { value: '', label: 'همه دسته‌ها' },
+                ...(query.data?.categories ?? []).map((category) => ({
+                  value: category.id,
+                  label: category.title,
+                })),
+              ]}
+            />
+          </FilterButton>
+          <FilterButton label="وضعیت محصول" active={active !== 'all'}>
+            <Select
+              aria-label="فیلتر فعال بودن"
+              className="w-full"
+              value={active}
+              onChange={(value) => {
+                setActive(value);
+                setPage(1);
+                setSelected([]);
+              }}
+              options={[
+                { value: 'all', label: 'همه محصولات' },
+                { value: 'active', label: 'فعال' },
+                { value: 'inactive', label: 'غیرفعال' },
+              ]}
+            />
+          </FilterButton>
+          <FilterButton label="مرتب‌سازی محصولات" active={sort !== 'NEWEST'}>
+            <Select
+              aria-label="مرتب‌سازی محصولات"
+              className="w-full"
+              value={sort}
+              onChange={(value) => {
+                setSort(value);
+                setPage(1);
+                setSelected([]);
+              }}
+              options={[
+                { value: 'NEWEST', label: 'جدیدترین' },
+                { value: 'PRICE_ASC', label: 'قیمت کمتر' },
+                { value: 'PRICE_DESC', label: 'قیمت بیشتر' },
+                { value: 'NAME_ASC', label: 'نام محصول' },
+              ]}
+            />
+          </FilterButton>
         </div>
       </Card>
       {!query.data ? (

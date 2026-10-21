@@ -66,21 +66,26 @@ export default function OrderConfirmation({ id }: { id: string }) {
         شمارهٔ سفارش: <b>{formatNumber(order.number)}</b>
       </p>
       <p className="rounded-xl bg-primary/5 p-3 font-bold text-primary">
-        {order.paidAt
-          ? 'پرداخت موفق'
-          : order.payments[0]
-            ? paymentStatusLabels[order.payments[0].status]
-            : order.status === 'PENDING_PAYMENT'
-              ? 'در انتظار پرداخت'
-              : 'سفارش ثبت‌شده'}
+        {order.salesChannel !== 'WEBSITE'
+          ? `دریافت فروشگاه: ${formatPrice(order.offlinePaidAmount)}`
+          : order.paidAt
+            ? 'پرداخت موفق'
+            : order.payments[0]
+              ? paymentStatusLabels[order.payments[0].status]
+              : order.status === 'PENDING_PAYMENT'
+                ? 'در انتظار پرداخت'
+                : 'سفارش ثبت‌شده'}
       </p>
       <p className="font-bold">مبلغ سفارش: {formatPrice(order.total)}</p>
       <p className="text-sm leading-8 text-muted-foreground">
-        {order.paidAt
-          ? 'بانک پرداخت را تأیید کرده است؛ سفارش در حال پیگیری است.'
-          : 'پرداخت سفارش پس از تأیید بانک ثبت می‌شود.'}
+        {order.salesChannel !== 'WEBSITE'
+          ? `ماندهٔ سفارش: ${formatPrice(order.total - order.offlinePaidAmount)}`
+          : order.paidAt
+            ? 'بانک پرداخت را تأیید کرده است؛ سفارش در حال پیگیری است.'
+            : 'پرداخت سفارش پس از تأیید بانک ثبت می‌شود.'}
       </p>
-      {!order.paidAt &&
+      {order.salesChannel === 'WEBSITE' &&
+        !order.paidAt &&
         ['CREATED', 'PENDING_PAYMENT'].includes(order.status) &&
         !pendingPaymentStates.includes(order.payments[0]?.status ?? '') && (
           <PayOrderButton orderId={id} />

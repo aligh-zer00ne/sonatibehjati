@@ -93,6 +93,7 @@ export async function adminOrder(id: string) {
     where: { id },
     include: {
       shippingLabel: true,
+      offlinePayments: { orderBy: [{ createdAt: 'desc' }, { id: 'desc' }] },
       user: { select: customerSelect },
       items: { orderBy: { id: 'asc' } },
       statusEvents: {
@@ -110,6 +111,10 @@ export async function adminOrder(id: string) {
     ...serializeDates(order),
     address: orderAddress(order.addressSnapshot),
     shippingLabel: presentShippingLabel(order.shippingLabel),
+    offlinePayments: order.offlinePayments.map((p) => ({
+      ...p,
+      createdAt: p.createdAt.toISOString(),
+    })),
     statusEvents: order.statusEvents.map((event) => ({
       ...event,
       admin: presentAdminIdentity(event.admin),
@@ -131,11 +136,18 @@ export async function changeOrderStatus(adminId: string, raw: unknown) {
     if (!orderStatusTransitions[order.status].includes(input.status))
       throw authError('این تغییر وضعیت مجاز نیست.', 'BAD_USER_INPUT');
     if (
+      order.salesChannel === 'WEBSITE' &&
       env.PAYMENT_PROVIDER === 'sep' &&
       ['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(input.status) &&
       !order.paidAt
     )
       throw authError('پرداخت این سفارش هنوز توسط بانک تأیید نشده است.', 'BAD_USER_INPUT');
+    if (
+      order.salesChannel !== 'WEBSITE' &&
+      ['PROCESSING', 'SHIPPED', 'DELIVERED'].includes(input.status) &&
+      order.offlinePaidAmount < order.total
+    )
+      throw authError('ابتدا ماندهٔ پرداخت سفارش را ثبت کنید.', 'BAD_USER_INPUT');
     await tx.order.update({ where: { id: input.id }, data: { status: input.status } });
     await tx.orderStatusEvent.create({
       data: { orderId: input.id, adminId, fromStatus: order.status, toStatus: input.status },

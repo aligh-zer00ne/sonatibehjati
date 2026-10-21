@@ -54,8 +54,8 @@ export default function ProductEditor({
   const initial = {
     shippingWeightGrams:
       product?.shippingWeightGrams ?? (product ? parseShippingWeight(product.weight) : undefined),
-    shippingBaseCost: product?.shippingBaseCost ?? 0,
-    shippingAdditionalKgCost: product?.shippingAdditionalKgCost ?? 0,
+    shippingBaseCost: product?.shippingBaseCost ?? undefined,
+    shippingAdditionalKgCost: product?.shippingAdditionalKgCost ?? undefined,
     ...(draft?.values ?? {
       ...(product
         ? {

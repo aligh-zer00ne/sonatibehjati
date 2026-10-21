@@ -1,3 +1,4 @@
+import { FilterChips } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
@@ -51,15 +52,15 @@ export default function Tickets() {
     <>
       <Typography.Title level={2}>پشتیبانی و تیکت‌ها</Typography.Title>
       <Card>
-        <Select
-          aria-label="وضعیت تیکت"
-          className="w-full sm:w-56"
-          placeholder="همه وضعیت‌ها"
-          allowClear
-          value={status}
-          options={statuses}
-          onChange={(value) => {
-            setStatus(value);
+        <FilterChips<TicketStatus | ''>
+          label="وضعیت تیکت"
+          value={status ?? ''}
+          options={[
+            { value: '', label: 'همه تیکت‌ها' },
+            ...statuses.map((o) => ({ ...o, value: o.value as TicketStatus })),
+          ]}
+          onChange={(v) => {
+            setStatus(v || undefined);
             setPage(1);
           }}
         />

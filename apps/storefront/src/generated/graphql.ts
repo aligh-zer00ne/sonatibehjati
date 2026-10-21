@@ -77,6 +77,15 @@ export type AddressInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminChannelMetric = {
+  __typename?: 'AdminChannelMetric';
+  customersCount: Scalars['Int']['output'];
+  orderValue: Scalars['Float']['output'];
+  ordersCount: Scalars['Int']['output'];
+  revenue: Scalars['Float']['output'];
+  salesChannel: SalesChannel;
+};
+
 export type AdminCoupon = {
   __typename?: 'AdminCoupon';
   code: Scalars['String']['output'];
@@ -105,6 +114,13 @@ export type AdminCouponInput = {
   value: Scalars['Int']['input'];
 };
 
+export type AdminCustomerInput = {
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
+  salesChannel: SalesChannel;
+};
+
 export type AdminDailyMetric = {
   __typename?: 'AdminDailyMetric';
   date: Scalars['String']['output'];
@@ -117,6 +133,7 @@ export type AdminDashboard = {
   __typename?: 'AdminDashboard';
   activeProductsCount: Scalars['Int']['output'];
   averageOrderValue: Scalars['Float']['output'];
+  channelMetrics: Array<AdminChannelMetric>;
   customersCount: Scalars['Int']['output'];
   orderValue: Scalars['Float']['output'];
   ordersCount: Scalars['Int']['output'];
@@ -159,6 +176,55 @@ export type AdminLoginInput = {
   password: Scalars['String']['input'];
 };
 
+export type AdminManualOrderInput = {
+  address?: InputMaybe<AddressInput>;
+  customerId: Scalars['ID']['input'];
+  discountCode: Scalars['String']['input'];
+  expectedTotal: Scalars['Int']['input'];
+  items: Array<CheckoutLineInput>;
+  paymentMethod?: InputMaybe<OfflinePaymentMethod>;
+  pickup: Scalars['Boolean']['input'];
+  receivedAmount: Scalars['Int']['input'];
+  requestId: Scalars['ID']['input'];
+  salesChannel: SalesChannel;
+  shippingMethod: ShippingMethod;
+};
+
+export type AdminManualQuote = {
+  __typename?: 'AdminManualQuote';
+  discount: Scalars['Int']['output'];
+  items: Array<CheckoutLine>;
+  shipping: Scalars['Int']['output'];
+  shippingMethod?: Maybe<ShippingMethod>;
+  shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
+  subtotal: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type AdminManualQuoteInput = {
+  discountCode: Scalars['String']['input'];
+  items: Array<CheckoutLineInput>;
+  pickup: Scalars['Boolean']['input'];
+  shippingMethod: ShippingMethod;
+};
+
+export type AdminOfflinePayment = {
+  __typename?: 'AdminOfflinePayment';
+  adminEmail: Scalars['String']['output'];
+  amount: Scalars['Int']['output'];
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  method: OfflinePaymentMethod;
+};
+
+export type AdminOfflinePaymentInput = {
+  amount: Scalars['Int']['input'];
+  expectedUpdatedAt: Scalars['String']['input'];
+  method: OfflinePaymentMethod;
+  orderId: Scalars['ID']['input'];
+  requestId: Scalars['ID']['input'];
+};
+
 export type AdminOrder = {
   __typename?: 'AdminOrder';
   address: OrderAddressSnapshot;
@@ -168,6 +234,7 @@ export type AdminOrder = {
   items: Array<OrderItemSnapshot>;
   number: Scalars['Int']['output'];
   offlinePaidAmount: Scalars['Int']['output'];
+  offlinePayments: Array<AdminOfflinePayment>;
   paidAt?: Maybe<Scalars['String']['output']>;
   payments: Array<PaymentInfo>;
   salesChannel: SalesChannel;
@@ -315,8 +382,10 @@ export type AdminPromotionTargetInput = {
 export type AdminReport = {
   __typename?: 'AdminReport';
   averageOrderValue: Scalars['Float']['output'];
+  bankRevenue: Scalars['Float']['output'];
   daily: Array<AdminDailyMetric>;
   from: Scalars['String']['output'];
+  offlineRevenue: Scalars['Float']['output'];
   orderValue: Scalars['Float']['output'];
   ordersCount: Scalars['Int']['output'];
   revenue: Scalars['Float']['output'];
@@ -396,6 +465,7 @@ export type AdminTopProduct = {
 
 export type AdminUser = {
   __typename?: 'AdminUser';
+  acquisitionSource: SalesChannel;
   createdAt: Scalars['String']['output'];
   email?: Maybe<Scalars['String']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
@@ -403,6 +473,7 @@ export type AdminUser = {
   lastName?: Maybe<Scalars['String']['output']>;
   ordersCount: Scalars['Int']['output'];
   phone: Scalars['String']['output'];
+  salesChannels: Array<SalesChannel>;
   totalOrdersValue: Scalars['Float']['output'];
 };
 
@@ -612,6 +683,8 @@ export type Mutation = {
   adminLogout: Scalars['Boolean']['output'];
   adminRefresh: AdminSessionPayload;
   changeAdminPassword: Scalars['Boolean']['output'];
+  createAdminCustomer: AdminUser;
+  createAdminManualOrder: AdminOrder;
   createOrder: OrderReceipt;
   createStaff: AdminIdentity;
   createTicket: SupportTicket;
@@ -619,6 +692,7 @@ export type Mutation = {
   deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
   moderateProductReview: ProductReview;
+  recordAdminOfflinePayment: AdminOrder;
   refreshToken: AuthSession;
   replyAdminTicket: SupportTicket;
   replyTicket: SupportTicket;
@@ -654,6 +728,16 @@ export type MutationChangeAdminPasswordArgs = {
 };
 
 
+export type MutationCreateAdminCustomerArgs = {
+  input: AdminCustomerInput;
+};
+
+
+export type MutationCreateAdminManualOrderArgs = {
+  input: AdminManualOrderInput;
+};
+
+
 export type MutationCreateOrderArgs = {
   input: CreateOrderInput;
 };
@@ -684,6 +768,11 @@ export type MutationModerateProductReviewArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
   status: ReviewStatus;
+};
+
+
+export type MutationRecordAdminOfflinePaymentArgs = {
+  input: AdminOfflinePaymentInput;
 };
 
 
@@ -1003,8 +1092,11 @@ export type Query = {
   adminDashboard: AdminDashboard;
   adminGatewayTest: AdminGatewayTestState;
   adminHomepageContent: HomepageContent;
+  adminManualQuote: AdminManualQuote;
   adminMe?: Maybe<AdminIdentity>;
   adminOrder: AdminOrder;
+  adminOrderCustomer: AdminUser;
+  adminOrderCustomers: AdminUsersPage;
   adminOrders: AdminOrdersPage;
   adminProduct: Product;
   adminProducts: AdminProductsPage;
@@ -1039,12 +1131,33 @@ export type Query = {
 
 
 export type QueryAdminCustomerExportArgs = {
+  salesChannel?: InputMaybe<SalesChannel>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryAdminDashboardArgs = {
+  salesChannel?: InputMaybe<SalesChannel>;
+};
+
+
+export type QueryAdminManualQuoteArgs = {
+  input: AdminManualQuoteInput;
 };
 
 
 export type QueryAdminOrderArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdminOrderCustomerArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdminOrderCustomersArgs = {
+  input: AdminUsersInput;
 };
 
 

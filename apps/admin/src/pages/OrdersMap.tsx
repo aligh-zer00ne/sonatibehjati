@@ -1,10 +1,11 @@
+import OrderFilters from '../components/OrderFilters';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { useRef, useState } from 'react';
-import { Typography, Alert, Card, Pagination, Button, Input, Select, Empty, Tag } from 'antd';
+import { Typography, Alert, Card, Pagination, Button, Empty, Tag } from 'antd';
 import { Link } from 'react-router-dom';
-import { formatNumber, orderStatuses, orderStatusLabels } from '@behjati/shared';
-import { AdminOrdersDocument, type AdminOrdersInput, type OrderStatus } from '../generated/graphql';
+import { formatNumber, orderStatusLabels } from '@behjati/shared';
+import { AdminOrdersDocument, type AdminOrdersInput } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import { useOrderFilters } from '../hooks/useOrderFilters';
 import { customerName, persianDigits } from '../lib/format';
@@ -58,64 +59,15 @@ export default function OrdersMap() {
           </Link>
         )}
       </div>
-      <Card>
-        <div className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]">
-          <div>
-            <label className="mb-2 block text-xs" htmlFor="map-order-search">
-              جستجوی سفارش
-            </label>
-            <Input.Search
-              key={filters.input.search ?? ''}
-              id="map-order-search"
-              placeholder="شماره سفارش، نام یا موبایل"
-              defaultValue={filters.input.search ?? ''}
-              maxLength={100}
-              allowClear
-              onSearch={(search) => updateFilters({ search })}
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-xs" htmlFor="map-order-city">
-              شهر مقصد
-            </label>
-            <Input.Search
-              key={filters.input.city ?? ''}
-              id="map-order-city"
-              placeholder="نام شهر"
-              defaultValue={filters.input.city ?? ''}
-              maxLength={80}
-              allowClear
-              onSearch={(city) => updateFilters({ city })}
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-xs" htmlFor="map-order-status">
-              وضعیت سفارش
-            </label>
-            <Select<OrderStatus | ''>
-              id="map-order-status"
-              className="w-full"
-              value={filters.input.status ?? ''}
-              onChange={(status) => updateFilters({ status: status || null })}
-              options={[
-                { value: '', label: 'همه وضعیت‌ها' },
-                ...orderStatuses.map((status) => ({
-                  value: status,
-                  label: orderStatusLabels[status],
-                })),
-              ]}
-            />
-          </div>
-          <Button
-            onClick={() => {
-              setSelection(null);
-              filters.reset();
-            }}
-          >
-            پاک کردن فیلترها
-          </Button>
-        </div>
-      </Card>
+      <OrderFilters
+        key={String(filters.input.search) + String(filters.input.city)}
+        input={filters.input}
+        onChange={updateFilters}
+        onReset={() => {
+          setSelection(null);
+          filters.reset();
+        }}
+      />
       {filters.error ? (
         <Alert title={filters.error} type="error" role="alert" />
       ) : !result ? (

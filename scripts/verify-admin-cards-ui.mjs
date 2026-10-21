@@ -47,10 +47,15 @@ const user = {
   createdAt: date,
   ordersCount: 12,
   totalOrdersValue: 123456789,
+  acquisitionSource: 'WEBSITE',
+  salesChannels: ['WEBSITE', 'INSTAGRAM'],
 };
 const order = {
   id: 'cards-order',
   number: 1240,
+  salesChannel: 'WEBSITE',
+  shippingMethod: 'POST',
+  offlinePaidAmount: 0,
   status: 'PROCESSING',
   total: 250000,
   createdAt: date,
@@ -118,6 +123,8 @@ const report = {
   orderValue: 123456789,
   averageOrderValue: 10288065,
   revenue: 250000,
+  bankRevenue: 250000,
+  offlineRevenue: 0,
   statuses: [{ status: 'PROCESSING', count: 12 }],
   daily: Array.from({ length: 21 }, (_, index) => ({
     date: new Date(Date.now() - index * 86400000).toISOString().slice(0, 10),
@@ -192,6 +199,13 @@ try {
             ...report,
             activeProductsCount: 1,
             customersCount: 1,
+            channelMetrics: ['WEBSITE', 'INSTAGRAM', 'IN_PERSON'].map((salesChannel) => ({
+              salesChannel,
+              customersCount: 1,
+              ordersCount: 1,
+              orderValue: 250000,
+              revenue: 250000,
+            })),
             ordersToday: 1,
             ordersThisMonth: 12,
             recentUsers: [user],

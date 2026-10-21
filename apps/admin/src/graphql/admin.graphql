@@ -140,6 +140,13 @@ fragment AdminOrderSummaryFields on AdminOrderSummary {
   }
 }
 fragment AdminOrderFields on AdminOrder {
+  offlinePayments {
+    id
+    amount
+    method
+    adminEmail
+    createdAt
+  }
   salesChannel
   shippingMethod
   shippingWeightGrams
@@ -216,6 +223,8 @@ query AdminUsers($input: AdminUsersInput!) {
       email
       createdAt
       ordersCount
+      acquisitionSource
+      salesChannels
       totalOrdersValue
     }
     total
@@ -225,6 +234,8 @@ query AdminUsers($input: AdminUsersInput!) {
   }
 }
 fragment AdminReportFields on AdminReport {
+  bankRevenue
+  offlineRevenue
   from
   to
   ordersCount
@@ -242,8 +253,15 @@ fragment AdminReportFields on AdminReport {
     count
   }
 }
-query AdminDashboard {
-  adminDashboard {
+query AdminDashboard($salesChannel: SalesChannel) {
+  adminDashboard(salesChannel: $salesChannel) {
+    channelMetrics {
+      salesChannel
+      customersCount
+      ordersCount
+      orderValue
+      revenue
+    }
     activeProductsCount
     customersCount
     recentUsers {
@@ -254,6 +272,8 @@ query AdminDashboard {
       email
       createdAt
       ordersCount
+      acquisitionSource
+      salesChannels
       totalOrdersValue
     }
     topProducts {
@@ -322,6 +342,8 @@ query AdminSelectedUser($id: ID!) {
     email
     createdAt
     ordersCount
+    acquisitionSource
+    salesChannels
     totalOrdersValue
   }
 }
@@ -371,8 +393,8 @@ mutation SaveAdminCoupon($id: ID, $expectedUpdatedAt: String, $input: AdminCoupo
     ...AdminCouponFields
   }
 }
-query AdminCustomerExport($search: String) {
-  adminCustomerExport(search: $search) {
+query AdminCustomerExport($search: String, $salesChannel: SalesChannel) {
+  adminCustomerExport(search: $search, salesChannel: $salesChannel) {
     filename
     base64
     count
@@ -549,5 +571,63 @@ mutation SaveAnnouncement($input: AnnouncementInput!, $expectedUpdatedAt: String
       enabled
       text
     }
+  }
+}
+
+query AdminOrderCustomers($input: AdminUsersInput!) {
+  adminOrderCustomers(input: $input) {
+    items {
+      id
+      phone
+      firstName
+      lastName
+    }
+    total
+  }
+}
+query AdminOrderCustomer($id: ID!) {
+  adminOrderCustomer(id: $id) {
+    id
+    phone
+    firstName
+    lastName
+  }
+}
+query ManualCatalog($input: CatalogInput!) {
+  catalog(input: $input) {
+    items {
+      id
+      title
+      weight
+      price
+    }
+    total
+  }
+}
+query AdminManualQuote($input: AdminManualQuoteInput!) {
+  adminManualQuote(input: $input) {
+    subtotal
+    discount
+    shipping
+    total
+    shippingWeightGrams
+  }
+}
+mutation CreateAdminCustomer($input: AdminCustomerInput!) {
+  createAdminCustomer(input: $input) {
+    id
+    phone
+    firstName
+    lastName
+  }
+}
+mutation CreateAdminManualOrder($input: AdminManualOrderInput!) {
+  createAdminManualOrder(input: $input) {
+    ...AdminOrderFields
+  }
+}
+mutation RecordAdminOfflinePayment($input: AdminOfflinePaymentInput!) {
+  recordAdminOfflinePayment(input: $input) {
+    ...AdminOrderFields
   }
 }

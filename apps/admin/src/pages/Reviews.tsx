@@ -1,7 +1,8 @@
+import { FilterChips } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import { Alert, Button, Card, Rate, Select, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Rate, Tag, Typography } from 'antd';
 import { formatDate } from '@behjati/shared';
 import {
   AdminReviewsDocument,
@@ -39,15 +40,15 @@ export default function Reviews() {
     <>
       <Typography.Title level={2}>مدیریت نظرات محصول</Typography.Title>
       <Card>
-        <Select
-          aria-label="وضعیت نظر"
-          allowClear
-          value={status}
-          options={statuses}
-          className="w-full sm:w-56"
-          placeholder="همه نظرات"
-          onChange={(value) => {
-            setStatus(value);
+        <FilterChips<ReviewStatus | ''>
+          label="وضعیت نظر"
+          value={status ?? ''}
+          options={[
+            { value: '', label: 'همه نظرات' },
+            ...statuses.map((o) => ({ ...o, value: o.value as ReviewStatus })),
+          ]}
+          onChange={(v) => {
+            setStatus(v || undefined);
             setPage(1);
           }}
         />

@@ -1,114 +1,120 @@
 import { hasPermission } from '@behjati/shared/permissions';
-import { Input, InputNumber, Select, Button, Card } from 'antd';
+import { Input, InputNumber, Button, Card } from 'antd';
 import CalendarPicker from './CalendarPicker';
 import { orderStatuses, orderStatusLabels } from '@behjati/shared';
-import type { AdminOrdersInput, OrderStatus } from '../generated/graphql';
+import {
+  salesChannels,
+  salesChannelLabels,
+  shippingMethods,
+  shippingMethodLabels,
+} from '@behjati/shared/sales';
+import type { AdminOrdersInput } from '../generated/graphql';
 import { useAdmin } from '../auth/AdminProvider';
 import UserFilter from './UserFilter';
+import { FilterButton, FilterChips } from './FilterButtons';
 export default function OrderFilters({
   input,
   onChange,
   onReset,
 }: {
   input: AdminOrdersInput;
-  onChange: (value: Partial<AdminOrdersInput>) => void;
+  onChange: (v: Partial<AdminOrdersInput>) => void;
   onReset: () => void;
 }) {
   const { admin } = useAdmin();
   return (
     <Card>
-      <div className="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div>
-          <label className="mb-2 block text-xs" htmlFor="order-search">
-            جستجو
-          </label>
+      <div className="flex flex-wrap gap-2" aria-label="فیلترهای سفارش">
+        <FilterButton label="جستجوی سفارش" active={!!input.search || !!input.number}>
           <Input.Search
             id="order-search"
+            aria-label="جستجوی سفارش"
             placeholder="شماره، نام یا موبایل"
             defaultValue={input.search ?? ''}
-            maxLength={100}
             allowClear
+            maxLength={100}
             onSearch={(search) => onChange({ search })}
           />
-        </div>
-        <div>
-          <label className="mb-2 block text-xs" htmlFor="order-status">
-            وضعیت
-          </label>
-          <Select<OrderStatus | ''>
-            id="order-status"
-            className="w-full"
-            value={input.status ?? ''}
-            onChange={(status) => onChange({ status: status || null })}
-            options={[
-              { value: '', label: 'همه وضعیت‌ها' },
-              ...orderStatuses.map((status) => ({
-                value: status,
-                label: orderStatusLabels[status],
-              })),
-            ]}
-          />
-        </div>
-        <div>
-          <label className="mb-2 block text-xs" htmlFor="order-number">
-            شماره سفارش
-          </label>
+          <label htmlFor="order-number">شماره سفارش</label>
           <InputNumber
             id="order-number"
-            className="!w-full"
             min={1}
             max={2147483647}
             precision={0}
             value={input.number}
             onChange={(number) => onChange({ number })}
           />
-        </div>
+        </FilterButton>
+        <FilterButton label="وضعیت سفارش" active={!!input.status}>
+          <FilterChips
+            label="وضعیت سفارش"
+            value={input.status ?? ''}
+            options={[
+              { value: '', label: 'همه وضعیت‌ها' },
+              ...orderStatuses.map((value) => ({ value, label: orderStatusLabels[value] })),
+            ]}
+            onChange={(status) => onChange({ status: status || null })}
+          />
+        </FilterButton>
+        <FilterButton label="محل خرید" active={!!input.salesChannel}>
+          <FilterChips
+            label="محل خرید"
+            value={input.salesChannel ?? ''}
+            options={[
+              { value: '', label: 'همه خریدها' },
+              ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
+            ]}
+            onChange={(salesChannel) => onChange({ salesChannel: salesChannel || null })}
+          />
+        </FilterButton>
+        <FilterButton label="شیوه ارسال" active={!!input.shippingMethod}>
+          <FilterChips
+            label="شیوه ارسال"
+            value={input.shippingMethod ?? ''}
+            options={[
+              { value: '', label: 'همه روش‌ها' },
+              ...shippingMethods.map((value) => ({ value, label: shippingMethodLabels[value] })),
+            ]}
+            onChange={(shippingMethod) => onChange({ shippingMethod: shippingMethod || null })}
+          />
+        </FilterButton>
         {hasPermission(admin, 'CUSTOMERS') && (
-          <div>
-            <span className="mb-2 block text-xs">مشتری</span>
+          <FilterButton label="مشتری" active={!!input.userId}>
             <UserFilter value={input.userId} onChange={(userId) => onChange({ userId })} />
-          </div>
+          </FilterButton>
         )}
-        <div>
-          <label className="mb-2 block text-xs" htmlFor="order-city">
-            شهر نشانی سفارش
-          </label>
+        <FilterButton label="شهر مقصد" active={!!input.city}>
           <Input.Search
-            id="order-city"
+            aria-label="شهر نشانی سفارش"
             defaultValue={input.city ?? ''}
             maxLength={80}
-            onSearch={(city) => onChange({ city })}
             allowClear
+            onSearch={(city) => onChange({ city })}
           />
-        </div>
-        <div>
-          <label className="mb-2 block text-xs" htmlFor="order-from">
-            از تاریخ
-          </label>
+        </FilterButton>
+        <FilterButton label="بازه تاریخ" active={!!input.from || !!input.to}>
+          <label htmlFor="order-from">از تاریخ</label>
           <CalendarPicker
             id="order-from"
             value={input.from}
             onChange={(from) => onChange({ from })}
           />
-        </div>
-        <div>
-          <label className="mb-2 block text-xs" htmlFor="order-to">
-            تا تاریخ
-          </label>
+          <label htmlFor="order-to">تا تاریخ</label>
           <CalendarPicker id="order-to" value={input.to} onChange={(to) => onChange({ to })} />
-        </div>
-        <Select
-          aria-label="مرتب‌سازی سفارش‌ها"
-          className="w-full"
-          value={input.sort ?? 'NEWEST'}
-          onChange={(sort) => onChange({ sort })}
-          options={[
-            { value: 'NEWEST', label: 'جدیدترین' },
-            { value: 'OLDEST', label: 'قدیمی‌ترین' },
-            { value: 'TOTAL_DESC', label: 'مبلغ بیشتر' },
-            { value: 'TOTAL_ASC', label: 'مبلغ کمتر' },
-          ]}
-        />
+        </FilterButton>
+        <FilterButton label="مرتب‌سازی سفارش‌ها" active={!!input.sort && input.sort !== 'NEWEST'}>
+          <FilterChips
+            label="مرتب‌سازی سفارش‌ها"
+            value={input.sort ?? 'NEWEST'}
+            options={[
+              { value: 'NEWEST', label: 'جدیدترین' },
+              { value: 'OLDEST', label: 'قدیمی‌ترین' },
+              { value: 'TOTAL_DESC', label: 'مبلغ بیشتر' },
+              { value: 'TOTAL_ASC', label: 'مبلغ کمتر' },
+            ]}
+            onChange={(sort) => onChange({ sort })}
+          />
+        </FilterButton>
         <Button onClick={onReset}>پاک کردن فیلترها</Button>
       </div>
     </Card>

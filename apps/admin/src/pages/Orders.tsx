@@ -1,3 +1,4 @@
+import ManualOrderModal from '../components/ManualOrderModal';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { Typography, Alert, Button } from 'antd';
@@ -12,6 +13,7 @@ import DataState from '../components/DataState';
 import AdminIcon from '../components/AdminIcon';
 export default function Orders() {
   const { admin } = useAdmin();
+  const [manualOpen, setManualOpen] = useState(false);
   const filters = useOrderFilters();
   const query = useAdminQuery(AdminOrdersDocument, { input: filters.input }, !filters.error);
   const filterKey = JSON.stringify(filters.input);
@@ -25,12 +27,33 @@ export default function Orders() {
             مدیریت سفارش، از جزئیات خرید تا آماده‌سازی و ارسال
           </p>
         </div>
-        {hasPermission(admin, 'ORDER_MAP') && (
-          <Link to="/admin/orders/map">
-            <Button icon={<AdminIcon name="map" width={18} height={18} />}>مشاهده روی نقشه</Button>
-          </Link>
-        )}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="primary"
+            icon={<AdminIcon name="plus" width={18} />}
+            onClick={() => setManualOpen(true)}
+          >
+            ثبت سفارش دستی
+          </Button>
+          {hasPermission(admin, 'ORDER_MAP') && (
+            <Link to="/admin/orders/map">
+              <Button icon={<AdminIcon name="map" width={18} height={18} />}>
+                مشاهده روی نقشه
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
+      {manualOpen && (
+        <ManualOrderModal
+          onClose={() => setManualOpen(false)}
+          onSaved={(id) => {
+            setManualOpen(false);
+            setSelection({ id, filterKey });
+            query.refresh();
+          }}
+        />
+      )}
       <OrderFilters
         key={String(filters.input.search) + String(filters.input.city)}
         input={filters.input}

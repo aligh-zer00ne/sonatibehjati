@@ -1,3 +1,4 @@
+import OfflineReceipts from './OfflineReceipts';
 import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import { lazy, Suspense, useId, useState, type ReactNode } from 'react';
 import { Alert, App, Button, Popconfirm, Select } from 'antd';
@@ -290,6 +291,13 @@ export default function OrderDetailsCard({
                 icon: <AdminIcon name="wallet" width={16} height={16} />,
                 children: (
                   <div className="space-y-3">
+                    <OfflineReceipts
+                      order={order}
+                      onUpdated={() => {
+                        query.refresh();
+                        onUpdated?.();
+                      }}
+                    />
                     <div
                       className={`flex items-center gap-2 rounded-xl p-3 text-xs font-medium ${order.paidAt ? 'bg-[#f4e8d3] text-[#96140d]' : 'bg-[#faf2df] text-[#816422]'}`}
                     >

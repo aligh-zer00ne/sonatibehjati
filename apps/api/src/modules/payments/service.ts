@@ -80,6 +80,8 @@ export async function startOrderPayment(userId: string, orderId: string) {
       include: { user: { select: { phone: true } } },
     });
     if (!order) throw authError('سفارش یافت نشد.', 'NOT_FOUND');
+    if (order.salesChannel !== 'WEBSITE')
+      throw authError('پرداخت این سفارش در فروشگاه ثبت می‌شود.', 'ORDER_NOT_PAYABLE');
     if (order.paidAt) throw authError('این سفارش قبلاً پرداخت شده است.', 'ALREADY_PAID');
     if (!['CREATED', 'PENDING_PAYMENT'].includes(order.status))
       throw authError('این سفارش قابل پرداخت نیست.', 'ORDER_NOT_PAYABLE');

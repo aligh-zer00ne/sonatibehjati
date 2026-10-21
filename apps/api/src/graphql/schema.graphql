@@ -42,6 +42,9 @@ type Product {
   updatedAt: String!
 }
 type Query {
+  adminOrderCustomers(input: AdminUsersInput!): AdminUsersPage!
+  adminOrderCustomer(id: ID!): AdminUser!
+  adminManualQuote(input: AdminManualQuoteInput!): AdminManualQuote!
   adminMe: AdminIdentity
   adminProducts(input: AdminProductsInput!): AdminProductsPage!
   adminProduct(id: ID!): Product!
@@ -49,7 +52,7 @@ type Query {
   adminOrder(id: ID!): AdminOrder!
   adminUser(id: ID!): AdminUser!
   adminUsers(input: AdminUsersInput!): AdminUsersPage!
-  adminDashboard: AdminDashboard!
+  adminDashboard(salesChannel: SalesChannel): AdminDashboard!
   adminReport(input: AdminReportInput!): AdminReport!
   myOrders(input: MyOrdersInput!): MyOrdersPage!
   myOrder(id: ID!): AccountOrder!
@@ -121,6 +124,9 @@ input VerifyOtpInput {
   code: String!
 }
 type Mutation {
+  createAdminCustomer(input: AdminCustomerInput!): AdminUser!
+  createAdminManualOrder(input: AdminManualOrderInput!): AdminOrder!
+  recordAdminOfflinePayment(input: AdminOfflinePaymentInput!): AdminOrder!
   setAdminPromotion(
     input: AdminPromotionInput!
     products: [AdminPromotionTargetInput!]!
@@ -461,6 +467,7 @@ type AdminOrderSummary {
   address: OrderAddressSnapshot!
 }
 type AdminOrder {
+  offlinePayments: [AdminOfflinePayment!]!
   salesChannel: SalesChannel!
   shippingMethod: ShippingMethod
   shippingWeightGrams: Int
@@ -501,6 +508,8 @@ input AdminUsersInput {
   search: String
 }
 type AdminUser {
+  acquisitionSource: SalesChannel!
+  salesChannels: [SalesChannel!]!
   id: ID!
   phone: String!
   firstName: String
@@ -535,6 +544,8 @@ type AdminStatusMetric {
   count: Int!
 }
 type AdminReport {
+  bankRevenue: Float!
+  offlineRevenue: Float!
   from: String!
   to: String!
   ordersCount: Int!
@@ -544,7 +555,15 @@ type AdminReport {
   daily: [AdminDailyMetric!]!
   statuses: [AdminStatusMetric!]!
 }
+type AdminChannelMetric {
+  salesChannel: SalesChannel!
+  customersCount: Int!
+  ordersCount: Int!
+  orderValue: Float!
+  revenue: Float!
+}
 type AdminDashboard {
+  channelMetrics: [AdminChannelMetric!]!
   activeProductsCount: Int!
   customersCount: Int!
   recentUsers: [AdminUser!]!
@@ -692,7 +711,7 @@ type CustomerExport {
 extend type Query {
   adminAccounts: [AdminIdentity!]!
   adminCoupons: [AdminCoupon!]!
-  adminCustomerExport(search: String): CustomerExport!
+  adminCustomerExport(search: String, salesChannel: SalesChannel): CustomerExport!
   myTickets(input: TicketFilter!): TicketPage!
   myTicket(id: ID!): SupportTicket!
   adminTickets(input: TicketFilter!): TicketPage!
@@ -869,4 +888,53 @@ enum OfflinePaymentMethod {
   CASH
   POS
   CARD_TRANSFER
+}
+
+input AdminCustomerInput {
+  phone: String!
+  firstName: String!
+  lastName: String!
+  salesChannel: SalesChannel!
+}
+input AdminManualQuoteInput {
+  items: [CheckoutLineInput!]!
+  discountCode: String!
+  shippingMethod: ShippingMethod!
+  pickup: Boolean!
+}
+input AdminManualOrderInput {
+  items: [CheckoutLineInput!]!
+  discountCode: String!
+  shippingMethod: ShippingMethod!
+  pickup: Boolean!
+  customerId: ID!
+  salesChannel: SalesChannel!
+  address: AddressInput
+  receivedAmount: Int!
+  paymentMethod: OfflinePaymentMethod
+  requestId: ID!
+  expectedTotal: Int!
+}
+input AdminOfflinePaymentInput {
+  orderId: ID!
+  amount: Int!
+  method: OfflinePaymentMethod!
+  requestId: ID!
+  expectedUpdatedAt: String!
+}
+type AdminOfflinePayment {
+  id: ID!
+  amount: Int!
+  method: OfflinePaymentMethod!
+  adminEmail: String!
+  createdAt: String!
+}
+type AdminManualQuote {
+  items: [CheckoutLine!]!
+  subtotal: Int!
+  discount: Int!
+  shipping: Int!
+  total: Int!
+  shippingMethod: ShippingMethod
+  shippingWeightGrams: Int
 }

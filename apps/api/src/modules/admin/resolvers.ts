@@ -1,3 +1,9 @@
+import {
+  createAdminCustomer,
+  manualQuote,
+  createManualOrder,
+  recordOfflinePayment,
+} from './retail.js';
 import type { Resolvers } from '../../generated/resolvers.js';
 import {
   currentAdmin,
@@ -24,6 +30,18 @@ import { serializeProduct as serializeDates } from '../products/presentation.js'
 import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepage.js';
 export const adminResolvers: Resolvers = {
   Query: {
+    adminOrderCustomers: async (_, { input }, ctx) => {
+      await requirePermission(ctx, 'ORDERS');
+      return adminUsers(input);
+    },
+    adminOrderCustomer: async (_, { id }, ctx) => {
+      await requirePermission(ctx, 'ORDERS');
+      return adminUser(id);
+    },
+    adminManualQuote: async (_, { input }, ctx) => {
+      await requirePermission(ctx, 'ORDERS');
+      return manualQuote(input);
+    },
     homepageContent: () => homepageContent(),
     adminHomepageContent: async (_, __, ctx) => {
       await requirePermission(ctx, 'HOMEPAGE');
@@ -59,12 +77,27 @@ export const adminResolvers: Resolvers = {
       await requirePermission(context, 'REPORTS');
       return adminReport(input);
     },
-    adminDashboard: async (_parent, _args, context) => {
+    adminDashboard: async (_parent, { salesChannel }, context) => {
       await requirePermission(context, 'DASHBOARD');
-      return adminDashboard();
+      return adminDashboard(salesChannel);
     },
   },
   Mutation: {
+    createAdminCustomer: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const a = await requirePermission(ctx, 'CUSTOMERS');
+      return createAdminCustomer(a.id, input);
+    },
+    createAdminManualOrder: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const a = await requirePermission(ctx, 'ORDERS');
+      return createManualOrder(a, input);
+    },
+    recordAdminOfflinePayment: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const a = await requirePermission(ctx, 'ORDERS');
+      return recordOfflinePayment(a, input);
+    },
     saveAnnouncement: async (_, { input, expectedUpdatedAt }, ctx) => {
       requireAdminOrigin(ctx);
       await requirePermission(ctx, 'HOMEPAGE');

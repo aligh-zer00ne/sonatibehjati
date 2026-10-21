@@ -1,6 +1,13 @@
 import { z } from 'zod';
-import { shippingMethods, salesChannels } from '@behjati/shared/sales';
-import { orderStatuses, normalizeDigits, catalogSorts } from '@behjati/shared';
+import { shippingMethods, salesChannels, offlinePaymentMethods } from '@behjati/shared/sales';
+import {
+  orderStatuses,
+  normalizeDigits,
+  catalogSorts,
+  phoneSchema,
+  addressInputSchema,
+  checkoutInputSchema,
+} from '@behjati/shared';
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
 export const adminPasswordChangeSchema = z
   .object({
@@ -202,3 +209,48 @@ export function defaultReportRange(now = new Date()) {
   const to = tehranDate(now);
   return { from: new Date(Date.parse(to) - 29 * 86400000).toISOString().slice(0, 10), to };
 }
+
+export const adminCustomerInputSchema = z
+  .object({
+    phone: phoneSchema,
+    firstName: text(1, 100),
+    lastName: text(0, 100).default(''),
+    salesChannel: z.enum(['INSTAGRAM', 'IN_PERSON']),
+  })
+  .strict();
+export const manualQuoteInputSchema = z
+  .object({
+    items: checkoutInputSchema.shape.items,
+    discountCode: checkoutInputSchema.shape.discountCode,
+    shippingMethod: z.enum(shippingMethods).default('POST'),
+    pickup: z.boolean().default(false),
+  })
+  .strict()
+  .refine((v) => new Set(v.items.map((i) => i.productId)).size === v.items.length);
+export const manualOrderInputSchema = manualQuoteInputSchema
+  .safeExtend({
+    customerId: text(1, 100),
+    salesChannel: z.enum(['INSTAGRAM', 'IN_PERSON']),
+    address: addressInputSchema.nullish(),
+    receivedAmount: z.number().int().min(0).max(2147483647),
+    paymentMethod: z.enum(offlinePaymentMethods).nullish(),
+    requestId: z.string().uuid(),
+    expectedTotal: z.number().int().min(0).max(2147483647),
+  })
+  .refine((v) => v.pickup || !!v.address, {
+    message: 'نشانی ارسال را وارد کنید.',
+    path: ['address'],
+  })
+  .refine((v) => !v.receivedAmount || !!v.paymentMethod, {
+    message: 'نوع پرداخت را انتخاب کنید.',
+    path: ['paymentMethod'],
+  });
+export const offlinePaymentInputSchema = z
+  .object({
+    orderId: text(1, 100),
+    amount: z.number().int().positive().max(2147483647),
+    method: z.enum(offlinePaymentMethods),
+    requestId: z.string().uuid(),
+    expectedUpdatedAt: z.iso.datetime(),
+  })
+  .strict();

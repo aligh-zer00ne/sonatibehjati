@@ -1,3 +1,4 @@
+import { FilterChips } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { adminSections, type AdminPermission } from '@behjati/shared/permissions';
@@ -26,6 +27,7 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 export default function Accounts() {
+  const [filter, setFilter] = useState('all');
   const query = useAdminQuery(AdminAccountsDocument, {});
   const [form] = Form.useForm();
   const [pending, setPending] = useState(false);
@@ -106,6 +108,18 @@ export default function Accounts() {
           </Button>
         </Form>
       </Card>
+      <FilterChips
+        label="فیلتر کاربران پنل"
+        value={filter}
+        options={[
+          { value: 'all', label: 'همه حساب‌ها' },
+          { value: 'owner', label: 'مدیر' },
+          { value: 'staff', label: 'همکار' },
+          { value: 'active', label: 'فعال' },
+          { value: 'inactive', label: 'غیرفعال' },
+        ]}
+        onChange={setFilter}
+      />
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
@@ -113,7 +127,14 @@ export default function Accounts() {
           rowKey="id"
           icon="shield"
           label="فهرست کاربران پنل"
-          dataSource={query.data.adminAccounts}
+          dataSource={query.data.adminAccounts.filter(
+            (a) =>
+              filter === 'all' ||
+              (filter === 'owner' && a.role === 'OWNER') ||
+              (filter === 'staff' && a.role === 'STAFF') ||
+              (filter === 'active' && a.isActive) ||
+              (filter === 'inactive' && !a.isActive),
+          )}
           pagination={false}
           columns={[
             { title: 'ایمیل', dataIndex: 'email' },

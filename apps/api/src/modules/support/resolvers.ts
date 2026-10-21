@@ -36,10 +36,10 @@ export const supportResolvers: Resolvers = {
         presentCoupon,
       );
     },
-    adminCustomerExport: async (_, { search }, ctx) => {
+    adminCustomerExport: async (_, { search, salesChannel }, ctx) => {
       const admin = await requirePermission(ctx, 'CUSTOMERS');
       await consumeAuthLimit(`export:${admin.id}`, 5, 60);
-      return customerExport(search ?? '');
+      return customerExport(search ?? '', salesChannel);
     },
     myTickets: async (_, { input }, ctx) => tickets(input, (await requireUser(ctx)).id),
     myTicket: async (_, { id }, ctx) => getTicket(id, (await requireUser(ctx)).id),

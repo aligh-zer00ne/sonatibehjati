@@ -67,7 +67,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
               />
               <Line
                 dataKey="revenue"
-                name="درآمد تأییدشده (تومان)"
+                name="کل دریافتی (تومان)"
                 stroke="#469169"
                 strokeWidth={2}
                 dot={false}

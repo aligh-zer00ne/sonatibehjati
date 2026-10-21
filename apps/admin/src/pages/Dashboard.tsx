@@ -1,3 +1,6 @@
+import { FilterChips } from '../components/FilterButtons';
+import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
+import type { SalesChannel } from '../generated/graphql';
 import { canOpenAdminPath } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
@@ -22,7 +25,8 @@ const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
 ];
 export default function Dashboard() {
   const { admin } = useAdmin();
-  const query = useAdminQuery(AdminDashboardDocument, {});
+  const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>('');
+  const query = useAdminQuery(AdminDashboardDocument, { salesChannel: salesChannel || null });
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -85,6 +89,34 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-5 sm:gap-6" data-admin-dashboard>
       <h1 className="sr-only">داشبورد مدیریت</h1>
+      <FilterChips<SalesChannel | ''>
+        label="محل خرید داشبورد"
+        value={salesChannel}
+        options={[
+          { value: '', label: 'همه خریدها' },
+          ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
+        ]}
+        onChange={setSalesChannel}
+      />
+      <section aria-label="مشتریان به تفکیک محل خرید" className="grid gap-3 sm:grid-cols-3">
+        {data.channelMetrics.map((c) => (
+          <div key={c.salesChannel} className="rounded-xl border border-[#e5d7c2] bg-[#fcf9f3] p-4">
+            <h2 className="mb-3 font-bold text-[#76100b]">
+              خرید از {salesChannelLabels[c.salesChannel]}
+            </h2>
+            <p className="text-sm leading-7">
+              {formatNumber(c.customersCount)} مشتری · {formatNumber(c.ordersCount)} سفارش
+            </p>
+            <p className="mt-2 text-xs leading-7">
+              دریافتی: <Money amount={c.revenue} />
+            </p>
+          </div>
+        ))}
+      </section>
+      <p className="text-xs leading-6 text-[#76685d]">
+        یک مشتری ممکن است از چند مسیر خرید کرده باشد؛ تعداد مشتریان هر مسیر مستقل است. برای مشتری
+        بدون سفارش، منبع ثبت مبناست. دریافت‌ها شامل پرداخت بانکی موفق و مبالغ ثبت‌شده توسط مدیر است.
+      </p>
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {metrics.map((metric) => (
           <div
@@ -193,6 +225,9 @@ export default function Dashboard() {
                     <p className="truncate text-xs font-bold">{customerName(user)}</p>
                     <p className="mt-1 text-[12px] text-[#8c8176]">
                       عضویت: {formatDate(user.createdAt)}
+                      <span className="mt-1 block">
+                        {user.salesChannels.map((c) => salesChannelLabels[c]).join('، ')}
+                      </span>
                     </p>
                   </div>
                 </li>

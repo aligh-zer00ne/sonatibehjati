@@ -1,3 +1,5 @@
+import type { SalesChannel } from '@prisma/client';
+import { customerWhere } from './users.js';
 import { permissionsSchema } from '@behjati/shared/permissions';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
@@ -91,17 +93,12 @@ export async function saveCoupon(
     throw error;
   }
 }
-export async function customerExport(rawSearch = '') {
-  const { search } = validate(adminUsersFilterSchema, { search: rawSearch });
-  const where = search.trim()
-    ? {
-        OR: [
-          { phone: { contains: search.trim() } },
-          { firstName: { contains: search.trim() } },
-          { lastName: { contains: search.trim() } },
-        ],
-      }
-    : {};
+export async function customerExport(rawSearch = '', salesChannel?: SalesChannel | null) {
+  const { search } = validate(adminUsersFilterSchema, {
+    search: rawSearch,
+    salesChannel: salesChannel ?? undefined,
+  });
+  const where = customerWhere(search, salesChannel);
   const users = await db.user.findMany({
     where,
     select: { phone: true, firstName: true, lastName: true },

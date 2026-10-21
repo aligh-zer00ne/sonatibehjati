@@ -3,7 +3,13 @@ import DesignCredit from '../components/DesignCredit';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Button, Alert, Modal } from 'antd';
-import { BRAND_NAME, formatNumber, formatDate, orderStatusLabels } from '@behjati/shared';
+import {
+  BRAND_NAME,
+  formatNumber,
+  formatPrice,
+  formatDate,
+  orderStatusLabels,
+} from '@behjati/shared';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import PrintSheet from '../components/PrintSheet';
 import BrandQr from '../components/BrandQr';
@@ -98,9 +104,11 @@ export default function Invoice({
           وضعیت سفارش: <b>{orderStatusLabels[order.status]}</b>
         </p>
         <p className="text-[10px]">
-          {order.paidAt
-            ? 'پرداخت این سفارش توسط بانک تأیید شده است.'
-            : 'پرداخت این سفارش تأیید نشده است؛ این برگه رسید پرداخت نیست.'}
+          {order.salesChannel !== 'WEBSITE'
+            ? `دریافت ثبت‌شده در فروشگاه: ${formatPrice(order.offlinePaidAmount)}؛ مانده: ${formatPrice(order.total - order.offlinePaidAmount)}`
+            : order.paidAt
+              ? 'پرداخت این سفارش توسط بانک تأیید شده است.'
+              : 'پرداخت این سفارش تأیید نشده است؛ این برگه رسید پرداخت نیست.'}
         </p>
       </section>
       <footer className="mt-4 print:mt-2 flex break-inside-avoid items-center justify-between gap-4 border-t border-slate-300 pt-3">

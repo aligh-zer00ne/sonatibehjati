@@ -47,6 +47,9 @@ async function send<T, V extends Record<string, unknown>>(
     const code = error?.extensions?.code ?? '';
     const known = [
       'BAD_USER_INPUT',
+      'PRICE_CHANGED',
+      'INVALID_DISCOUNT',
+      'SHIPPING_UNAVAILABLE',
       'INVALID_CREDENTIALS',
       'UNAUTHENTICATED',
       'FORBIDDEN',

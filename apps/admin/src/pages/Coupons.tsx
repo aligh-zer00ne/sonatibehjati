@@ -1,3 +1,4 @@
+import { FilterChips, FilterButton } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
@@ -27,6 +28,8 @@ import { Money, MoneyInput } from '../components/Money';
 import CalendarPicker from '../components/CalendarPicker';
 import DataState from '../components/DataState';
 export default function Coupons() {
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
   const query = useAdminQuery(AdminCouponsDocument, {});
   const [editing, setEditing] = useState<AdminCouponFieldsFragment | null>(null);
   const [open, setOpen] = useState(false);
@@ -63,6 +66,28 @@ export default function Coupons() {
         type="info"
         title="کد روی مبلغ کالاهای سفارش، پس از تخفیف محصول، اعمال می‌شود و هزینهٔ ارسال را تغییر نمی‌دهد. سقف استفاده هنگام ثبت سفارش کنترل می‌شود."
       />
+      <div className="my-4 flex flex-wrap gap-2">
+        <FilterButton label="جستجوی کد" active={!!search}>
+          <Input.Search
+            aria-label="جستجوی کد تخفیف"
+            maxLength={50}
+            allowClear
+            onSearch={setSearch}
+          />
+        </FilterButton>
+        <FilterChips
+          label="فیلتر کدهای تخفیف"
+          value={filter}
+          options={[
+            { value: 'all', label: 'همه' },
+            { value: 'active', label: 'فعال' },
+            { value: 'inactive', label: 'غیرفعال' },
+            { value: 'expired', label: 'منقضی / تمام‌شده' },
+            { value: 'scheduled', label: 'آینده' },
+          ]}
+          onChange={setFilter}
+        />
+      </div>
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
@@ -71,7 +96,21 @@ export default function Coupons() {
           icon="discount"
           label="فهرست کدهای تخفیف"
           featuredField="تخفیف"
-          dataSource={query.data.adminCoupons}
+          dataSource={query.data.adminCoupons.filter((c) => {
+            const now = Date.now();
+            const ended =
+              Date.parse(c.expiresAt) <= now ||
+              (c.usageLimit != null && c.usageCount >= c.usageLimit);
+            const scheduled = Date.parse(c.startsAt) > now;
+            return (
+              c.code.toLowerCase().includes(search.toLowerCase()) &&
+              (filter === 'all' ||
+                (filter === 'inactive' && !c.isActive) ||
+                (filter === 'expired' && ended) ||
+                (filter === 'scheduled' && c.isActive && !ended && scheduled) ||
+                (filter === 'active' && c.isActive && !ended && !scheduled))
+            );
+          })}
           columns={[
             { title: 'کد', render: (_, row) => <bdi className="font-bold">{row.code}</bdi> },
             {

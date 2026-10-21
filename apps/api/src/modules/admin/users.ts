@@ -1,18 +1,41 @@
+import type { Prisma, SalesChannel } from '@prisma/client';
 import { authError } from '../auth/errors.js';
 import { adminUsersFilterSchema } from '@behjati/shared/admin';
 import { db } from '../../database/client.js';
 import { validate, omitNulls } from './validation.js';
+export function customerWhere(
+  search = '',
+  salesChannel?: SalesChannel | null,
+): Prisma.UserWhereInput {
+  return {
+    AND: [
+      ...(search
+        ? [
+            {
+              OR: [
+                { phone: { contains: search } },
+                { firstName: { contains: search } },
+                { lastName: { contains: search } },
+              ],
+            },
+          ]
+        : []),
+      ...(salesChannel
+        ? [
+            {
+              OR: [
+                { acquisitionSource: salesChannel, orders: { none: {} } },
+                { orders: { some: { salesChannel } } },
+              ],
+            },
+          ]
+        : []),
+    ],
+  };
+}
 export async function adminUsers(raw: Record<string, unknown>) {
-  const { page, pageSize, search } = validate(adminUsersFilterSchema, omitNulls(raw));
-  const where = search
-    ? {
-        OR: [
-          { phone: { contains: search } },
-          { firstName: { contains: search } },
-          { lastName: { contains: search } },
-        ],
-      }
-    : {};
+  const { page, pageSize, search, salesChannel } = validate(adminUsersFilterSchema, omitNulls(raw));
+  const where = customerWhere(search, salesChannel);
   return db.$transaction(async (tx) => {
     const [users, total] = await Promise.all([
       tx.user.findMany({
@@ -24,6 +47,8 @@ export async function adminUsers(raw: Record<string, unknown>) {
           lastName: true,
           email: true,
           createdAt: true,
+          acquisitionSource: true,
+          orders: { select: { salesChannel: true }, distinct: ['salesChannel'] },
           _count: { select: { orders: true } },
         },
         orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
@@ -40,6 +65,11 @@ export async function adminUsers(raw: Record<string, unknown>) {
     return {
       items: users.map((user) => ({
         ...user,
+        salesChannels: [
+          ...new Set(
+            user.orders.length ? user.orders.map((o) => o.salesChannel) : [user.acquisitionSource],
+          ),
+        ],
         createdAt: user.createdAt.toISOString(),
         ordersCount: user._count.orders,
         totalOrdersValue: values.find((value) => value.userId === user.id)?._sum.total ?? 0,
@@ -63,6 +93,8 @@ export async function adminUser(id: string) {
       lastName: true,
       email: true,
       createdAt: true,
+      acquisitionSource: true,
+      orders: { select: { salesChannel: true }, distinct: ['salesChannel'] },
       _count: { select: { orders: true } },
     },
   });
@@ -73,6 +105,11 @@ export async function adminUser(id: string) {
   });
   return {
     ...user,
+    salesChannels: [
+      ...new Set(
+        user.orders.length ? user.orders.map((o) => o.salesChannel) : [user.acquisitionSource],
+      ),
+    ],
     createdAt: user.createdAt.toISOString(),
     ordersCount: user._count.orders,
     totalOrdersValue: values._sum.total ?? 0,
