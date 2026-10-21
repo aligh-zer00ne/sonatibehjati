@@ -5,10 +5,12 @@ import { parseCatalogParams } from './catalog/params';
 
 // One stable public identity, including when the site is previewed on localhost.
 export const SITE_URL = 'https://sonatibehjati.ir';
+export const BRAND_ALTERNATE_NAMES = ['سنتی بهجتی اردکان', 'بهجتی اردکان', 'بهجتی'];
+export const HOME_TITLE = 'سنتی بهجتی اردکان | خرید ارده و حلواارده';
 export const SITE_DESCRIPTION =
   'فروشگاه سنتی بهجتی اردکان؛ مشاهده و خرید ارده، حلواارده، روغن‌های خوراکی و محصولات سنتی، همراه با مشخصات و قیمت هر محصول.';
 export const BUSINESS = {
-  name: BRAND_NAME,
+  name: 'سنتی بهجتی',
   phone: '+989131564876',
   instagram: 'https://www.instagram.com/sonatibehjati.ir/',
   map: 'https://nshn.ir/7f_bZEYENGX9qg',
@@ -32,15 +34,17 @@ export function pageMetadata({
   path,
   image = '/images/home/tahini-family.webp',
   index = true,
+  absoluteTitle,
 }: {
   title: string;
   description?: string;
   path: string;
   image?: string;
   index?: boolean;
+  absoluteTitle?: string;
 }): Metadata {
   const indexable = indexingEnabled() && index;
-  const fullTitle = `${title} | ${BRAND_NAME}`;
+  const fullTitle = absoluteTitle ?? `${title} | ${BRAND_NAME}`;
   return {
     title: { absolute: fullTitle },
     description,
@@ -52,7 +56,7 @@ export function pageMetadata({
     },
     openGraph: {
       type: 'website',
-      siteName: BRAND_NAME,
+      siteName: BUSINESS.name,
       locale: 'fa_IR',
       url: absoluteUrl(path),
       title: fullTitle,

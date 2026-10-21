@@ -39,7 +39,9 @@ export default async function AboutPage() {
             دربارهٔ سنتی بهجتی اردکان
           </h1>
           <p className="mt-4 leading-8 text-earth">
-            سنتی بهجتی، برند محصولات کنجدی و سنتی در اردکانِ استان یزد است.
+            سنتی بهجتی، برند محصولات کنجدی و سنتی در اردکانِ استان یزد است. در فروشگاه اینترنتی
+            بهجتی اردکان می‌توانید مشخصات و قیمت ارده، حلواارده و دیگر محصولات مجموعه را ببینید و
+            سفارش خود را ثبت کنید.
           </p>
           <h2 className="mt-6 text-xl font-bold">
             {content.story.title} {content.story.subtitle}

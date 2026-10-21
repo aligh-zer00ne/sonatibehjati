@@ -6,13 +6,18 @@ import { BRAND_NAME } from '@behjati/shared';
 import AuthProvider from '@/components/auth/AuthProvider';
 import ClientRuntime from '@/components/layout/ClientRuntime';
 import StorefrontBackdrop from '@/components/decoration/storefront-backdrop';
-import { pageMetadata, SITE_URL } from '@/lib/seo';
+import { BUSINESS, pageMetadata, SITE_URL } from '@/lib/seo';
 export const metadata: Metadata = {
   ...pageMetadata({ title: 'خرید ارده و حلواارده اردکان', path: '/' }),
   metadataBase: new URL(SITE_URL),
   alternates: undefined,
   title: { default: BRAND_NAME, template: `%s | ${BRAND_NAME}` },
-  applicationName: BRAND_NAME,
+  applicationName: BUSINESS.name,
+  icons: {
+    icon: [{ url: '/icon.png', type: 'image/png', sizes: '192x192' }],
+    shortcut: '/favicon.ico',
+    apple: [{ url: '/apple-icon.png', type: 'image/png', sizes: '180x180' }],
+  },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
     other: process.env.BING_SITE_VERIFICATION

@@ -1,6 +1,6 @@
 import type { CatalogProductFragment } from '../generated/graphql';
 import { productPhotoUrl } from './product-photo';
-import { absoluteUrl, BUSINESS, productPath, SITE_DESCRIPTION } from './seo';
+import { absoluteUrl, BRAND_ALTERNATE_NAMES, BUSINESS, productPath, SITE_DESCRIPTION } from './seo';
 
 export function organizationSchema(description = SITE_DESCRIPTION) {
   return {
@@ -8,6 +8,7 @@ export function organizationSchema(description = SITE_DESCRIPTION) {
     '@type': 'OnlineStore',
     '@id': absoluteUrl('/#organization'),
     name: BUSINESS.name,
+    alternateName: BRAND_ALTERNATE_NAMES,
     url: absoluteUrl('/'),
     logo: absoluteUrl(BUSINESS.logo),
     description,
@@ -36,6 +37,7 @@ export function websiteSchema() {
     '@id': absoluteUrl('/#website'),
     url: absoluteUrl('/'),
     name: BUSINESS.name,
+    alternateName: BRAND_ALTERNATE_NAMES,
     inLanguage: 'fa-IR',
     publisher: { '@id': absoluteUrl('/#organization') },
   };

@@ -125,10 +125,45 @@ try {
     ).flatMap((value) => JSON.parse(value));
     assert.ok(graph.length > 0, path + ' has server-rendered structured data');
     if (path === '/') {
-      assert.ok(graph.some((node) => node['@type'] === 'OnlineStore'));
-      assert.ok(graph.some((node) => node['@type'] === 'WebSite'));
-      assert.ok(await page.locator('a[href="/about"]').count());
-      assert.ok(await page.locator('a[href="/faq"]').count());
+      assert.equal(title, 'سنتی بهجتی اردکان | خرید ارده و حلواارده');
+      for (const type of ['OnlineStore', 'WebSite']) {
+        const node = graph.find((entry) => entry['@type'] === type);
+        assert.equal(node.name, 'سنتی بهجتی');
+        assert.deepEqual(node.alternateName, ['سنتی بهجتی اردکان', 'بهجتی اردکان', 'بهجتی']);
+        assert.equal(node.url, domain + '/');
+      }
+      for (const [rel, dimensions] of [
+        ['icon', 192],
+        ['apple-touch-icon', 180],
+      ]) {
+        const link = page.locator(`head link[rel="${rel}"][type="image/png"]`).first();
+        await expect(link).toHaveAttribute('type', 'image/png');
+        await expect(link).toHaveAttribute('sizes', `${dimensions}x${dimensions}`);
+        const response = await fetch(new URL(await link.getAttribute('href'), origin));
+        assert.equal(response.status, 200);
+        assert.match(response.headers.get('content-type'), /image\/png/);
+        assert.doesNotMatch(response.headers.get('x-robots-tag') ?? '', /noindex/);
+        const png = Buffer.from(await response.arrayBuffer());
+        assert.equal(png.subarray(1, 4).toString(), 'PNG');
+        assert.equal(png.readUInt32BE(16), dimensions);
+        assert.equal(png.readUInt32BE(20), dimensions);
+      }
+      await expect(page.locator('head link[rel="icon"]').first()).toHaveAttribute(
+        'sizes',
+        '192x192',
+      );
+      const legacyIcon = await fetch(origin + '/favicon.ico');
+      assert.equal(legacyIcon.status, 200);
+      assert.equal(
+        Buffer.from(await legacyIcon.arrayBuffer())
+          .subarray(0, 4)
+          .toString('hex'),
+        '00000100',
+      );
+      // The owner removed the pre-footer About/FAQ links; retain the story menu
+      // and verify the separate informational pages remain discoverable in XML.
+      assert.ok(await page.locator('a[href="/#story"]').count());
+      assert.ok(urls.includes(domain + '/about') && urls.includes(domain + '/faq'));
       assert.ok(!(await page.textContent('main')).includes('فروش آنلاین هنوز فعال نیست'));
     }
     if (path.includes('/product/')) {

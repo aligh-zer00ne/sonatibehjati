@@ -11,10 +11,14 @@ import DiscountSection from '@/components/promotion/DiscountSection';
 import BrandStory from '@/components/home/BrandStory';
 import { getHomepageCatalog, getHomepageContent } from '@/lib/catalog/service';
 import { Reveal } from '@/components/ui/reveal';
-import { pageMetadata } from '@/lib/seo';
+import { HOME_TITLE, pageMetadata } from '@/lib/seo';
 import { organizationSchema, websiteSchema } from '@/lib/structured-data';
 import JsonLd from '@/components/seo/JsonLd';
-export const metadata = pageMetadata({ title: 'خرید ارده و حلواارده اردکان', path: '/' });
+export const metadata = pageMetadata({
+  title: 'سنتی بهجتی اردکان',
+  absoluteTitle: HOME_TITLE,
+  path: '/',
+});
 export default async function Home() {
   const [{ products, categories, promotionalProducts }, content] = await Promise.all([
     getHomepageCatalog(),
