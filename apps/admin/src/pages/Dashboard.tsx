@@ -1,4 +1,4 @@
-import { FilterChips } from '../components/FilterButtons';
+import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
 import type { SalesChannel } from '../generated/graphql';
 import { canOpenAdminPath } from '@behjati/shared/permissions';
@@ -89,15 +89,19 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-5 sm:gap-6" data-admin-dashboard>
       <h1 className="sr-only">داشبورد مدیریت</h1>
-      <FilterChips<SalesChannel | ''>
-        label="محل خرید داشبورد"
-        value={salesChannel}
-        options={[
-          { value: '', label: 'همه خریدها' },
-          ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
-        ]}
-        onChange={setSalesChannel}
-      />
+      <FilterBar label="فیلتر داشبورد">
+        <FilterButton label="محل خرید" active={!!salesChannel}>
+          <FilterChips<SalesChannel | ''>
+            label="محل خرید داشبورد"
+            value={salesChannel}
+            options={[
+              { value: '', label: 'همه خریدها' },
+              ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
+            ]}
+            onChange={setSalesChannel}
+          />
+        </FilterButton>
+      </FilterBar>
       <section aria-label="مشتریان به تفکیک محل خرید" className="grid gap-3 sm:grid-cols-3">
         {data.channelMetrics.map((c) => (
           <div key={c.salesChannel} className="rounded-xl border border-[#e5d7c2] bg-[#fcf9f3] p-4">

@@ -146,6 +146,7 @@ const browser = await chromium.launch({
 });
 try {
   const page = await browser.newPage({ viewport: { width: 390, height: 900 } });
+  page.setDefaultNavigationTimeout(20000);
   const errors = [];
   const mutations = [];
   page.on('pageerror', (error) => errors.push(error.message));

@@ -1,4 +1,4 @@
-import { FilterChips } from '../components/FilterButtons';
+import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { adminSections, type AdminPermission } from '@behjati/shared/permissions';
@@ -108,18 +108,22 @@ export default function Accounts() {
           </Button>
         </Form>
       </Card>
-      <FilterChips
-        label="فیلتر کاربران پنل"
-        value={filter}
-        options={[
-          { value: 'all', label: 'همه حساب‌ها' },
-          { value: 'owner', label: 'مدیر' },
-          { value: 'staff', label: 'همکار' },
-          { value: 'active', label: 'فعال' },
-          { value: 'inactive', label: 'غیرفعال' },
-        ]}
-        onChange={setFilter}
-      />
+      <FilterBar label="فیلترهای کاربران پنل">
+        <FilterButton label="نوع حساب" active={filter !== 'all'}>
+          <FilterChips
+            label="فیلتر کاربران پنل"
+            value={filter}
+            options={[
+              { value: 'all', label: 'همه حساب‌ها' },
+              { value: 'owner', label: 'مدیر' },
+              { value: 'staff', label: 'همکار' },
+              { value: 'active', label: 'فعال' },
+              { value: 'inactive', label: 'غیرفعال' },
+            ]}
+            onChange={setFilter}
+          />
+        </FilterButton>
+      </FilterBar>
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (

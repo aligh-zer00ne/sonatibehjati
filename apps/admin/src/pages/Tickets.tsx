@@ -1,8 +1,8 @@
-import { FilterChips } from '../components/FilterButtons';
+import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import { Alert, Button, Card, Form, Input, Modal, Select, Tag, Typography } from 'antd';
+import { Alert, Button, Form, Input, Modal, Select, Tag, Typography } from 'antd';
 import { formatDate } from '@behjati/shared';
 import {
   AdminTicketsDocument,
@@ -51,20 +51,22 @@ export default function Tickets() {
   return (
     <>
       <Typography.Title level={2}>پشتیبانی و تیکت‌ها</Typography.Title>
-      <Card>
-        <FilterChips<TicketStatus | ''>
-          label="وضعیت تیکت"
-          value={status ?? ''}
-          options={[
-            { value: '', label: 'همه تیکت‌ها' },
-            ...statuses.map((o) => ({ ...o, value: o.value as TicketStatus })),
-          ]}
-          onChange={(v) => {
-            setStatus(v || undefined);
-            setPage(1);
-          }}
-        />
-      </Card>
+      <FilterBar>
+        <FilterButton label="وضعیت تیکت" active={!!status}>
+          <FilterChips<TicketStatus | ''>
+            label="وضعیت تیکت"
+            value={status ?? ''}
+            options={[
+              { value: '', label: 'همه تیکت‌ها' },
+              ...statuses.map((o) => ({ ...o, value: o.value as TicketStatus })),
+            ]}
+            onChange={(v) => {
+              setStatus(v || undefined);
+              setPage(1);
+            }}
+          />
+        </FilterButton>
+      </FilterBar>
       {!list.data ? (
         <DataState error={list.error} retry={list.refresh} />
       ) : (

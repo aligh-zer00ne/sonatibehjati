@@ -155,12 +155,7 @@ try {
     .getByRole('button', { name: 'حضوری', exact: true })
     .click();
   await expect(page).toHaveURL(/salesChannel=IN_PERSON/);
-  await page
-    .locator('.ant-popover')
-    .filter({ visible: true })
-    .last()
-    .getByRole('button', { name: 'بستن فیلتر', exact: true })
-    .click();
+
   await fits(page);
   await page.getByRole('button', { name: 'شیوه ارسال', exact: true }).click();
   await page
@@ -168,18 +163,15 @@ try {
     .getByRole('button', { name: 'تیپاکس', exact: true })
     .click();
   await expect(page).toHaveURL(/shippingMethod=TIPAX/);
-  await page
-    .locator('.ant-popover')
-    .filter({ visible: true })
-    .last()
-    .getByRole('button', { name: 'بستن فیلتر', exact: true })
-    .click();
+
   await page.goto(base + '/admin/users');
   await page.getByRole('button', { name: 'افزودن مشتری', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'افزودن مشتری', exact: true })).toBeVisible();
   await page.getByRole('dialog').locator('.ant-modal-close').click();
   await page.goto(base + '/admin/reports');
+  await page.getByRole('button', { name: 'بازه گزارش', exact: true }).hover();
   await page.getByRole('button', { name: 'امروز', exact: true }).click();
+  await page.keyboard.press('Escape');
   await expect(page.getByText('پرداخت موفق درگاه', { exact: true })).toBeVisible();
   await expect(page.getByText('دریافت ثبت‌شده توسط مدیر', { exact: true })).toBeVisible();
   await fits(page);
@@ -187,10 +179,12 @@ try {
   await expect(
     page.getByRole('region', { name: 'مشتریان به تفکیک محل خرید', exact: true }),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'محل خرید', exact: true }).hover();
   await page
     .getByRole('group', { name: 'محل خرید داشبورد', exact: true })
     .getByRole('button', { name: 'حضوری', exact: true })
     .click();
+  await page.getByRole('button', { name: 'محل خرید', exact: true }).hover();
   await expect(
     page
       .getByRole('group', { name: 'محل خرید داشبورد' })

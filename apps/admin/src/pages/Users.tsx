@@ -1,5 +1,5 @@
 import RetailCustomerModal from '../components/RetailCustomerModal';
-import { FilterButton, FilterChips } from '../components/FilterButtons';
+import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
 import type { SalesChannel } from '../generated/graphql';
 import AdminIcon from '../components/AdminIcon';
@@ -9,7 +9,7 @@ import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Typography, Card, Input, Button, Alert } from 'antd';
+import { Typography, Input, Button, Alert } from 'antd';
 import { formatNumber, formatDate } from '@behjati/shared';
 import {
   AdminUsersDocument,
@@ -88,43 +88,41 @@ export default function Users() {
         محدود نمی‌کند.
       </p>
       {exportError && <Alert type="error" title={exportError} role="alert" />}
-      <Card>
-        <div className="flex flex-wrap gap-2">
-          <FilterButton label="جستجوی مشتری" active={!!search}>
-            <Input.Search
-              aria-label="جستجوی کاربران"
-              placeholder="نام یا موبایل"
-              defaultValue={search}
-              maxLength={100}
-              allowClear
-              onSearch={(value) => {
-                const next = new URLSearchParams(params);
-                if (value) next.set('search', value);
-                else next.delete('search');
-                setParams(next);
-                setPage(1);
-              }}
-            />
-          </FilterButton>
-          <FilterButton label="محل خرید مشتری" active={!!salesChannel}>
-            <FilterChips<SalesChannel | ''>
-              label="محل خرید مشتری"
-              value={salesChannel ?? ''}
-              options={[
-                { value: '', label: 'همه مشتریان' },
-                ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
-              ]}
-              onChange={(value) => {
-                const next = new URLSearchParams(params);
-                if (value) next.set('source', value);
-                else next.delete('source');
-                setParams(next);
-                setPage(1);
-              }}
-            />
-          </FilterButton>
-        </div>
-      </Card>
+      <FilterBar label="فیلترهای مشتریان">
+        <FilterButton label="جستجوی مشتری" active={!!search}>
+          <Input.Search
+            aria-label="جستجوی کاربران"
+            placeholder="نام یا موبایل"
+            defaultValue={search}
+            maxLength={100}
+            allowClear
+            onSearch={(value) => {
+              const next = new URLSearchParams(params);
+              if (value) next.set('search', value);
+              else next.delete('search');
+              setParams(next);
+              setPage(1);
+            }}
+          />
+        </FilterButton>
+        <FilterButton label="محل خرید مشتری" active={!!salesChannel}>
+          <FilterChips<SalesChannel | ''>
+            label="محل خرید مشتری"
+            value={salesChannel ?? ''}
+            options={[
+              { value: '', label: 'همه مشتریان' },
+              ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
+            ]}
+            onChange={(value) => {
+              const next = new URLSearchParams(params);
+              if (value) next.set('source', value);
+              else next.delete('source');
+              setParams(next);
+              setPage(1);
+            }}
+          />
+        </FilterButton>
+      </FilterBar>
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (

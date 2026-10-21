@@ -1,8 +1,8 @@
-import { FilterChips } from '../components/FilterButtons';
+import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import { Alert, Button, Card, Rate, Tag, Typography } from 'antd';
+import { Alert, Button, Rate, Tag, Typography } from 'antd';
 import { formatDate } from '@behjati/shared';
 import {
   AdminReviewsDocument,
@@ -39,20 +39,22 @@ export default function Reviews() {
   return (
     <>
       <Typography.Title level={2}>مدیریت نظرات محصول</Typography.Title>
-      <Card>
-        <FilterChips<ReviewStatus | ''>
-          label="وضعیت نظر"
-          value={status ?? ''}
-          options={[
-            { value: '', label: 'همه نظرات' },
-            ...statuses.map((o) => ({ ...o, value: o.value as ReviewStatus })),
-          ]}
-          onChange={(v) => {
-            setStatus(v || undefined);
-            setPage(1);
-          }}
-        />
-      </Card>
+      <FilterBar>
+        <FilterButton label="وضعیت نظر" active={!!status}>
+          <FilterChips<ReviewStatus | ''>
+            label="وضعیت نظر"
+            value={status ?? ''}
+            options={[
+              { value: '', label: 'همه نظرات' },
+              ...statuses.map((o) => ({ ...o, value: o.value as ReviewStatus })),
+            ]}
+            onChange={(v) => {
+              setStatus(v || undefined);
+              setPage(1);
+            }}
+          />
+        </FilterButton>
+      </FilterBar>
       {error && <Alert type="error" title={error} role="alert" />}
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />

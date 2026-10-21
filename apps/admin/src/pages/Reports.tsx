@@ -1,4 +1,4 @@
-import { FilterButton, FilterChips } from '../components/FilterButtons';
+import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
 import {
   salesChannels,
   salesChannelLabels,
@@ -9,7 +9,7 @@ import type { SalesChannel, ShippingMethod } from '../generated/graphql';
 import RecordCards from '../components/RecordCards';
 import { Money } from '../components/Money';
 import { useState } from 'react';
-import { Typography, Card, Select, Button, Alert } from 'antd';
+import { Typography, Card, Button, Alert } from 'antd';
 import CalendarPicker from '../components/CalendarPicker';
 import { orderStatuses, orderStatusLabels, formatNumber } from '@behjati/shared';
 import { defaultReportRange, adminReportFilterSchema, tehranDate } from '@behjati/shared/admin';
@@ -41,110 +41,116 @@ export default function Reports() {
   return (
     <>
       <Typography.Title level={2}>گزارش سفارش‌ها</Typography.Title>
-      <Card>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { days: 1, label: 'امروز' },
-            { days: 7, label: '۷ روز اخیر' },
-            { days: 30, label: '۳۰ روز اخیر' },
-          ].map((p) => (
-            <Button
-              key={p.days}
-              onClick={() => {
-                const to = tehranDate();
-                setRange({
-                  to,
-                  from: new Date(Date.parse(to) - (p.days - 1) * 86400000)
-                    .toISOString()
-                    .slice(0, 10),
-                });
+      <FilterBar label="فیلترهای گزارش">
+        <FilterButton label="بازه گزارش">
+          <div className="grid grid-cols-3 gap-1 border-b border-[#eee5d9] pb-3">
+            {[
+              { days: 1, label: 'امروز' },
+              { days: 7, label: '۷ روز اخیر' },
+              { days: 30, label: '۳۰ روز اخیر' },
+            ].map((p) => (
+              <Button
+                key={p.days}
+                size="small"
+                className="!px-1 !text-[12px]"
+                onClick={() => {
+                  const to = tehranDate();
+                  setRange({
+                    to,
+                    from: new Date(Date.parse(to) - (p.days - 1) * 86400000)
+                      .toISOString()
+                      .slice(0, 10),
+                  });
+                }}
+              >
+                {p.label}
+              </Button>
+            ))}
+          </div>
+
+          <div>
+            <label htmlFor="report-from" className="mb-2 block text-xs">
+              از تاریخ
+            </label>
+            <CalendarPicker
+              id="report-from"
+              clearable={false}
+              value={range.from}
+              onChange={(date) => {
+                if (date) setRange({ ...range, from: date });
               }}
-            >
-              {p.label}
-            </Button>
-          ))}
-          <FilterButton label="بازه دلخواه">
-            <div>
-              <label htmlFor="report-from" className="mb-2 block text-xs">
-                از تاریخ
-              </label>
-              <CalendarPicker
-                id="report-from"
-                clearable={false}
-                value={range.from}
-                onChange={(date) => {
-                  if (date) setRange({ ...range, from: date });
-                }}
-              />
-            </div>
-            <div>
-              <label htmlFor="report-to" className="mb-2 block text-xs">
-                تا تاریخ
-              </label>
-              <CalendarPicker
-                id="report-to"
-                clearable={false}
-                value={range.to}
-                onChange={(date) => {
-                  if (date) setRange({ ...range, to: date });
-                }}
-              />
-            </div>
-          </FilterButton>
-          <FilterButton label="وضعیت گزارش" active={!!status}>
-            <Select<OrderStatus | ''>
-              aria-label="وضعیت گزارش"
-              className="w-full"
-              value={status}
-              onChange={setStatus}
-              options={[
-                { value: '', label: 'همه وضعیت‌ها' },
-                ...orderStatuses.map((value) => ({ value, label: orderStatusLabels[value] })),
-              ]}
             />
-          </FilterButton>
-          <FilterButton label="محل خرید" active={!!salesChannel}>
-            <FilterChips<SalesChannel | ''>
-              label="محل خرید گزارش"
-              value={salesChannel}
-              options={[
-                { value: '', label: 'همه خریدها' },
-                ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
-              ]}
-              onChange={setSalesChannel}
+          </div>
+          <div>
+            <label htmlFor="report-to" className="mb-2 block text-xs">
+              تا تاریخ
+            </label>
+            <CalendarPicker
+              id="report-to"
+              clearable={false}
+              value={range.to}
+              onChange={(date) => {
+                if (date) setRange({ ...range, to: date });
+              }}
             />
-          </FilterButton>
-          <FilterButton label="شیوه ارسال" active={!!shippingMethod}>
-            <FilterChips<ShippingMethod | ''>
-              label="شیوه ارسال گزارش"
-              value={shippingMethod}
-              options={[
-                { value: '', label: 'همه روش‌ها' },
-                ...shippingMethods.map((value) => ({ value, label: shippingMethodLabels[value] })),
-              ]}
-              onChange={setShippingMethod}
-            />
-          </FilterButton>
-          <Button
-            onClick={() => {
-              setRange(defaultReportRange());
-              setStatus('');
-              setSalesChannel('');
-              setShippingMethod('');
-            }}
-          >
-            پاک کردن فیلترها
-          </Button>
-          <Button
-            disabled={!report}
-            onClick={() => {
-              if (report) downloadReport(report);
-            }}
-          >
-            خروجی CSV
-          </Button>
-        </div>
-      </Card>
+          </div>
+        </FilterButton>
+        <FilterButton label="وضعیت گزارش" active={!!status}>
+          <FilterChips<OrderStatus | ''>
+            label="وضعیت گزارش"
+            value={status}
+            onChange={setStatus}
+            options={[
+              { value: '', label: 'همه وضعیت‌ها' },
+              ...orderStatuses.map((value) => ({ value, label: orderStatusLabels[value] })),
+            ]}
+          />
+        </FilterButton>
+        <FilterButton label="محل خرید" active={!!salesChannel}>
+          <FilterChips<SalesChannel | ''>
+            label="محل خرید گزارش"
+            value={salesChannel}
+            options={[
+              { value: '', label: 'همه خریدها' },
+              ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
+            ]}
+            onChange={setSalesChannel}
+          />
+        </FilterButton>
+        <FilterButton label="شیوه ارسال" active={!!shippingMethod}>
+          <FilterChips<ShippingMethod | ''>
+            label="شیوه ارسال گزارش"
+            value={shippingMethod}
+            options={[
+              { value: '', label: 'همه روش‌ها' },
+              ...shippingMethods.map((value) => ({ value, label: shippingMethodLabels[value] })),
+            ]}
+            onChange={setShippingMethod}
+          />
+        </FilterButton>
+        <Button
+          type="text"
+          size="small"
+          className="!ms-auto !text-[12px] !text-[#96140d]"
+          onClick={() => {
+            setRange(defaultReportRange());
+            setStatus('');
+            setSalesChannel('');
+            setShippingMethod('');
+          }}
+        >
+          پاک کردن فیلترها
+        </Button>
+        <Button
+          size="small"
+          disabled={!report}
+          onClick={() => {
+            if (report) downloadReport(report);
+          }}
+        >
+          خروجی CSV
+        </Button>
+      </FilterBar>
       {!parsed.success ? (
         <Alert type="error" title="بازه گزارش باید معتبر و حداکثر ۳۶۶ روز باشد." role="alert" />
       ) : !report ? (

@@ -24,6 +24,7 @@ export default function UserFilter({
   return (
     <Select
       className="w-full"
+      getPopupContainer={(node) => node.parentElement ?? document.body}
       aria-label="فیلتر کاربر"
       placeholder="نام یا موبایل مشتری"
       value={value || undefined}

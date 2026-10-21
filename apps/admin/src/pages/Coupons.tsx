@@ -1,4 +1,4 @@
-import { FilterChips, FilterButton } from '../components/FilterButtons';
+import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
@@ -66,7 +66,7 @@ export default function Coupons() {
         type="info"
         title="کد روی مبلغ کالاهای سفارش، پس از تخفیف محصول، اعمال می‌شود و هزینهٔ ارسال را تغییر نمی‌دهد. سقف استفاده هنگام ثبت سفارش کنترل می‌شود."
       />
-      <div className="my-4 flex flex-wrap gap-2">
+      <FilterBar label="فیلترهای کد تخفیف">
         <FilterButton label="جستجوی کد" active={!!search}>
           <Input.Search
             aria-label="جستجوی کد تخفیف"
@@ -75,19 +75,21 @@ export default function Coupons() {
             onSearch={setSearch}
           />
         </FilterButton>
-        <FilterChips
-          label="فیلتر کدهای تخفیف"
-          value={filter}
-          options={[
-            { value: 'all', label: 'همه' },
-            { value: 'active', label: 'فعال' },
-            { value: 'inactive', label: 'غیرفعال' },
-            { value: 'expired', label: 'منقضی / تمام‌شده' },
-            { value: 'scheduled', label: 'آینده' },
-          ]}
-          onChange={setFilter}
-        />
-      </div>
+        <FilterButton label="وضعیت کد" active={filter !== 'all'}>
+          <FilterChips
+            label="فیلتر کدهای تخفیف"
+            value={filter}
+            options={[
+              { value: 'all', label: 'همه' },
+              { value: 'active', label: 'فعال' },
+              { value: 'inactive', label: 'غیرفعال' },
+              { value: 'expired', label: 'منقضی / تمام‌شده' },
+              { value: 'scheduled', label: 'آینده' },
+            ]}
+            onChange={setFilter}
+          />
+        </FilterButton>
+      </FilterBar>
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
