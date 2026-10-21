@@ -13,6 +13,9 @@ const links = [
 ] as const;
 
 const socialMarks = [
+  { name: 'ایتا', image: '/images/eitaa-social.svg', href: undefined },
+  { name: 'تلگرام', image: '/images/telegram-social.svg', href: undefined },
+  { name: 'واتساپ', image: '/images/whatsapp-social.svg', href: undefined },
   { name: 'اینستاگرام', image: '/images/instagram-social.svg', href: BUSINESS.instagram },
 ] as const;
 
@@ -47,7 +50,7 @@ export default function Footer() {
           </span>
         </Link>
         <div className="relative z-[1] flex min-h-[260px] flex-col items-start justify-end px-4 pt-[132px] pb-3 md:min-h-[290px] md:px-8 md:pt-40 md:pb-5 lg:min-h-[300px] lg:px-10">
-          <div className="flex w-[150px] flex-col items-start gap-1 min-[480px]:w-auto md:gap-2">
+          <div className="flex w-[176px] flex-col items-start gap-1 min-[480px]:w-auto md:gap-2">
             <nav
               aria-label="لینک‌های فوتر"
               className="order-2 flex items-center justify-start gap-1 text-[10px] font-semibold min-[480px]:text-xs md:gap-2 lg:text-sm"
@@ -66,16 +69,8 @@ export default function Footer() {
               className="order-1 flex items-center justify-start gap-1 md:gap-3"
               aria-label="شبکه‌های اجتماعی سنتی بهجتی"
             >
-              {socialMarks.map(({ name, image, href }) => (
-                <a
-                  key={name}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={`${name} رسمی سنتی بهجتی`}
-                  aria-label={name}
-                  className="grid size-11 place-items-center"
-                >
+              {socialMarks.map(({ name, image, href }) => {
+                const icon = (
                   <Image
                     src={image}
                     alt=""
@@ -83,21 +78,48 @@ export default function Footer() {
                     height={22}
                     className="size-[22px] opacity-85 brightness-0 invert"
                   />
-                </a>
-              ))}
+                );
+                return href ? (
+                  <a
+                    key={name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`${name} رسمی سنتی بهجتی`}
+                    aria-label={name}
+                    className="grid size-11 shrink-0 place-items-center"
+                  >
+                    {icon}
+                  </a>
+                ) : (
+                  <span
+                    key={name}
+                    role="img"
+                    title={name}
+                    aria-label={name}
+                    className="grid size-11 shrink-0 place-items-center"
+                  >
+                    {icon}
+                  </span>
+                );
+              })}
             </div>
           </div>
           <div
-            className="order-first mb-1 flex items-center justify-start gap-1.5"
+            data-slot="footer-trust-marks"
+            className="order-first mb-2 flex items-center justify-start gap-2 md:mb-1 md:gap-1.5"
             aria-label="نشان‌های اعتماد و پرداخت"
           >
-            <div className="flex size-11 shrink-0 items-center justify-center rounded border border-[#f4d493]/30 bg-[#fff8ed] p-1">
+            <div
+              data-slot="footer-sep-badge"
+              className="flex size-20 shrink-0 items-center justify-center rounded border border-[#f4d493]/30 bg-[#fff8ed] p-1 md:size-11"
+            >
               <Image
                 src="/images/sep-logo.png"
                 alt="لوگوی پرداخت الکترونیک سامان کیش"
                 width={78}
                 height={49}
-                className="h-auto w-9 object-contain"
+                className="h-auto w-[72px] object-contain md:w-9"
               />
             </div>
             <EnamadBadge compact />
