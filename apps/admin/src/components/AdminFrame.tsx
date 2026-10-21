@@ -236,10 +236,26 @@ export default function AdminFrame() {
         onClose={() => setMenuOpen(false)}
         classNames={{
           root: 'print:!hidden',
-          body: '!bg-[#660311] !px-0 !py-4 [--admin-scrollbar-track:#4f0915] [--admin-scrollbar-thumb:#d8b97b] [--admin-scrollbar-hover:#f2d4a0]',
+          body: '!flex !flex-col !bg-[#660311] !px-0 !py-4 [--admin-scrollbar-track:#4f0915] [--admin-scrollbar-thumb:#d8b97b] [--admin-scrollbar-hover:#f2d4a0]',
         }}
       >
-        <div id="admin-mobile-navigation">{navigation()}</div>
+        <div id="admin-mobile-navigation" className="flex min-h-full flex-1 flex-col">
+          {navigation()}
+          <div
+            data-admin-mobile-brand
+            className="pointer-events-none relative mt-auto h-36 shrink-0"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-4 bottom-9 h-24 opacity-75 [&_svg]:h-full"
+            >
+              <AdminSkyline />
+            </div>
+            <p className="absolute inset-x-0 bottom-0 px-3 py-2 text-center text-[13px] font-medium text-[#e5bb71]">
+              طعم اصالت، از دل کویر
+            </p>
+          </div>
+        </div>
       </Drawer>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex min-h-[82px] flex-wrap items-center justify-between gap-3 border-b border-[#e8ded1] bg-[#fffdf9]/85 px-4 py-3 sm:px-6 lg:px-8 print:!hidden">
