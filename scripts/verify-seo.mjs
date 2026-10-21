@@ -125,6 +125,11 @@ try {
     ).flatMap((value) => JSON.parse(value));
     assert.ok(graph.length > 0, path + ' has server-rendered structured data');
     if (path === '/') {
+      // Inspect initial HTML without JS so duplicate automatic/manual metadata
+      // or a broken production asset cannot pass through a .first() assertion.
+      for (const rel of ['icon', 'apple-touch-icon', 'shortcut icon']) {
+        await expect(page.locator(`head link[rel="${rel}"]`)).toHaveCount(1);
+      }
       assert.equal(title, 'سنتی بهجتی اردکان | خرید ارده و حلواارده');
       for (const type of ['OnlineStore', 'WebSite']) {
         const node = graph.find((entry) => entry['@type'] === type);
@@ -147,6 +152,14 @@ try {
         assert.equal(png.subarray(1, 4).toString(), 'PNG');
         assert.equal(png.readUInt32BE(16), dimensions);
         assert.equal(png.readUInt32BE(20), dimensions);
+        const source = await readFile(
+          `apps/storefront/src/app/${rel === 'icon' ? 'icon' : 'apple-icon'}.png`,
+        );
+        assert.deepEqual(
+          png,
+          source,
+          `${rel}: production response contains the actual brand image`,
+        );
       }
       await expect(page.locator('head link[rel="icon"]').first()).toHaveAttribute(
         'sizes',
