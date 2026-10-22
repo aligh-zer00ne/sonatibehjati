@@ -22,6 +22,10 @@ import DashboardProductImage from '../components/DashboardProductImage';
 import OrdersTable from '../components/OrdersTable';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import { customerName } from '../lib/format';
+import AmbientBackdrop from '../components/AmbientBackdrop';
+import AdminSkyline from '../components/AdminSkyline';
+import MotionButton from '../components/MotionButton';
+import { useSurfaceMotion } from '../hooks/useSurfaceMotion';
 const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
   { label: 'سفارش‌های وبسایت', href: '/admin/orders/website', icon: 'orders' },
   { label: 'فروش دستی', href: '/admin/orders/manual', icon: 'receipt' },
@@ -32,6 +36,7 @@ const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
 ];
 export default function Dashboard() {
   const { admin } = useAdmin();
+  const heroMotion = useSurfaceMotion<HTMLElement>();
   const navigate = useNavigate();
   const inspectionTrigger = useRef<HTMLElement | SVGElement | null>(null);
   const [inspection, setInspection] = useState<OrderInspection | null>(null);
@@ -78,12 +83,24 @@ export default function Dashboard() {
     </div>
   );
   return (
-    <div className="flex flex-col gap-4" data-admin-dashboard>
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfd6c8] pb-4">
-        <div>
-          <h1 className="text-xl font-extrabold text-[#34251e] sm:text-2xl">داشبورد مدیریت</h1>
-          <p className="mt-1 text-xs text-[#857467]">
-            سنتی بهجتی اردکان ·{' '}
+    <div className="flex flex-col gap-4 motion-safe:animate-surface-enter" data-admin-dashboard>
+      <header
+        {...heroMotion}
+        className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#a94d31]/40 bg-[radial-gradient(ellipse_at_top_right,#a13521,transparent_65%),linear-gradient(125deg,#83160e,#4b0c09)] px-5 py-6 text-[#fff5e1] shadow-[0_12px_28px_-12px_#76100b50] sm:px-7 sm:py-7"
+      >
+        <AmbientBackdrop />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-0 -z-10 w-64 opacity-40 [mask-image:linear-gradient(to_right,black,transparent)]"
+        >
+          <AdminSkyline />
+        </div>
+        <div className="relative z-10">
+          <p className="mb-2 text-xs font-semibold text-[#f2d6a2]">
+            سنتی بهجتی اردکان · طعم اصالت، از دل کویر
+          </p>
+          <h1 className="text-2xl font-extrabold text-[#fff5e1] sm:text-[28px]">داشبورد مدیریت</h1>
+          <p className="mt-2 text-xs text-[#f2d6a2]">
             <time dateTime={now.toISOString()}>
               {new Intl.DateTimeFormat('fa-IR', {
                 dateStyle: 'full',
@@ -92,7 +109,7 @@ export default function Dashboard() {
             </time>
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="relative z-10 flex flex-wrap gap-2 [&_.ant-btn]:!rounded-xl [&_.ant-btn]:!font-bold [&_.ant-btn-primary]:!border-[#edc57d] [&_.ant-btn-primary]:!bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] [&_.ant-btn-primary]:!text-[#4b270c] [&_.ant-btn-primary]:!shadow-[0_4px_18px_#edc57d30] [&_.ant-btn-default]:!border-white/25 [&_.ant-btn-default]:!bg-white/10 [&_.ant-btn-default]:!text-[#fff5e1]">
           {canInspect && (
             <Button
               type="primary"
@@ -190,7 +207,7 @@ export default function Dashboard() {
             <Link
               key={item.href}
               to={item.href}
-              className="flex min-h-9 items-center gap-2 rounded-lg border border-[#e5ded3] bg-white px-3 text-xs !text-[#62452f] transition hover:border-[#c69b48] hover:bg-[#faf5eb]"
+              className="flex min-h-10 items-center gap-2 rounded-xl border border-[#e5ded3] bg-white px-3 text-xs !text-[#62452f] shadow-[0_2px_6px_#62452f04] transition hover:border-[#c69b48] hover:bg-[#faf5eb] hover:shadow-md motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-reduce:transition-none"
             >
               <AdminIcon name={item.icon} width={15} />
               {item.label}
@@ -207,13 +224,13 @@ export default function Dashboard() {
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
           {data.channelMetrics.map((c) => (
-            <button
+            <MotionButton
               type="button"
               key={c.salesChannel}
               onClick={() => setSalesChannel(salesChannel === c.salesChannel ? '' : c.salesChannel)}
               aria-pressed={salesChannel === c.salesChannel}
               aria-label={`نمایش آمار خرید از ${salesChannelLabels[c.salesChannel]}`}
-              className="min-w-0 rounded-xl border border-[#e8ded1] bg-white p-3 text-start transition hover:border-[#c69b48] aria-pressed:border-[#96140d] aria-pressed:bg-[#fcf5ed]"
+              className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-4 text-start shadow-[0_3px_14px_#62452f06] hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] aria-pressed:border-[#c69b48] aria-pressed:bg-[linear-gradient(135deg,#fffaf0,#f6e5bd)] aria-pressed:shadow-[0_4px_16px_#c69b4824]"
             >
               <div className="mb-2 flex items-center gap-2">
                 <span className="grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#96140d]">
@@ -258,7 +275,7 @@ export default function Dashboard() {
                   }}
                 />
               </div>
-            </button>
+            </MotionButton>
           ))}
         </div>
         <details className="mt-3 text-xs leading-6 text-[#857467]">

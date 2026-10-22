@@ -66,7 +66,7 @@ export default function DashboardCharts({
                 key={n}
                 aria-pressed={days === n}
                 onClick={() => setDays(n)}
-                className="rounded-md px-2 py-1 text-xs text-[#76685d] aria-pressed:bg-white aria-pressed:text-[#76100b]"
+                className="min-h-9 rounded-lg px-3 py-1 text-xs font-semibold text-[#76685d] transition aria-pressed:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-pressed:text-[#4b270c] aria-pressed:shadow-[0_3px_8px_#c69b4830] motion-safe:active:scale-95 motion-reduce:transition-none"
               >
                 {formatNumber(n)} روز
               </button>

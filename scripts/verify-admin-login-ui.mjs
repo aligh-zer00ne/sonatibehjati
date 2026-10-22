@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
 import { createAdmin, startAdmin, cleanupAdmin } from './admin-harness.mjs';
+import { verifySurfaceMotion } from './surface-motion-checks.mjs';
 
 let browser;
 try {
@@ -84,6 +85,7 @@ try {
   await expect(email).toBeVisible();
   await expect(email).toHaveAttribute('autocomplete', 'username');
   await expect(password).toHaveAttribute('autocomplete', 'current-password');
+  await verifySurfaceMotion(page, page.locator('[data-motion-surface]').first(), { ambient: true });
   for (const [width, height] of [
     [320, 568],
     [390, 844],
@@ -147,6 +149,20 @@ try {
   });
   const staffPage = await staffContext.newPage();
   await staffPage.goto(adminOrigin + '/login');
+  await staffPage.setViewportSize({ width: 390, height: 568 });
+  await staffPage.getByLabel('ایمیل مدیر', { exact: true }).waitFor();
+  const touch = await staffContext.newCDPSession(staffPage);
+  await touch.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: 180, y: 155 }],
+  });
+  await touch.send('Input.dispatchTouchEvent', {
+    type: 'touchMove',
+    touchPoints: [{ x: 180, y: 65 }],
+  });
+  await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect.poll(() => staffPage.evaluate(() => scrollY)).toBeGreaterThan(25);
+  await touch.detach();
   await staffPage.getByLabel('ایمیل مدیر', { exact: true }).fill(staff.email);
   await staffPage.getByLabel('رمز ورود', { exact: true }).fill(staff.password);
   await staffPage.getByRole('button', { name: 'ورود به پنل', exact: true }).tap();

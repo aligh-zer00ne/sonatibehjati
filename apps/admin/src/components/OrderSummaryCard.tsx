@@ -9,6 +9,8 @@ import AdminIcon from './AdminIcon';
 import OrderStatus from './OrderStatus';
 import OrderDetailsCard from './OrderDetailsCard';
 import QuickOrderPrint from './QuickOrderPrint';
+import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
+import SurfaceGlow from './SurfaceGlow';
 
 export default function OrderSummaryCard({
   order,
@@ -28,15 +30,18 @@ export default function OrderSummaryCard({
   canExpand?: boolean;
 }) {
   const [print, setPrint] = useState<'invoice' | 'label' | null>(null);
+  const motion = useSurfaceMotion<HTMLElement>({ tilt: true, enabled: !expanded });
   const detailsId = `order-details-${order.id}`;
   return (
     <article
+      {...motion}
       data-admin-record
       data-order-id={order.id}
       data-record-index={index + 1}
       aria-label={`سفارش ${formatNumber(order.number)}`}
-      className={`group relative min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] transition-[border-color,box-shadow] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15 md:col-span-2 xl:col-span-3' : 'border-[#e5ded3] hover:border-[#c7ab7d] hover:shadow-[0_8px_24px_#62452f12]'}`}
+      className={`${surfaceCardMotion} group relative min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15 md:col-span-2 xl:col-span-3' : 'border-[#e5ded3] hover:border-[#c7ab7d] hover:shadow-[0_8px_24px_#62452f12]'}`}
     >
+      <SurfaceGlow />
       <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#96140d]" />
       <div className="p-3.5" data-order-summary>
         <header className="flex items-center gap-2.5">
@@ -105,7 +110,7 @@ export default function OrderSummaryCard({
               aria-expanded={expanded}
               aria-controls={detailsId}
               onClick={onToggle}
-              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#76100b] transition hover:border-[#b7825b] hover:bg-[#f0e0c7]"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#76100b] transition hover:border-[#b7825b] hover:bg-[#f0e0c7] aria-expanded:border-[#c69b48] aria-expanded:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-expanded:shadow-[0_3px_10px_#c69b4830] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
             >
               <AdminIcon name="receipt" width={16} />
               <span>{expanded ? 'بستن' : 'جزئیات'}</span>
@@ -132,7 +137,11 @@ export default function OrderSummaryCard({
         )}
       </div>
       <div id={detailsId} hidden={!expanded}>
-        {expanded && <OrderDetailsCard id={order.id} onClose={onToggle} onUpdated={onUpdated} />}
+        {expanded && (
+          <div className="motion-safe:animate-surface-enter">
+            <OrderDetailsCard id={order.id} onClose={onToggle} onUpdated={onUpdated} />
+          </div>
+        )}
       </div>
       {print && canExpand && (
         <QuickOrderPrint

@@ -1,6 +1,8 @@
 import { formatNumber } from '@behjati/shared';
 import { formatAdminPrice } from '../lib/money';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
+import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
+import SurfaceGlow from './SurfaceGlow';
 
 export default function AnalyticsMetric({
   label,
@@ -23,11 +25,14 @@ export default function AnalyticsMetric({
   onInspect?: () => void;
   actionLabel?: string;
 }) {
+  const motion = useSurfaceMotion<HTMLElement>({ tilt: !!onInspect });
   return (
     <article
-      className={`relative min-w-0 overflow-hidden rounded-xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'transition hover:border-[#c69b48] hover:shadow-sm' : ''} ${featured ? 'border-[#76100b] bg-[#76100b] text-white shadow-[0_8px_24px_#76100b18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
+      {...motion}
+      className={`${surfaceCardMotion} relative min-w-0 overflow-hidden rounded-2xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] focus-within:ring-2 focus-within:ring-[#c69b48]/40' : ''} ${featured ? 'border-[#76100b] bg-[linear-gradient(135deg,#96281b,#580d09)] text-white shadow-[0_8px_24px_#76100b18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
       data-analytics-metric={label}
     >
+      <SurfaceGlow />
       <div className={`${compact ? 'mb-2' : 'mb-4'} flex items-center justify-between gap-2`}>
         <h2 className={`text-xs font-semibold ${featured ? 'text-[#f7ddbb]' : 'text-[#76685d]'}`}>
           {label}

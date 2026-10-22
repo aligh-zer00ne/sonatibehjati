@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
+import { verifySurfaceMotion } from './surface-motion-checks.mjs';
 import {
   createAdmin,
   loginAdmin,
@@ -100,7 +101,20 @@ try {
   }
   await page.goto(adminOrigin + '/admin');
   await expect(page.locator('[data-admin-dashboard]')).toBeVisible();
+  const hero = page.locator('[data-admin-dashboard] > header');
+  await verifySurfaceMotion(page, hero, { ambient: true });
+  await verifySurfaceMotion(page, page.locator('[data-analytics-metric]').first(), { tilt: true });
+  await verifySurfaceMotion(page, page.locator('[data-order-id]').first(), { tilt: true });
+  await expect(hero.locator('[data-ambient-backdrop]')).toHaveAttribute('data-active', 'false');
+  assert.equal(
+    await hero
+      .locator('[data-ambient-layer]')
+      .first()
+      .evaluate((el) => getComputedStyle(el).animationPlayState),
+    'paused',
+  );
   const sector = page.locator('[data-dashboard-status="PROCESSING"]');
+  await sector.scrollIntoViewIfNeeded();
   await expect(sector).toHaveAttribute('role', 'button');
   const point = await sector.evaluate((el) => {
     const box = el.getBBox();
@@ -217,9 +231,11 @@ try {
   await manual.locator('.ant-modal-close').click();
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
+    await page.evaluate(() => scrollTo(0, 0));
     await page.screenshot({
       path: `/tmp/behjati-dashboard-workspace-${width}.png`,
       fullPage: true,
+      animations: 'disabled',
     });
   }
   await db.admin.update({
