@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { Alert, Button, Form, Input, Modal, Select } from 'antd';
 import { manualOrderInputSchema, manualQuoteInputSchema } from '@behjati/shared/admin';
 import {
   shippingMethods,
@@ -26,6 +26,10 @@ import RetailCustomerModal from './RetailCustomerModal';
 import { Money, MoneyInput } from './Money';
 import { customerName } from '../lib/format';
 import AdminIcon from './AdminIcon';
+import ManualOrderLines from './ManualOrderLines';
+import DashboardProductImage from './DashboardProductImage';
+import { formatAdminPrice } from '../lib/money';
+import { formatNumber } from '@behjati/shared';
 export default function ManualOrderModal({
   onClose,
   onSaved,
@@ -170,7 +174,7 @@ export default function ManualOrderModal({
     <Modal
       open
       title="ثبت سفارش حضوری / اینستاگرام"
-      width={760}
+      width={1120}
       footer={null}
       maskClosable={false}
       onCancel={() => {
@@ -218,128 +222,101 @@ export default function ManualOrderModal({
             افزودن مشتری جدید
           </Button>
         )}
-        <Form.Item label="افزودن محصول">
+        <section
+          className="mb-5 rounded-2xl border border-[#e8ded1] bg-[#fcf9f3] p-3 sm:p-4"
+          aria-label="انتخاب کالا و اقلام فاکتور"
+        >
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="flex items-center gap-2 font-bold">
+              <AdminIcon name="products" className="text-[#96140d]" />
+              اقلام فاکتور
+            </h3>
+            <span className="rounded-full bg-[#f4e8d3] px-3 py-1 text-xs text-[#62452f]">
+              {formatNumber(lines.length)} نوع کالا ·{' '}
+              {formatNumber(lines.reduce((sum, l) => sum + l.quantity, 0))} عدد
+            </span>
+          </div>
           <Select<string>
             aria-label="محصول سفارش دستی"
+            className="mb-4 w-full"
+            size="large"
+            virtual={false}
             showSearch
+            allowClear
             filterOption={false}
-            value={undefined}
+            placeholder="نام کالا را بنویسید و به فاکتور اضافه کنید…"
+            prefix={<AdminIcon name="search" width={20} className="text-[#96140d]" />}
+            value={null}
+            searchValue={productTerm}
             onSearch={setProductTerm}
-            loading={!products.data}
+            loading={!products.data && !products.error}
+            notFoundContent={
+              products.error ? (
+                <span role="alert">
+                  {products.error}
+                  <Button size="small" onClick={products.refresh}>
+                    تلاش مجدد
+                  </Button>
+                </span>
+              ) : products.data ? (
+                'کالایی با این نام پیدا نشد.'
+              ) : (
+                'در حال جستجوی کالا…'
+              )
+            }
             options={(products.data?.catalog.items ?? []).map((p) => ({
               value: p.id,
               label: `${p.title} · ${p.weight}`,
             }))}
-            onChange={(id) => {
+            optionRender={(option) => {
+              const p = products.data?.catalog.items.find((p) => p.id === option.value);
+              if (!p) return option.label;
+              const line = lines.find((l) => l.productId === p.id);
+              return (
+                <div className="flex items-center gap-3 py-1" data-product-result={p.id}>
+                  <DashboardProductImage src={p.images[0]?.url} title={p.title} />
+                  <div className="min-w-0 flex-1">
+                    <b className="block whitespace-normal text-sm">{p.title}</b>
+                    <span className="text-xs text-[#76685d]">
+                      {p.weight} · {formatAdminPrice(p.price)}
+                    </span>
+                  </div>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#f4e8d3] text-[#96140d]">
+                    {line ? formatNumber(line.quantity) : <AdminIcon name="plus" width={17} />}
+                  </span>
+                </div>
+              );
+            }}
+            onSelect={(id) => {
               const p = products.data?.catalog.items.find((p) => p.id === id);
-              if (p && !lines.some((l) => l.productId === id))
-                setLines([
-                  ...lines,
-                  {
-                    productId: id,
-                    title: p.title,
-                    quantity: 1,
-                    unitPrice: p.price,
-                    discountKind: 'FIXED',
-                    discountValue: 0,
-                  },
-                ]);
+              if (!p) return;
+              setLines((value) => {
+                const line = value.find((l) => l.productId === id);
+                return line
+                  ? value.map((l) =>
+                      l.productId === id ? { ...l, quantity: Math.min(99, l.quantity + 1) } : l,
+                    )
+                  : [
+                      ...value,
+                      {
+                        productId: id,
+                        title: p.title,
+                        quantity: 1,
+                        unitPrice: p.price,
+                        discountKind: 'FIXED',
+                        discountValue: 0,
+                      },
+                    ];
+              });
+              setProductTerm('');
             }}
           />
-        </Form.Item>
-        <ul className="mb-4 space-y-3">
-          {lines.map((l) => (
-            <li key={l.productId} className="rounded-2xl border border-[#e8ded1] bg-[#fcf9f3] p-3">
-              <div className="mb-3 flex items-center justify-between gap-2">
-                <b className="min-w-0 break-words text-sm">{l.title}</b>
-                <Button
-                  type="text"
-                  danger
-                  aria-label={`حذف ${l.title}`}
-                  icon={<AdminIcon name="trash" width={18} />}
-                  onClick={() => setLines(lines.filter((x) => x.productId !== l.productId))}
-                />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div>
-                  <label className="mb-1 block text-xs" htmlFor={`qty-${l.productId}`}>
-                    تعداد
-                  </label>
-                  <InputNumber
-                    id={`qty-${l.productId}`}
-                    aria-label={`تعداد ${l.title}`}
-                    className="!w-full"
-                    min={1}
-                    max={99}
-                    precision={0}
-                    value={l.quantity}
-                    onChange={(v) => {
-                      if (v) updateLine(l.productId, { quantity: v });
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs" htmlFor={`unit-${l.productId}`}>
-                    قیمت واحد (ریال)
-                  </label>
-                  <MoneyInput
-                    id={`unit-${l.productId}`}
-                    value={l.unitPrice}
-                    onChange={(v) => updateLine(l.productId, { unitPrice: v ?? 0 })}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs" htmlFor={`total-${l.productId}`}>
-                    قیمت کل (ریال)
-                  </label>
-                  <MoneyInput
-                    id={`total-${l.productId}`}
-                    value={l.unitPrice * l.quantity}
-                    onChange={(v) => updateLine(l.productId, { unitPrice: (v ?? 0) / l.quantity })}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs">نوع تخفیف ردیف</label>
-                  <Select
-                    aria-label={`نوع تخفیف ${l.title}`}
-                    className="w-full"
-                    value={l.discountKind}
-                    options={[
-                      { value: 'FIXED', label: 'مبلغی (ریال)' },
-                      { value: 'PERCENT', label: 'درصدی' },
-                    ]}
-                    onChange={(discountKind) =>
-                      updateLine(l.productId, { discountKind, discountValue: 0 })
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs" htmlFor={`discount-${l.productId}`}>
-                    مقدار تخفیف
-                  </label>
-                  {l.discountKind === 'FIXED' ? (
-                    <MoneyInput
-                      id={`discount-${l.productId}`}
-                      value={l.discountValue}
-                      onChange={(v) => updateLine(l.productId, { discountValue: v ?? 0 })}
-                    />
-                  ) : (
-                    <InputNumber
-                      id={`discount-${l.productId}`}
-                      aria-label={`درصد تخفیف ${l.title}`}
-                      className="!w-full"
-                      min={0}
-                      max={100}
-                      precision={2}
-                      value={l.discountValue}
-                      onChange={(v) => updateLine(l.productId, { discountValue: v ?? 0 })}
-                    />
-                  )}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+          <ManualOrderLines
+            lines={lines}
+            updateLine={updateLine}
+            removeLine={(id) => setLines((value) => value.filter((l) => l.productId !== id))}
+          />
+        </section>
         {lines.length > 0 && !validQuote.success && (
           <Alert
             className="!mb-3"

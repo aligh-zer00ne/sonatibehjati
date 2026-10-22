@@ -41,6 +41,22 @@ try {
     },
   });
   products.add(product.id);
+  const extraProducts = [];
+  for (const name of ['روغن کنجد یک لیتری', 'حلوا ارده سنتی']) {
+    const p = await db.product.create({
+      data: {
+        title: `${name} ${randomUUID().slice(0, 6)}`,
+        slug: `compact-${randomUUID()}`,
+        price: 690000,
+        weight: 'یک بسته',
+        shortDescription: '',
+        description: '',
+        categoryId: category.id,
+      },
+    });
+    products.add(p.id);
+    extraProducts.push(p);
+  }
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
     headless: true,
@@ -96,6 +112,14 @@ try {
   await page.locator('.ant-select-item-option').filter({ hasText: customer.user.phone }).click();
   await modal.getByRole('combobox', { name: 'محصول سفارش دستی', exact: true }).fill(product.title);
   await page.locator('.ant-select-item-option').filter({ hasText: product.title }).click();
+  await modal.getByRole('combobox', { name: 'محصول سفارش دستی', exact: true }).fill(product.title);
+  await expect(page.locator(`[data-product-result="${product.id}"] img`)).toBeVisible();
+  await expect(page.locator(`[data-product-result="${product.id}"]`)).toContainText('ریال');
+  await page.locator('.ant-select-item-option').filter({ hasText: product.title }).click();
+  await expect(modal.locator('[data-manual-line]')).toHaveCount(1);
+  await expect(
+    modal.getByRole('spinbutton', { name: `تعداد ${product.title}`, exact: true }),
+  ).toHaveValue('2');
   await modal.getByRole('spinbutton', { name: `تعداد ${product.title}`, exact: true }).fill('2');
   await modal.getByRole('spinbutton', { name: `تعداد ${product.title}`, exact: true }).press('Tab');
   await modal.getByLabel('قیمت واحد (ریال)', { exact: true }).fill('2000000');
@@ -113,6 +137,19 @@ try {
     modal.getByRole('button', { name: `حذف ${product.title}`, exact: true }).locator('svg'),
   ).toHaveCount(1);
   await modal.getByLabel('مبلغ دریافت‌شده (ریال)', { exact: true }).fill('500000');
+  await modal.getByLabel('مبلغ دریافت‌شده (ریال)', { exact: true }).press('Tab');
+  const rowBox = await modal.locator('[data-manual-line]').boundingBox();
+  assert.ok(rowBox && rowBox.height < 100, 'Desktop invoice items must fit one compact row');
+  for (const p of extraProducts) {
+    await modal.getByRole('combobox', { name: 'محصول سفارش دستی', exact: true }).fill(p.title);
+    await page.locator('.ant-select-item-option').filter({ hasText: p.title }).click();
+  }
+  await expect(modal.locator('[data-manual-line]')).toHaveCount(3);
+  for (const row of await modal.locator('[data-manual-line]').all())
+    assert.ok((await row.boundingBox()).height < 100);
+  await modal.screenshot({ path: '/tmp/behjati-manual-compact-desktop.png' });
+  for (const p of extraProducts)
+    await modal.getByRole('button', { name: `حذف ${p.title}`, exact: true }).click();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await fits(page);

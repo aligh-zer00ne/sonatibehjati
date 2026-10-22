@@ -17,15 +17,17 @@ export function MoneyInput({
   onChange,
   id,
   disabled,
+  compact = false,
 }: {
   value?: number | null;
   onChange?: (value: number | null) => void;
   id?: string;
   disabled?: boolean;
+  compact?: boolean;
 }) {
   const invalidPrecision = value != null && !Number.isInteger(value);
   return (
-    <div>
+    <div className={compact ? 'group relative min-w-0' : undefined}>
       <InputNumber<number>
         id={id}
         value={value == null ? value : toRials(value)}
@@ -47,7 +49,15 @@ export function MoneyInput({
           مبلغ را مضرب ۱۰ ریال وارد کنید.
         </p>
       )}
-      <AmountInWords amount={value ?? null} />
+      <div
+        className={
+          compact
+            ? 'pointer-events-none absolute end-0 top-full z-10 hidden min-w-36 max-w-64 rounded-lg border border-[#e8ded1] bg-white px-2 py-1 shadow-lg group-focus-within:block'
+            : undefined
+        }
+      >
+        <AmountInWords amount={value ?? null} />
+      </div>
     </div>
   );
 }

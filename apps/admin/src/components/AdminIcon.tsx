@@ -1,5 +1,9 @@
 import type { SVGProps } from 'react';
 const paths = {
+  search: 'm21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',
+  refresh: 'M20 7V3m0 4h-4M4 17v4m0-4h4M20 7a9 9 0 0 0-16 2M4 17a9 9 0 0 0 16-2',
+  trend: 'm3 17 6-6 4 4 8-10M15 5h6v6',
+  download: 'M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4',
   support: 'M4 14v-3a8 8 0 0 1 16 0v3M4 12H2v7h4v-7H4ZM20 12h2v7h-4v-7h2ZM18 19v3h-6',
   review: 'M3 3h18v14H8l-5 4V3ZM7 7h10M7 11h7',
   home: 'm3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7',

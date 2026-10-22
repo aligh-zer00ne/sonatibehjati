@@ -620,6 +620,9 @@ query ManualCatalog($input: CatalogInput!) {
       title
       weight
       price
+      images {
+        url
+      }
     }
     total
   }
