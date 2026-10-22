@@ -1,12 +1,13 @@
 import AccountStatus from '../components/AccountStatus';
-import { toRials } from '../lib/money';
+import AnalyticsMetric from '../components/AnalyticsMetric';
+import AnalyticsRefresh from '../components/AnalyticsRefresh';
+import AdminSkyline from '../components/AdminSkyline';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
 import type { SalesChannel } from '../generated/graphql';
 import { canOpenAdminPath } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
-import { AmountInWords } from '../components/AmountInWords';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Empty } from 'antd';
@@ -16,11 +17,13 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import DataState from '../components/DataState';
 import DashboardCharts from '../components/DashboardCharts';
 import DashboardProductImage from '../components/DashboardProductImage';
-import OrdersTable from '../components/OrdersTable';
+import DashboardRecentOrders from '../components/DashboardRecentOrders';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import { customerName } from '../lib/format';
 const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
-  { label: 'مدیریت سفارش‌ها', href: '/admin/orders', icon: 'orders' },
+  { label: 'سفارش‌های وبسایت', href: '/admin/orders/website', icon: 'orders' },
+  { label: 'فروش دستی', href: '/admin/orders/manual', icon: 'receipt' },
+  { label: 'دریافت و پرداخت', href: '/admin/settlements', icon: 'wallet' },
   { label: 'افزودن محصول', href: '/admin/products/new', icon: 'plus' },
   { label: 'مدیریت مشتریان', href: '/admin/users', icon: 'users' },
   { label: 'گزارش فروش', href: '/admin/reports', icon: 'reports' },
@@ -28,7 +31,12 @@ const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
 export default function Dashboard() {
   const { admin } = useAdmin();
   const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>('');
-  const query = useAdminQuery(AdminDashboardDocument, { salesChannel: salesChannel || null });
+  const query = useAdminQuery(
+    AdminDashboardDocument,
+    { salesChannel: salesChannel || null },
+    true,
+    { pollInterval: 30000 },
+  );
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -36,47 +44,6 @@ export default function Dashboard() {
   }, []);
   if (!query.data) return <DataState error={query.error} retry={query.refresh} />;
   const data = query.data.adminDashboard;
-  const metrics: Array<{
-    label: string;
-    value: number;
-    detail: string;
-    icon: AdminIconName;
-    color: string;
-    background: string;
-  }> = [
-    {
-      label: 'محصول فعال',
-      value: data.activeProductsCount,
-      detail: 'محصولات قابل نمایش در فروشگاه',
-      icon: 'products',
-      color: '#9b610a',
-      background: '#fff7e7',
-    },
-    {
-      label: 'ارزش کل سفارش‌ها (ریال)',
-      value: data.orderValue,
-      detail: 'بدون سفارش‌های لغوشده',
-      icon: 'wallet',
-      color: '#525198',
-      background: '#f6f2fd',
-    },
-    {
-      label: 'سفارش ثبت شده',
-      value: data.ordersCount,
-      detail: `${formatNumber(data.ordersToday)} سفارش امروز`,
-      icon: 'orders',
-      color: '#087b53',
-      background: '#effaf3',
-    },
-    {
-      label: 'مشتری ثبت نام شده',
-      value: data.customersCount,
-      detail: 'مشتریان فروشگاه سنتی بهجتی',
-      icon: 'users',
-      color: '#a51432',
-      background: '#fff1f2',
-    },
-  ];
   const panelTitle = (label: string, href: string) => (
     <div className="flex items-center justify-between gap-2">
       <span>{label}</span>
@@ -90,7 +57,74 @@ export default function Dashboard() {
   );
   return (
     <div className="flex flex-col gap-5 sm:gap-6" data-admin-dashboard>
-      <h1 className="sr-only">داشبورد مدیریت</h1>
+      <header className="relative isolate overflow-hidden rounded-3xl bg-[#76100b] p-5 text-white sm:p-7">
+        <div aria-hidden="true" className="absolute inset-y-0 end-0 -z-10 w-72 opacity-70">
+          <AdminSkyline />
+        </div>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs text-[#edc994]">سنتی بهجتی اردکان · میز کار شما</p>
+            <h1 className="mt-3 text-2xl font-extrabold sm:text-3xl">داشبورد مدیریت</h1>
+            <p className="mt-3 text-sm text-[#f2d7ba]">نبض فروشگاه، از سفارش تا دریافت</p>
+          </div>
+          <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3">
+            <p className="text-xs text-[#f2d7ba]">سفارش‌های امروز</p>
+            <b className="mt-1 block text-3xl tabular-nums text-[#edc994]">
+              {formatNumber(data.ordersToday)}
+            </b>
+          </div>
+        </div>
+        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-white/15 pt-4 text-xs text-[#f2d7ba]">
+          <AdminIcon name="calendar" width={17} />
+          <time dateTime={now.toISOString()}>
+            {new Intl.DateTimeFormat('fa-IR', {
+              dateStyle: 'full',
+              timeZone: 'Asia/Tehran',
+            }).format(now)}
+          </time>
+          <span className="ms-auto">
+            {new Intl.DateTimeFormat('fa-IR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZone: 'Asia/Tehran',
+            }).format(now)}
+          </span>
+        </div>
+      </header>
+      <AnalyticsRefresh
+        refreshing={query.refreshing}
+        updatedAt={query.updatedAt}
+        error={query.error}
+        refresh={query.refresh}
+      />
+      <section className="grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="آمار اصلی فروشگاه">
+        <AnalyticsMetric
+          label="خالص دریافتی"
+          value={data.revenue}
+          amount
+          featured
+          icon="wallet"
+          detail="از ابتدای فعالیت؛ مطابق محل خرید انتخابی"
+        />
+        <AnalyticsMetric
+          label="کل سفارش‌ها"
+          value={data.ordersCount}
+          icon="orders"
+          detail={`${formatNumber(data.ordersThisMonth)} سفارش در ماه جاری`}
+        />
+        <AnalyticsMetric
+          label="مشتریان فروشگاه"
+          value={data.customersCount}
+          icon="users"
+          detail="مطابق محل خرید انتخابی"
+        />
+        <AnalyticsMetric
+          label="محصول فعال"
+          value={data.activeProductsCount}
+          icon="products"
+          detail="کالاهای قابل نمایش در فروشگاه"
+        />
+      </section>
       <FilterBar label="فیلتر داشبورد">
         <FilterButton label="محل خرید" active={!!salesChannel}>
           <FilterChips<SalesChannel | ''>
@@ -104,60 +138,74 @@ export default function Dashboard() {
           />
         </FilterButton>
       </FilterBar>
-      <section aria-label="مشتریان به تفکیک محل خرید" className="grid gap-3 sm:grid-cols-3">
-        {data.channelMetrics.map((c) => (
-          <div key={c.salesChannel} className="rounded-xl border border-[#e5d7c2] bg-[#fcf9f3] p-4">
-            <h2 className="mb-3 font-bold text-[#76100b]">
-              خرید از {salesChannelLabels[c.salesChannel]}
-            </h2>
-            <p className="text-sm leading-7">
-              {formatNumber(c.customersCount)} مشتری · {formatNumber(c.ordersCount)} سفارش
-            </p>
-            <p className="mt-2 text-xs leading-7">
-              دریافتی: <Money amount={c.revenue} />
-            </p>
-          </div>
-        ))}
+      <section aria-label="مشتریان به تفکیک محل خرید">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-bold">فروش از کدام مسیر آمده؟</h2>
+          <span className="text-xs text-[#857467]">برای فیلتر آمار، یک مسیر را انتخاب کنید</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {data.channelMetrics.map((c) => (
+            <button
+              type="button"
+              key={c.salesChannel}
+              onClick={() => setSalesChannel(salesChannel === c.salesChannel ? '' : c.salesChannel)}
+              aria-pressed={salesChannel === c.salesChannel}
+              aria-label={`نمایش آمار خرید از ${salesChannelLabels[c.salesChannel]}`}
+              className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-4 text-start transition hover:border-[#c69b48] aria-pressed:border-[#96140d] aria-pressed:bg-[#fcf5ed]"
+            >
+              <div className="mb-3 flex items-center gap-2">
+                <span className="grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#96140d]">
+                  <AdminIcon
+                    name={
+                      c.salesChannel === 'WEBSITE'
+                        ? 'home'
+                        : c.salesChannel === 'INSTAGRAM'
+                          ? 'phone'
+                          : 'person'
+                    }
+                    width={19}
+                  />
+                </span>
+                <h3 className="font-bold">خرید از {salesChannelLabels[c.salesChannel]}</h3>
+                <AdminIcon name="arrow" className="ms-auto text-[#b59b7c]" width={17} />
+              </div>
+              <p className="text-xs text-[#76685d]">
+                {formatNumber(c.customersCount)} مشتری · {formatNumber(c.ordersCount)} سفارش
+              </p>
+              <div className="mt-3 text-sm font-bold">
+                <span className="mb-1 block text-xs font-medium text-[#857467]">
+                  دریافت تخصیص‌یافته
+                </span>
+                <Money amount={c.revenue} />
+              </div>
+              <div
+                className="mt-3 h-1 overflow-hidden rounded-full bg-[#f2e8da]"
+                aria-hidden="true"
+              >
+                <div
+                  className="h-full rounded-full bg-[#c69b48]"
+                  style={{
+                    width: `${
+                      (c.ordersCount /
+                        Math.max(
+                          1,
+                          data.channelMetrics.reduce((sum, v) => sum + v.ordersCount, 0),
+                        )) *
+                      100
+                    }%`,
+                  }}
+                />
+              </div>
+            </button>
+          ))}
+        </div>
+        <details className="mt-3 text-xs leading-6 text-[#857467]">
+          <summary className="cursor-pointer">دربارهٔ آمار مسیرهای خرید</summary>مشتریِ دارای خرید
+          از چند مسیر، در هر مسیر جدا حساب می‌شود. برای مشتری بدون سفارش، منبع ثبت مبناست. دریافتی
+          هر مسیر فقط وجه تخصیص‌یافته به فاکتورهاست؛ پیش‌دریافت و بازپرداخت کلی حساب، در خالص کل
+          لحاظ می‌شوند.
+        </details>
       </section>
-      <p className="text-xs leading-6 text-[#76685d]">
-        یک مشتری ممکن است از چند مسیر خرید کرده باشد؛ تعداد مشتریان هر مسیر مستقل است. برای مشتری
-        بدون سفارش، منبع ثبت مبناست. دریافت‌ها شامل پرداخت بانکی موفق و مبالغ ثبت‌شده توسط مدیر است.
-      </p>
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        {metrics.map((metric) => (
-          <div
-            key={metric.label}
-            style={{ backgroundColor: metric.background, color: metric.color }}
-            className="rounded-xl border border-[#e8ded1]/80 p-4 shadow-[0_4px_18px_rgba(94,61,32,0.025)]"
-          >
-            <span className="mb-3 grid size-10 place-items-center rounded-full bg-white/70">
-              <AdminIcon name={metric.icon} width={24} height={24} />
-            </span>
-            <b className="block text-xl leading-9 break-all tabular-nums sm:text-[25px]">
-              {formatNumber(metric.icon === 'wallet' ? toRials(metric.value) : metric.value)}
-            </b>
-            {metric.icon === 'wallet' && <AmountInWords amount={metric.value} />}
-            <p className="mt-1 text-xs font-medium">{metric.label}</p>
-            <p className="mt-4 text-[12px] text-[#8b8277]">{metric.detail}</p>
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center gap-2 text-xs text-[#857467]">
-        <AdminIcon name="calendar" width={16} height={16} />
-        <time dateTime={now.toISOString()}>
-          {new Intl.DateTimeFormat('fa-IR', { dateStyle: 'full', timeZone: 'Asia/Tehran' }).format(
-            now,
-          )}
-        </time>
-        <span className="mr-auto">
-          ساعت{' '}
-          {new Intl.DateTimeFormat('fa-IR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'Asia/Tehran',
-          }).format(now)}
-        </span>
-      </div>
       <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card
           title="سریع‌ترین دسترسی‌ها"
@@ -170,7 +218,7 @@ export default function Dashboard() {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className="group flex min-h-[103px] flex-col items-center justify-center gap-3 rounded-lg border border-[#eee3d5] bg-[#fffcf7] px-2 !text-[#34251e] transition hover:border-[#cfa99f] hover:shadow-sm"
+                  className="group flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border border-[#eee3d5] bg-[#fffcf7] px-2 !text-[#34251e] transition hover:border-[#c69b48] hover:bg-[#f8f0e1]"
                 >
                   <AdminIcon
                     name={item.icon}
@@ -185,12 +233,12 @@ export default function Dashboard() {
         </Card>
         <DashboardCharts report={data.report} />
       </div>
-      <div className="grid min-w-0 gap-4 xl:grid-cols-4">
+      <div className="grid min-w-0 items-start gap-4 xl:grid-cols-4">
         <Card
           title={panelTitle('آخرین سفارش‌ها', '/admin/orders')}
           className="min-w-0 xl:col-span-2"
         >
-          <OrdersTable items={data.recentOrders} compact onUpdated={query.refresh} />
+          <DashboardRecentOrders items={data.recentOrders} onUpdated={query.refresh} />
         </Card>
         <Card title={panelTitle('محصولات پرسفارش', '/admin/products')} className="min-w-0">
           {data.topProducts.length ? (

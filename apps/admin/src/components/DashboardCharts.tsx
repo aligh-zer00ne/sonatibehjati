@@ -1,4 +1,6 @@
-import { toRials } from '../lib/money';
+import { useId, useState } from 'react';
+import { compactRials } from './ReportCharts';
+import { formatAdminPrice } from '../lib/money';
 import { Card, Empty } from 'antd';
 import {
   ResponsiveContainer,
@@ -16,8 +18,12 @@ import type { AdminReportFieldsFragment } from '../generated/graphql';
 import { Money } from './Money';
 import { chartDate } from '../lib/format';
 import AdminIcon from './AdminIcon';
-const colors = ['#b01032', '#f5a54c', '#03a77b', '#49aeb7', '#789acd', '#f36b72'];
+const colors = ['#96140d', '#c69b48', '#70614d', '#d09f86', '#366e58', '#b66565'];
 export default function DashboardCharts({ report }: { report: AdminReportFieldsFragment }) {
+  const [days, setDays] = useState(7);
+  const [metric, setMetric] = useState<'orderValue' | 'revenue'>('orderValue');
+  const gradient = useId().replace(/:/g, '');
+  const series = report.daily.slice(-days);
   const statuses = report.statuses
     .filter((item) => item.count > 0)
     .map((item) => ({
@@ -31,20 +37,56 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
         title={
           <span className="flex items-center gap-2">
             <AdminIcon name="reports" className="text-[#930d25]" />
-            ارزش سفارش‌های ۷ روز اخیر
+            روند فروشگاه
           </span>
+        }
+        extra={
+          <div className="flex gap-1 rounded-lg bg-[#f4e8d3] p-1" aria-label="بازه نمودار داشبورد">
+            {[7, 30].map((n) => (
+              <button
+                type="button"
+                key={n}
+                aria-pressed={days === n}
+                onClick={() => setDays(n)}
+                className="rounded-md px-2 py-1 text-xs text-[#76685d] aria-pressed:bg-white aria-pressed:text-[#76100b]"
+              >
+                {formatNumber(n)} روز
+              </button>
+            ))}
+          </div>
         }
         className="min-w-0 xl:col-span-2"
       >
-        <div className="h-[235px] w-full" dir="ltr">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <b className="text-lg text-[#76100b]">
+            {formatAdminPrice(series.reduce((sum, d) => sum + d[metric], 0))}
+          </b>
+          <div className="flex gap-3 text-xs">
+            {[
+              { key: 'orderValue', label: 'ارزش فاکتورها' },
+              { key: 'revenue', label: 'دریافتی' },
+            ].map((m) => (
+              <button
+                key={m.key}
+                type="button"
+                aria-pressed={metric === m.key}
+                onClick={() => setMetric(m.key as 'orderValue' | 'revenue')}
+                className="border-b-2 border-transparent py-1 text-[#857467] aria-pressed:border-[#96140d] aria-pressed:text-[#76100b]"
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="h-[235px] w-full" dir="ltr" data-dashboard-chart={metric}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={report.daily.slice(-7)}
+              data={series}
               margin={{ top: 16, right: 12, bottom: 0, left: 4 }}
               accessibilityLayer
             >
               <defs>
-                <linearGradient id="dashboard-order-value" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#ad1634" stopOpacity={0.22} />
                   <stop offset="100%" stopColor="#ad1634" stopOpacity={0.02} />
                 </linearGradient>
@@ -59,29 +101,32 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
                 tickMargin={12}
               />
               <YAxis
-                tickFormatter={(value) => formatNumber(toRials(Number(value)))}
+                tickFormatter={(value) => compactRials(Number(value))}
                 axisLine={false}
                 tickLine={false}
-                width={82}
+                width={60}
                 fontSize={10}
               />
               <Tooltip
                 labelFormatter={(value) => chartDate(String(value))}
-                formatter={(value) => [<Money amount={Number(value)} />, 'ارزش سفارش']}
+                formatter={(value) => [
+                  <Money amount={Number(value)} />,
+                  metric === 'orderValue' ? 'ارزش فاکتورها' : 'خالص دریافتی',
+                ]}
               />
               <Area
                 type="monotone"
-                dataKey="orderValue"
+                dataKey={metric}
                 stroke="#a50f30"
-                fill="url(#dashboard-order-value)"
+                fill={`url(#${gradient})`}
                 strokeWidth={2}
-                dot={{ r: 3, fill: '#a50f30' }}
+                dot={series.length === 1 ? { r: 3, fill: '#a50f30' } : false}
                 isAnimationActive={false}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <p className="mt-2 text-[12px] text-[#8c8176]">جمع مبلغ فاکتورهای این بازه.</p>
+        <p className="mt-2 text-[12px] text-[#8c8176]">مبالغ به ریال · مطابق محل خرید انتخابی</p>
       </Card>
       <Card title="وضعیت سفارش‌ها" className="min-w-0">
         {statuses.length ? (

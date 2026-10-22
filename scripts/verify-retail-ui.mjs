@@ -145,6 +145,8 @@ try {
     await page.locator('.ant-select-item-option').filter({ hasText: p.title }).click();
   }
   await expect(modal.locator('[data-manual-line]')).toHaveCount(3);
+  await modal.getByText('اقلام فاکتور', { exact: true }).click();
+  await expect(page.locator('.ant-select-dropdown:visible')).toHaveCount(0);
   for (const row of await modal.locator('[data-manual-line]').all())
     assert.ok((await row.boundingBox()).height < 100);
   await modal.screenshot({ path: '/tmp/behjati-manual-compact-desktop.png' });
