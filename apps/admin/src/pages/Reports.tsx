@@ -6,25 +6,25 @@ import {
   shippingMethodLabels,
 } from '@behjati/shared/sales';
 import type { SalesChannel, ShippingMethod } from '../generated/graphql';
-import RecordCards from '../components/RecordCards';
+import AnalyticsMetric from '../components/AnalyticsMetric';
+import AnalyticsRefresh from '../components/AnalyticsRefresh';
+import AdminIcon from '../components/AdminIcon';
 import { Money } from '../components/Money';
 import { useState } from 'react';
-import { Typography, Card, Button, Alert } from 'antd';
+import { Card, Button, Alert, Pagination, Switch, Empty } from 'antd';
 import CalendarPicker from '../components/CalendarPicker';
 import { orderStatuses, orderStatusLabels, formatNumber } from '@behjati/shared';
 import { defaultReportRange, adminReportFilterSchema, tehranDate } from '@behjati/shared/admin';
-import {
-  AdminReportDocument,
-  type OrderStatus,
-  type AdminReportFieldsFragment,
-} from '../generated/graphql';
+import { AdminReportDocument, type OrderStatus } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import { downloadReport } from '../lib/csv';
 import { chartDate } from '../lib/format';
 import DataState from '../components/DataState';
-import MetricCards from '../components/MetricCards';
+
 import ReportCharts from '../components/ReportCharts';
 export default function Reports() {
+  const [activeOnly, setActiveOnly] = useState(true);
+  const [page, setPage] = useState(1);
   const [range, setRange] = useState(defaultReportRange());
   const [status, setStatus] = useState<OrderStatus | ''>('');
   const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>('');
@@ -36,38 +36,82 @@ export default function Reports() {
     shippingMethod: shippingMethod || null,
   };
   const parsed = adminReportFilterSchema.safeParse(filter);
-  const query = useAdminQuery(AdminReportDocument, { input: filter }, parsed.success);
+  const query = useAdminQuery(AdminReportDocument, { input: filter }, parsed.success, {
+    pollInterval: 30000,
+  });
   const report = query.data?.adminReport;
+  const daily = (report?.daily ?? [])
+    .filter((d) => !activeOnly || d.ordersCount > 0 || d.revenue !== 0)
+    .slice()
+    .reverse();
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(daily.length / 10)));
+  const setPreset = (days: number) => {
+    const to = tehranDate();
+    setPage(1);
+    setRange({
+      to,
+      from: new Date(Date.parse(to) - (days - 1) * 86400000).toISOString().slice(0, 10),
+    });
+  };
   return (
-    <>
-      <Typography.Title level={2}>گزارش سفارش‌ها</Typography.Title>
+    <div className="space-y-5" data-admin-reports>
+      <header className="relative overflow-hidden rounded-3xl bg-[#76100b] p-5 text-white sm:p-7">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -end-12 -top-20 size-72 rounded-full border-[36px] border-[#e8bd70]/10"
+        />
+        <div className="relative flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span className="text-xs tracking-wide text-[#edc994]">
+              تصویر روشن از عملکرد فروشگاه
+            </span>
+            <h1 className="mt-2 text-2xl font-extrabold sm:text-3xl">گزارش سفارش‌ها</h1>
+            <p className="mt-3 text-sm text-[#f0d9c3]">
+              {chartDate(range.from)} تا {chartDate(range.to)}
+            </p>
+          </div>
+          <Button
+            icon={<AdminIcon name="download" width={17} />}
+            disabled={!report}
+            onClick={() => {
+              if (report) downloadReport(report);
+            }}
+          >
+            خروجی CSV
+          </Button>
+        </div>
+        <div className="relative mt-5 flex flex-wrap gap-2" aria-label="بازه‌های سریع گزارش">
+          {[
+            { days: 1, label: 'امروز' },
+            { days: 7, label: '۷ روز اخیر' },
+            { days: 30, label: '۳۰ روز اخیر' },
+          ].map((preset) => (
+            <button
+              key={preset.days}
+              type="button"
+              onClick={() => setPreset(preset.days)}
+              aria-pressed={
+                range.to === tehranDate() &&
+                range.from ===
+                  new Date(Date.parse(tehranDate()) - (preset.days - 1) * 86400000)
+                    .toISOString()
+                    .slice(0, 10)
+              }
+              className="rounded-full border border-white/20 px-4 py-2 text-xs transition hover:bg-white/15 aria-pressed:border-[#e9c27a] aria-pressed:bg-[#e9c27a] aria-pressed:text-[#4d210e]"
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </header>
+      <AnalyticsRefresh
+        refreshing={query.refreshing}
+        updatedAt={query.updatedAt}
+        error={query.error}
+        refresh={query.refresh}
+      />
       <FilterBar label="فیلترهای گزارش">
         <FilterButton label="بازه گزارش">
-          <div className="grid grid-cols-3 gap-1 border-b border-[#eee5d9] pb-3">
-            {[
-              { days: 1, label: 'امروز' },
-              { days: 7, label: '۷ روز اخیر' },
-              { days: 30, label: '۳۰ روز اخیر' },
-            ].map((p) => (
-              <Button
-                key={p.days}
-                size="small"
-                className="!px-1 !text-[12px]"
-                onClick={() => {
-                  const to = tehranDate();
-                  setRange({
-                    to,
-                    from: new Date(Date.parse(to) - (p.days - 1) * 86400000)
-                      .toISOString()
-                      .slice(0, 10),
-                  });
-                }}
-              >
-                {p.label}
-              </Button>
-            ))}
-          </div>
-
           <div>
             <label htmlFor="report-from" className="mb-2 block text-xs">
               از تاریخ
@@ -141,15 +185,6 @@ export default function Reports() {
         >
           پاک کردن فیلترها
         </Button>
-        <Button
-          size="small"
-          disabled={!report}
-          onClick={() => {
-            if (report) downloadReport(report);
-          }}
-        >
-          خروجی CSV
-        </Button>
       </FilterBar>
       {!parsed.success ? (
         <Alert type="error" title="بازه گزارش باید معتبر و حداکثر ۳۶۶ روز باشد." role="alert" />
@@ -157,43 +192,134 @@ export default function Reports() {
         <DataState error={query.error} retry={query.refresh} />
       ) : (
         <>
-          <MetricCards
-            metrics={[
-              { label: 'تعداد سفارش', value: report.ordersCount },
-              { label: 'ارزش فاکتورها', value: report.orderValue, amount: true },
-              {
-                label: 'میانگین ارزش سفارش',
-                value: Math.round(report.averageOrderValue),
-                amount: true,
-              },
-              { label: 'خالص دریافتی', value: report.revenue, amount: true },
-              { label: 'پرداخت موفق درگاه', value: report.bankRevenue, amount: true },
-              { label: 'دریافت ثبت‌شده توسط مدیر', value: report.offlineRevenue, amount: true },
-            ]}
-          />
-          <Alert
-            type="info"
-            title="دریافتی‌ها بر اساس تاریخ پرداخت هستند. پرداخت‌های موفق درگاه و دریافت‌های خارج از سایت جدا نمایش داده می‌شوند؛ ارزش سفارش‌های لغوشده در ارزش فروش نیست."
-          />
-          <ReportCharts report={report} />
-          <Card title="داده‌های روزانه">
-            <RecordCards<AdminReportFieldsFragment['daily'][number]>
-              rowKey="date"
-              icon="reports"
-              label="گزارش‌های روزانه"
-              featuredField="ارزش سفارش"
-              dataSource={[...report.daily].sort((a, b) => b.date.localeCompare(a.date))}
-              pagination={{ pageSize: 15, showSizeChanger: false }}
-              columns={[
-                { title: 'روز', render: (_, day) => chartDate(day.date) },
-                { title: 'تعداد سفارش', render: (_, day) => formatNumber(day.ordersCount) },
-                { title: 'ارزش سفارش', render: (_, day) => <Money amount={day.orderValue} /> },
-                { title: 'خالص دریافتی', render: (_, day) => <Money amount={day.revenue} /> },
-              ]}
+          <section className="grid grid-cols-2 gap-3 xl:grid-cols-3" aria-label="خلاصه عملکرد فروش">
+            <AnalyticsMetric
+              label="خالص دریافتی"
+              value={report.revenue}
+              amount
+              featured
+              icon="wallet"
+              detail="وجه دریافت‌شده پس از کسر پرداخت به مشتری"
             />
+            <AnalyticsMetric
+              label="تعداد سفارش"
+              value={report.ordersCount}
+              icon="orders"
+              detail="سفارش‌های ثبت‌شده در بازهٔ انتخابی"
+            />
+            <AnalyticsMetric
+              label="ارزش فاکتورها"
+              value={report.orderValue}
+              amount
+              icon="receipt"
+              detail="جمع فاکتورها بدون سفارش‌های لغوشده"
+            />
+            <AnalyticsMetric
+              label="پرداخت موفق درگاه"
+              value={report.bankRevenue}
+              amount
+              icon="shield"
+              detail="پرداخت‌های بانکی تأییدشده"
+            />
+            <AnalyticsMetric
+              label="دریافت ثبت‌شده توسط مدیر"
+              value={report.offlineRevenue}
+              amount
+              icon="person"
+              detail={
+                salesChannel || shippingMethod || status
+                  ? 'دریافت‌های تخصیص‌یافته به فاکتورهای این فیلتر'
+                  : 'خالص دریافت و پرداخت دفتر حساب مشتریان'
+              }
+            />
+            <AnalyticsMetric
+              label="میانگین ارزش سفارش"
+              value={Math.round(report.averageOrderValue)}
+              amount
+              icon="trend"
+              detail="میانگین فاکتورهای غیرلغوشدهٔ این بازه"
+            />
+          </section>
+          <details className="rounded-xl border border-[#e8ded1] bg-[#fcf9f3] px-4 py-3 text-xs leading-7 text-[#76685d]">
+            <summary className="cursor-pointer font-semibold text-[#62452f]">
+              این اعداد چطور محاسبه می‌شوند؟
+            </summary>
+            دریافتی بر اساس تاریخ دریافت یا پرداخت است و ارزش فاکتور بر اساس تاریخ ثبت سفارش. گزارش
+            کل، پیش‌دریافت و بازپرداخت مشتری را هم لحاظ می‌کند. با فیلتر محل خرید، ارسال یا وضعیت،
+            فقط دریافت‌های تخصیص‌یافته به فاکتورهای منطبق گزارش می‌شوند؛ جمع این فیلترها لزوماً با
+            خالص کل برابر نیست.
+          </details>
+          <ReportCharts report={report} />
+          <Card
+            title="داده‌های روزانه"
+            extra={
+              <span className="flex items-center gap-2 text-xs">
+                <Switch
+                  size="small"
+                  checked={activeOnly}
+                  onChange={(checked) => {
+                    setActiveOnly(checked);
+                    setPage(1);
+                  }}
+                  aria-label="فقط روزهای دارای فعالیت"
+                />
+                روزهای فعال
+              </span>
+            }
+          >
+            <div role="table" aria-label="گزارش‌های روزانه" className="min-w-0">
+              <div
+                role="row"
+                className="mb-2 hidden grid-cols-[1.1fr_.6fr_1.2fr_1.2fr] gap-3 rounded-lg bg-[#f8f1e5] p-3 text-xs text-[#76685d] sm:grid"
+              >
+                <span role="columnheader">روز</span>
+                <span role="columnheader">سفارش</span>
+                <span role="columnheader">ارزش فاکتورها</span>
+                <span role="columnheader">خالص دریافتی</span>
+              </div>
+              {daily.slice((currentPage - 1) * 10, currentPage * 10).map((day) => (
+                <div
+                  key={day.date}
+                  role="row"
+                  className="grid grid-cols-2 items-start gap-3 border-b border-[#eee5d9] py-3 last:border-0 sm:grid-cols-[1.1fr_.6fr_1.2fr_1.2fr] sm:px-3"
+                  data-report-day={day.date}
+                >
+                  <span role="cell" className="text-sm font-semibold">
+                    {chartDate(day.date)}
+                  </span>
+                  <span role="cell" className="text-xs sm:text-sm">
+                    {formatNumber(day.ordersCount)} سفارش
+                  </span>
+                  <div role="cell" className="min-w-0 text-xs">
+                    <span className="mb-1 block text-[#857467] sm:hidden">ارزش فاکتورها</span>
+                    <Money amount={day.orderValue} />
+                  </div>
+                  <div role="cell" className="min-w-0 text-xs">
+                    <span className="mb-1 block text-[#857467] sm:hidden">خالص دریافتی</span>
+                    <Money amount={day.revenue} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            {!daily.length && (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="در این بازه فعالیتی ثبت نشده است."
+              />
+            )}
+            {daily.length > 10 && (
+              <Pagination
+                current={currentPage}
+                pageSize={10}
+                total={daily.length}
+                onChange={setPage}
+                showSizeChanger={false}
+                className="!mt-4 !flex !flex-wrap !justify-center"
+              />
+            )}
           </Card>
         </>
       )}
-    </>
+    </div>
   );
 }
