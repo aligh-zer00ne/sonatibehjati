@@ -3,11 +3,11 @@ import { formatAdminPrice, toRials, fromRials } from '../lib/money';
 import { AmountInWords } from './AmountInWords';
 import { formatNumericInput, normalizeDigits } from '../lib/numbers';
 
-export function Money({ amount }: { amount: number }) {
+export function Money({ amount, compact = false }: { amount: number; compact?: boolean }) {
   return (
     <span className="block" data-amount={amount}>
       <span className="tabular-nums">{formatAdminPrice(amount)}</span>
-      <AmountInWords amount={amount} />
+      {!compact && <AmountInWords amount={amount} />}
     </span>
   );
 }

@@ -106,6 +106,8 @@ try {
   await page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true }).click();
   let modal = page.getByRole('dialog', { name: 'ثبت سفارش حضوری / اینستاگرام', exact: true });
   await expect(modal).toBeVisible();
+  await expect(modal.locator('[data-invoice-header]')).toHaveCount(0);
+  await expect(modal.getByText('فاکتور هنوز خالی است', { exact: true })).toBeVisible();
   await modal
     .getByRole('combobox', { name: 'مشتری سفارش دستی', exact: true })
     .fill(customer.user.phone);
@@ -145,6 +147,7 @@ try {
     await page.locator('.ant-select-item-option').filter({ hasText: p.title }).click();
   }
   await expect(modal.locator('[data-manual-line]')).toHaveCount(3);
+  await expect(modal.locator('[data-invoice-header]')).toBeVisible();
   await modal.getByText('اقلام فاکتور', { exact: true }).click();
   await expect(page.locator('.ant-select-dropdown:visible')).toHaveCount(0);
   for (const row of await modal.locator('[data-manual-line]').all())

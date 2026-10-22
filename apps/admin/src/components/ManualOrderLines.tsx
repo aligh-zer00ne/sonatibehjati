@@ -1,6 +1,8 @@
 import { Button, InputNumber, Select } from 'antd';
 import { MoneyInput } from './Money';
 import AdminIcon from './AdminIcon';
+import { formatNumber } from '@behjati/shared';
+import { formatAdminPrice } from '../lib/money';
 
 type Line = {
   productId: string;
@@ -20,27 +22,35 @@ export default function ManualOrderLines({
   removeLine: (id: string) => void;
 }) {
   const grid =
-    'grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1fr)] items-start gap-2 lg:grid-cols-[minmax(140px,1.4fr)_64px_minmax(125px,1fr)_minmax(125px,1fr)_minmax(200px,1.5fr)_36px] lg:items-center lg:gap-3';
+    'grid grid-cols-[48px_minmax(0,1fr)_minmax(0,1fr)] items-start gap-2 lg:grid-cols-[24px_minmax(120px,1.3fr)_56px_minmax(100px,1fr)_minmax(100px,1fr)_minmax(176px,1.3fr)_minmax(108px,1fr)_28px] lg:items-center';
   return (
-    <>
-      <div
-        aria-hidden="true"
-        className={`${grid} mb-2 !hidden px-3 text-xs text-[#76685d] lg:!grid`}
-      >
-        <span>کالا</span>
-        <span>تعداد</span>
-        <span>قیمت واحد (ریال)</span>
-        <span>قیمت کل (ریال)</span>
-        <span>تخفیف ردیف</span>
-        <span />
-      </div>
-      <ul className="space-y-2" aria-label="ردیف‌های فاکتور دستی">
-        {lines.map((l) => (
+    <div className="overflow-visible rounded-xl border border-[#ddd3c5] bg-white" data-invoice-grid>
+      {lines.length > 0 && (
+        <div
+          aria-hidden="true"
+          className={`${grid} !hidden rounded-t-xl border-b border-[#ddd3c5] bg-[#eee6d9] px-3 py-3 text-xs font-bold text-[#59432c] lg:!grid`}
+          data-invoice-header
+        >
+          <span>#</span>
+          <span>شرح کالا</span>
+          <span>تعداد</span>
+          <span>قیمت واحد</span>
+          <span>قیمت کل</span>
+          <span>تخفیف</span>
+          <span>خالص ردیف</span>
+          <span />
+        </div>
+      )}
+      <ul className="divide-y divide-[#e8ded1]" aria-label="ردیف‌های فاکتور دستی">
+        {lines.map((l, index) => (
           <li
             key={l.productId}
             data-manual-line={l.productId}
-            className={`${grid} rounded-xl border border-[#e8ded1] bg-white p-3 transition-colors focus-within:border-[#c99a71]`}
+            className={`${grid} relative px-3 py-2.5 transition-colors even:bg-[#faf8f4] focus-within:bg-[#fff7e7]`}
           >
+            <span className="hidden text-center text-xs text-[#8b7761] lg:block">
+              {formatNumber(index + 1)}
+            </span>
             <b className="col-span-2 min-w-0 self-center break-words text-sm lg:col-span-1">
               {l.title}
             </b>
@@ -83,8 +93,8 @@ export default function ManualOrderLines({
                 onChange={(v) => updateLine(l.productId, { unitPrice: (v ?? 0) / l.quantity })}
               />
             </div>
-            <div className="col-span-3 flex min-w-0 items-end gap-2 lg:col-span-1">
-              <div className="w-24 shrink-0">
+            <div className="col-span-2 col-start-1 row-start-3 flex min-w-0 items-end gap-1.5 lg:col-span-1 lg:col-auto lg:row-auto">
+              <div className="w-[72px] shrink-0 lg:w-20">
                 <label className="mb-1 block text-xs lg:sr-only">نوع تخفیف ردیف</label>
                 <Select
                   aria-label={`نوع تخفیف ${l.title}`}
@@ -128,6 +138,19 @@ export default function ManualOrderLines({
                 )}
               </div>
             </div>
+            <div className="col-start-3 row-start-3 min-w-0 self-center text-end lg:col-auto lg:row-auto">
+              <span className="mb-1 block text-xs text-[#857467] lg:hidden">خالص ردیف</span>
+              <b className="block break-words text-xs tabular-nums text-[#76100b] lg:text-sm">
+                {(() => {
+                  const gross = l.unitPrice * l.quantity;
+                  const discount =
+                    l.discountKind === 'PERCENT'
+                      ? Math.floor((gross * l.discountValue) / 100)
+                      : l.discountValue;
+                  return discount > gross ? 'تخفیف نامعتبر' : formatAdminPrice(gross - discount);
+                })()}
+              </b>
+            </div>
             <Button
               type="text"
               danger
@@ -140,11 +163,14 @@ export default function ManualOrderLines({
         ))}
       </ul>
       {!lines.length && (
-        <div className="flex items-center justify-center gap-3 rounded-xl border border-dashed border-[#dacbb7] px-3 py-6 text-sm text-[#76685d]">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl px-3 py-9 text-sm text-[#76685d]">
           <AdminIcon name="products" />
-          اولین کالا را از جستجوی بالا اضافه کنید.
+          <b className="text-[#59432c]">فاکتور هنوز خالی است</b>
+          <span className="text-xs">
+            کالا را جستجو و انتخاب کنید؛ هر کالا یک ردیف در فاکتور دارد.
+          </span>
         </div>
       )}
-    </>
+    </div>
   );
 }

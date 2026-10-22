@@ -174,7 +174,8 @@ export default function ManualOrderModal({
     <Modal
       open
       title="ثبت سفارش حضوری / اینستاگرام"
-      width={1120}
+      width={1200}
+      style={{ top: 24 }}
       footer={null}
       maskClosable={false}
       onCancel={() => {
@@ -183,8 +184,8 @@ export default function ManualOrderModal({
       destroyOnHidden
     >
       <Form form={form} layout="vertical" onFinish={submit} disabled={pending || !!submission}>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Form.Item label="مشتری">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-[minmax(0,1fr)_200px_auto]">
+          <Form.Item label="مشتری" className="!col-span-2 !mb-3 sm:!col-span-1">
             <Select
               aria-label="مشتری سفارش دستی"
               showSearch
@@ -198,7 +199,7 @@ export default function ManualOrderModal({
               }))}
             />
           </Form.Item>
-          <Form.Item label="محل خرید" htmlFor="manual-channel">
+          <Form.Item label="محل خرید" htmlFor="manual-channel" className="!mb-3">
             <Select
               id="manual-channel"
               value={channel}
@@ -212,21 +213,21 @@ export default function ManualOrderModal({
               ]}
             />
           </Form.Item>
+          {hasPermission(admin, 'CUSTOMERS') && (
+            <Button
+              className="!mb-3 self-end"
+              disabled={pending || !!submission}
+              onClick={() => setAddCustomer(true)}
+            >
+              افزودن مشتری جدید
+            </Button>
+          )}
         </div>
-        {hasPermission(admin, 'CUSTOMERS') && (
-          <Button
-            className="!mb-4"
-            disabled={pending || !!submission}
-            onClick={() => setAddCustomer(true)}
-          >
-            افزودن مشتری جدید
-          </Button>
-        )}
         <section
-          className="mb-5 rounded-2xl border border-[#e8ded1] bg-[#fcf9f3] p-3 sm:p-4"
+          className="mb-5 rounded-xl border border-[#ddd3c5] bg-[#faf8f4]"
           aria-label="انتخاب کالا و اقلام فاکتور"
         >
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e8ded1] px-4 py-3">
             <h3 className="flex items-center gap-2 font-bold">
               <AdminIcon name="products" className="text-[#96140d]" />
               اقلام فاکتور
@@ -236,86 +237,98 @@ export default function ManualOrderModal({
               {formatNumber(lines.reduce((sum, l) => sum + l.quantity, 0))} عدد
             </span>
           </div>
-          <Select<string>
-            aria-label="محصول سفارش دستی"
-            className="mb-4 w-full"
-            size="large"
-            virtual={false}
-            showSearch
-            allowClear
-            filterOption={false}
-            placeholder="نام کالا را بنویسید و به فاکتور اضافه کنید…"
-            prefix={<AdminIcon name="search" width={20} className="text-[#96140d]" />}
-            value={null}
-            searchValue={productTerm}
-            onSearch={setProductTerm}
-            loading={!products.data && !products.error}
-            notFoundContent={
-              products.error ? (
-                <span role="alert">
-                  {products.error}
-                  <Button size="small" onClick={products.refresh}>
-                    تلاش مجدد
-                  </Button>
-                </span>
-              ) : products.data ? (
-                'کالایی با این نام پیدا نشد.'
-              ) : (
-                'در حال جستجوی کالا…'
-              )
-            }
-            options={(products.data?.catalog.items ?? []).map((p) => ({
-              value: p.id,
-              label: `${p.title} · ${p.weight}`,
-            }))}
-            optionRender={(option) => {
-              const p = products.data?.catalog.items.find((p) => p.id === option.value);
-              if (!p) return option.label;
-              const line = lines.find((l) => l.productId === p.id);
-              return (
-                <div className="flex items-center gap-3 py-1" data-product-result={p.id}>
-                  <DashboardProductImage src={p.images[0]?.url} title={p.title} />
-                  <div className="min-w-0 flex-1">
-                    <b className="block whitespace-normal text-sm">{p.title}</b>
-                    <span className="text-xs text-[#76685d]">
-                      {p.weight} · {formatAdminPrice(p.price)}
+          <div className="px-3 pt-3 pb-4 sm:px-4">
+            <label
+              className="mb-2 block text-xs font-semibold text-[#76685d]"
+              htmlFor="invoice-product-search"
+            >
+              جستجو و افزودن کالا
+            </label>
+            <Select<string>
+              id="invoice-product-search"
+              aria-label="محصول سفارش دستی"
+              className="w-full"
+              size="large"
+              virtual={false}
+              showSearch
+              allowClear
+              filterOption={false}
+              placeholder="نام کالا را بنویسید و به فاکتور اضافه کنید…"
+              prefix={<AdminIcon name="search" width={20} className="text-[#96140d]" />}
+              value={null}
+              searchValue={productTerm}
+              onSearch={setProductTerm}
+              loading={!products.data && !products.error}
+              notFoundContent={
+                products.error ? (
+                  <span role="alert">
+                    {products.error}
+                    <Button size="small" onClick={products.refresh}>
+                      تلاش مجدد
+                    </Button>
+                  </span>
+                ) : products.data ? (
+                  'کالایی با این نام پیدا نشد.'
+                ) : (
+                  'در حال جستجوی کالا…'
+                )
+              }
+              options={(products.data?.catalog.items ?? []).map((p) => ({
+                value: p.id,
+                label: `${p.title} · ${p.weight}`,
+              }))}
+              optionRender={(option) => {
+                const p = products.data?.catalog.items.find((p) => p.id === option.value);
+                if (!p) return option.label;
+                const line = lines.find((l) => l.productId === p.id);
+                return (
+                  <div className="flex items-center gap-3 py-1" data-product-result={p.id}>
+                    <DashboardProductImage src={p.images[0]?.url} title={p.title} />
+                    <div className="min-w-0 flex-1">
+                      <b className="block whitespace-normal text-sm">{p.title}</b>
+                      <span className="text-xs text-[#76685d]">
+                        {p.weight} · {formatAdminPrice(p.price)}
+                      </span>
+                    </div>
+                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#f4e8d3] text-[#96140d]">
+                      {line ? formatNumber(line.quantity) : <AdminIcon name="plus" width={17} />}
                     </span>
                   </div>
-                  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#f4e8d3] text-[#96140d]">
-                    {line ? formatNumber(line.quantity) : <AdminIcon name="plus" width={17} />}
-                  </span>
-                </div>
-              );
-            }}
-            onSelect={(id) => {
-              const p = products.data?.catalog.items.find((p) => p.id === id);
-              if (!p) return;
-              setLines((value) => {
-                const line = value.find((l) => l.productId === id);
-                return line
-                  ? value.map((l) =>
-                      l.productId === id ? { ...l, quantity: Math.min(99, l.quantity + 1) } : l,
-                    )
-                  : [
-                      ...value,
-                      {
-                        productId: id,
-                        title: p.title,
-                        quantity: 1,
-                        unitPrice: p.price,
-                        discountKind: 'FIXED',
-                        discountValue: 0,
-                      },
-                    ];
-              });
-              setProductTerm('');
-            }}
-          />
-          <ManualOrderLines
-            lines={lines}
-            updateLine={updateLine}
-            removeLine={(id) => setLines((value) => value.filter((l) => l.productId !== id))}
-          />
+                );
+              }}
+              onSelect={(id) => {
+                const p = products.data?.catalog.items.find((p) => p.id === id);
+                if (!p) return;
+                setLines((value) => {
+                  const line = value.find((l) => l.productId === id);
+                  return line
+                    ? value.map((l) =>
+                        l.productId === id ? { ...l, quantity: Math.min(99, l.quantity + 1) } : l,
+                      )
+                    : [
+                        ...value,
+                        {
+                          productId: id,
+                          title: p.title,
+                          quantity: 1,
+                          unitPrice: p.price,
+                          discountKind: 'FIXED',
+                          discountValue: 0,
+                        },
+                      ];
+                });
+                setProductTerm('');
+              }}
+            />
+          </div>
+          <div className="px-3 pb-3 sm:px-4">
+            <p className="mb-2 text-xs text-[#857467]">همهٔ مبالغ به ریال است</p>
+            <ManualOrderLines
+              lines={lines}
+              updateLine={updateLine}
+              removeLine={(id) => setLines((value) => value.filter((l) => l.productId !== id))}
+            />
+          </div>
         </section>
         {lines.length > 0 && !validQuote.success && (
           <Alert
@@ -363,7 +376,7 @@ export default function ManualOrderModal({
         )}
         {quote.error && <Alert type="error" title={quote.error} role="alert" />}
         {price && (
-          <dl className="mb-4 grid grid-cols-2 gap-3 rounded-xl bg-[#f4e8d3] p-4 text-sm">
+          <dl className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-[#e3d4bd] bg-[#f8f0e1] p-3 text-sm lg:grid-cols-4">
             {[
               ['جمع کالاها', price.subtotal],
               ['تخفیف', price.discount],
@@ -373,7 +386,7 @@ export default function ManualOrderModal({
               <div key={label}>
                 <dt>{label}</dt>
                 <dd className="mt-2 font-bold">
-                  <Money amount={Number(amount)} />
+                  <Money compact amount={Number(amount)} />
                 </dd>
               </div>
             ))}
@@ -383,6 +396,7 @@ export default function ManualOrderModal({
           <Form.Item label="مبلغ دریافت‌شده (ریال)" htmlFor="manual-received">
             <MoneyInput
               id="manual-received"
+              compact
               value={received}
               onChange={(v) => setReceived(v ?? 0)}
             />
