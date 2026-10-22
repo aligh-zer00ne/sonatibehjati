@@ -4,6 +4,7 @@ import {
   createManualOrder,
   recordOfflinePayment,
 } from './retail.js';
+import { customerAccount, recordAccountEntry } from './customer-accounts.js';
 import type { Resolvers } from '../../generated/resolvers.js';
 import {
   currentAdmin,
@@ -30,6 +31,10 @@ import { serializeProduct as serializeDates } from '../products/presentation.js'
 import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepage.js';
 export const adminResolvers: Resolvers = {
   Query: {
+    adminCustomerAccount: async (_, { customerId, page, invoicePage }, ctx) => {
+      await requirePermission(ctx, 'ORDERS');
+      return customerAccount(customerId, page ?? 1, invoicePage ?? 1);
+    },
     adminOrderCustomers: async (_, { input }, ctx) => {
       await requirePermission(ctx, 'ORDERS');
       return adminUsers(input);
@@ -83,6 +88,11 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    recordAdminAccountEntry: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const admin = await requirePermission(ctx, 'ORDERS');
+      return recordAccountEntry(admin, input);
+    },
     createAdminCustomer: async (_, { input }, ctx) => {
       requireAdminOrigin(ctx);
       const a = await requirePermission(ctx, 'CUSTOMERS');

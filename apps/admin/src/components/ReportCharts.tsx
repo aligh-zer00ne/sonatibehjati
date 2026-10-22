@@ -1,3 +1,4 @@
+import { toRials } from '../lib/money';
 import { Card, Empty } from 'antd';
 import {
   ResponsiveContainer,
@@ -51,7 +52,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
             <LineChart data={report.daily} accessibilityLayer>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={chartDate} />
-              <YAxis tickFormatter={(value) => formatNumber(Number(value))} width={90} />
+              <YAxis tickFormatter={(value) => formatNumber(toRials(Number(value)))} width={90} />
               <Tooltip
                 labelFormatter={(value) => chartDate(String(value))}
                 formatter={(value, name) => [<Money amount={Number(value)} />, name]}
@@ -59,7 +60,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
               <Legend />
               <Line
                 dataKey="orderValue"
-                name="ارزش سفارش‌ها (تومان)"
+                name="ارزش سفارش‌ها (ریال)"
                 stroke="#4084bd"
                 strokeWidth={2}
                 dot={false}
@@ -67,7 +68,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
               />
               <Line
                 dataKey="revenue"
-                name="کل دریافتی (تومان)"
+                name="خالص دریافتی (ریال)"
                 stroke="#469169"
                 strokeWidth={2}
                 dot={false}

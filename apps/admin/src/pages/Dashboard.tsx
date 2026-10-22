@@ -1,3 +1,5 @@
+import AccountStatus from '../components/AccountStatus';
+import { toRials } from '../lib/money';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
 import type { SalesChannel } from '../generated/graphql';
@@ -51,7 +53,7 @@ export default function Dashboard() {
       background: '#fff7e7',
     },
     {
-      label: 'ارزش کل سفارش‌ها (تومان)',
+      label: 'ارزش کل سفارش‌ها (ریال)',
       value: data.orderValue,
       detail: 'بدون سفارش‌های لغوشده',
       icon: 'wallet',
@@ -132,7 +134,7 @@ export default function Dashboard() {
               <AdminIcon name={metric.icon} width={24} height={24} />
             </span>
             <b className="block text-xl leading-9 break-all tabular-nums sm:text-[25px]">
-              {formatNumber(metric.value)}
+              {formatNumber(metric.icon === 'wallet' ? toRials(metric.value) : metric.value)}
             </b>
             {metric.icon === 'wallet' && <AmountInWords amount={metric.value} />}
             <p className="mt-1 text-xs font-medium">{metric.label}</p>
@@ -229,6 +231,9 @@ export default function Dashboard() {
                     <p className="truncate text-xs font-bold">{customerName(user)}</p>
                     <p className="mt-1 text-[12px] text-[#8c8176]">
                       عضویت: {formatDate(user.createdAt)}
+                      <span className="mt-1 block">
+                        <AccountStatus balance={user.accountBalance} amount={false} />
+                      </span>
                       <span className="mt-1 block">
                         {user.salesChannels.map((c) => salesChannelLabels[c]).join('، ')}
                       </span>

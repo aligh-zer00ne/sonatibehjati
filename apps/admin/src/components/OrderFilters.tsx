@@ -47,17 +47,19 @@ export default function OrderFilters({
           onChange={(number) => onChange({ number })}
         />
       </FilterButton>
-      <FilterButton label="وضعیت سفارش" active={!!input.status}>
-        <FilterChips
-          label="وضعیت سفارش"
-          value={input.status ?? ''}
-          options={[
-            { value: '', label: 'همه وضعیت‌ها' },
-            ...orderStatuses.map((value) => ({ value, label: orderStatusLabels[value] })),
-          ]}
-          onChange={(status) => onChange({ status: status || null })}
-        />
-      </FilterButton>
+      {scope !== 'manual' && (
+        <FilterButton label="وضعیت سفارش" active={!!input.status}>
+          <FilterChips
+            label="وضعیت سفارش"
+            value={input.status ?? ''}
+            options={[
+              { value: '', label: 'همه وضعیت‌ها' },
+              ...orderStatuses.map((value) => ({ value, label: orderStatusLabels[value] })),
+            ]}
+            onChange={(status) => onChange({ status: status || null })}
+          />
+        </FilterButton>
+      )}
       {scope !== 'website' && (
         <FilterButton label="محل خرید" active={!!input.salesChannel}>
           <FilterChips

@@ -116,7 +116,7 @@ export default function ProductEditor({
         </Form.Item>
         <Form.Item
           name="price"
-          label="قیمت (تومان)"
+          label="قیمت (ریال)"
           rules={[{ required: true, message: 'قیمت لازم است.' }]}
         >
           <MoneyInput disabled={pending} />
@@ -302,14 +302,14 @@ export default function ProductEditor({
                     </Form.Item>
                     <Form.Item
                       name="shippingBaseCost"
-                      label="هزینهٔ پایهٔ ارسال (تومان)"
+                      label="هزینهٔ پایهٔ ارسال (ریال)"
                       rules={[{ required: true, type: 'number', min: 0 }]}
                     >
                       <MoneyInput disabled={pending} />
                     </Form.Item>
                     <Form.Item
                       name="shippingAdditionalKgCost"
-                      label="هزینهٔ هر کیلو اضافه (تومان)"
+                      label="هزینهٔ هر کیلو اضافه (ریال)"
                       rules={[{ required: true, type: 'number', min: 0 }]}
                     >
                       <MoneyInput disabled={pending} />

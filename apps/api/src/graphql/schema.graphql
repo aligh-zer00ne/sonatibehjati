@@ -198,6 +198,9 @@ input CreateOrderInput {
   expectedTotal: Int!
 }
 type CheckoutLine {
+  lineSubtotal: Int
+  discountAmount: Int
+  discountPercent: Float
   shippingWeightGrams: Int
   productId: ID!
   title: String!
@@ -300,6 +303,9 @@ type OrderAddressSnapshot {
   longitude: Float
 }
 type OrderItemSnapshot {
+  lineSubtotal: Int
+  discountAmount: Int
+  discountPercent: Float
   id: ID!
   productId: ID!
   productTitle: String!
@@ -509,6 +515,8 @@ input AdminUsersInput {
   search: String
 }
 type AdminUser {
+  accountBalance: Float!
+  defaultAddress: Address
   acquisitionSource: SalesChannel!
   salesChannels: [SalesChannel!]!
   id: ID!
@@ -889,23 +897,27 @@ enum OfflinePaymentMethod {
   CASH
   POS
   CARD_TRANSFER
+  CHECK
 }
 
 input AdminCustomerInput {
+  address: AddressInput
   phone: String!
   firstName: String!
   lastName: String!
   salesChannel: SalesChannel!
 }
 input AdminManualQuoteInput {
-  items: [CheckoutLineInput!]!
-  discountCode: String!
+  items: [AdminManualLineInput!]!
+  discountCode: String = ""
+  manualShippingCost: Int = 0
   shippingMethod: ShippingMethod!
   pickup: Boolean!
 }
 input AdminManualOrderInput {
-  items: [CheckoutLineInput!]!
-  discountCode: String!
+  items: [AdminManualLineInput!]!
+  discountCode: String = ""
+  manualShippingCost: Int = 0
   shippingMethod: ShippingMethod!
   pickup: Boolean!
   customerId: ID!
@@ -922,6 +934,73 @@ input AdminOfflinePaymentInput {
   method: OfflinePaymentMethod!
   requestId: ID!
   expectedUpdatedAt: String!
+}
+
+input AdminManualLineInput {
+  productId: ID!
+  quantity: Int!
+  unitPrice: Int
+  discountAmount: Int
+  discountPercent: Float
+}
+enum AccountEntryDirection {
+  RECEIPT
+  PAYMENT
+}
+input AdminAccountEntryInput {
+  customerId: ID!
+  direction: AccountEntryDirection!
+  amount: Int!
+  method: OfflinePaymentMethod!
+  note: String = ""
+  chequeNumber: String = ""
+  chequeBank: String = ""
+  chequeDueDate: String
+  requestId: ID!
+}
+type AccountAllocation {
+  orderId: ID!
+  number: Int!
+  amount: Int!
+}
+type CustomerAccountEntry {
+  id: ID!
+  direction: AccountEntryDirection!
+  amount: Int!
+  method: OfflinePaymentMethod!
+  note: String
+  chequeNumber: String
+  chequeBank: String
+  chequeDueDate: String
+  adminEmail: String!
+  createdAt: String!
+  allocations: [AccountAllocation!]!
+}
+type AccountInvoice {
+  id: ID!
+  number: Int!
+  total: Int!
+  offlinePaidAmount: Int!
+  createdAt: String!
+}
+type CustomerAccount {
+  invoiceTotal: Int!
+  invoicePage: Int!
+  received: Float!
+  paid: Float!
+  invoiced: Float!
+  user: AuthUser!
+  balance: Float!
+  entries: [CustomerAccountEntry!]!
+  total: Int!
+  page: Int!
+  invoices: [AccountInvoice!]!
+}
+extend type Query {
+  adminCustomerAccount(customerId: ID!, page: Int = 1, invoicePage: Int = 1): CustomerAccount!
+}
+extend type Mutation {
+  recordAdminAccountEntry(input: AdminAccountEntryInput!): CustomerAccount!
 }
 type AdminOfflinePayment {
   id: ID!

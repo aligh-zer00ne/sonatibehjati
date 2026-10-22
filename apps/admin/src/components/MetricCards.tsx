@@ -1,6 +1,7 @@
 import { AmountInWords } from './AmountInWords';
 import { Card, Statistic } from 'antd';
 import { formatNumber } from '@behjati/shared';
+import { toRials } from '../lib/money';
 export default function MetricCards({
   metrics,
 }: {
@@ -12,9 +13,9 @@ export default function MetricCards({
         <Card key={metric.label}>
           <Statistic
             title={metric.label}
-            value={metric.value}
+            value={metric.amount ? toRials(metric.value) : metric.value}
             formatter={(value) => formatNumber(Number(value))}
-            suffix={metric.amount ? 'تومان' : undefined}
+            suffix={metric.amount ? 'ریال' : undefined}
           />
           {metric.amount && <AmountInWords amount={metric.value} />}
         </Card>

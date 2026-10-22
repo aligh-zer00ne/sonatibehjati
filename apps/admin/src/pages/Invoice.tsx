@@ -1,15 +1,11 @@
+import AccountStatus from '../components/AccountStatus';
+import { formatAdminPrice as formatPrice } from '../lib/money';
 import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import DesignCredit from '../components/DesignCredit';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Button, Alert, Modal } from 'antd';
-import {
-  BRAND_NAME,
-  formatNumber,
-  formatPrice,
-  formatDate,
-  orderStatusLabels,
-} from '@behjati/shared';
+import { BRAND_NAME, formatNumber, formatDate, orderStatusLabels } from '@behjati/shared';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import PrintSheet from '../components/PrintSheet';
 import BrandQr from '../components/BrandQr';
@@ -64,6 +60,7 @@ export default function Invoice({
             <th className="w-[35%]">محصول / وزن</th>
             <th className="w-[12%]">تعداد</th>
             <th>قیمت واحد</th>
+            <th>تخفیف ردیف</th>
             <th>مبلغ ردیف</th>
           </tr>
         </thead>
@@ -76,6 +73,9 @@ export default function Invoice({
               </td>
               <td className="text-center">{formatNumber(item.quantity)}</td>
               <td>{<Money amount={item.unitPrice} />}</td>
+              <td>
+                <Money amount={item.discountAmount ?? 0} />
+              </td>
               <td>{<Money amount={item.lineTotal} />}</td>
             </tr>
           ))}
@@ -101,7 +101,16 @@ export default function Invoice({
           ))}
         </dl>
         <p className="mt-4 print:mt-2 border-t border-slate-300 pt-2">
-          وضعیت سفارش: <b>{orderStatusLabels[order.status]}</b>
+          {order.salesChannel === 'WEBSITE' ? (
+            <>
+              وضعیت سفارش: <b>{orderStatusLabels[order.status]}</b>
+            </>
+          ) : (
+            <>
+              وضعیت حساب فاکتور:{' '}
+              <AccountStatus balance={order.total - order.offlinePaidAmount} amount={false} />
+            </>
+          )}
         </p>
         <p className="text-[10px]">
           {order.salesChannel !== 'WEBSITE'

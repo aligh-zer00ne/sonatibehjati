@@ -1,6 +1,7 @@
+import { formatAdminPrice as formatPrice } from '../lib/money';
 import { useEffect, useState } from 'react';
 import { Alert, Button, Card, Typography } from 'antd';
-import { formatPrice } from '@behjati/shared';
+
 import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
 import {
   AdminGatewayTestDocument,

@@ -1,8 +1,10 @@
+import AccountStatus from './AccountStatus';
+import { formatAdminPrice as formatPrice } from '../lib/money';
 import OfflineReceipts from './OfflineReceipts';
 import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import { lazy, Suspense, useId, useState, type ReactNode } from 'react';
 import { Alert, App, Button, Popconfirm, Select } from 'antd';
-import { formatNumber, formatPrice, orderStatusLabels } from '@behjati/shared';
+import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import { orderStatusTransitions } from '@behjati/shared/admin';
 import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
 import {
@@ -37,7 +39,7 @@ function OrderDetailTabs({
       <div
         role="tablist"
         aria-label="بخش‌های جزئیات سفارش"
-        className="mb-3 grid grid-cols-4 gap-1 border-b border-[#e8ded1] pb-3 sm:gap-2"
+        className={`mb-3 grid ${items.length === 1 ? 'grid-cols-1' : 'grid-cols-4'} gap-1 border-b border-[#e8ded1] pb-3 sm:gap-2`}
       >
         {items.map((item, index) => (
           <button
@@ -135,7 +137,11 @@ export default function OrderDetailsCard({
         </div>
         {order && !onClose && (
           <div className="ms-auto shrink-0">
-            <OrderStatus status={order.status} />
+            {order.salesChannel === 'WEBSITE' ? (
+              <OrderStatus status={order.status} />
+            ) : (
+              <AccountStatus balance={order.total - order.offlinePaidAmount} amount={false} />
+            )}
           </div>
         )}
         {onClose && (
@@ -153,7 +159,7 @@ export default function OrderDetailsCard({
       ) : (
         <>
           <OrderDetailTabs
-            activeKey={tab}
+            activeKey={order.salesChannel === 'WEBSITE' ? tab : 'products'}
             onChange={setTab}
             items={[
               {
@@ -398,72 +404,74 @@ export default function OrderDetailsCard({
                   <p className="py-3 text-xs text-[#76685d]">هنوز تغییری توسط مدیر ثبت نشده است.</p>
                 ),
               },
-            ]}
+            ].filter((item) => order.salesChannel === 'WEBSITE' || item.key === 'products')}
           />
-          <div className="mt-4 rounded-2xl border border-[#e8ded1] p-3">
-            <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#76100b]">
-              <AdminIcon name="edit" width={17} height={17} />
-              تغییر وضعیت سفارش
-            </h4>
-            <p className="mb-3 text-[12px] leading-6 text-[#76685d]">
-              تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست.
-            </p>
-            {orderStatusTransitions[order.status].length ? (
-              <div className="flex flex-wrap gap-2">
-                <Select<Status>
-                  aria-label="وضعیت جدید سفارش"
-                  className="min-w-0 flex-1 sm:max-w-64"
-                  placeholder="وضعیت جدید"
-                  value={status}
-                  disabled={pending}
-                  onChange={setStatus}
-                  options={orderStatusTransitions[order.status].map((value) => ({
-                    value,
-                    label: orderStatusLabels[value],
-                  }))}
-                />
-                <Popconfirm
-                  title="تغییر وضعیت سفارش تأیید شود؟"
-                  okText="تأیید"
-                  cancelText="انصراف"
-                  disabled={!status || pending}
-                  onConfirm={async () => {
-                    if (!status || pending) return;
-                    setPending(true);
-                    try {
-                      await adminRequest(UpdateAdminOrderStatusDocument, {
-                        input: { id, status, expectedStatus: order.status },
-                      });
-                      setStatus(null);
-                      query.refresh();
-                      onUpdated?.();
-                      void message.success('وضعیت سفارش ثبت شد.');
-                    } catch (error) {
-                      void message.error(
-                        error instanceof Error ? error.message : 'وضعیت تغییر نکرد.',
-                      );
-                      setStatus(null);
-                      query.refresh();
-                      onUpdated?.();
-                    } finally {
-                      setPending(false);
-                    }
-                  }}
-                >
-                  <Button
-                    type="primary"
-                    icon={<AdminIcon name="edit" width={16} height={16} />}
-                    disabled={!status}
-                    loading={pending}
+          {order.salesChannel === 'WEBSITE' && (
+            <div className="mt-4 rounded-2xl border border-[#e8ded1] p-3">
+              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#76100b]">
+                <AdminIcon name="edit" width={17} height={17} />
+                تغییر وضعیت سفارش
+              </h4>
+              <p className="mb-3 text-[12px] leading-6 text-[#76685d]">
+                تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست.
+              </p>
+              {orderStatusTransitions[order.status].length ? (
+                <div className="flex flex-wrap gap-2">
+                  <Select<Status>
+                    aria-label="وضعیت جدید سفارش"
+                    className="min-w-0 flex-1 sm:max-w-64"
+                    placeholder="وضعیت جدید"
+                    value={status}
+                    disabled={pending}
+                    onChange={setStatus}
+                    options={orderStatusTransitions[order.status].map((value) => ({
+                      value,
+                      label: orderStatusLabels[value],
+                    }))}
+                  />
+                  <Popconfirm
+                    title="تغییر وضعیت سفارش تأیید شود؟"
+                    okText="تأیید"
+                    cancelText="انصراف"
+                    disabled={!status || pending}
+                    onConfirm={async () => {
+                      if (!status || pending) return;
+                      setPending(true);
+                      try {
+                        await adminRequest(UpdateAdminOrderStatusDocument, {
+                          input: { id, status, expectedStatus: order.status },
+                        });
+                        setStatus(null);
+                        query.refresh();
+                        onUpdated?.();
+                        void message.success('وضعیت سفارش ثبت شد.');
+                      } catch (error) {
+                        void message.error(
+                          error instanceof Error ? error.message : 'وضعیت تغییر نکرد.',
+                        );
+                        setStatus(null);
+                        query.refresh();
+                        onUpdated?.();
+                      } finally {
+                        setPending(false);
+                      }
+                    }}
                   >
-                    ثبت وضعیت
-                  </Button>
-                </Popconfirm>
-              </div>
-            ) : (
-              <p className="text-xs text-[#76685d]">این سفارش به وضعیت نهایی رسیده است.</p>
-            )}
-          </div>
+                    <Button
+                      type="primary"
+                      icon={<AdminIcon name="edit" width={16} height={16} />}
+                      disabled={!status}
+                      loading={pending}
+                    >
+                      ثبت وضعیت
+                    </Button>
+                  </Popconfirm>
+                </div>
+              ) : (
+                <p className="text-xs text-[#76685d]">این سفارش به وضعیت نهایی رسیده است.</p>
+              )}
+            </div>
+          )}
           <div className="mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#e8ded1] pt-3">
             <Button
               className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#76100b]"

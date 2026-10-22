@@ -1,6 +1,8 @@
+import AccountStatus from './AccountStatus';
+import { formatAdminPrice as formatPrice } from '../lib/money';
 import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
 import { Button } from 'antd';
-import { formatNumber, formatPrice, formatDate } from '@behjati/shared';
+import { formatNumber, formatDate } from '@behjati/shared';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import { customerName, persianDigits } from '../lib/format';
 import AdminIcon from './AdminIcon';
@@ -67,7 +69,11 @@ export default function OrderSummaryCard({
             </p>
           </div>
           <div className="[&_.ant-tag]:!m-0 [&_.ant-tag]:!rounded-lg [&_.ant-tag]:!px-2 [&_.ant-tag]:!py-0.5">
-            <OrderStatus status={order.status} />
+            {order.salesChannel === 'WEBSITE' ? (
+              <OrderStatus status={order.status} />
+            ) : (
+              <AccountStatus balance={order.total - order.offlinePaidAmount} amount={false} />
+            )}
           </div>
         </div>
         <dl className={`mt-2.5 grid grid-cols-2 gap-2 text-xs ${compact ? '' : 'sm:grid-cols-3'}`}>

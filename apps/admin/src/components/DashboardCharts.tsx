@@ -1,3 +1,4 @@
+import { toRials } from '../lib/money';
 import { Card, Empty } from 'antd';
 import {
   ResponsiveContainer,
@@ -58,7 +59,7 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
                 tickMargin={12}
               />
               <YAxis
-                tickFormatter={(value) => formatNumber(Number(value))}
+                tickFormatter={(value) => formatNumber(toRials(Number(value)))}
                 axisLine={false}
                 tickLine={false}
                 width={82}
@@ -80,9 +81,7 @@ export default function DashboardCharts({ report }: { report: AdminReportFieldsF
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <p className="mt-2 text-[12px] text-[#8c8176]">
-          ارزش سفارش‌های غیرلغوشده؛ این مبلغ معادل درآمد دریافت‌شده نیست.
-        </p>
+        <p className="mt-2 text-[12px] text-[#8c8176]">جمع مبلغ فاکتورهای این بازه.</p>
       </Card>
       <Card title="وضعیت سفارش‌ها" className="min-w-0">
         {statuses.length ? (

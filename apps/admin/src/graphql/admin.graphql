@@ -180,6 +180,9 @@ fragment AdminOrderFields on AdminOrder {
     productWeight
     unitPrice
     quantity
+    lineSubtotal
+    discountAmount
+    discountPercent
     lineTotal
   }
   statusEvents {
@@ -225,6 +228,7 @@ query AdminUsers($input: AdminUsersInput!) {
       ordersCount
       acquisitionSource
       salesChannels
+      accountBalance
       totalOrdersValue
     }
     total
@@ -274,6 +278,7 @@ query AdminDashboard($salesChannel: SalesChannel) {
       ordersCount
       acquisitionSource
       salesChannels
+      accountBalance
       totalOrdersValue
     }
     topProducts {
@@ -344,6 +349,7 @@ query AdminSelectedUser($id: ID!) {
     ordersCount
     acquisitionSource
     salesChannels
+    accountBalance
     totalOrdersValue
   }
 }
@@ -590,6 +596,20 @@ query AdminOrderCustomer($id: ID!) {
     id
     phone
     firstName
+    accountBalance
+    defaultAddress {
+      id
+      title
+      recipientName
+      recipientPhone
+      province
+      city
+      postalAddress
+      postalCode
+      latitude
+      longitude
+      isDefault
+    }
     lastName
   }
 }
@@ -629,5 +649,57 @@ mutation CreateAdminManualOrder($input: AdminManualOrderInput!) {
 mutation RecordAdminOfflinePayment($input: AdminOfflinePaymentInput!) {
   recordAdminOfflinePayment(input: $input) {
     ...AdminOrderFields
+  }
+}
+
+fragment CustomerAccountFields on CustomerAccount {
+  invoiceTotal
+  invoicePage
+  received
+  paid
+  invoiced
+  user {
+    id
+    phone
+    firstName
+    lastName
+    email
+  }
+  balance
+  total
+  page
+  entries {
+    id
+    direction
+    amount
+    method
+    note
+    chequeNumber
+    chequeBank
+    chequeDueDate
+    adminEmail
+    createdAt
+    allocations {
+      orderId
+      number
+      amount
+    }
+  }
+  invoices {
+    id
+    number
+    total
+    offlinePaidAmount
+    createdAt
+  }
+}
+query AdminCustomerAccount($customerId: ID!, $page: Int, $invoicePage: Int) {
+  adminCustomerAccount(customerId: $customerId, page: $page, invoicePage: $invoicePage) {
+    ...CustomerAccountFields
+  }
+}
+mutation RecordAdminAccountEntry($input: AdminAccountEntryInput!) {
+  recordAdminAccountEntry(input: $input) {
+    ...CustomerAccountFields
   }
 }

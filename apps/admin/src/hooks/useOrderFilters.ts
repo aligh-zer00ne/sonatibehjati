@@ -8,6 +8,7 @@ export function useOrderFilters(pageSize = 20, scope: OrderScope = 'all') {
   const parsed = adminOrdersFilterSchema.safeParse({
     ...raw,
     manualOnly: scope === 'manual' ? true : undefined,
+    status: scope === 'manual' ? undefined : raw.status,
     salesChannel:
       scope === 'website'
         ? 'WEBSITE'
@@ -28,6 +29,7 @@ export function useOrderFilters(pageSize = 20, scope: OrderScope = 'all') {
             ([key, value]) =>
               key !== 'pageSize' &&
               key !== 'manualOnly' &&
+              !(scope === 'manual' && key === 'status') &&
               !(scope === 'website' && key === 'salesChannel') &&
               value != null &&
               value !== '',

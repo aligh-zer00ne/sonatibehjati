@@ -1,10 +1,10 @@
 import type { AdminReportFieldsFragment } from '../generated/graphql';
 export function reportCSV(report: AdminReportFieldsFragment) {
   const rows = [
-    ['تاریخ میلادی', 'تعداد سفارش', 'ارزش سفارش‌های غیرلغوشده (تومان)', 'کل دریافتی (تومان)'],
+    ['تاریخ میلادی', 'تعداد سفارش', 'ارزش فاکتورها (ریال)', 'خالص دریافتی (ریال)'],
     ...[...report.daily]
       .sort((a, b) => b.date.localeCompare(a.date))
-      .map((day) => [day.date, day.ordersCount, day.orderValue, day.revenue]),
+      .map((day) => [day.date, day.ordersCount, day.orderValue * 10, day.revenue * 10]),
   ];
   return (
     '\uFEFF' +

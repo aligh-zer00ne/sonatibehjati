@@ -30,7 +30,18 @@ try {
     firstName: 'مشتری دستی آزمون',
     lastName: 'موقت',
     salesChannel: 'INSTAGRAM',
+    address: {
+      title: 'خانه',
+      recipientName: 'مشتری دستی آزمون',
+      recipientPhone: '',
+      province: 'یزد',
+      city: 'اردکان',
+      postalAddress: 'خیابان آزمون پلاک ۱۲',
+      postalCode: '1234567890',
+      isDefault: true,
+    },
   };
+  inputCustomer.address.recipientPhone = inputCustomer.phone;
   const customer = good(
     await adminGql(customerMutation, { input: inputCustomer }, cookie),
   ).createAdminCustomer;
@@ -72,7 +83,7 @@ try {
   assert.equal(order.shippingMethod, null);
   assert.equal(order.offlinePaidAmount, 100000);
   assert.equal(order.paidAt, null);
-  assert.equal(order.status, 'PENDING_PAYMENT');
+  assert.equal(order.status, 'DELIVERED');
   assert.equal(order.offlinePayments.length, 1);
   assert.equal(good(await adminGql(create, { input }, cookie)).createAdminManualOrder.id, order.id);
   assert.equal(
@@ -86,7 +97,7 @@ try {
     (
       await adminGql(
         status,
-        { input: { id: order.id, expectedStatus: 'PENDING_PAYMENT', status: 'PROCESSING' } },
+        { input: { id: order.id, expectedStatus: order.status, status: 'PROCESSING' } },
         cookie,
       )
     ).errors[0].extensions.code,
@@ -100,7 +111,7 @@ try {
     expectedUpdatedAt: order.updatedAt,
   };
   const paid = good(await adminGql(record, { input: payment }, cookie)).recordAdminOfflinePayment;
-  assert.equal(paid.status, 'PROCESSING');
+  assert.equal(paid.status, 'DELIVERED');
   assert.equal(paid.offlinePaidAmount, 300000);
   assert.equal(paid.paidAt, null);
   assert.equal(paid.offlinePayments.length, 2);
@@ -155,6 +166,7 @@ try {
     salesChannel: 'INSTAGRAM',
     pickup: false,
     shippingMethod: 'TIPAX',
+    manualShippingCost: 60000,
     receivedAmount: 360000,
     expectedTotal: 360000,
     requestId: randomUUID(),
@@ -183,7 +195,7 @@ try {
       ).adminUsers.items.some((u) => u.id === customer.id),
     );
   assert.equal(shipped.shipping, 60000);
-  assert.equal(shipped.status, 'PROCESSING');
+  assert.equal(shipped.status, 'CREATED');
   const list = good(
     await adminGql(
       'query($input:AdminOrdersInput!){adminOrders(input:$input){items{id} total}}',
@@ -246,7 +258,7 @@ try {
     (
       await adminGql(
         create,
-        { input: { ...input, requestId: randomUUID(), receivedAmount: 300001 } },
+        { input: { ...input, requestId: randomUUID(), receivedAmount: -1 } },
         cookie,
       )
     ).errors[0].extensions.code,
@@ -303,7 +315,7 @@ try {
 
   assert.ok(admins.length === 2);
   console.log(
-    'Retail operations passed: manual customers, pickup/shipping, partial/full receipts, ledger/replay/conflicts, overpayment/stale price guards, payment separation, source/method reports, multi-source customers, dashboard and permissions. No real SMS or bank request.',
+    'Retail operations passed: manual customers with saved addresses, manual shipping, no approval workflow, partial/full invoice receipts, ledger/replay/conflicts, stale price guards, payment separation, source/method reports, multi-source customers, dashboard and permissions. No real SMS or bank request.',
   );
 } finally {
   await cleanupAdmin();

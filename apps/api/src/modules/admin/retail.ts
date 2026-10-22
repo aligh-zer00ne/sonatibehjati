@@ -8,7 +8,8 @@ import {
 } from '@behjati/shared/admin';
 import { db } from '../../database/client.js';
 import { authError } from '../auth/errors.js';
-import { priceCart } from '../checkout/service.js';
+import { priceManualOrder } from './manual-pricing.js';
+import { allocateCredits, postAccountEntry } from './customer-accounts.js';
 import { validate, omitNulls } from './validation.js';
 import { adminOrder } from './orders.js';
 import { adminUser } from './users.js';
@@ -23,6 +24,7 @@ export async function createAdminCustomer(adminId: string, raw: unknown) {
         lastName: input.lastName,
         acquisitionSource: input.salesChannel,
         createdByAdminId: adminId,
+        ...(input.address ? { addresses: { create: input.address } } : {}),
       },
     });
     return adminUser(user.id);
@@ -37,7 +39,7 @@ export async function createAdminCustomer(adminId: string, raw: unknown) {
 }
 export async function manualQuote(raw: Record<string, unknown>) {
   const input = validate(manualQuoteInputSchema, omitNulls(raw));
-  return db.$transaction(async (tx) => (await priceCart(tx, input)).quote, {
+  return db.$transaction(async (tx) => await priceManualOrder(tx, input), {
     isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
   });
 }
@@ -67,25 +69,17 @@ export async function createManualOrder(
         if (previous.requestHash !== requestHash) throw conflict();
         return previous.id;
       }
-      const { quote, coupon, tariff } = await priceCart(tx, input);
+      const quote = await priceManualOrder(tx, {
+        items: input.items,
+        discountCode: input.discountCode,
+        pickup: input.pickup,
+        shippingMethod: input.shippingMethod,
+        manualShippingCost: input.manualShippingCost,
+      });
       if (quote.total !== input.expectedTotal)
         throw authError('مبلغ سفارش تغییر کرده است؛ خلاصه را دوباره بررسی کنید.', 'PRICE_CHANGED');
-      if (input.receivedAmount > quote.total)
-        throw authError('مبلغ دریافتی بیشتر از مبلغ سفارش است.', 'BAD_USER_INPUT');
-      if (coupon) {
-        const used = await tx.discountCode.updateMany({
-          where: {
-            id: coupon.id,
-            isActive: true,
-            startsAt: { lte: new Date() },
-            expiresAt: { gt: new Date() },
-            ...(coupon.usageLimit === null ? {} : { usageCount: { lt: coupon.usageLimit } }),
-          },
-          data: { usageCount: { increment: 1 } },
-        });
-        if (!used.count) throw authError('کد تخفیف دیگر قابل استفاده نیست.', 'INVALID_DISCOUNT');
-      }
-      const status = input.receivedAmount === quote.total ? 'PROCESSING' : 'PENDING_PAYMENT';
+      const status =
+        input.salesChannel === 'IN_PERSON' ? ('DELIVERED' as const) : ('CREATED' as const);
       const a = input.address;
       const addressSnapshot = input.pickup
         ? {
@@ -114,16 +108,16 @@ export async function createManualOrder(
           salesChannel: input.salesChannel,
           shippingMethod: quote.shippingMethod,
           shippingWeightGrams: quote.shippingWeightGrams,
-          shippingBaseCost: tariff.baseCost,
-          shippingAdditionalKgCost: tariff.additionalKgCost,
+          shippingBaseCost: quote.shipping,
+          shippingAdditionalKgCost: 0,
           subtotal: quote.subtotal,
           discount: quote.discount,
           shipping: quote.shipping,
           total: quote.total,
-          discountCodeId: coupon?.id,
+
           createdByAdminId: admin.id,
           createdByAdminEmail: admin.email,
-          offlinePaidAmount: input.receivedAmount,
+          offlinePaidAmount: 0,
           items: {
             create: quote.items.map((l) => ({
               productId: l.productId,
@@ -133,24 +127,26 @@ export async function createManualOrder(
               unitPrice: l.unitPrice,
               quantity: l.quantity,
               lineTotal: l.lineTotal,
+              lineSubtotal: l.lineSubtotal,
+              discountAmount: l.discountAmount,
+              discountPercent: l.discountPercent,
             })),
           },
-          statusEvents: { create: { adminId: admin.id, fromStatus: 'CREATED', toStatus: status } },
-          ...(input.receivedAmount
-            ? {
-                offlinePayments: {
-                  create: {
-                    id: input.requestId,
-                    amount: input.receivedAmount,
-                    method: input.paymentMethod!,
-                    adminId: admin.id,
-                    adminEmail: admin.email,
-                  },
-                },
-              }
-            : {}),
         },
       });
+      await allocateCredits(tx, user.id);
+      if (input.receivedAmount) {
+        if (input.paymentMethod === 'CHECK')
+          throw authError('چک را با شماره و سررسید در دریافت و پرداخت ثبت کنید.', 'BAD_USER_INPUT');
+        await postAccountEntry(tx, admin, {
+          customerId: user.id,
+          direction: 'RECEIPT',
+          amount: input.receivedAmount,
+          method: input.paymentMethod,
+          requestId: input.requestId,
+          note: `دریافت هنگام صدور فاکتور ${order.number}`,
+        });
+      }
       return order.id;
     },
     { timeout: 10000, isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted },
@@ -161,55 +157,28 @@ export async function recordOfflinePayment(admin: { id: string; email: string },
   const input = validate(offlinePaymentInputSchema, raw);
   await db.$transaction(
     async (tx) => {
-      await tx.$queryRaw`SELECT id FROM \`Order\` WHERE id = ${input.orderId} FOR UPDATE`;
-      const order = await tx.order.findUnique({ where: { id: input.orderId } });
-      if (!order) throw authError('سفارش یافت نشد.', 'NOT_FOUND');
-      const previous = await tx.offlinePayment.findUnique({ where: { id: input.requestId } });
-      if (previous) {
-        if (
-          previous.orderId !== order.id ||
-          previous.amount !== input.amount ||
-          previous.method !== input.method ||
-          previous.adminId !== admin.id
-        )
-          throw conflict();
-        return;
-      }
+      const found = await tx.order.findUnique({ where: { id: input.orderId } });
+      if (!found) throw authError('سفارش یافت نشد.', 'NOT_FOUND');
+      await tx.$queryRaw`SELECT id FROM User WHERE id=${found.userId} FOR UPDATE`;
+      const order = await tx.order.findUniqueOrThrow({ where: { id: found.id } });
+      const previous = await tx.customerAccountEntry.findUnique({ where: { id: input.requestId } });
+      if (!previous && order.updatedAt.toISOString() !== input.expectedUpdatedAt) throw conflict();
       if (order.salesChannel === 'WEBSITE' || order.status === 'CANCELED')
         throw authError('ثبت دریافت برای این سفارش مجاز نیست.', 'BAD_USER_INPUT');
-      if (order.updatedAt.toISOString() !== input.expectedUpdatedAt) throw conflict();
-      if (input.amount > order.total - order.offlinePaidAmount)
-        throw authError('مبلغ بیشتر از ماندهٔ سفارش است.', 'BAD_USER_INPUT');
-      await tx.offlinePayment.create({
-        data: {
-          id: input.requestId,
-          orderId: order.id,
+      if (!previous && input.amount > order.total - order.offlinePaidAmount)
+        throw authError('مبلغ بیشتر از ماندهٔ فاکتور است.', 'BAD_USER_INPUT');
+      await postAccountEntry(
+        tx,
+        admin,
+        {
+          customerId: order.userId,
+          direction: 'RECEIPT',
           amount: input.amount,
           method: input.method,
-          adminId: admin.id,
-          adminEmail: admin.email,
+          requestId: input.requestId,
         },
-      });
-      const complete =
-        input.amount + order.offlinePaidAmount === order.total &&
-        ['CREATED', 'PENDING_PAYMENT'].includes(order.status);
-      await tx.order.update({
-        where: { id: order.id },
-        data: {
-          offlinePaidAmount: { increment: input.amount },
-          updatedAt: new Date(Math.max(Date.now(), order.updatedAt.getTime() + 1)),
-          ...(complete ? { status: 'PROCESSING' } : {}),
-        },
-      });
-      if (complete)
-        await tx.orderStatusEvent.create({
-          data: {
-            orderId: order.id,
-            adminId: admin.id,
-            fromStatus: order.status,
-            toStatus: 'PROCESSING',
-          },
-        });
+        order.id,
+      );
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted },
   );

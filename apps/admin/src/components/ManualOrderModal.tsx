@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Checkbox, Form, Input, InputNumber, Modal, Select } from 'antd';
-import { manualOrderInputSchema } from '@behjati/shared/admin';
+import { Alert, Button, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { manualOrderInputSchema, manualQuoteInputSchema } from '@behjati/shared/admin';
 import {
   shippingMethods,
   shippingMethodLabels,
@@ -25,6 +25,7 @@ import { useAdmin } from '../auth/AdminProvider';
 import RetailCustomerModal from './RetailCustomerModal';
 import { Money, MoneyInput } from './Money';
 import { customerName } from '../lib/format';
+import AdminIcon from './AdminIcon';
 export default function ManualOrderModal({
   onClose,
   onSaved,
@@ -39,16 +40,22 @@ export default function ManualOrderModal({
   const [search, setSearch] = useState('');
   const [productTerm, setProductTerm] = useState('');
   const [productSearch, setProductSearch] = useState('');
-  const [lines, setLines] = useState<Array<{ productId: string; title: string; quantity: number }>>(
-    [],
-  );
+  const [lines, setLines] = useState<
+    Array<{
+      productId: string;
+      title: string;
+      quantity: number;
+      unitPrice: number;
+      discountKind: 'PERCENT' | 'FIXED';
+      discountValue: number;
+    }>
+  >([]);
   const [channel, setChannel] = useState<SalesChannel>('IN_PERSON');
   const [pickup, setPickup] = useState(true);
   const [method, setMethod] = useState<ShippingMethod>('POST');
   const [received, setReceived] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<OfflinePaymentMethod>('POS');
-  const [discountCode, setDiscountCode] = useState('');
-  const [couponDraft, setCouponDraft] = useState('');
+  const [shippingCost, setShippingCost] = useState(0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [addCustomer, setAddCustomer] = useState(false);
@@ -70,13 +77,44 @@ export default function ManualOrderModal({
     input: { search: productSearch, page: 1, pageSize: 20 },
   });
   const quoteInput = {
-    items: lines.map(({ productId, quantity }) => ({ productId, quantity })),
-    discountCode,
+    items: lines.map(({ productId, quantity, unitPrice, discountKind, discountValue }) => ({
+      productId,
+      quantity,
+      unitPrice,
+      ...(discountKind === 'PERCENT'
+        ? { discountPercent: discountValue }
+        : { discountAmount: discountValue }),
+    })),
+    manualShippingCost: shippingCost,
     shippingMethod: method,
     pickup,
   };
-  const quote = useAdminQuery(AdminManualQuoteDocument, { input: quoteInput }, lines.length > 0);
+  const validQuote = manualQuoteInputSchema.safeParse(quoteInput);
+  const quote = useAdminQuery(
+    AdminManualQuoteDocument,
+    { input: quoteInput },
+    lines.length > 0 && validQuote.success,
+  );
   const price = quote.data?.adminManualQuote;
+  useEffect(() => {
+    const customer = selected.data?.adminOrderCustomer;
+    if (!customer || pickup) return;
+    form.setFieldsValue(
+      customer.defaultAddress ?? {
+        recipientName: [customer.firstName, customer.lastName].filter(Boolean).join(' '),
+        recipientPhone: customer.phone,
+        province: '',
+        city: '',
+        postalCode: '',
+        postalAddress: '',
+      },
+    );
+  }, [selected.data, pickup, form]);
+  function updateLine(id: string, patch: Partial<(typeof lines)[number]>) {
+    setLines((value) =>
+      value.map((line) => (line.productId === id ? { ...line, ...patch } : line)),
+    );
+  }
   const options = [...(customers.data?.adminOrderCustomers.items ?? [])];
   if (selected.data && !options.some((u) => u.id === customerId))
     options.unshift(selected.data.adminOrderCustomer);
@@ -156,10 +194,14 @@ export default function ManualOrderModal({
               }))}
             />
           </Form.Item>
-          <Form.Item label="محل خرید">
+          <Form.Item label="محل خرید" htmlFor="manual-channel">
             <Select
+              id="manual-channel"
               value={channel}
-              onChange={setChannel}
+              onChange={(value) => {
+                setChannel(value);
+                setPickup(value === 'IN_PERSON');
+              }}
               options={[
                 { value: 'IN_PERSON', label: 'حضوری' },
                 { value: 'INSTAGRAM', label: 'اینستاگرام' },
@@ -191,54 +233,133 @@ export default function ManualOrderModal({
             onChange={(id) => {
               const p = products.data?.catalog.items.find((p) => p.id === id);
               if (p && !lines.some((l) => l.productId === id))
-                setLines([...lines, { productId: id, title: p.title, quantity: 1 }]);
+                setLines([
+                  ...lines,
+                  {
+                    productId: id,
+                    title: p.title,
+                    quantity: 1,
+                    unitPrice: p.price,
+                    discountKind: 'FIXED',
+                    discountValue: 0,
+                  },
+                ]);
             }}
           />
         </Form.Item>
-        <ul className="mb-4 space-y-2">
+        <ul className="mb-4 space-y-3">
           {lines.map((l) => (
-            <li
-              key={l.productId}
-              className="flex flex-wrap items-center gap-2 rounded-xl bg-[#fcf9f3] p-3"
-            >
-              <b className="min-w-0 flex-1 break-words text-sm">{l.title}</b>
-              <InputNumber
-                aria-label={`تعداد ${l.title}`}
-                min={1}
-                max={99}
-                precision={0}
-                value={l.quantity}
-                onChange={(q) => {
-                  if (q)
-                    setLines(
-                      lines.map((x) => (x.productId === l.productId ? { ...x, quantity: q } : x)),
-                    );
-                }}
-              />
-              <Button onClick={() => setLines(lines.filter((x) => x.productId !== l.productId))}>
-                حذف
-              </Button>
+            <li key={l.productId} className="rounded-2xl border border-[#e8ded1] bg-[#fcf9f3] p-3">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <b className="min-w-0 break-words text-sm">{l.title}</b>
+                <Button
+                  type="text"
+                  danger
+                  aria-label={`حذف ${l.title}`}
+                  icon={<AdminIcon name="trash" width={18} />}
+                  onClick={() => setLines(lines.filter((x) => x.productId !== l.productId))}
+                />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label className="mb-1 block text-xs" htmlFor={`qty-${l.productId}`}>
+                    تعداد
+                  </label>
+                  <InputNumber
+                    id={`qty-${l.productId}`}
+                    aria-label={`تعداد ${l.title}`}
+                    className="!w-full"
+                    min={1}
+                    max={99}
+                    precision={0}
+                    value={l.quantity}
+                    onChange={(v) => {
+                      if (v) updateLine(l.productId, { quantity: v });
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs" htmlFor={`unit-${l.productId}`}>
+                    قیمت واحد (ریال)
+                  </label>
+                  <MoneyInput
+                    id={`unit-${l.productId}`}
+                    value={l.unitPrice}
+                    onChange={(v) => updateLine(l.productId, { unitPrice: v ?? 0 })}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs" htmlFor={`total-${l.productId}`}>
+                    قیمت کل (ریال)
+                  </label>
+                  <MoneyInput
+                    id={`total-${l.productId}`}
+                    value={l.unitPrice * l.quantity}
+                    onChange={(v) => updateLine(l.productId, { unitPrice: (v ?? 0) / l.quantity })}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs">نوع تخفیف ردیف</label>
+                  <Select
+                    aria-label={`نوع تخفیف ${l.title}`}
+                    className="w-full"
+                    value={l.discountKind}
+                    options={[
+                      { value: 'FIXED', label: 'مبلغی (ریال)' },
+                      { value: 'PERCENT', label: 'درصدی' },
+                    ]}
+                    onChange={(discountKind) =>
+                      updateLine(l.productId, { discountKind, discountValue: 0 })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs" htmlFor={`discount-${l.productId}`}>
+                    مقدار تخفیف
+                  </label>
+                  {l.discountKind === 'FIXED' ? (
+                    <MoneyInput
+                      id={`discount-${l.productId}`}
+                      value={l.discountValue}
+                      onChange={(v) => updateLine(l.productId, { discountValue: v ?? 0 })}
+                    />
+                  ) : (
+                    <InputNumber
+                      id={`discount-${l.productId}`}
+                      aria-label={`درصد تخفیف ${l.title}`}
+                      className="!w-full"
+                      min={0}
+                      max={100}
+                      precision={2}
+                      value={l.discountValue}
+                      onChange={(v) => updateLine(l.productId, { discountValue: v ?? 0 })}
+                    />
+                  )}
+                </div>
+              </div>
             </li>
           ))}
         </ul>
-        <Form.Item label="کد تخفیف">
-          <Input.Search
-            value={couponDraft}
-            onChange={(e) => setCouponDraft(e.target.value)}
-            onSearch={() => setDiscountCode(couponDraft.trim())}
-            enterButton="اعمال"
-            maxLength={50}
+        {lines.length > 0 && !validQuote.success && (
+          <Alert
+            className="!mb-3"
+            type="error"
+            title="قیمت کل باید با تعداد و قیمت واحد سازگار باشد؛ مبالغ را با دقت ده ریال وارد کنید."
+            role="alert"
           />
-        </Form.Item>
-        <Form.Item>
-          <Checkbox checked={pickup} onChange={(e) => setPickup(e.target.checked)}>
-            تحویل حضوری — بدون هزینه ارسال
-          </Checkbox>
-        </Form.Item>
+        )}
         {!pickup && (
           <>
-            <Form.Item label="شیوه ارسال">
+            <Form.Item label="هزینهٔ ارسال بسته (ریال)" htmlFor="manual-shipping-cost">
+              <MoneyInput
+                id="manual-shipping-cost"
+                value={shippingCost}
+                onChange={(v) => setShippingCost(v ?? 0)}
+              />
+            </Form.Item>
+            <Form.Item label="شیوه ارسال" htmlFor="manual-carrier">
               <Select
+                id="manual-carrier"
                 value={method}
                 onChange={setMethod}
                 options={shippingMethods.map((value) => ({
@@ -282,27 +403,30 @@ export default function ManualOrderModal({
           </dl>
         )}
         <div className="grid gap-3 sm:grid-cols-2">
-          <Form.Item label="مبلغ دریافت‌شده (تومان)" htmlFor="manual-received">
+          <Form.Item label="مبلغ دریافت‌شده (ریال)" htmlFor="manual-received">
             <MoneyInput
               id="manual-received"
               value={received}
               onChange={(v) => setReceived(v ?? 0)}
             />
           </Form.Item>
-          <Form.Item label="نوع پرداخت خارج از سایت">
+          <Form.Item label="نوع پرداخت خارج از سایت" htmlFor="manual-payment-method">
             <Select
+              id="manual-payment-method"
               disabled={!received || pending || !!submission}
               value={paymentMethod}
               onChange={setPaymentMethod}
-              options={offlinePaymentMethods.map((value) => ({
-                value,
-                label: offlinePaymentMethodLabels[value],
-              }))}
+              options={offlinePaymentMethods
+                .filter((value) => value !== 'CHECK')
+                .map((value) => ({
+                  value,
+                  label: offlinePaymentMethodLabels[value],
+                }))}
             />
           </Form.Item>
         </div>
         <p className="mb-3 text-xs leading-6 text-[#76685d]">
-          این دریافت توسط مدیر ثبت می‌شود. ماندهٔ پرداخت را می‌توانید بعداً در جزئیات سفارش ثبت
+          این دریافت توسط مدیر ثبت می‌شود. دریافت‌های بعدی و چک را در بخش «دریافت و پرداخت» ثبت
           کنید.
         </p>
         {error && <Alert className="!mb-3" type="error" title={error} role="alert" />}
@@ -334,6 +458,7 @@ export default function ManualOrderModal({
       </Form>
       {addCustomer && (
         <RetailCustomerModal
+          defaultChannel={channel === 'INSTAGRAM' ? 'INSTAGRAM' : 'IN_PERSON'}
           onClose={() => setAddCustomer(false)}
           onSaved={(id) => {
             setCustomerId(id);

@@ -1,6 +1,7 @@
+import { formatAdminPrice as formatPrice } from '../lib/money';
 import { useState } from 'react';
 import { Alert, Button, Modal, Select } from 'antd';
-import { formatPrice } from '@behjati/shared';
+
 import { offlinePaymentMethods, offlinePaymentMethodLabels } from '@behjati/shared/sales';
 import {
   RecordAdminOfflinePaymentDocument,
@@ -103,7 +104,7 @@ export default function OfflineReceipts({
         }}
       >
         <label htmlFor="offline-received" className="mb-2 block">
-          مبلغ (تومان)
+          مبلغ (ریال)
         </label>
         <MoneyInput
           id="offline-received"

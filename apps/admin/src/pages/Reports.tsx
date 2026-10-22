@@ -160,13 +160,13 @@ export default function Reports() {
           <MetricCards
             metrics={[
               { label: 'تعداد سفارش', value: report.ordersCount },
-              { label: 'ارزش سفارش‌های غیرلغوشده', value: report.orderValue, amount: true },
+              { label: 'ارزش فاکتورها', value: report.orderValue, amount: true },
               {
                 label: 'میانگین ارزش سفارش',
                 value: Math.round(report.averageOrderValue),
                 amount: true,
               },
-              { label: 'کل دریافتی', value: report.revenue, amount: true },
+              { label: 'خالص دریافتی', value: report.revenue, amount: true },
               { label: 'پرداخت موفق درگاه', value: report.bankRevenue, amount: true },
               { label: 'دریافت ثبت‌شده توسط مدیر', value: report.offlineRevenue, amount: true },
             ]}
@@ -188,7 +188,7 @@ export default function Reports() {
                 { title: 'روز', render: (_, day) => chartDate(day.date) },
                 { title: 'تعداد سفارش', render: (_, day) => formatNumber(day.ordersCount) },
                 { title: 'ارزش سفارش', render: (_, day) => <Money amount={day.orderValue} /> },
-                { title: 'کل دریافتی', render: (_, day) => <Money amount={day.revenue} /> },
+                { title: 'خالص دریافتی', render: (_, day) => <Money amount={day.revenue} /> },
               ]}
             />
           </Card>

@@ -129,6 +129,8 @@ export async function changeOrderStatus(adminId: string, raw: unknown) {
     await tx.$queryRaw`SELECT id FROM \`Order\` WHERE id = ${input.id} FOR UPDATE`;
     const order = await tx.order.findUnique({ where: { id: input.id } });
     if (!order) throw authError('سفارش یافت نشد.', 'NOT_FOUND');
+    if (order.salesChannel !== 'WEBSITE')
+      throw authError('فاکتور دستی مرحلهٔ تأیید یا تغییر وضعیت ندارد.', 'BAD_USER_INPUT');
     if (order.status !== input.expectedStatus)
       throw authError(
         'وضعیت سفارش تغییر کرده است؛ اطلاعات را دوباره دریافت کنید.',

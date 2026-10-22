@@ -227,7 +227,7 @@ export default function Coupons() {
             </Form.Item>
             <Form.Item
               name="value"
-              label={type === 'FIXED' ? 'مبلغ تخفیف (تومان)' : 'درصد تخفیف'}
+              label={type === 'FIXED' ? 'مبلغ تخفیف (ریال)' : 'درصد تخفیف'}
               rules={[{ required: true }]}
             >
               {type === 'FIXED' ? (
@@ -236,7 +236,7 @@ export default function Coupons() {
                 <InputNumber className="!w-full" min={1} max={100} precision={0} />
               )}
             </Form.Item>
-            <Form.Item name="minOrderAmount" label="حداقل خرید (تومان)">
+            <Form.Item name="minOrderAmount" label="حداقل خرید (ریال)">
               <MoneyInput />
             </Form.Item>
             <Form.Item name="maxDiscountAmount" label="حداکثر مبلغ تخفیف (اختیاری)">

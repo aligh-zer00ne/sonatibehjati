@@ -1,3 +1,4 @@
+import AccountStatus from '../components/AccountStatus';
 import RetailCustomerModal from '../components/RetailCustomerModal';
 import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
@@ -6,7 +7,6 @@ import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
-import { Money } from '../components/Money';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Typography, Input, Button, Alert } from 'antd';
@@ -130,7 +130,7 @@ export default function Users() {
           rowKey="id"
           icon="users"
           label="فهرست مشتریان"
-          featuredField="ارزش سفارش‌های غیرلغوشده"
+          featuredField="وضعیت حساب"
           dataSource={query.data.adminUsers.items}
           pagination={{
             current: page,
@@ -149,16 +149,16 @@ export default function Users() {
             { title: 'تاریخ عضویت', render: (_, user) => formatDate(user.createdAt) },
             { title: 'تعداد سفارش', render: (_, user) => formatNumber(user.ordersCount) },
             {
-              title: 'ارزش سفارش‌های غیرلغوشده',
-              render: (_, user) => <Money amount={user.totalOrdersValue} />,
+              title: 'وضعیت حساب',
+              render: (_, user) => <AccountStatus balance={user.accountBalance} />,
             },
             {
               title: 'عملیات',
               render: (_, user) =>
                 hasPermission(admin, 'ORDERS') && (
-                  <Link to={`/admin/orders?userId=${user.id}`}>
+                  <Link to={`/admin/settlements?customerId=${user.id}`}>
                     <Button icon={<AdminIcon name="orders" width={17} height={17} />}>
-                      سفارش‌های کاربر
+                      حساب و فاکتورهای دستی
                     </Button>
                   </Link>
                 ),

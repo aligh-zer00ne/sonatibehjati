@@ -9,6 +9,7 @@ import AdminSkyline from './AdminSkyline';
 const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin', label: 'داشبورد', icon: 'home' },
   { href: '/admin/orders', label: 'سفارش‌ها', icon: 'orders' },
+  { href: '/admin/settlements', label: 'دریافت و پرداخت', icon: 'wallet' },
   { href: '/admin/products', label: 'محصولات', icon: 'products' },
   { href: '/admin/users', label: 'مشتریان', icon: 'users' },
   { href: '/admin/orders/map', label: 'نقشه سفارش‌ها', icon: 'map' },
@@ -75,7 +76,13 @@ export default function AdminFrame() {
       id: 'sales',
       label: 'فروش و مشتریان',
       icon: 'orders',
-      paths: ['/admin/orders', '/admin/orders/map', '/admin/users', '/admin/reports'],
+      paths: [
+        '/admin/orders',
+        '/admin/settlements',
+        '/admin/orders/map',
+        '/admin/users',
+        '/admin/reports',
+      ],
     },
     {
       id: 'catalog',

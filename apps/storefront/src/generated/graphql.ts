@@ -16,6 +16,26 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AccountAllocation = {
+  __typename?: 'AccountAllocation';
+  amount: Scalars['Int']['output'];
+  number: Scalars['Int']['output'];
+  orderId: Scalars['ID']['output'];
+};
+
+export type AccountEntryDirection =
+  | 'PAYMENT'
+  | 'RECEIPT';
+
+export type AccountInvoice = {
+  __typename?: 'AccountInvoice';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
 export type AccountOrder = {
   __typename?: 'AccountOrder';
   address: OrderAddressSnapshot;
@@ -77,6 +97,18 @@ export type AddressInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminAccountEntryInput = {
+  amount: Scalars['Int']['input'];
+  chequeBank?: InputMaybe<Scalars['String']['input']>;
+  chequeDueDate?: InputMaybe<Scalars['String']['input']>;
+  chequeNumber?: InputMaybe<Scalars['String']['input']>;
+  customerId: Scalars['ID']['input'];
+  direction: AccountEntryDirection;
+  method: OfflinePaymentMethod;
+  note?: InputMaybe<Scalars['String']['input']>;
+  requestId: Scalars['ID']['input'];
+};
+
 export type AdminChannelMetric = {
   __typename?: 'AdminChannelMetric';
   customersCount: Scalars['Int']['output'];
@@ -115,6 +147,7 @@ export type AdminCouponInput = {
 };
 
 export type AdminCustomerInput = {
+  address?: InputMaybe<AddressInput>;
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   phone: Scalars['String']['input'];
@@ -176,12 +209,21 @@ export type AdminLoginInput = {
   password: Scalars['String']['input'];
 };
 
+export type AdminManualLineInput = {
+  discountAmount?: InputMaybe<Scalars['Int']['input']>;
+  discountPercent?: InputMaybe<Scalars['Float']['input']>;
+  productId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+  unitPrice?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type AdminManualOrderInput = {
   address?: InputMaybe<AddressInput>;
   customerId: Scalars['ID']['input'];
-  discountCode: Scalars['String']['input'];
+  discountCode?: InputMaybe<Scalars['String']['input']>;
   expectedTotal: Scalars['Int']['input'];
-  items: Array<CheckoutLineInput>;
+  items: Array<AdminManualLineInput>;
+  manualShippingCost?: InputMaybe<Scalars['Int']['input']>;
   paymentMethod?: InputMaybe<OfflinePaymentMethod>;
   pickup: Scalars['Boolean']['input'];
   receivedAmount: Scalars['Int']['input'];
@@ -202,8 +244,9 @@ export type AdminManualQuote = {
 };
 
 export type AdminManualQuoteInput = {
-  discountCode: Scalars['String']['input'];
-  items: Array<CheckoutLineInput>;
+  discountCode?: InputMaybe<Scalars['String']['input']>;
+  items: Array<AdminManualLineInput>;
+  manualShippingCost?: InputMaybe<Scalars['Int']['input']>;
   pickup: Scalars['Boolean']['input'];
   shippingMethod: ShippingMethod;
 };
@@ -466,8 +509,10 @@ export type AdminTopProduct = {
 
 export type AdminUser = {
   __typename?: 'AdminUser';
+  accountBalance: Scalars['Float']['output'];
   acquisitionSource: SalesChannel;
   createdAt: Scalars['String']['output'];
+  defaultAddress?: Maybe<Address>;
   email?: Maybe<Scalars['String']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -585,7 +630,10 @@ export type CheckoutInput = {
 
 export type CheckoutLine = {
   __typename?: 'CheckoutLine';
+  discountAmount?: Maybe<Scalars['Int']['output']>;
+  discountPercent?: Maybe<Scalars['Float']['output']>;
   imageUrl?: Maybe<Scalars['String']['output']>;
+  lineSubtotal?: Maybe<Scalars['Int']['output']>;
   lineTotal: Scalars['Int']['output'];
   productId: Scalars['ID']['output'];
   quantity: Scalars['Int']['output'];
@@ -619,6 +667,36 @@ export type CreateOrderInput = {
   items: Array<CheckoutLineInput>;
   requestId: Scalars['ID']['input'];
   shippingMethod?: InputMaybe<ShippingMethod>;
+};
+
+export type CustomerAccount = {
+  __typename?: 'CustomerAccount';
+  balance: Scalars['Float']['output'];
+  entries: Array<CustomerAccountEntry>;
+  invoicePage: Scalars['Int']['output'];
+  invoiceTotal: Scalars['Int']['output'];
+  invoiced: Scalars['Float']['output'];
+  invoices: Array<AccountInvoice>;
+  page: Scalars['Int']['output'];
+  paid: Scalars['Float']['output'];
+  received: Scalars['Float']['output'];
+  total: Scalars['Int']['output'];
+  user: AuthUser;
+};
+
+export type CustomerAccountEntry = {
+  __typename?: 'CustomerAccountEntry';
+  adminEmail: Scalars['String']['output'];
+  allocations: Array<AccountAllocation>;
+  amount: Scalars['Int']['output'];
+  chequeBank?: Maybe<Scalars['String']['output']>;
+  chequeDueDate?: Maybe<Scalars['String']['output']>;
+  chequeNumber?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  direction: AccountEntryDirection;
+  id: Scalars['ID']['output'];
+  method: OfflinePaymentMethod;
+  note?: Maybe<Scalars['String']['output']>;
 };
 
 export type CustomerExport = {
@@ -693,6 +771,7 @@ export type Mutation = {
   deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
   moderateProductReview: ProductReview;
+  recordAdminAccountEntry: CustomerAccount;
   recordAdminOfflinePayment: AdminOrder;
   refreshToken: AuthSession;
   replyAdminTicket: SupportTicket;
@@ -769,6 +848,11 @@ export type MutationModerateProductReviewArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
   status: ReviewStatus;
+};
+
+
+export type MutationRecordAdminAccountEntryArgs = {
+  input: AdminAccountEntryInput;
 };
 
 
@@ -910,6 +994,7 @@ export type MyOrdersPage = {
 export type OfflinePaymentMethod =
   | 'CARD_TRANSFER'
   | 'CASH'
+  | 'CHECK'
   | 'POS';
 
 export type OrderAddressSnapshot = {
@@ -927,7 +1012,10 @@ export type OrderAddressSnapshot = {
 
 export type OrderItemSnapshot = {
   __typename?: 'OrderItemSnapshot';
+  discountAmount?: Maybe<Scalars['Int']['output']>;
+  discountPercent?: Maybe<Scalars['Float']['output']>;
   id: Scalars['ID']['output'];
+  lineSubtotal?: Maybe<Scalars['Int']['output']>;
   lineTotal: Scalars['Int']['output'];
   productId: Scalars['ID']['output'];
   productTitle: Scalars['String']['output'];
@@ -1089,6 +1177,7 @@ export type Query = {
   __typename?: 'Query';
   adminAccounts: Array<AdminIdentity>;
   adminCoupons: Array<AdminCoupon>;
+  adminCustomerAccount: CustomerAccount;
   adminCustomerExport: CustomerExport;
   adminDashboard: AdminDashboard;
   adminGatewayTest: AdminGatewayTestState;
@@ -1128,6 +1217,13 @@ export type Query = {
   productsByIds: Array<Product>;
   promotionalProducts: Array<Product>;
   reverseLocation?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type QueryAdminCustomerAccountArgs = {
+  customerId: Scalars['ID']['input'];
+  invoicePage?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

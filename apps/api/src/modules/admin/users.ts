@@ -1,3 +1,4 @@
+import { accountBalance } from './customer-accounts.js';
 import type { Prisma, SalesChannel } from '@prisma/client';
 import { authError } from '../auth/errors.js';
 import { adminUsersFilterSchema } from '@behjati/shared/admin';
@@ -48,6 +49,7 @@ export async function adminUsers(raw: Record<string, unknown>) {
           email: true,
           createdAt: true,
           acquisitionSource: true,
+          addresses: { take: 1, orderBy: { isDefault: 'desc' } },
           orders: { select: { salesChannel: true }, distinct: ['salesChannel'] },
           _count: { select: { orders: true } },
         },
@@ -63,17 +65,23 @@ export async function adminUsers(raw: Record<string, unknown>) {
       _sum: { total: true },
     });
     return {
-      items: users.map((user) => ({
-        ...user,
-        salesChannels: [
-          ...new Set(
-            user.orders.length ? user.orders.map((o) => o.salesChannel) : [user.acquisitionSource],
-          ),
-        ],
-        createdAt: user.createdAt.toISOString(),
-        ordersCount: user._count.orders,
-        totalOrdersValue: values.find((value) => value.userId === user.id)?._sum.total ?? 0,
-      })),
+      items: await Promise.all(
+        users.map(async (user) => ({
+          accountBalance: await accountBalance(tx, user.id),
+          defaultAddress: user.addresses[0] ?? null,
+          ...user,
+          salesChannels: [
+            ...new Set(
+              user.orders.length
+                ? user.orders.map((o) => o.salesChannel)
+                : [user.acquisitionSource],
+            ),
+          ],
+          createdAt: user.createdAt.toISOString(),
+          ordersCount: user._count.orders,
+          totalOrdersValue: values.find((value) => value.userId === user.id)?._sum.total ?? 0,
+        })),
+      ),
       total,
       page,
       pageSize,
@@ -94,6 +102,7 @@ export async function adminUser(id: string) {
       email: true,
       createdAt: true,
       acquisitionSource: true,
+      addresses: { take: 1, orderBy: { isDefault: 'desc' } },
       orders: { select: { salesChannel: true }, distinct: ['salesChannel'] },
       _count: { select: { orders: true } },
     },
@@ -105,6 +114,8 @@ export async function adminUser(id: string) {
   });
   return {
     ...user,
+    accountBalance: await accountBalance(db, user.id),
+    defaultAddress: user.addresses[0] ?? null,
     salesChannels: [
       ...new Set(
         user.orders.length ? user.orders.map((o) => o.salesChannel) : [user.acquisitionSource],

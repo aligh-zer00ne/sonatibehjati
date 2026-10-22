@@ -15,6 +15,7 @@ const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Products = lazy(() => import('./pages/Products'));
 const Orders = lazy(() => import('./pages/Orders'));
+const Settlements = lazy(() => import('./pages/Settlements'));
 const OrderDetails = lazy(() => import('./pages/OrderDetails'));
 const OrdersMap = lazy(() => import('./pages/OrdersMap'));
 const Users = lazy(() => import('./pages/Users'));
@@ -83,6 +84,7 @@ export default function App() {
                     <Route path="products/:id/edit" element={<ProductEdit />} />
                     <Route path="promotions" element={<Navigate to="/admin/products" replace />} />
                     <Route path="orders" element={<Orders />} />
+                    <Route path="settlements" element={<Settlements />} />
                     <Route
                       path="orders/website"
                       element={<Orders key="website" scope="website" />}

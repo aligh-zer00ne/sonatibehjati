@@ -6,7 +6,6 @@ import {
   catalogSorts,
   phoneSchema,
   addressInputSchema,
-  checkoutInputSchema,
 } from '@behjati/shared';
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
 export const adminPasswordChangeSchema = z
@@ -217,12 +216,30 @@ export const adminCustomerInputSchema = z
     firstName: text(1, 100),
     lastName: text(0, 100).default(''),
     salesChannel: z.enum(['INSTAGRAM', 'IN_PERSON']),
+    address: addressInputSchema.nullish(),
   })
-  .strict();
+  .strict()
+  .refine((v) => v.salesChannel !== 'INSTAGRAM' || !!v.address, {
+    message: 'نشانی و کد پستی مشتری اینستاگرامی لازم است.',
+    path: ['address'],
+  });
+export const manualLineSchema = z
+  .object({
+    productId: text(1, 100),
+    quantity: z.number().int().min(1).max(99),
+    unitPrice: z.number().int().min(0).max(2147483647).nullish(),
+    discountAmount: z.number().int().min(0).max(2147483647).nullish(),
+    discountPercent: z.number().min(0).max(100).nullish(),
+  })
+  .strict()
+  .refine((v) => !v.discountAmount || !v.discountPercent, {
+    message: 'تخفیف ردیف را درصدی یا مبلغی وارد کنید.',
+  });
 export const manualQuoteInputSchema = z
   .object({
-    items: checkoutInputSchema.shape.items,
-    discountCode: checkoutInputSchema.shape.discountCode,
+    items: z.array(manualLineSchema).min(1).max(50),
+    discountCode: z.literal('').default(''),
+    manualShippingCost: z.number().int().min(0).max(2147483647).default(0),
     shippingMethod: z.enum(shippingMethods).default('POST'),
     pickup: z.boolean().default(false),
   })
@@ -245,6 +262,22 @@ export const manualOrderInputSchema = manualQuoteInputSchema
   .refine((v) => !v.receivedAmount || !!v.paymentMethod, {
     message: 'نوع پرداخت را انتخاب کنید.',
     path: ['paymentMethod'],
+  });
+export const accountEntryInputSchema = z
+  .object({
+    customerId: text(1, 100),
+    direction: z.enum(['RECEIPT', 'PAYMENT']),
+    amount: z.number().int().positive().max(2147483647),
+    method: z.enum(offlinePaymentMethods),
+    note: text(0, 500).default(''),
+    chequeNumber: text(0, 60).default(''),
+    chequeBank: text(0, 100).default(''),
+    chequeDueDate: z.iso.date().nullish(),
+    requestId: z.string().uuid(),
+  })
+  .strict()
+  .refine((v) => v.method !== 'CHECK' || (!!v.chequeNumber && !!v.chequeDueDate), {
+    message: 'شماره و تاریخ سررسید چک لازم است.',
   });
 export const offlinePaymentInputSchema = z
   .object({

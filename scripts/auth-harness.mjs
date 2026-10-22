@@ -163,6 +163,8 @@ export async function cleanup() {
   });
   const userIds = users.map((user) => user.id);
   await db.supportTicket.deleteMany({ where: { userId: { in: userIds } } });
+  await db.offlinePayment.deleteMany({ where: { order: { userId: { in: userIds } } } });
+  await db.customerAccountEntry.deleteMany({ where: { userId: { in: userIds } } });
   await db.orderItem.deleteMany({ where: { order: { userId: { in: userIds } } } });
   await db.order.deleteMany({ where: { userId: { in: userIds } } });
   await db.otpCode.deleteMany({ where: { phone: { in: phones }, createdAt: { gte: startedAt } } });

@@ -79,11 +79,14 @@ try {
       if (/query AdminOrders\b/.test(body.query)) inputs.push(body.variables.input);
     }
   });
-  await page.goto(`${adminOrigin}/admin/orders/manual?userId=${customer.user.id}`);
+  await page.goto(`${adminOrigin}/admin/orders/manual?userId=${customer.user.id}&status=CANCELED`);
   await expect(page.getByRole('heading', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
   await page.screenshot({ path: '/tmp/behjati-order-sections-desktop.png' });
   await expect(page.locator('article[data-admin-record]')).toHaveCount(2);
+  assert.equal(inputs.at(-1).status, undefined, 'Manual invoices ignore old fulfillment filters');
+  await expect(page.getByRole('button', { name: 'وضعیت سفارش', exact: true })).toHaveCount(0);
   const nav = page.locator('#admin-desktop-navigation');
+  await expect(nav.getByRole('link', { name: 'دریافت و پرداخت', exact: true })).toBeVisible();
   await expect(nav.getByRole('button', { name: 'سفارش‌ها', exact: true })).toHaveAttribute(
     'aria-expanded',
     'true',
@@ -110,6 +113,7 @@ try {
   await expect(page.getByRole('heading', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
   await expect(page.locator('article[data-admin-record]')).toHaveCount(1);
   assert.equal(inputs.at(-1).salesChannel, 'WEBSITE');
+  await expect(page.getByRole('button', { name: 'وضعیت سفارش', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'محل خرید', exact: true })).toHaveCount(0);
   await nav.getByRole('link', { name: 'سایر سفارش‌ها', exact: true }).click();

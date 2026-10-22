@@ -12,12 +12,13 @@ export const shippingMethodLabels: Record<ShippingMethod, string> = {
   TIPAX: 'تیپاکس',
   COURIER: 'پیک',
 };
-export const offlinePaymentMethods = ['CASH', 'POS', 'CARD_TRANSFER'] as const;
+export const offlinePaymentMethods = ['CASH', 'POS', 'CARD_TRANSFER', 'CHECK'] as const;
 export type OfflinePaymentMethod = (typeof offlinePaymentMethods)[number];
 export const offlinePaymentMethodLabels: Record<OfflinePaymentMethod, string> = {
   CASH: 'نقدی',
   POS: 'کارت‌خوان',
   CARD_TRANSFER: 'کارت به کارت',
+  CHECK: 'چک',
 };
 
 export function parseShippingWeight(value: string): number | null {

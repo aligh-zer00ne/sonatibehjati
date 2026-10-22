@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { chromium, expect } from '@playwright/test';
-import { startAPI, db } from './auth-harness.mjs';
+import { startAPI, db, phone } from './auth-harness.mjs';
 import {
   createAdmin,
   createCustomer,
@@ -54,7 +54,7 @@ try {
     const body = route.request().postDataJSON();
     const kind = body.query.includes('mutation CreateAdminManualOrder')
       ? 'create'
-      : body.query.includes('mutation RecordAdminOfflinePayment')
+      : body.query.includes('mutation RecordAdminAccountEntry')
         ? 'receipt'
         : null;
     if (!kind) return route.continue();
@@ -78,15 +78,15 @@ try {
   await page.goto(`${base}/admin/products/${product.id}/edit`);
   await page.getByRole('tab', { name: 'هزینه و وزن ارسال', exact: true }).click();
   await page.getByLabel('وزن بسته برای ارسال (گرم)', { exact: true }).fill('600');
-  await page.getByLabel('هزینهٔ پایهٔ ارسال (تومان)', { exact: true }).fill('70000');
-  await page.getByLabel('هزینهٔ هر کیلو اضافه (تومان)', { exact: true }).fill('20000');
+  await page.getByLabel('هزینهٔ پایهٔ ارسال (ریال)', { exact: true }).fill('700000');
+  await page.getByLabel('هزینهٔ هر کیلو اضافه (ریال)', { exact: true }).fill('200000');
   await page.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
   await expect(page.getByText('محصول ذخیره شد.', { exact: true })).toBeVisible();
   const saved = await db.product.findUniqueOrThrow({ where: { id: product.id } });
   assert.equal(saved.shippingWeightGrams, 600);
   assert.equal(saved.shippingBaseCost, 70000);
   assert.equal(saved.shippingAdditionalKgCost, 20000);
-  await page.goto(base + '/admin/orders');
+  await page.goto(base + '/admin/orders/manual');
   await page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true }).click();
   let modal = page.getByRole('dialog', { name: 'ثبت سفارش حضوری / اینستاگرام', exact: true });
   await expect(modal).toBeVisible();
@@ -98,8 +98,21 @@ try {
   await page.locator('.ant-select-item-option').filter({ hasText: product.title }).click();
   await modal.getByRole('spinbutton', { name: `تعداد ${product.title}`, exact: true }).fill('2');
   await modal.getByRole('spinbutton', { name: `تعداد ${product.title}`, exact: true }).press('Tab');
-  await expect(modal.locator('[data-amount="200000"]').first()).toBeVisible();
-  await modal.getByLabel('مبلغ دریافت‌شده (تومان)', { exact: true }).fill('50000');
+  await modal.getByLabel('قیمت واحد (ریال)', { exact: true }).fill('2000000');
+  await modal.getByLabel('قیمت کل (ریال)', { exact: true }).fill('6000000');
+  await modal.getByLabel('مقدار تخفیف', { exact: true }).fill('500000');
+  await expect(modal.locator('[data-amount="550000"]').first()).toBeVisible();
+  await modal.getByRole('combobox', { name: `نوع تخفیف ${product.title}`, exact: true }).click();
+  await page.locator('.ant-select-item-option').filter({ hasText: 'درصدی' }).click();
+  await modal
+    .getByRole('spinbutton', { name: `درصد تخفیف ${product.title}`, exact: true })
+    .fill('10');
+  await expect(modal.locator('[data-amount="540000"]').first()).toBeVisible();
+  await expect(modal.getByLabel('کد تخفیف', { exact: true })).toHaveCount(0);
+  await expect(
+    modal.getByRole('button', { name: `حذف ${product.title}`, exact: true }).locator('svg'),
+  ).toHaveCount(1);
+  await modal.getByLabel('مبلغ دریافت‌شده (ریال)', { exact: true }).fill('500000');
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await fits(page);
@@ -120,38 +133,95 @@ try {
   });
   assert.equal(order.salesChannel, 'IN_PERSON');
   assert.equal(order.offlinePaidAmount, 50000);
-  assert.equal(order.total, 200000);
-  await expect(page.getByRole('tab', { name: 'پرداخت‌ها', exact: true })).toBeVisible();
-  await page.getByRole('tab', { name: 'پرداخت‌ها', exact: true }).click();
-  await page.getByRole('button', { name: 'ثبت دریافت مانده', exact: true }).click();
-  await page
-    .getByRole('dialog', { name: 'ثبت دریافت خارج از سایت', exact: true })
-    .getByRole('button', { name: 'ثبت دریافت', exact: true })
-    .click();
-  await expect(page.getByRole('dialog').getByRole('alert')).toBeVisible();
-  await page
-    .getByRole('dialog', { name: 'ثبت دریافت خارج از سایت', exact: true })
-    .getByRole('button', { name: 'ثبت دریافت', exact: true })
-    .click();
-  assert.deepEqual(replayInputs.receipt[0], replayInputs.receipt[1]);
-  await expect(
-    page.getByRole('dialog', { name: 'ثبت دریافت خارج از سایت', exact: true }),
-  ).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'ثبت دریافت مانده', exact: true })).toHaveCount(0);
-  order = await db.order.findUniqueOrThrow({ where: { id: order.id } });
-  assert.equal(order.offlinePaidAmount, 200000);
-  assert.equal(order.status, 'PROCESSING');
-  assert.equal(order.paidAt, null);
+  assert.equal(order.total, 540000);
+  await expect(page.getByRole('tab', { name: 'محصولات', exact: true })).toBeVisible();
+  for (const name of ['مشتری و ارسال', 'پرداخت‌ها', 'تاریخچه'])
+    await expect(page.getByRole('tab', { name, exact: true })).toHaveCount(0);
+  await expect(page.getByText('تغییر وضعیت سفارش', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'چاپ فاکتور / PDF', exact: true }).click();
   await expect(page.getByRole('dialog').getByText(/دریافت ثبت‌شده در فروشگاه/)).toBeVisible();
+  await expect(page.getByRole('dialog').getByText('تخفیف ردیف', { exact: true })).toBeVisible();
+  await page.getByRole('dialog').locator('.ant-modal-close').click();
+  await page.goto(`${base}/admin/settlements?customerId=${customer.user.id}`);
+  await expect(page.locator('[data-account-status="debtor"]').first()).toBeVisible();
   await expect(
-    page.getByRole('dialog').getByRole('link', { name: 'nexoraict.ir', exact: true }),
+    page.locator('[data-account-status="debtor"]').first().locator('.ant-tag-red'),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'ثبت دریافت و پرداخت', exact: true }).click();
+  let receipt = page.getByRole('dialog', { name: 'ثبت دریافت و پرداخت مشتری', exact: true });
+  await receipt.getByLabel('مبلغ (ریال)', { exact: true }).fill('5500000');
+  await receipt.getByRole('button', { name: 'ثبت در حساب مشتری', exact: true }).click();
+  await expect(
+    receipt.getByRole('button', { name: 'بررسی و ثبت مجدد همین درخواست', exact: true }),
+  ).toBeEnabled();
+  // The server accepted the first POST but its response was lost. Reload must recover the SAME UUID.
+  await page.reload();
+  receipt = page.getByRole('dialog', { name: 'ثبت دریافت و پرداخت مشتری', exact: true });
+  await expect(
+    receipt.getByRole('button', { name: 'بررسی و ثبت مجدد همین درخواست', exact: true }),
+  ).toBeEnabled();
+  await receipt.getByRole('button', { name: 'بررسی و ثبت مجدد همین درخواست', exact: true }).click();
+  await expect(receipt).toHaveCount(0);
+  assert.deepEqual(replayInputs.receipt[0], replayInputs.receipt[1]);
+  await expect(
+    page.locator('[data-account-status="creditor"]').first().locator('.ant-tag-gold'),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-account-status="settled"]').first().locator('.ant-tag-green'),
+  ).toBeVisible();
+  order = await db.order.findUniqueOrThrow({ where: { id: order.id } });
+  assert.equal(order.offlinePaidAmount, 540000);
+  assert.equal(order.paidAt, null);
+  assert.equal(order.status, 'DELIVERED');
+  assert.equal(await db.customerAccountEntry.count({ where: { userId: customer.user.id } }), 2);
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await fits(page);
+  }
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.screenshot({ path: '/tmp/behjati-customer-accounts-mobile.png', fullPage: true });
+  // Instagram customer entry captures and reuses postal details; shipping is explicitly entered in rial.
+  const instagramPhone = phone();
+  await page.goto(base + '/admin/orders/manual');
+  await page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true }).click();
+  modal = page.getByRole('dialog', { name: 'ثبت سفارش حضوری / اینستاگرام', exact: true });
+  await modal.getByLabel('محل خرید', { exact: true }).click();
+  await page.locator('.ant-select-item-option').filter({ hasText: 'اینستاگرام' }).click();
+  await modal.getByRole('button', { name: 'افزودن مشتری جدید', exact: true }).click();
+  const customerDialog = page.getByRole('dialog', { name: 'افزودن مشتری', exact: true });
+  await customerDialog.getByLabel('نام', { exact: true }).fill('مشتری اینستا');
+  await customerDialog.getByLabel('نام خانوادگی', { exact: true }).fill('آزمون');
+  await customerDialog.getByLabel('موبایل', { exact: true }).fill(instagramPhone);
+  for (const [name, value] of [
+    ['استان', 'یزد'],
+    ['شهر', 'اردکان'],
+    ['آدرس کامل', 'نشانی پستی آزمون پلاک ۱۲'],
+    ['کد پستی', '1234567890'],
+  ])
+    await customerDialog.getByLabel(name, { exact: true }).fill(value);
+  await customerDialog.getByRole('button', { name: 'ثبت مشتری', exact: true }).click();
+  await expect(customerDialog).toHaveCount(0);
+  await expect(modal.getByLabel('کد پستی', { exact: true })).toHaveValue('1234567890');
+  await modal.getByRole('combobox', { name: 'محصول سفارش دستی', exact: true }).fill(product.title);
+  await page.locator('.ant-select-item-option').filter({ hasText: product.title }).click();
+  await modal.getByLabel('هزینهٔ ارسال بسته (ریال)', { exact: true }).fill('400000');
+  await expect(modal.locator('[data-amount="140000"]').first()).toBeVisible();
+  await modal.getByRole('button', { name: 'ثبت نهایی سفارش', exact: true }).click();
+  await expect(modal).toHaveCount(0);
+  const insta = await db.user.findUniqueOrThrow({ where: { phone: instagramPhone } });
+  const instaOrder = await db.order.findFirstOrThrow({ where: { userId: insta.id } });
+  assert.equal(instaOrder.shipping, 40000);
+  assert.equal(instaOrder.total, 140000);
+  assert.equal(instaOrder.addressSnapshot.postalCode, '1234567890');
+  await page.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
+  const label = page.getByRole('dialog').locator('[data-label-sheet]');
+  await expect(label.getByText(/هزینهٔ ارسال:/)).toContainText(/ریال/);
+  await expect(label).toContainText('نشانی پستی آزمون پلاک ۱۲');
   await page.getByRole('dialog').locator('.ant-modal-close').click();
   // Filter buttons modify URL/backend results and remain usable on a small screen.
   await page.getByRole('button', { name: 'محل خرید', exact: true }).click();
   await page
-    .getByRole('group', { name: 'محل خرید', exact: true })
+    .getByRole('region', { name: 'محل خرید', exact: true })
     .getByRole('button', { name: 'حضوری', exact: true })
     .click();
   await expect(page).toHaveURL(/salesChannel=IN_PERSON/);
@@ -159,7 +229,7 @@ try {
   await fits(page);
   await page.getByRole('button', { name: 'شیوه ارسال', exact: true }).click();
   await page
-    .getByRole('group', { name: 'شیوه ارسال', exact: true })
+    .getByRole('region', { name: 'شیوه ارسال', exact: true })
     .getByRole('button', { name: 'تیپاکس', exact: true })
     .click();
   await expect(page).toHaveURL(/shippingMethod=TIPAX/);

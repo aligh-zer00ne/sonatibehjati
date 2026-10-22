@@ -18,6 +18,26 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AccountAllocation = {
+  __typename?: 'AccountAllocation';
+  amount: Scalars['Int']['output'];
+  number: Scalars['Int']['output'];
+  orderId: Scalars['ID']['output'];
+};
+
+export type AccountEntryDirection =
+  | 'PAYMENT'
+  | 'RECEIPT';
+
+export type AccountInvoice = {
+  __typename?: 'AccountInvoice';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  number: Scalars['Int']['output'];
+  offlinePaidAmount: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
 export type AccountOrder = {
   __typename?: 'AccountOrder';
   address: OrderAddressSnapshot;
@@ -79,6 +99,18 @@ export type AddressInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminAccountEntryInput = {
+  amount: Scalars['Int']['input'];
+  chequeBank?: InputMaybe<Scalars['String']['input']>;
+  chequeDueDate?: InputMaybe<Scalars['String']['input']>;
+  chequeNumber?: InputMaybe<Scalars['String']['input']>;
+  customerId: Scalars['ID']['input'];
+  direction: AccountEntryDirection;
+  method: OfflinePaymentMethod;
+  note?: InputMaybe<Scalars['String']['input']>;
+  requestId: Scalars['ID']['input'];
+};
+
 export type AdminChannelMetric = {
   __typename?: 'AdminChannelMetric';
   customersCount: Scalars['Int']['output'];
@@ -117,6 +149,7 @@ export type AdminCouponInput = {
 };
 
 export type AdminCustomerInput = {
+  address?: InputMaybe<AddressInput>;
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   phone: Scalars['String']['input'];
@@ -178,12 +211,21 @@ export type AdminLoginInput = {
   password: Scalars['String']['input'];
 };
 
+export type AdminManualLineInput = {
+  discountAmount?: InputMaybe<Scalars['Int']['input']>;
+  discountPercent?: InputMaybe<Scalars['Float']['input']>;
+  productId: Scalars['ID']['input'];
+  quantity: Scalars['Int']['input'];
+  unitPrice?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type AdminManualOrderInput = {
   address?: InputMaybe<AddressInput>;
   customerId: Scalars['ID']['input'];
-  discountCode: Scalars['String']['input'];
+  discountCode?: InputMaybe<Scalars['String']['input']>;
   expectedTotal: Scalars['Int']['input'];
-  items: Array<CheckoutLineInput>;
+  items: Array<AdminManualLineInput>;
+  manualShippingCost?: InputMaybe<Scalars['Int']['input']>;
   paymentMethod?: InputMaybe<OfflinePaymentMethod>;
   pickup: Scalars['Boolean']['input'];
   receivedAmount: Scalars['Int']['input'];
@@ -204,8 +246,9 @@ export type AdminManualQuote = {
 };
 
 export type AdminManualQuoteInput = {
-  discountCode: Scalars['String']['input'];
-  items: Array<CheckoutLineInput>;
+  discountCode?: InputMaybe<Scalars['String']['input']>;
+  items: Array<AdminManualLineInput>;
+  manualShippingCost?: InputMaybe<Scalars['Int']['input']>;
   pickup: Scalars['Boolean']['input'];
   shippingMethod: ShippingMethod;
 };
@@ -468,8 +511,10 @@ export type AdminTopProduct = {
 
 export type AdminUser = {
   __typename?: 'AdminUser';
+  accountBalance: Scalars['Float']['output'];
   acquisitionSource: SalesChannel;
   createdAt: Scalars['String']['output'];
+  defaultAddress?: Maybe<Address>;
   email?: Maybe<Scalars['String']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -587,7 +632,10 @@ export type CheckoutInput = {
 
 export type CheckoutLine = {
   __typename?: 'CheckoutLine';
+  discountAmount?: Maybe<Scalars['Int']['output']>;
+  discountPercent?: Maybe<Scalars['Float']['output']>;
   imageUrl?: Maybe<Scalars['String']['output']>;
+  lineSubtotal?: Maybe<Scalars['Int']['output']>;
   lineTotal: Scalars['Int']['output'];
   productId: Scalars['ID']['output'];
   quantity: Scalars['Int']['output'];
@@ -621,6 +669,36 @@ export type CreateOrderInput = {
   items: Array<CheckoutLineInput>;
   requestId: Scalars['ID']['input'];
   shippingMethod?: InputMaybe<ShippingMethod>;
+};
+
+export type CustomerAccount = {
+  __typename?: 'CustomerAccount';
+  balance: Scalars['Float']['output'];
+  entries: Array<CustomerAccountEntry>;
+  invoicePage: Scalars['Int']['output'];
+  invoiceTotal: Scalars['Int']['output'];
+  invoiced: Scalars['Float']['output'];
+  invoices: Array<AccountInvoice>;
+  page: Scalars['Int']['output'];
+  paid: Scalars['Float']['output'];
+  received: Scalars['Float']['output'];
+  total: Scalars['Int']['output'];
+  user: AuthUser;
+};
+
+export type CustomerAccountEntry = {
+  __typename?: 'CustomerAccountEntry';
+  adminEmail: Scalars['String']['output'];
+  allocations: Array<AccountAllocation>;
+  amount: Scalars['Int']['output'];
+  chequeBank?: Maybe<Scalars['String']['output']>;
+  chequeDueDate?: Maybe<Scalars['String']['output']>;
+  chequeNumber?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  direction: AccountEntryDirection;
+  id: Scalars['ID']['output'];
+  method: OfflinePaymentMethod;
+  note?: Maybe<Scalars['String']['output']>;
 };
 
 export type CustomerExport = {
@@ -695,6 +773,7 @@ export type Mutation = {
   deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
   moderateProductReview: ProductReview;
+  recordAdminAccountEntry: CustomerAccount;
   recordAdminOfflinePayment: AdminOrder;
   refreshToken: AuthSession;
   replyAdminTicket: SupportTicket;
@@ -771,6 +850,11 @@ export type MutationModerateProductReviewArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
   status: ReviewStatus;
+};
+
+
+export type MutationRecordAdminAccountEntryArgs = {
+  input: AdminAccountEntryInput;
 };
 
 
@@ -912,6 +996,7 @@ export type MyOrdersPage = {
 export type OfflinePaymentMethod =
   | 'CARD_TRANSFER'
   | 'CASH'
+  | 'CHECK'
   | 'POS';
 
 export type OrderAddressSnapshot = {
@@ -929,7 +1014,10 @@ export type OrderAddressSnapshot = {
 
 export type OrderItemSnapshot = {
   __typename?: 'OrderItemSnapshot';
+  discountAmount?: Maybe<Scalars['Int']['output']>;
+  discountPercent?: Maybe<Scalars['Float']['output']>;
   id: Scalars['ID']['output'];
+  lineSubtotal?: Maybe<Scalars['Int']['output']>;
   lineTotal: Scalars['Int']['output'];
   productId: Scalars['ID']['output'];
   productTitle: Scalars['String']['output'];
@@ -1091,6 +1179,7 @@ export type Query = {
   __typename?: 'Query';
   adminAccounts: Array<AdminIdentity>;
   adminCoupons: Array<AdminCoupon>;
+  adminCustomerAccount: CustomerAccount;
   adminCustomerExport: CustomerExport;
   adminDashboard: AdminDashboard;
   adminGatewayTest: AdminGatewayTestState;
@@ -1130,6 +1219,13 @@ export type Query = {
   productsByIds: Array<Product>;
   promotionalProducts: Array<Product>;
   reverseLocation?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type QueryAdminCustomerAccountArgs = {
+  customerId: Scalars['ID']['input'];
+  invoicePage?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -1455,10 +1551,14 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AccountAllocation: ResolverTypeWrapper<AccountAllocation>;
+  AccountEntryDirection: AccountEntryDirection;
+  AccountInvoice: ResolverTypeWrapper<AccountInvoice>;
   AccountOrder: ResolverTypeWrapper<AccountOrderSource>;
   AccountOrderSummary: ResolverTypeWrapper<AccountOrderSummary>;
   Address: ResolverTypeWrapper<Address>;
   AddressInput: AddressInput;
+  AdminAccountEntryInput: AdminAccountEntryInput;
   AdminChannelMetric: ResolverTypeWrapper<AdminChannelMetric>;
   AdminCoupon: ResolverTypeWrapper<AdminCoupon>;
   AdminCouponInput: AdminCouponInput;
@@ -1469,6 +1569,7 @@ export type ResolversTypes = {
   AdminGatewayTestState: ResolverTypeWrapper<AdminGatewayTestState>;
   AdminIdentity: ResolverTypeWrapper<AdminIdentity>;
   AdminLoginInput: AdminLoginInput;
+  AdminManualLineInput: AdminManualLineInput;
   AdminManualOrderInput: AdminManualOrderInput;
   AdminManualQuote: ResolverTypeWrapper<AdminManualQuote>;
   AdminManualQuoteInput: AdminManualQuoteInput;
@@ -1515,6 +1616,8 @@ export type ResolversTypes = {
   CheckoutLineInput: CheckoutLineInput;
   CheckoutQuote: ResolverTypeWrapper<CheckoutQuote>;
   CreateOrderInput: CreateOrderInput;
+  CustomerAccount: ResolverTypeWrapper<CustomerAccount>;
+  CustomerAccountEntry: ResolverTypeWrapper<CustomerAccountEntry>;
   CustomerExport: ResolverTypeWrapper<CustomerExport>;
   DiscountType: DiscountType;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
@@ -1566,10 +1669,13 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AccountAllocation: AccountAllocation;
+  AccountInvoice: AccountInvoice;
   AccountOrder: AccountOrderSource;
   AccountOrderSummary: AccountOrderSummary;
   Address: Address;
   AddressInput: AddressInput;
+  AdminAccountEntryInput: AdminAccountEntryInput;
   AdminChannelMetric: AdminChannelMetric;
   AdminCoupon: AdminCoupon;
   AdminCouponInput: AdminCouponInput;
@@ -1580,6 +1686,7 @@ export type ResolversParentTypes = {
   AdminGatewayTestState: AdminGatewayTestState;
   AdminIdentity: AdminIdentity;
   AdminLoginInput: AdminLoginInput;
+  AdminManualLineInput: AdminManualLineInput;
   AdminManualOrderInput: AdminManualOrderInput;
   AdminManualQuote: AdminManualQuote;
   AdminManualQuoteInput: AdminManualQuoteInput;
@@ -1623,6 +1730,8 @@ export type ResolversParentTypes = {
   CheckoutLineInput: CheckoutLineInput;
   CheckoutQuote: CheckoutQuote;
   CreateOrderInput: CreateOrderInput;
+  CustomerAccount: CustomerAccount;
+  CustomerAccountEntry: CustomerAccountEntry;
   CustomerExport: CustomerExport;
   Float: Scalars['Float']['output'];
   HeroSlide: HeroSlide;
@@ -1660,6 +1769,20 @@ export type ResolversParentTypes = {
   TicketPage: TicketPage;
   TicketReplyInput: TicketReplyInput;
   VerifyOtpInput: VerifyOtpInput;
+};
+
+export type AccountAllocationResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AccountAllocation'] = ResolversParentTypes['AccountAllocation']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  orderId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+};
+
+export type AccountInvoiceResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AccountInvoice'] = ResolversParentTypes['AccountInvoice']> = {
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offlinePaidAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AccountOrderResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AccountOrder'] = ResolversParentTypes['AccountOrder']> = {
@@ -1903,8 +2026,10 @@ export type AdminTopProductResolvers<ContextType = AuthContext, ParentType exten
 };
 
 export type AdminUserResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminUser'] = ResolversParentTypes['AdminUser']> = {
+  accountBalance?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   acquisitionSource?: Resolver<ResolversTypes['SalesChannel'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  defaultAddress?: Resolver<Maybe<ResolversTypes['Address']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -1971,7 +2096,10 @@ export type CategoryResolvers<ContextType = AuthContext, ParentType extends Reso
 };
 
 export type CheckoutLineResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CheckoutLine'] = ResolversParentTypes['CheckoutLine']> = {
+  discountAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  discountPercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lineSubtotal?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lineTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1990,6 +2118,34 @@ export type CheckoutQuoteResolvers<ContextType = AuthContext, ParentType extends
   shippingWeightGrams?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   subtotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type CustomerAccountResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CustomerAccount'] = ResolversParentTypes['CustomerAccount']> = {
+  balance?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  entries?: Resolver<Array<ResolversTypes['CustomerAccountEntry']>, ParentType, ContextType>;
+  invoicePage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  invoiceTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  invoiced?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  invoices?: Resolver<Array<ResolversTypes['AccountInvoice']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  paid?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  received?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType>;
+};
+
+export type CustomerAccountEntryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CustomerAccountEntry'] = ResolversParentTypes['CustomerAccountEntry']> = {
+  adminEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  allocations?: Resolver<Array<ResolversTypes['AccountAllocation']>, ParentType, ContextType>;
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  chequeBank?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  chequeDueDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  chequeNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  direction?: Resolver<ResolversTypes['AccountEntryDirection'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  method?: Resolver<ResolversTypes['OfflinePaymentMethod'], ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
 export type CustomerExportResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CustomerExport'] = ResolversParentTypes['CustomerExport']> = {
@@ -2033,6 +2189,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   deleteAdminProduct?: Resolver<ResolversTypes['AdminProductDeletion'], ParentType, ContextType, RequireFields<MutationDeleteAdminProductArgs, 'expectedUpdatedAt' | 'id'>>;
   logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   moderateProductReview?: Resolver<ResolversTypes['ProductReview'], ParentType, ContextType, RequireFields<MutationModerateProductReviewArgs, 'expectedUpdatedAt' | 'id' | 'status'>>;
+  recordAdminAccountEntry?: Resolver<ResolversTypes['CustomerAccount'], ParentType, ContextType, RequireFields<MutationRecordAdminAccountEntryArgs, 'input'>>;
   recordAdminOfflinePayment?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationRecordAdminOfflinePaymentArgs, 'input'>>;
   refreshToken?: Resolver<ResolversTypes['AuthSession'], ParentType, ContextType>;
   replyAdminTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationReplyAdminTicketArgs, 'input'>>;
@@ -2079,7 +2236,10 @@ export type OrderAddressSnapshotResolvers<ContextType = AuthContext, ParentType 
 };
 
 export type OrderItemSnapshotResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['OrderItemSnapshot'] = ResolversParentTypes['OrderItemSnapshot']> = {
+  discountAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  discountPercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lineSubtotal?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lineTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   productTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2195,6 +2355,7 @@ export type ProductReviewResolvers<ContextType = AuthContext, ParentType extends
 export type QueryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   adminAccounts?: Resolver<Array<ResolversTypes['AdminIdentity']>, ParentType, ContextType>;
   adminCoupons?: Resolver<Array<ResolversTypes['AdminCoupon']>, ParentType, ContextType>;
+  adminCustomerAccount?: Resolver<ResolversTypes['CustomerAccount'], ParentType, ContextType, RequireFields<QueryAdminCustomerAccountArgs, 'customerId' | 'invoicePage' | 'page'>>;
   adminCustomerExport?: Resolver<ResolversTypes['CustomerExport'], ParentType, ContextType, Partial<QueryAdminCustomerExportArgs>>;
   adminDashboard?: Resolver<ResolversTypes['AdminDashboard'], ParentType, ContextType, Partial<QueryAdminDashboardArgs>>;
   adminGatewayTest?: Resolver<ResolversTypes['AdminGatewayTestState'], ParentType, ContextType>;
@@ -2269,6 +2430,8 @@ export type TicketPageResolvers<ContextType = AuthContext, ParentType extends Re
 };
 
 export type Resolvers<ContextType = AuthContext> = {
+  AccountAllocation?: AccountAllocationResolvers<ContextType>;
+  AccountInvoice?: AccountInvoiceResolvers<ContextType>;
   AccountOrder?: AccountOrderResolvers<ContextType>;
   AccountOrderSummary?: AccountOrderSummaryResolvers<ContextType>;
   Address?: AddressResolvers<ContextType>;
@@ -2301,6 +2464,8 @@ export type Resolvers<ContextType = AuthContext> = {
   Category?: CategoryResolvers<ContextType>;
   CheckoutLine?: CheckoutLineResolvers<ContextType>;
   CheckoutQuote?: CheckoutQuoteResolvers<ContextType>;
+  CustomerAccount?: CustomerAccountResolvers<ContextType>;
+  CustomerAccountEntry?: CustomerAccountEntryResolvers<ContextType>;
   CustomerExport?: CustomerExportResolvers<ContextType>;
   HeroSlide?: HeroSlideResolvers<ContextType>;
   HomepageContent?: HomepageContentResolvers<ContextType>;

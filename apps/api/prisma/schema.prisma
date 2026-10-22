@@ -39,15 +39,16 @@ enum ReviewStatus {
 }
 
 model User {
-  acquisitionSource SalesChannel    @default(WEBSITE)
+  accountEntries    CustomerAccountEntry[]
+  acquisitionSource SalesChannel           @default(WEBSITE)
   createdByAdminId  String?
-  id                String          @id @default(cuid())
-  phone             String          @unique
+  id                String                 @id @default(cuid())
+  phone             String                 @unique
   firstName         String?
   lastName          String?
   email             String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
   tickets           SupportTicket[]
   reviews           ProductReview[]
   addresses         Address[]
@@ -264,6 +265,9 @@ model OrderShippingLabel {
 }
 
 model OrderItem {
+  lineSubtotal        Int?
+  discountAmount      Int     @default(0)
+  discountPercent     Float?
   shippingWeightGrams Int?
   id                  String  @id @default(cuid())
   orderId             String
@@ -434,18 +438,50 @@ enum OfflinePaymentMethod {
   CASH
   POS
   CARD_TRANSFER
+  CHECK
 }
 
 model OfflinePayment {
-  id         String               @id @db.VarChar(36)
-  orderId    String
-  order      Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  amount     Int
-  method     OfflinePaymentMethod
-  adminId    String
-  adminEmail String
-  createdAt  DateTime             @default(now())
+  accountEntryId String?               @db.VarChar(36)
+  accountEntry   CustomerAccountEntry? @relation(fields: [accountEntryId], references: [id], onDelete: Restrict)
+  voided         Boolean               @default(false)
+  id             String                @id @db.VarChar(36)
+  orderId        String
+  order          Order                 @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount         Int
+  method         OfflinePaymentMethod
+  adminId        String
+  adminEmail     String
+  createdAt      DateTime              @default(now())
 
   @@index([orderId, createdAt])
+  @@index([createdAt])
+  @@index([accountEntryId])
+}
+
+enum AccountEntryDirection {
+  RECEIPT
+  PAYMENT
+}
+
+model CustomerAccountEntry {
+  id            String                @id @db.VarChar(36)
+  userId        String
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  direction     AccountEntryDirection
+  amount        Int
+  remaining     Int                   @default(0)
+  method        OfflinePaymentMethod
+  note          String?               @db.VarChar(500)
+  chequeNumber  String?               @db.VarChar(60)
+  chequeBank    String?               @db.VarChar(100)
+  chequeDueDate DateTime?
+  adminId       String
+  adminEmail    String
+  requestHash   String                @db.VarChar(64)
+  createdAt     DateTime              @default(now())
+  allocations   OfflinePayment[]
+
+  @@index([userId, createdAt])
   @@index([createdAt])
 }

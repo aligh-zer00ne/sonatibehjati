@@ -1,3 +1,4 @@
+import { formatAdminPrice } from '../lib/money';
 import DesignCredit from './DesignCredit';
 import type { ShippingLabelValues } from '@behjati/shared/admin';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
@@ -124,6 +125,7 @@ export default function ShippingLabelSheet({
               <h2 className="font-bold">محتویات</h2>
               <p className="break-words">{values.packageContent || 'محصولات کنجدی'}</p>
               {values.packageWeight && <p>وزن: {values.packageWeight}</p>}
+              <p>هزینهٔ ارسال: {formatAdminPrice(order.shipping)}</p>
             </div>
             <div className="border-s border-black ps-2 text-center">
               <p>تعداد اقلام</p>
