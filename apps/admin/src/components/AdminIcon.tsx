@@ -35,6 +35,10 @@ const paths = {
   edit: 'm15 4 5 5M3 21l5-1L21 7l-5-5L3 15v6Z',
   receipt: 'M5 3h14v19l-3-2-4 2-4-2-3 2V3ZM9 7h6M9 11h6M9 15h3',
   eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12ZM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
+  eyeOff:
+    'm3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.5 5.3A11 11 0 0 1 12 5c6 0 10 7 10 7a20 20 0 0 1-3 3.8M6.2 6.2A24 24 0 0 0 2 12s4 7 10 7a12 12 0 0 0 5.8-1.8',
+  mail: 'M3 5h18v14H3V5Zm0 1 9 7 9-7',
+  lock: 'M5 10h14v11H5V10ZM8 10V6a4 4 0 0 1 8 0v4M12 14v3',
   trash: 'M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7',
 } as const;
 export type AdminIconName = keyof typeof paths;

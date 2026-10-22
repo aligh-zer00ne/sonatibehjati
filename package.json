@@ -40,6 +40,7 @@
     "admin:create": "node scripts/create-admin.mjs",
     "admin:reset": "bun --env-file=apps/api/.env scripts/reset-admin.mjs",
     "verify:admin-auth": "node scripts/verify-admin-auth.mjs",
+    "verify:admin-login-ui": "node --env-file=apps/api/.env scripts/verify-admin-login-ui.mjs",
     "verify:admin": "node scripts/verify-admin-commerce.mjs",
     "verify:admin-ui": "node scripts/verify-admin-ui.mjs",
     "verify:admin-orders-ui": "node scripts/verify-admin-orders-ui.mjs",
