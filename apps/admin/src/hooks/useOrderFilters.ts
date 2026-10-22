@@ -1,11 +1,19 @@
 import { useSearchParams } from 'react-router-dom';
 import { adminOrdersFilterSchema } from '@behjati/shared/admin';
 import type { AdminOrdersInput } from '../generated/graphql';
-export function useOrderFilters(pageSize = 20) {
+export type OrderScope = 'all' | 'website' | 'manual';
+export function useOrderFilters(pageSize = 20, scope: OrderScope = 'all') {
   const [params, setParams] = useSearchParams();
   const raw = Object.fromEntries(params.entries());
   const parsed = adminOrdersFilterSchema.safeParse({
     ...raw,
+    manualOnly: scope === 'manual' ? true : undefined,
+    salesChannel:
+      scope === 'website'
+        ? 'WEBSITE'
+        : scope === 'manual' && raw.salesChannel === 'WEBSITE'
+          ? undefined
+          : raw.salesChannel,
     page: raw.page ? Number(raw.page) : 1,
     pageSize,
     number: raw.number ? Number(raw.number) : undefined,
@@ -16,7 +24,14 @@ export function useOrderFilters(pageSize = 20) {
     setParams(
       Object.fromEntries(
         Object.entries(next)
-          .filter(([key, value]) => key !== 'pageSize' && value != null && value !== '')
+          .filter(
+            ([key, value]) =>
+              key !== 'pageSize' &&
+              key !== 'manualOnly' &&
+              !(scope === 'website' && key === 'salesChannel') &&
+              value != null &&
+              value !== '',
+          )
           .map(([key, value]) => [key, String(value)]),
       ),
     );

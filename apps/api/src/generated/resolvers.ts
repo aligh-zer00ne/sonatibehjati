@@ -282,6 +282,7 @@ export type AdminOrderSummary = {
 export type AdminOrdersInput = {
   city?: InputMaybe<Scalars['String']['input']>;
   from?: InputMaybe<Scalars['String']['input']>;
+  manualOnly?: InputMaybe<Scalars['Boolean']['input']>;
   number?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   pageSize?: InputMaybe<Scalars['Int']['input']>;

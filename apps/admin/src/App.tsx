@@ -83,6 +83,11 @@ export default function App() {
                     <Route path="products/:id/edit" element={<ProductEdit />} />
                     <Route path="promotions" element={<Navigate to="/admin/products" replace />} />
                     <Route path="orders" element={<Orders />} />
+                    <Route
+                      path="orders/website"
+                      element={<Orders key="website" scope="website" />}
+                    />
+                    <Route path="orders/manual" element={<Orders key="manual" scope="manual" />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
                     <Route path="settings" element={<Settings />} />

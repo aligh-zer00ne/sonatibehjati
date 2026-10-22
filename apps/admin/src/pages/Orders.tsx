@@ -6,15 +6,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminOrdersDocument } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
-import { useOrderFilters } from '../hooks/useOrderFilters';
+import { useOrderFilters, type OrderScope } from '../hooks/useOrderFilters';
 import OrderFilters from '../components/OrderFilters';
 import OrdersTable from '../components/OrdersTable';
 import DataState from '../components/DataState';
 import AdminIcon from '../components/AdminIcon';
-export default function Orders() {
+export default function Orders({ scope = 'all' }: { scope?: OrderScope }) {
   const { admin } = useAdmin();
   const [manualOpen, setManualOpen] = useState(false);
-  const filters = useOrderFilters();
+  const filters = useOrderFilters(20, scope);
   const query = useAdminQuery(AdminOrdersDocument, { input: filters.input }, !filters.error);
   const filterKey = JSON.stringify(filters.input);
   const [selection, setSelection] = useState<{ id: string | null; filterKey: string } | null>(null);
@@ -22,19 +22,29 @@ export default function Orders() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <Typography.Title level={2}>سفارش‌ها</Typography.Title>
+          <Typography.Title level={2}>
+            {scope === 'website'
+              ? 'سفارش‌های وبسایت'
+              : scope === 'manual'
+                ? 'سایر سفارش‌ها'
+                : 'سفارش‌ها'}
+          </Typography.Title>
           <p className="mb-3 text-xs leading-6 text-[#76685d]">
-            مدیریت سفارش، از جزئیات خرید تا آماده‌سازی و ارسال
+            {scope === 'manual'
+              ? 'مدیریت سفارش‌های دستی، حضوری و اینستاگرامی'
+              : 'مدیریت سفارش، از جزئیات خرید تا آماده‌سازی و ارسال'}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            type="primary"
-            icon={<AdminIcon name="plus" width={18} />}
-            onClick={() => setManualOpen(true)}
-          >
-            ثبت سفارش دستی
-          </Button>
+          {scope !== 'website' && (
+            <Button
+              type="primary"
+              icon={<AdminIcon name="plus" width={18} />}
+              onClick={() => setManualOpen(true)}
+            >
+              ثبت سفارش دستی
+            </Button>
+          )}
           {hasPermission(admin, 'ORDER_MAP') && (
             <Link to="/admin/orders/map">
               <Button icon={<AdminIcon name="map" width={18} height={18} />}>
@@ -59,6 +69,7 @@ export default function Orders() {
         input={filters.input}
         onChange={filters.update}
         onReset={filters.reset}
+        scope={scope}
       />
       {filters.error ? (
         <Alert title={filters.error} type="error" role="alert" />

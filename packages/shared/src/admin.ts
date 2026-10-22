@@ -149,6 +149,7 @@ export const adminOrdersFilterSchema = z
     status: z.enum(orderStatuses).nullish(),
     userId: text(1, 100).nullish(),
     salesChannel: z.enum(salesChannels).nullish(),
+    manualOnly: z.boolean().nullish(),
     shippingMethod: z.enum(shippingMethods).nullish(),
     number: z.number().int().positive().max(2147483647).nullish(),
     city: text(0, 80).default(''),

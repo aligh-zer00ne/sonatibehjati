@@ -21,6 +21,10 @@ const links: Array<{ href: string; label: string; icon: AdminIconName }> = [
   { href: '/admin/accounts', label: 'کاربران پنل', icon: 'shield' },
   { href: '/admin/settings', label: 'تنظیمات حساب', icon: 'settings' },
 ];
+const orderLinks: typeof links = [
+  { href: '/admin/orders/website', label: 'سفارش‌های وبسایت', icon: 'orders' },
+  { href: '/admin/orders/manual', label: 'سایر سفارش‌ها', icon: 'orders' },
+];
 export default function AdminFrame() {
   const { logout, admin } = useAdmin();
   const owner = admin?.role === 'OWNER';
@@ -48,9 +52,12 @@ export default function AdminFrame() {
   const activeSearch = searchOptions.some((option) => option.value === searchScope)
     ? searchScope
     : searchOptions[0]?.value;
-  const selected = pathname.startsWith('/admin/orders/map')
-    ? '/admin/orders/map'
-    : (links.slice(1).find(({ href }) => pathname.startsWith(href))?.href ?? '/admin');
+  const selected =
+    [...links.slice(1), ...orderLinks]
+      .sort((a, b) => b.href.length - a.href.length)
+      .find(({ href }) => pathname === href || pathname.startsWith(href + '/'))?.href ?? '/admin';
+  const ordersActive =
+    selected === '/admin/orders' || orderLinks.some((link) => link.href === selected);
   useEffect(() => {
     setMenuOpen(false);
     setOpenGroups({});
@@ -135,7 +142,9 @@ export default function AdminFrame() {
           visibleLinks.filter((link) => link.href === path),
         );
         if (!children.length) return null;
-        const active = children.some((link) => link.href === selected);
+        const active = children.some(
+          (link) => link.href === selected || (link.href === '/admin/orders' && ordersActive),
+        );
         const open = openGroups[group.id] ?? active;
         const id = `admin-${desktop ? 'desktop' : 'mobile'}-${group.id}`;
         if (compact)
@@ -147,12 +156,24 @@ export default function AdminFrame() {
               menu={{
                 items: children.map((link) => ({
                   key: link.href,
-                  label: (
-                    <Link to={link.href} onClick={() => setMenuOpen(false)}>
-                      {link.label}
-                    </Link>
-                  ),
+                  label:
+                    link.href === '/admin/orders' ? (
+                      link.label
+                    ) : (
+                      <Link to={link.href} onClick={() => setMenuOpen(false)}>
+                        {link.label}
+                      </Link>
+                    ),
                   icon: <AdminIcon name={link.icon} width={18} height={18} />,
+                  ...(link.href === '/admin/orders'
+                    ? {
+                        children: orderLinks.map((child) => ({
+                          key: child.href,
+                          label: <Link to={child.href}>{child.label}</Link>,
+                          icon: <AdminIcon name={child.icon} width={18} height={18} />,
+                        })),
+                      }
+                    : {}),
                 })),
                 selectedKeys: [selected],
               }}
@@ -192,7 +213,35 @@ export default function AdminFrame() {
               />
             </button>
             <div id={id} hidden={!open} className="mt-1 space-y-0.5">
-              {children.map((link) => navLink(link, true))}
+              {children.map((link) => {
+                if (link.href !== '/admin/orders') return navLink(link, true);
+                const ordersOpen = openGroups.orders ?? ordersActive;
+                const ordersId = `${id}-orders`;
+                return (
+                  <div key={link.href}>
+                    <button
+                      type="button"
+                      aria-label="سفارش‌ها"
+                      aria-expanded={ordersOpen}
+                      aria-controls={ordersId}
+                      onClick={() => setOpenGroups((value) => ({ ...value, orders: !ordersOpen }))}
+                      className={`ms-3 flex min-h-11 w-[calc(100%-12px)] cursor-pointer items-center gap-2.5 rounded-lg border-s border-[#d8b97b]/30 px-3 py-2 text-[13px] font-semibold text-[#fff7eb] hover:bg-[#ad5360] ${ordersActive ? 'bg-[#a34a55]/40' : ''}`}
+                    >
+                      <AdminIcon name="orders" width={18} height={18} className="shrink-0" />
+                      <span className="min-w-0 flex-1 text-start">سفارش‌ها</span>
+                      <AdminIcon
+                        name="chevron"
+                        width={16}
+                        height={16}
+                        className={`shrink-0 transition-transform ${ordersOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    <div id={ordersId} hidden={!ordersOpen} className="ms-3 mt-1 space-y-0.5">
+                      {orderLinks.map((child) => navLink(child, true))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         );

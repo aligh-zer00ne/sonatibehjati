@@ -68,7 +68,8 @@
     "verify:retail-operations": "node --env-file=apps/api/.env scripts/verify-retail-operations.mjs",
     "verify:retail-ui": "node --env-file=apps/api/.env scripts/verify-retail-ui.mjs",
     "verify:shipping-checkout-ui": "node scripts/verify-shipping-checkout-ui.mjs",
-    "verify:admin-filters-ui": "node scripts/verify-admin-filters-ui.mjs"
+    "verify:admin-filters-ui": "node scripts/verify-admin-filters-ui.mjs",
+    "verify:order-sections": "node --env-file=apps/api/.env scripts/verify-order-sections.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

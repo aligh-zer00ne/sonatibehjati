@@ -434,6 +434,7 @@ enum AdminOrderSort {
 }
 input AdminOrdersInput {
   salesChannel: SalesChannel
+  manualOnly: Boolean
   shippingMethod: ShippingMethod
   page: Int
   pageSize: Int

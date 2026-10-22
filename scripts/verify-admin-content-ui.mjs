@@ -54,12 +54,14 @@ try {
   const nav = page.locator('[data-admin-sidebar] nav');
   await expect(nav.getByRole('button', { expanded: true })).toHaveCount(1);
   await nav.getByRole('button', { name: 'فروش و مشتریان', exact: true }).click();
-  await expect(nav.getByRole('link', { name: 'سفارش‌ها', exact: true })).toBeVisible();
+  await nav.getByRole('button', { name: 'سفارش‌ها', exact: true }).click();
+  await expect(nav.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'جمع کردن منوی مدیریت', exact: true }).click();
   await nav.getByRole('button', { name: 'فروش و مشتریان', exact: true }).click();
-  await expect(
-    page.getByRole('menu').getByRole('link', { name: 'سفارش‌ها', exact: true }),
-  ).toBeVisible();
+  await page.getByRole('menu').getByText('سفارش‌ها', { exact: true }).hover();
+  await expect(page.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'باز کردن منوی کناری', exact: true }).click();
   for (const width of [320, 390, 768, 1440]) {

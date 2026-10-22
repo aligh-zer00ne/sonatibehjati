@@ -12,14 +12,17 @@ import type { AdminOrdersInput } from '../generated/graphql';
 import { useAdmin } from '../auth/AdminProvider';
 import UserFilter from './UserFilter';
 import { FilterButton, FilterChips, FilterBar } from './FilterButtons';
+import type { OrderScope } from '../hooks/useOrderFilters';
 export default function OrderFilters({
   input,
   onChange,
   onReset,
+  scope = 'all',
 }: {
   input: AdminOrdersInput;
   onChange: (v: Partial<AdminOrdersInput>) => void;
   onReset: () => void;
+  scope?: OrderScope;
 }) {
   const { admin } = useAdmin();
   return (
@@ -55,17 +58,21 @@ export default function OrderFilters({
           onChange={(status) => onChange({ status: status || null })}
         />
       </FilterButton>
-      <FilterButton label="محل خرید" active={!!input.salesChannel}>
-        <FilterChips
-          label="محل خرید"
-          value={input.salesChannel ?? ''}
-          options={[
-            { value: '', label: 'همه خریدها' },
-            ...salesChannels.map((value) => ({ value, label: salesChannelLabels[value] })),
-          ]}
-          onChange={(salesChannel) => onChange({ salesChannel: salesChannel || null })}
-        />
-      </FilterButton>
+      {scope !== 'website' && (
+        <FilterButton label="محل خرید" active={!!input.salesChannel}>
+          <FilterChips
+            label="محل خرید"
+            value={input.salesChannel ?? ''}
+            options={[
+              { value: '', label: scope === 'manual' ? 'همه سفارش‌های دستی' : 'همه خریدها' },
+              ...salesChannels
+                .filter((value) => scope !== 'manual' || value !== 'WEBSITE')
+                .map((value) => ({ value, label: salesChannelLabels[value] })),
+            ]}
+            onChange={(salesChannel) => onChange({ salesChannel: salesChannel || null })}
+          />
+        </FilterButton>
+      )}
       <FilterButton label="شیوه ارسال" active={!!input.shippingMethod}>
         <FilterChips
           label="شیوه ارسال"
