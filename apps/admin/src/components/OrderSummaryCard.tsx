@@ -1,13 +1,14 @@
+import { useState } from 'react';
 import AccountStatus from './AccountStatus';
-import { formatAdminPrice as formatPrice } from '../lib/money';
+import { formatAdminPrice } from '../lib/money';
 import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
-import { Button } from 'antd';
 import { formatNumber, formatDate } from '@behjati/shared';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import { customerName, persianDigits } from '../lib/format';
 import AdminIcon from './AdminIcon';
 import OrderStatus from './OrderStatus';
 import OrderDetailsCard from './OrderDetailsCard';
+import QuickOrderPrint from './QuickOrderPrint';
 
 export default function OrderSummaryCard({
   order,
@@ -26,49 +27,48 @@ export default function OrderSummaryCard({
   index?: number;
   canExpand?: boolean;
 }) {
+  const [print, setPrint] = useState<'invoice' | 'label' | null>(null);
   const detailsId = `order-details-${order.id}`;
   return (
     <article
       data-admin-record
+      data-order-id={order.id}
       data-record-index={index + 1}
       aria-label={`سفارش ${formatNumber(order.number)}`}
-      className={`relative min-w-0 overflow-hidden rounded-3xl border bg-[#fcf9f3] shadow-[0_4px_20px_rgba(102,3,17,0.03)] transition-colors ${expanded ? 'border-[#b7825b]' : 'border-[#e8ded1]'}`}
+      className={`group relative min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] transition-[border-color,box-shadow] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15 md:col-span-2 xl:col-span-3' : 'border-[#e5ded3] hover:border-[#c7ab7d] hover:shadow-[0_8px_24px_#62452f12]'}`}
     >
-      <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#96140d]" />
-      <div className={compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'}>
-        <header className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-full border-[3px] border-[#f9eed0] bg-gradient-to-br from-[#f0d17b] to-[#ce9f38] text-[#76100b] shadow-[0_4px_9px_rgba(106,97,49,0.12)]">
-              <AdminIcon name="person" width={23} height={23} />
-            </span>
-            <div className="min-w-0">
-              <h3 className="break-words text-sm leading-6 font-bold text-[#62452f]">
-                {customerName(order.user)}
-              </h3>
-              <p className="mt-0.5 text-[12px] text-[#76685d]">
-                {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}
-                {salesChannelLabels[order.salesChannel ?? 'WEBSITE']} ·{' '}
-                {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
-              </p>
-            </div>
-          </div>
-          <span className="shrink-0 rounded-xl border border-[#e8ded1] bg-[#f4e8d3] px-2.5 py-1.5 text-center text-[#76100b]">
-            <span className="block text-[9px] leading-4 text-[#76685d]">
-              {compact ? 'ردیف' : 'سفارش'}
-            </span>
-            <bdi data-record-number className="text-xs font-bold">
-              {formatNumber(compact ? index + 1 : order.number)}
-            </bdi>
+      <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#96140d]" />
+      <div className="p-3.5" data-order-summary>
+        <header className="flex items-center gap-2.5">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#76100b] shadow-[0_3px_8px_#b7825b26]">
+            <AdminIcon name="person" width={21} />
           </span>
-        </header>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#e5d1aa] bg-gradient-to-l from-[#f4e8d3] to-[#fcf9f3] px-3 py-2.5 sm:px-4">
-          <div>
-            <p className="mb-0.5 text-[12px] text-[#76685d]">مبلغ سفارش</p>
-            <p className="text-lg leading-8 font-bold text-[#96140d] sm:text-xl">
-              {formatPrice(order.total)}
+          <div className="min-w-0 flex-1">
+            <h3 className="break-words text-sm font-bold leading-6 text-[#34251e]">
+              {customerName(order.user)}
+            </h3>
+            <p className="line-clamp-1 text-[11px] text-[#857467]">
+              {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}
+              {salesChannelLabels[order.salesChannel]} ·{' '}
+              {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
+              {order.address.city ? ` · ${order.address.city}` : ''}
             </p>
           </div>
-          <div className="[&_.ant-tag]:!m-0 [&_.ant-tag]:!rounded-lg [&_.ant-tag]:!px-2 [&_.ant-tag]:!py-0.5">
+          <span className="shrink-0 rounded-lg border border-[#e8ded1] bg-[#faf6ee] px-2 py-1 text-center">
+            <small className="block text-[9px] text-[#857467]">{compact ? 'ردیف' : 'سفارش'}</small>
+            <b className="text-xs text-[#76100b]" data-record-number>
+              {formatNumber(compact ? index + 1 : order.number)}
+            </b>
+          </span>
+        </header>
+        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#e8d9bf] bg-gradient-to-l from-[#f4e8d3] to-[#fbf8f0] px-3 py-2">
+          <div className="min-w-0">
+            <span className="block text-[10px] text-[#857467]">مبلغ سفارش</span>
+            <b className="block break-words text-base leading-7 tabular-nums text-[#76100b]">
+              {formatAdminPrice(order.total)}
+            </b>
+          </div>
+          <div className="[&_.ant-tag]:!m-0 [&_.ant-tag]:!rounded-md [&_.ant-tag]:!text-[11px]">
             {order.salesChannel === 'WEBSITE' ? (
               <OrderStatus status={order.status} />
             ) : (
@@ -76,67 +76,74 @@ export default function OrderSummaryCard({
             )}
           </div>
         </div>
-        <dl className={`mt-2.5 grid grid-cols-2 gap-2 text-xs ${compact ? '' : 'sm:grid-cols-3'}`}>
-          <div className="flex min-w-0 items-center gap-2 rounded-xl bg-[#f4e8d3] px-3 py-2.5">
-            <AdminIcon name="phone" className="shrink-0 text-[#b7825b]" width={17} height={17} />
-            <div>
-              <dt className="text-[12px] leading-5 text-[#76685d]">موبایل مشتری</dt>
-              <dd className="font-medium text-[#62452f]">
-                <bdi>{persianDigits(order.user.phone)}</bdi>
-              </dd>
-            </div>
+        <dl className="mt-2 grid grid-cols-2 gap-2 text-xs">
+          <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
+            <dt className="flex items-center gap-1 text-[10px] text-[#857467]">
+              <AdminIcon name="phone" width={12} />
+              موبایل مشتری
+            </dt>
+            <dd className="mt-0.5 font-semibold text-[#62452f]">
+              <bdi>{persianDigits(order.user.phone)}</bdi>
+            </dd>
           </div>
-          {!compact && (
-            <div className="flex min-w-0 items-center gap-2 rounded-xl bg-[#f4e8d3] px-3 py-2.5">
-              <AdminIcon name="pin" className="shrink-0 text-[#b7825b]" width={17} height={17} />
-              <div className="min-w-0">
-                <dt className="text-[12px] leading-5 text-[#76685d]">شهر مقصد</dt>
-                <dd className="break-words font-medium text-[#62452f]">
-                  {order.address.city || 'ثبت نشده'}
-                </dd>
-              </div>
-            </div>
-          )}
-          <div
-            className={`flex min-w-0 items-center gap-2 rounded-xl bg-[#f4e8d3] px-3 py-2.5 ${compact ? '' : 'col-span-2 sm:col-span-1'}`}
-          >
-            <AdminIcon name="calendar" className="shrink-0 text-[#b7825b]" width={17} height={17} />
-            <div>
-              <dt className="text-[12px] leading-5 text-[#76685d]">تاریخ ثبت</dt>
-              <dd className="font-medium text-[#62452f]">
-                <time dateTime={order.createdAt}>{formatDate(order.createdAt)}</time>
-              </dd>
-            </div>
+          <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
+            <dt className="flex items-center gap-1 text-[10px] text-[#857467]">
+              <AdminIcon name="calendar" width={12} />
+              تاریخ ثبت
+            </dt>
+            <dd className="mt-0.5 font-semibold text-[#62452f]">
+              <time dateTime={order.createdAt}>{formatDate(order.createdAt)}</time>
+            </dd>
           </div>
         </dl>
         {canExpand && (
-          <div className="mt-3 border-t border-dashed border-[#e8ded1] pt-3">
-            <Button
+          <div className="mt-2.5 grid grid-cols-[1.4fr_1fr_1fr] gap-1.5 border-t border-dashed border-[#e8ded1] pt-2.5">
+            <button
               id={`order-toggle-${order.id}`}
+              type="button"
               aria-label={`جزئیات سفارش ${formatNumber(order.number)}`}
               aria-expanded={expanded}
               aria-controls={detailsId}
               onClick={onToggle}
-              block
-              icon={<AdminIcon name="receipt" width={18} height={18} />}
-              className="!flex !min-h-11 !items-center !justify-between !rounded-xl !border-[#e5d7c2] !bg-[#f4e8d3] !px-3 !text-xs !font-medium !text-[#76100b] hover:!bg-[#f2e5d4]"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#76100b] transition hover:border-[#b7825b] hover:bg-[#f0e0c7]"
             >
-              <span className="flex flex-1 items-center justify-between gap-2">
-                {expanded ? 'بستن جزئیات' : 'جزئیات سفارش'}
-                <AdminIcon
-                  name="chevron"
-                  width={17}
-                  height={17}
-                  className={`shrink-0 transition-transform motion-reduce:transition-none ${expanded ? 'rotate-180' : ''}`}
-                />
-              </span>
-            </Button>
+              <AdminIcon name="receipt" width={16} />
+              <span>{expanded ? 'بستن' : 'جزئیات'}</span>
+            </button>
+            <button
+              type="button"
+              aria-label={`چاپ فاکتور سفارش ${formatNumber(order.number)}`}
+              title="چاپ فاکتور"
+              onClick={() => setPrint('invoice')}
+              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#76100b]"
+            >
+              <AdminIcon name="print" width={17} />
+            </button>
+            <button
+              type="button"
+              aria-label={`چاپ لیبل سفارش ${formatNumber(order.number)}`}
+              title="لیبل پستی"
+              onClick={() => setPrint('label')}
+              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#76100b]"
+            >
+              <AdminIcon name="truck" width={17} />
+            </button>
           </div>
         )}
       </div>
       <div id={detailsId} hidden={!expanded}>
         {expanded && <OrderDetailsCard id={order.id} onClose={onToggle} onUpdated={onUpdated} />}
       </div>
+      {print && canExpand && (
+        <QuickOrderPrint
+          id={order.id}
+          view={print}
+          onClose={() => {
+            setPrint(null);
+            if (print === 'label') onUpdated?.();
+          }}
+        />
+      )}
     </article>
   );
 }

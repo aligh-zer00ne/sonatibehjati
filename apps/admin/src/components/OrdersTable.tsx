@@ -42,9 +42,13 @@ export default function OrdersTable({
     }
   };
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {items.length ? (
-        <div className="space-y-4" aria-label="فهرست سفارش‌ها">
+        <div
+          className="grid grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-3"
+          aria-label="فهرست سفارش‌ها"
+          data-order-grid
+        >
           {items.map((order, index) => (
             <OrderSummaryCard
               key={order.id}
