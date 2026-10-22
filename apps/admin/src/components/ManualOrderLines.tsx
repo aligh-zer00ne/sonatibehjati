@@ -100,6 +100,7 @@ export default function ManualOrderLines({
                   aria-label={`نوع تخفیف ${l.title}`}
                   className="w-full"
                   value={l.discountKind}
+                  labelRender={({ value }) => (value === 'PERCENT' ? '٪' : 'ریال')}
                   options={[
                     { value: 'FIXED', label: 'مبلغی' },
                     { value: 'PERCENT', label: 'درصدی' },

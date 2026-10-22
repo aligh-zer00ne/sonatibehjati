@@ -1,23 +1,25 @@
 import AccountStatus from '../components/AccountStatus';
 import AnalyticsMetric from '../components/AnalyticsMetric';
 import AnalyticsRefresh from '../components/AnalyticsRefresh';
-import AdminSkyline from '../components/AdminSkyline';
+import DashboardOrderExplorer, { type OrderInspection } from '../components/DashboardOrderExplorer';
+import ManualOrderModal from '../components/ManualOrderModal';
+import { tehranDate } from '@behjati/shared/admin';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
-import type { SalesChannel } from '../generated/graphql';
+import type { SalesChannel, AdminOrdersInput } from '../generated/graphql';
 import { canOpenAdminPath } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { Money } from '../components/Money';
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Empty } from 'antd';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Card, Empty, Button } from 'antd';
 import { formatNumber, formatDate } from '@behjati/shared';
 import { AdminDashboardDocument } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import DataState from '../components/DataState';
 import DashboardCharts from '../components/DashboardCharts';
 import DashboardProductImage from '../components/DashboardProductImage';
-import DashboardRecentOrders from '../components/DashboardRecentOrders';
+import OrdersTable from '../components/OrdersTable';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import { customerName } from '../lib/format';
 const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
@@ -30,6 +32,11 @@ const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
 ];
 export default function Dashboard() {
   const { admin } = useAdmin();
+  const navigate = useNavigate();
+  const inspectionTrigger = useRef<HTMLElement | SVGElement | null>(null);
+  const [inspection, setInspection] = useState<OrderInspection | null>(null);
+  const [manualOpen, setManualOpen] = useState(false);
+  const canInspect = !!admin && canOpenAdminPath(admin, '/admin/orders');
   const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>('');
   const query = useAdminQuery(
     AdminDashboardDocument,
@@ -44,6 +51,21 @@ export default function Dashboard() {
   }, []);
   if (!query.data) return <DataState error={query.error} retry={query.refresh} />;
   const data = query.data.adminDashboard;
+  const inspect = (title: string, input: AdminOrdersInput) => {
+    if (canInspect) {
+      const active = document.activeElement;
+      inspectionTrigger.current =
+        active instanceof HTMLElement || active instanceof SVGElement ? active : null;
+      setInspection({ title, input: { ...input, salesChannel: salesChannel || null } });
+    }
+  };
+  const closeInspection = () => {
+    setInspection(null);
+    requestAnimationFrame(() => {
+      if (inspectionTrigger.current?.isConnected) inspectionTrigger.current.focus();
+    });
+  };
+  const reportsPath = '/admin/reports' + (salesChannel ? `?salesChannel=${salesChannel}` : '');
   const panelTitle = (label: string, href: string) => (
     <div className="flex items-center justify-between gap-2">
       <span>{label}</span>
@@ -56,39 +78,35 @@ export default function Dashboard() {
     </div>
   );
   return (
-    <div className="flex flex-col gap-5 sm:gap-6" data-admin-dashboard>
-      <header className="relative isolate overflow-hidden rounded-3xl bg-[#76100b] p-5 text-white sm:p-7">
-        <div aria-hidden="true" className="absolute inset-y-0 end-0 -z-10 w-72 opacity-70">
-          <AdminSkyline />
+    <div className="flex flex-col gap-4" data-admin-dashboard>
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#dfd6c8] pb-4">
+        <div>
+          <h1 className="text-xl font-extrabold text-[#34251e] sm:text-2xl">داشبورد مدیریت</h1>
+          <p className="mt-1 text-xs text-[#857467]">
+            سنتی بهجتی اردکان ·{' '}
+            <time dateTime={now.toISOString()}>
+              {new Intl.DateTimeFormat('fa-IR', {
+                dateStyle: 'full',
+                timeZone: 'Asia/Tehran',
+              }).format(now)}
+            </time>
+          </p>
         </div>
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs text-[#edc994]">سنتی بهجتی اردکان · میز کار شما</p>
-            <h1 className="mt-3 text-2xl font-extrabold sm:text-3xl">داشبورد مدیریت</h1>
-            <p className="mt-3 text-sm text-[#f2d7ba]">نبض فروشگاه، از سفارش تا دریافت</p>
-          </div>
-          <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3">
-            <p className="text-xs text-[#f2d7ba]">سفارش‌های امروز</p>
-            <b className="mt-1 block text-3xl tabular-nums text-[#edc994]">
-              {formatNumber(data.ordersToday)}
-            </b>
-          </div>
-        </div>
-        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-white/15 pt-4 text-xs text-[#f2d7ba]">
-          <AdminIcon name="calendar" width={17} />
-          <time dateTime={now.toISOString()}>
-            {new Intl.DateTimeFormat('fa-IR', {
-              dateStyle: 'full',
-              timeZone: 'Asia/Tehran',
-            }).format(now)}
-          </time>
-          <span className="ms-auto">
-            {new Intl.DateTimeFormat('fa-IR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              timeZone: 'Asia/Tehran',
-            }).format(now)}
-          </span>
+        <div className="flex flex-wrap gap-2">
+          {canInspect && (
+            <Button
+              type="primary"
+              icon={<AdminIcon name="plus" width={17} />}
+              onClick={() => setManualOpen(true)}
+            >
+              ثبت فروش دستی
+            </Button>
+          )}
+          {admin && canOpenAdminPath(admin, '/admin/settlements') && (
+            <Link to="/admin/settlements">
+              <Button icon={<AdminIcon name="wallet" width={17} />}>دریافت و پرداخت</Button>
+            </Link>
+          )}
         </div>
       </header>
       <AnalyticsRefresh
@@ -97,34 +115,6 @@ export default function Dashboard() {
         error={query.error}
         refresh={query.refresh}
       />
-      <section className="grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="آمار اصلی فروشگاه">
-        <AnalyticsMetric
-          label="خالص دریافتی"
-          value={data.revenue}
-          amount
-          featured
-          icon="wallet"
-          detail="از ابتدای فعالیت؛ مطابق محل خرید انتخابی"
-        />
-        <AnalyticsMetric
-          label="کل سفارش‌ها"
-          value={data.ordersCount}
-          icon="orders"
-          detail={`${formatNumber(data.ordersThisMonth)} سفارش در ماه جاری`}
-        />
-        <AnalyticsMetric
-          label="مشتریان فروشگاه"
-          value={data.customersCount}
-          icon="users"
-          detail="مطابق محل خرید انتخابی"
-        />
-        <AnalyticsMetric
-          label="محصول فعال"
-          value={data.activeProductsCount}
-          icon="products"
-          detail="کالاهای قابل نمایش در فروشگاه"
-        />
-      </section>
       <FilterBar label="فیلتر داشبورد">
         <FilterButton label="محل خرید" active={!!salesChannel}>
           <FilterChips<SalesChannel | ''>
@@ -137,10 +127,82 @@ export default function Dashboard() {
             onChange={setSalesChannel}
           />
         </FilterButton>
+        <span className="ms-auto text-xs text-[#857467]">
+          {salesChannel ? salesChannelLabels[salesChannel] : 'همه مسیرهای خرید'}
+        </span>
       </FilterBar>
+      <section className="grid grid-cols-2 gap-2 xl:grid-cols-4" aria-label="آمار اصلی فروشگاه">
+        <AnalyticsMetric
+          compact
+          label="خالص دریافتی"
+          value={data.revenue}
+          amount
+          featured
+          icon="wallet"
+          detail="از ابتدای فعالیت؛ مشاهدهٔ گزارش دریافت"
+          onInspect={
+            admin && canOpenAdminPath(admin, '/admin/reports')
+              ? () => navigate(reportsPath)
+              : undefined
+          }
+          actionLabel="باز کردن گزارش دریافتی"
+        />
+        <AnalyticsMetric
+          compact
+          label="سفارش‌های امروز"
+          value={data.ordersToday}
+          icon="calendar"
+          detail="برای دیدن سفارش‌ها کلیک کنید"
+          onInspect={
+            canInspect
+              ? () => inspect('سفارش‌های امروز', { from: tehranDate(), to: tehranDate() })
+              : undefined
+          }
+          actionLabel="نمایش سفارش‌های امروز"
+        />
+        <AnalyticsMetric
+          compact
+          label="کل سفارش‌ها"
+          value={data.ordersCount}
+          icon="orders"
+          detail={`${formatNumber(data.ordersThisMonth)} سفارش در ماه جاری`}
+          onInspect={canInspect ? () => inspect('همه سفارش‌ها', {}) : undefined}
+          actionLabel="نمایش همه سفارش‌ها"
+        />
+        <AnalyticsMetric
+          compact
+          label="مشتریان فروشگاه"
+          value={data.customersCount}
+          icon="users"
+          detail={`${formatNumber(data.activeProductsCount)} محصول فعال در فروشگاه`}
+          onInspect={
+            admin && canOpenAdminPath(admin, '/admin/users')
+              ? () => navigate('/admin/users')
+              : undefined
+          }
+          actionLabel="باز کردن مدیریت مشتریان"
+        />
+      </section>
+      <nav className="flex flex-wrap gap-2" aria-label="دسترسی سریع عملیات">
+        {shortcuts
+          .filter((item) => admin && canOpenAdminPath(admin, item.href))
+          .map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              className="flex min-h-9 items-center gap-2 rounded-lg border border-[#e5ded3] bg-white px-3 text-xs !text-[#62452f] transition hover:border-[#c69b48] hover:bg-[#faf5eb]"
+            >
+              <AdminIcon name={item.icon} width={15} />
+              {item.label}
+            </Link>
+          ))}
+      </nav>
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(280px,1fr)]">
+        <DashboardCharts report={data.report} onInspect={canInspect ? inspect : undefined} />
+      </div>
       <section aria-label="مشتریان به تفکیک محل خرید">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-bold">فروش از کدام مسیر آمده؟</h2>
+          <h2 className="font-bold">عملکرد مسیرهای خرید</h2>
           <span className="text-xs text-[#857467]">برای فیلتر آمار، یک مسیر را انتخاب کنید</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -151,9 +213,9 @@ export default function Dashboard() {
               onClick={() => setSalesChannel(salesChannel === c.salesChannel ? '' : c.salesChannel)}
               aria-pressed={salesChannel === c.salesChannel}
               aria-label={`نمایش آمار خرید از ${salesChannelLabels[c.salesChannel]}`}
-              className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-4 text-start transition hover:border-[#c69b48] aria-pressed:border-[#96140d] aria-pressed:bg-[#fcf5ed]"
+              className="min-w-0 rounded-xl border border-[#e8ded1] bg-white p-3 text-start transition hover:border-[#c69b48] aria-pressed:border-[#96140d] aria-pressed:bg-[#fcf5ed]"
             >
-              <div className="mb-3 flex items-center gap-2">
+              <div className="mb-2 flex items-center gap-2">
                 <span className="grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#96140d]">
                   <AdminIcon
                     name={
@@ -176,7 +238,7 @@ export default function Dashboard() {
                 <span className="mb-1 block text-xs font-medium text-[#857467]">
                   دریافت تخصیص‌یافته
                 </span>
-                <Money amount={c.revenue} />
+                <Money compact amount={c.revenue} />
               </div>
               <div
                 className="mt-3 h-1 overflow-hidden rounded-full bg-[#f2e8da]"
@@ -206,41 +268,17 @@ export default function Dashboard() {
           لحاظ می‌شوند.
         </details>
       </section>
-      <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card
-          title="سریع‌ترین دسترسی‌ها"
-          className="min-w-0 md:col-span-2 xl:col-span-1 xl:order-last"
-        >
-          <div className="grid grid-cols-2 gap-3">
-            {shortcuts
-              .filter((item) => admin && canOpenAdminPath(admin, item.href))
-              .map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className="group flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border border-[#eee3d5] bg-[#fffcf7] px-2 !text-[#34251e] transition hover:border-[#c69b48] hover:bg-[#f8f0e1]"
-                >
-                  <AdminIcon
-                    name={item.icon}
-                    width={25}
-                    height={25}
-                    className="text-[#930d25] transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none"
-                  />
-                  <span className="text-[12px]">{item.label}</span>
-                </Link>
-              ))}
-          </div>
-        </Card>
-        <DashboardCharts report={data.report} />
-      </div>
       <div className="grid min-w-0 items-start gap-4 xl:grid-cols-4">
         <Card
           title={panelTitle('آخرین سفارش‌ها', '/admin/orders')}
+          className="min-w-0 xl:col-span-4"
+        >
+          <OrdersTable items={data.recentOrders.slice(0, 3)} compact onUpdated={query.refresh} />
+        </Card>
+        <Card
+          title={panelTitle('محصولات پرسفارش', '/admin/products')}
           className="min-w-0 xl:col-span-2"
         >
-          <DashboardRecentOrders items={data.recentOrders} onUpdated={query.refresh} />
-        </Card>
-        <Card title={panelTitle('محصولات پرسفارش', '/admin/products')} className="min-w-0">
           {data.topProducts.length ? (
             <ul aria-label="محصولات پرسفارش" className="divide-y divide-[#eee5d9]">
               {data.topProducts.map((product) => (
@@ -265,7 +303,10 @@ export default function Dashboard() {
             />
           )}
         </Card>
-        <Card title={panelTitle('جدیدترین مشتریان', '/admin/users')} className="min-w-0">
+        <Card
+          title={panelTitle('جدیدترین مشتریان', '/admin/users')}
+          className="min-w-0 xl:col-span-2"
+        >
           {data.recentUsers.length ? (
             <ul className="divide-y divide-[#eee5d9]">
               {data.recentUsers.map((user, index) => (
@@ -295,6 +336,23 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+      {inspection && canInspect && (
+        <DashboardOrderExplorer
+          key={JSON.stringify(inspection)}
+          inspection={inspection}
+          onClose={closeInspection}
+          onUpdated={query.refresh}
+        />
+      )}
+      {manualOpen && canInspect && (
+        <ManualOrderModal
+          onClose={() => setManualOpen(false)}
+          onSaved={(id) => {
+            setManualOpen(false);
+            navigate(`/admin/orders/${id}`);
+          }}
+        />
+      )}
     </div>
   );
 }

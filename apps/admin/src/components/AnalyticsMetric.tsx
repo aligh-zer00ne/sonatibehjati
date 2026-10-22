@@ -9,6 +9,9 @@ export default function AnalyticsMetric({
   icon,
   amount = false,
   featured = false,
+  compact = false,
+  onInspect,
+  actionLabel,
 }: {
   label: string;
   value: number;
@@ -16,13 +19,16 @@ export default function AnalyticsMetric({
   icon: AdminIconName;
   amount?: boolean;
   featured?: boolean;
+  compact?: boolean;
+  onInspect?: () => void;
+  actionLabel?: string;
 }) {
   return (
     <article
-      className={`relative min-w-0 overflow-hidden rounded-2xl border p-4 sm:p-5 ${featured ? 'border-[#76100b] bg-[#76100b] text-white shadow-[0_8px_24px_#76100b18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
+      className={`relative min-w-0 overflow-hidden rounded-xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'transition hover:border-[#c69b48] hover:shadow-sm' : ''} ${featured ? 'border-[#76100b] bg-[#76100b] text-white shadow-[0_8px_24px_#76100b18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
       data-analytics-metric={label}
     >
-      <div className="mb-4 flex items-center justify-between gap-2">
+      <div className={`${compact ? 'mb-2' : 'mb-4'} flex items-center justify-between gap-2`}>
         <h2 className={`text-xs font-semibold ${featured ? 'text-[#f7ddbb]' : 'text-[#76685d]'}`}>
           {label}
         </h2>
@@ -35,9 +41,19 @@ export default function AnalyticsMetric({
       <p className="break-words text-base font-extrabold tabular-nums sm:text-2xl">
         {amount ? formatAdminPrice(value) : formatNumber(value)}
       </p>
-      <p className={`mt-3 text-xs leading-6 ${featured ? 'text-[#eed8c6]' : 'text-[#857467]'}`}>
+      <p
+        className={`${compact ? 'mt-1' : 'mt-3'} text-xs leading-6 ${featured ? 'text-[#eed8c6]' : 'text-[#857467]'}`}
+      >
         {detail}
       </p>
+      {onInspect && (
+        <button
+          type="button"
+          aria-label={actionLabel ?? `مشاهده ${label}`}
+          onClick={onInspect}
+          className="absolute inset-0 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#c69b48]"
+        />
+      )}
     </article>
   );
 }

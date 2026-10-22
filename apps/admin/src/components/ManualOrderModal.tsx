@@ -188,6 +188,7 @@ export default function ManualOrderModal({
           <Form.Item label="مشتری" className="!col-span-2 !mb-3 sm:!col-span-1">
             <Select
               aria-label="مشتری سفارش دستی"
+              placeholder="نام یا شماره موبایل مشتری"
               showSearch
               filterOption={false}
               value={customerId || undefined}

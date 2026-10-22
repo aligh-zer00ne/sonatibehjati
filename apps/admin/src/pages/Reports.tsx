@@ -11,6 +11,7 @@ import AnalyticsRefresh from '../components/AnalyticsRefresh';
 import AdminIcon from '../components/AdminIcon';
 import { Money } from '../components/Money';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, Button, Alert, Pagination, Switch, Empty } from 'antd';
 import CalendarPicker from '../components/CalendarPicker';
 import { orderStatuses, orderStatusLabels, formatNumber } from '@behjati/shared';
@@ -23,12 +24,24 @@ import DataState from '../components/DataState';
 
 import ReportCharts from '../components/ReportCharts';
 export default function Reports() {
+  const [params] = useSearchParams();
+  const initial = adminReportFilterSchema.safeParse({
+    ...defaultReportRange(),
+    ...Object.fromEntries(params),
+  });
+  const initialFilter = initial.success
+    ? initial.data
+    : { ...defaultReportRange(), status: null, salesChannel: null, shippingMethod: null };
   const [activeOnly, setActiveOnly] = useState(true);
   const [page, setPage] = useState(1);
-  const [range, setRange] = useState(defaultReportRange());
-  const [status, setStatus] = useState<OrderStatus | ''>('');
-  const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>('');
-  const [shippingMethod, setShippingMethod] = useState<ShippingMethod | ''>('');
+  const [range, setRange] = useState({ from: initialFilter.from, to: initialFilter.to });
+  const [status, setStatus] = useState<OrderStatus | ''>(() => initialFilter.status || '');
+  const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>(
+    () => initialFilter.salesChannel || '',
+  );
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod | ''>(
+    () => initialFilter.shippingMethod || '',
+  );
   const filter = {
     ...range,
     status: status || null,

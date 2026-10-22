@@ -72,7 +72,8 @@
     "verify:order-sections": "node --env-file=apps/api/.env scripts/verify-order-sections.mjs",
     "verify:customer-accounts": "node --env-file=apps/api/.env scripts/verify-customer-accounts.mjs",
     "verify:account-migration": "node --env-file=apps/api/.env scripts/verify-account-migration.mjs",
-    "verify:analytics-ui": "node --env-file=apps/api/.env scripts/verify-analytics-ui.mjs"
+    "verify:analytics-ui": "node --env-file=apps/api/.env scripts/verify-analytics-ui.mjs",
+    "verify:dashboard-workspace": "node --env-file=apps/api/.env scripts/verify-dashboard-workspace.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
