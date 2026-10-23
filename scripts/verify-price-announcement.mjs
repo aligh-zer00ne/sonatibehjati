@@ -153,6 +153,19 @@ try {
   await priceTwo.fill('1800000');
   await page.getByRole('button', { name: /فقط تغییرکرده‌ها/ }).click();
   await expect(page.locator('[data-price-row]')).toHaveCount(2);
+  const categories = page.getByRole('navigation', { name: 'دسته‌های اعلامیه قیمت', exact: true });
+  const otherCategory = categories
+    .getByRole('button')
+    .filter({ hasNotText: category.title })
+    .filter({ hasNotText: 'همهٔ دسته‌ها' })
+    .first();
+  if (await otherCategory.count()) {
+    await otherCategory.click();
+    await expect(page.locator('[data-price-row]')).toHaveCount(0);
+    await categories.getByRole('button', { name: /همهٔ دسته‌ها/ }).click();
+    await expect(page.locator('[data-price-row]')).toHaveCount(2);
+    assert.equal((await priceOne.inputValue()).replace(/[٬,]/g, ''), '1600000');
+  }
   // The response is lost after the real server commit. The same prices remain retryable.
   let lose = true,
     requests = 0;
