@@ -134,12 +134,14 @@ export default function PrintWorkspace({
         '[data-invoice-sheet], [data-label-sheet]',
       );
       if (!sheet) throw new Error('برگه آماده نیست.');
-      const { invoiceFile, downloadInvoice } = await import('../lib/invoice-file');
-      const file = await invoiceFile(sheet, fileName, pageSize, margin);
+      const { invoiceFile, invoiceImage, downloadInvoice } = await import('../lib/invoice-file');
+      const file = share
+        ? await invoiceImage(sheet, fileName)
+        : await invoiceFile(sheet, fileName, pageSize, margin);
       if (share && navigator.canShare?.({ files: [file] })) {
         try {
           await navigator.share({ files: [file], title });
-          setNotice('فایل برای اشتراک‌گذاری آماده شد.');
+          setNotice('تصویر برگه برای اشتراک‌گذاری آماده شد.');
           return;
         } catch (e) {
           if (e instanceof Error && e.name === 'AbortError') {
@@ -151,7 +153,7 @@ export default function PrintWorkspace({
       downloadInvoice(file);
       setNotice(
         share
-          ? 'اشتراک مستقیم در این مرورگر در دسترس نیست؛ فایل مستقل برگه ذخیره شد.'
+          ? 'اشتراک مستقیم در این مرورگر در دسترس نیست؛ تصویر PNG برگه ذخیره شد.'
           : 'فایل مستقل برگه ذخیره شد؛ می‌توانید آن را در مرورگر باز و چاپ کنید.',
       );
     } catch (e) {
@@ -298,7 +300,7 @@ export default function PrintWorkspace({
               </Button>
               <Button
                 aria-label={`اشتراک فایل ${kind === 'invoice' ? 'فاکتور' : 'لیبل'}`}
-                title="اشتراک فایل برگه"
+                title="ارسال تصویر برگه (PNG)"
                 icon={<AdminIcon name="share" width={18} />}
                 disabled={pending}
                 onClick={() => void exportFile(true)}

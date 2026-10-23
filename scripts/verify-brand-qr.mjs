@@ -6,7 +6,7 @@ import jsQR from 'jsqr';
 const svg = await readFile('apps/storefront/public/images/brand-qr.svg');
 for (const size of [128, 200, 320, 720]) {
   for (const grayscale of [false, true]) {
-    const raster = sharp(svg).resize(size, size).flatten({ background: '#fff' });
+    const raster = sharp(svg).resize({ width: size }).flatten({ background: '#fff' });
     const { data, info } = await raster.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     if (grayscale) {
       for (let pixel = 0; pixel < data.length; pixel += 4) {
@@ -19,11 +19,11 @@ for (const size of [128, 200, 320, 720]) {
     const decoded = jsQR(new Uint8ClampedArray(data), info.width, info.height);
     assert.equal(
       decoded?.data,
-      'https://sonatibehjati.ir/QR',
+      'http://sonatibehjati.ir/QR',
       `Decode failed at ${size}px, grayscale=${grayscale}`,
     );
   }
 }
 console.info(
-  'Branded QR verified at 128–720px, in color and grayscale: https://sonatibehjati.ir/QR',
+  'Supplied PDF QR verified at 128–720px, in color and grayscale: http://sonatibehjati.ir/QR',
 );

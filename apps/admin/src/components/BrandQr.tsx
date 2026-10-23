@@ -12,9 +12,9 @@ export default function BrandQr({ className = '' }: { className?: string }) {
         data-brand-qr
         src="/images/brand-qr.svg"
         alt="QR سنتی بهجتی؛ اسکن برای مشاهده راه‌های ارتباطی"
-        width={720}
-        height={720}
-        className="block aspect-square h-auto w-full"
+        width={1740}
+        height={2030}
+        className="block h-auto w-full"
       />
     </a>
   );

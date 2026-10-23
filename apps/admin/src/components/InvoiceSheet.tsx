@@ -1,4 +1,4 @@
-import { BRAND_NAME, formatDate, formatNumber, orderStatusLabels } from '@behjati/shared';
+import { BRAND_NAME, formatDate, formatNumber } from '@behjati/shared';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import { customerName, persianDigits } from '../lib/format';
 import { formatAdminPrice, toRials } from '../lib/money';
@@ -46,24 +46,11 @@ export default function InvoiceSheet({
         وضعیت پرداخت
       </h2>
       <div className={compact ? 'space-y-1 p-2' : 'space-y-1.5 p-3'}>
-        <p className="flex items-start gap-1.5 font-bold">
-          <AdminIcon
-            name={manual ? 'wallet' : order.paidAt ? 'checkCircle' : 'history'}
-            width={thermal ? 12 : 15}
-            className="mt-0.5 shrink-0"
-          />
-          {manual
-            ? `وضعیت حساب فاکتور: ${balance > 0 ? 'بدهکار' : balance < 0 ? 'بستانکار' : 'تسویه شده'}`
-            : `وضعیت سفارش: ${orderStatusLabels[order.status]}`}
+        <p className="font-bold">
+          وضعیت حساب فاکتور: {balance > 0 ? 'بدهکار' : balance < 0 ? 'بستانکار' : 'تسویه شده'}
         </p>
-        <p>
-          {manual
-            ? `دریافت ثبت‌شده در فروشگاه: ${formatAdminPrice(order.offlinePaidAmount)}`
-            : order.paidAt
-              ? 'پرداخت این سفارش توسط بانک تأیید شده است.'
-              : 'پرداخت این سفارش تأیید نشده است؛ این برگه رسید پرداخت نیست.'}
-        </p>
-        {manual && <p>ماندهٔ این فاکتور: {formatAdminPrice(balance)}</p>}
+        <p>دریافت ثبت‌شده در فروشگاه: {formatAdminPrice(order.offlinePaidAmount)}</p>
+        <p>ماندهٔ این فاکتور: {formatAdminPrice(balance)}</p>
       </div>
     </>
   );
@@ -257,7 +244,7 @@ export default function InvoiceSheet({
       </div>
 
       <div className="break-inside-avoid">
-        <div className={`grid gap-3 ${thermal ? 'grid-cols-1' : 'grid-cols-2'}`}>
+        <div className={`grid gap-3 ${thermal || !manual ? 'grid-cols-1' : 'grid-cols-2'}`}>
           <section className={`${box} bg-[#fafafa]`}>
             {!thermal && (
               <h2 className={heading}>
@@ -286,7 +273,7 @@ export default function InvoiceSheet({
               ))}
             </dl>
           </section>
-          {!thermal && <section className={box}>{payment}</section>}
+          {!thermal && manual && <section className={box}>{payment}</section>}
         </div>
         <p
           className={`flex items-start gap-2 rounded-lg border border-[#777777] bg-[#f4f4f4] font-semibold ${compact ? 'mt-2 px-2 py-1' : 'mt-3 px-3 py-2'}`}
@@ -294,14 +281,11 @@ export default function InvoiceSheet({
           <AdminIcon name="wallet" width={thermal ? 13 : 17} className="mt-0.5 shrink-0" />
           <span>مبلغ به حروف: {amountToPersianWords(toRials(order.total), 'ریال')}</span>
         </p>
-        {thermal && (
+        {thermal && manual && (
           <div className="mt-2 border-y border-dashed border-[#777777] py-1.5 text-[8px]">
             <p>
-              {manual
-                ? `دریافت ثبت‌شده در فروشگاه: ${formatAdminPrice(order.offlinePaidAmount)} · مانده: ${formatAdminPrice(balance)}`
-                : order.paidAt
-                  ? 'پرداخت این سفارش توسط بانک تأیید شده است.'
-                  : 'پرداخت این سفارش تأیید نشده است؛ این برگه رسید پرداخت نیست.'}
+              دریافت ثبت‌شده در فروشگاه: {formatAdminPrice(order.offlinePaidAmount)} · مانده:{' '}
+              {formatAdminPrice(balance)}
             </p>
           </div>
         )}

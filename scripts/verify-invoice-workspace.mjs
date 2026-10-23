@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { chromium, expect } from '@playwright/test';
+import { verifySharedPrintImage } from './shared-print-image-checks.mjs';
 import { verifyLabelWorkspace } from './verify-label-workspace.mjs';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
 import {
@@ -107,6 +108,7 @@ try {
     );
     await expect(sheet).toContainText('دریافت ثبت‌شده در فروشگاه');
     await expect(sheet).toContainText('هزینه ارسال');
+    await expect(sheet).not.toContainText('این برگه رسید پرداخت نیست');
     const coloredText = await sheet
       .locator('p,b,th,td,h1,h2,a,dt,dd,span')
       .evaluateAll((elements) =>
@@ -201,6 +203,7 @@ try {
     assert.ok(!text.includes(admin.email) && !text.includes('Save as PDF'));
     await page.emulateMedia({ media: 'screen' });
   }
+  await verifySharedPrintImage(page, workspace, 'invoice');
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     workspace.getByRole('button', { name: 'ذخیره فایل فاکتور', exact: true }).click(),
@@ -322,6 +325,8 @@ try {
     await page.getByRole('button', { name: label, exact: true }).click();
     await page.evaluate(() => document.fonts.ready);
     await expect(page.locator(`[data-invoice] [data-invoice-sheet="${key}"]`)).toBeVisible();
+    await expect(page.locator('[data-invoice]')).not.toContainText('پرداخت این سفارش تأیید نشده');
+    await expect(page.locator('[data-invoice]')).not.toContainText('وضعیت پرداخت');
     await page.screenshot({
       path: `/tmp/behjati-invoice-reference-${key}.png`,
       fullPage: false,

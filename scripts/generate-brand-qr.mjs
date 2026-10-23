@@ -1,6 +1,14 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import QRCode from 'qrcode';
 
+// Preserve the exact QR artwork supplied by the store owner.
+const current = await readFile('apps/storefront/public/images/brand-qr.svg', 'utf8').catch(
+  () => '',
+);
+if (current.includes('data-qr-source="supplied-pdf"')) {
+  console.info('Supplied PDF QR preserved; no generic regeneration.');
+  process.exit(0);
+}
 const target = 'https://sonatibehjati.ir/QR';
 const { modules } = QRCode.create(target, { errorCorrectionLevel: 'H' });
 const margin = 6;

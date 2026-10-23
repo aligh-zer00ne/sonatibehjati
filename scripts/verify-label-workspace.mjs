@@ -1,3 +1,4 @@
+import { verifySharedPrintImage } from './shared-print-image-checks.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { expect } from '@playwright/test';
@@ -114,6 +115,7 @@ export async function verifyLabelWorkspace(page, db, orderId) {
     assert.ok(!text.includes('Save as PDF'));
     await page.emulateMedia({ media: 'screen' });
   }
+  await verifySharedPrintImage(page, workspace, 'label');
   const download = page.waitForEvent('download');
   await workspace.getByRole('button', { name: 'ذخیره فایل لیبل', exact: true }).click();
   await (await download).saveAs('/tmp/behjati-label-export.html');
