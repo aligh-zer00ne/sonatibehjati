@@ -2,7 +2,16 @@ import AccountStatus from './AccountStatus';
 import { formatAdminPrice as formatPrice } from '../lib/money';
 import OfflineReceipts from './OfflineReceipts';
 import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
-import { lazy, Suspense, useId, useState, type ReactNode } from 'react';
+import {
+  lazy,
+  Suspense,
+  useId,
+  useState,
+  useEffect,
+  useImperativeHandle,
+  type Ref,
+  type ReactNode,
+} from 'react';
 import { Alert, App, Button, Popconfirm, Select } from 'antd';
 import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import { orderStatusTransitions } from '@behjati/shared/admin';
@@ -106,14 +115,21 @@ function Field({
   );
 }
 
+export type OrderDetailsHandle = { requestClose: () => void };
 export default function OrderDetailsCard({
   id,
   onClose,
   onUpdated,
+  inDialog = false,
+  closeRef,
+  onBusyChange,
 }: {
   id: string;
   onClose?: () => void;
   onUpdated?: () => void;
+  inDialog?: boolean;
+  closeRef?: Ref<OrderDetailsHandle>;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const query = useAdminQuery(AdminOrderDocument, { id });
   const [printView, setPrintView] = useState<'invoice' | 'label' | null>(null);
@@ -121,21 +137,42 @@ export default function OrderDetailsCard({
   const [pending, setPending] = useState(false);
   const [paymentPending, setPaymentPending] = useState<string | null>(null);
   const [tab, setTab] = useState('products');
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const order = query.data?.adminOrder;
+  const busy = pending || Boolean(paymentPending) || Boolean(printView);
+  useEffect(() => {
+    onBusyChange?.(busy);
+  }, [busy, onBusyChange]);
+  const requestClose = () => {
+    if (busy) return;
+    if (status && status !== order?.status) {
+      modal.confirm({
+        title: 'وضعیت انتخاب‌شده ثبت نشده است',
+        content: 'با بستن پنجره، وضعیت سفارش تغییر نمی‌کند.',
+        okText: 'بستن جزئیات',
+        cancelText: 'ادامه بررسی',
+        onOk: onClose,
+      });
+    } else onClose?.();
+  };
+  useImperativeHandle(closeRef, () => ({ requestClose }));
   return (
     <section
       aria-label="جزئیات سفارش"
-      className="min-w-0 border-t border-[#e8ded1] bg-[#fcf9f3] p-3 sm:p-5"
+      className={inDialog ? 'min-w-0' : 'min-w-0 border-t border-[#e8ded1] bg-[#fcf9f3] p-3 sm:p-5'}
     >
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-bold text-[#701e2a]">
+          <h3 className="text-base font-extrabold text-[#701e2a]">
             جزئیات سفارش {order && formatNumber(order.number)}
           </h3>
-          <p className="mt-1 text-[13px] text-[#76685d]">اطلاعات ثبت‌شده هنگام خرید</p>
+          <p className="mt-1 text-[13px] leading-6 text-[#76685d]">
+            {order
+              ? `${customerName(order.user)} · ${salesChannelLabels[order.salesChannel]} · ${formatDateTime(order.createdAt)}`
+              : 'در حال دریافت اطلاعات سفارش'}
+          </p>
         </div>
-        {order && !onClose && (
+        {order && (!onClose || inDialog) && (
           <div className="ms-auto shrink-0">
             {order.salesChannel === 'WEBSITE' ? (
               <OrderStatus status={order.status} />
@@ -144,11 +181,11 @@ export default function OrderDetailsCard({
             )}
           </div>
         )}
-        {onClose && (
+        {onClose && !inDialog && (
           <Button
             type="text"
             aria-label="بستن جزئیات سفارش"
-            onClick={onClose}
+            onClick={requestClose}
             icon={<AdminIcon name="close" width={18} height={18} />}
             className="!min-h-11 !min-w-11 !text-[#76685d]"
           />
@@ -158,6 +195,72 @@ export default function OrderDetailsCard({
         <DataState error={query.error} retry={query.refresh} />
       ) : (
         <>
+          {order.salesChannel === 'WEBSITE' && (
+            <div className="mb-4 rounded-2xl border border-[#e8ded1] bg-[#faf6ee] p-3">
+              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#4e141c]">
+                <AdminIcon name="edit" width={17} height={17} />
+                تغییر وضعیت سفارش
+              </h4>
+              <p className="mb-3 text-[13px] leading-6 text-[#76685d]">
+                تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست.
+              </p>
+              {orderStatusTransitions[order.status].length ? (
+                <div className="flex flex-wrap gap-2">
+                  <Select<Status>
+                    aria-label="وضعیت جدید سفارش"
+                    className="min-w-0 flex-1 sm:max-w-64"
+                    placeholder="وضعیت جدید"
+                    value={status}
+                    disabled={pending}
+                    onChange={setStatus}
+                    options={orderStatusTransitions[order.status].map((value) => ({
+                      value,
+                      label: orderStatusLabels[value],
+                    }))}
+                  />
+                  <Popconfirm
+                    title="تغییر وضعیت سفارش تأیید شود؟"
+                    okText="تأیید"
+                    cancelText="انصراف"
+                    disabled={!status || pending}
+                    onConfirm={async () => {
+                      if (!status || pending) return;
+                      setPending(true);
+                      try {
+                        await adminRequest(UpdateAdminOrderStatusDocument, {
+                          input: { id, status, expectedStatus: order.status },
+                        });
+                        setStatus(null);
+                        query.refresh();
+                        onUpdated?.();
+                        void message.success('وضعیت سفارش ثبت شد.');
+                      } catch (error) {
+                        void message.error(
+                          error instanceof Error ? error.message : 'وضعیت تغییر نکرد.',
+                        );
+                        setStatus(null);
+                        query.refresh();
+                        onUpdated?.();
+                      } finally {
+                        setPending(false);
+                      }
+                    }}
+                  >
+                    <Button
+                      type="primary"
+                      icon={<AdminIcon name="edit" width={16} height={16} />}
+                      disabled={!status}
+                      loading={pending}
+                    >
+                      ثبت وضعیت
+                    </Button>
+                  </Popconfirm>
+                </div>
+              ) : (
+                <p className="text-xs text-[#76685d]">این سفارش به وضعیت نهایی رسیده است.</p>
+              )}
+            </div>
+          )}
           <OrderDetailTabs
             activeKey={order.salesChannel === 'WEBSITE' ? tab : 'products'}
             onChange={setTab}
@@ -406,73 +509,9 @@ export default function OrderDetailsCard({
               },
             ].filter((item) => order.salesChannel === 'WEBSITE' || item.key === 'products')}
           />
-          {order.salesChannel === 'WEBSITE' && (
-            <div className="mt-4 rounded-2xl border border-[#e8ded1] p-3">
-              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#4e141c]">
-                <AdminIcon name="edit" width={17} height={17} />
-                تغییر وضعیت سفارش
-              </h4>
-              <p className="mb-3 text-[13px] leading-6 text-[#76685d]">
-                تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست.
-              </p>
-              {orderStatusTransitions[order.status].length ? (
-                <div className="flex flex-wrap gap-2">
-                  <Select<Status>
-                    aria-label="وضعیت جدید سفارش"
-                    className="min-w-0 flex-1 sm:max-w-64"
-                    placeholder="وضعیت جدید"
-                    value={status}
-                    disabled={pending}
-                    onChange={setStatus}
-                    options={orderStatusTransitions[order.status].map((value) => ({
-                      value,
-                      label: orderStatusLabels[value],
-                    }))}
-                  />
-                  <Popconfirm
-                    title="تغییر وضعیت سفارش تأیید شود؟"
-                    okText="تأیید"
-                    cancelText="انصراف"
-                    disabled={!status || pending}
-                    onConfirm={async () => {
-                      if (!status || pending) return;
-                      setPending(true);
-                      try {
-                        await adminRequest(UpdateAdminOrderStatusDocument, {
-                          input: { id, status, expectedStatus: order.status },
-                        });
-                        setStatus(null);
-                        query.refresh();
-                        onUpdated?.();
-                        void message.success('وضعیت سفارش ثبت شد.');
-                      } catch (error) {
-                        void message.error(
-                          error instanceof Error ? error.message : 'وضعیت تغییر نکرد.',
-                        );
-                        setStatus(null);
-                        query.refresh();
-                        onUpdated?.();
-                      } finally {
-                        setPending(false);
-                      }
-                    }}
-                  >
-                    <Button
-                      type="primary"
-                      icon={<AdminIcon name="edit" width={16} height={16} />}
-                      disabled={!status}
-                      loading={pending}
-                    >
-                      ثبت وضعیت
-                    </Button>
-                  </Popconfirm>
-                </div>
-              ) : (
-                <p className="text-xs text-[#76685d]">این سفارش به وضعیت نهایی رسیده است.</p>
-              )}
-            </div>
-          )}
-          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#e8ded1] pt-3">
+          <div
+            className={`mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#e8ded1] pt-3 ${inDialog ? 'sticky -bottom-3 z-10 rounded-xl bg-white/95 pb-3 backdrop-blur-sm sm:-bottom-5 sm:pb-5' : ''}`}
+          >
             <Button
               className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#4e141c]"
               icon={<AdminIcon name="truck" width={18} height={18} />}

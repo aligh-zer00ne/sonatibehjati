@@ -213,6 +213,27 @@ try {
     await page.setViewportSize({ width, height: 1000 });
     await fits(page);
   }
+  const transactionButton = page.getByRole('button', { name: 'جزئیات تراکنش‌ها', exact: true });
+  await transactionButton.click();
+  const transactions = page.getByRole('dialog', { name: 'جزئیات تراکنش‌ها', exact: true });
+  await expect(transactions).toBeVisible();
+  await expect(
+    transactions.getByRole('textbox', { name: 'آدرس لینک پرداخت', exact: true }),
+  ).toHaveValue(url);
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect
+      .poll(async () => {
+        const box = await transactions.boundingBox();
+        return box && box.x >= 0 && box.x + box.width <= width + 1 && box.y + box.height <= 1000;
+      })
+      .toBe(true);
+    const box = await transactions.boundingBox();
+    assert.ok(box.x >= 0 && box.x + box.width <= width + 1 && box.y + box.height <= 1000);
+  }
+  await page.keyboard.press('Escape');
+  await expect(transactions).toBeHidden();
+  await expect(transactionButton).toBeFocused();
   const genericCard = page.locator(`[data-payment-request="${generic.id}"]`);
   await genericCard.getByRole('button', { name: 'غیرفعال‌کردن لینک', exact: true }).click();
   await expect(genericCard.getByText('غیرفعال', { exact: true })).toBeVisible();

@@ -4,6 +4,7 @@ import { Pagination, Empty } from 'antd';
 import { useRef, useState } from 'react';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import OrderSummaryCard from './OrderSummaryCard';
+import OrderDetailsDialog from './OrderDetailsDialog';
 export default function OrdersTable({
   items,
   page,
@@ -14,6 +15,7 @@ export default function OrdersTable({
   expandedId,
   onExpandedChange,
   onUpdated,
+  onDetailsClose,
 }: {
   items: AdminOrderSummaryFieldsFragment[];
   page?: number;
@@ -24,6 +26,7 @@ export default function OrdersTable({
   expandedId?: string | null;
   onExpandedChange?: (id: string | null) => void;
   onUpdated?: () => void;
+  onDetailsClose?: () => void;
 }) {
   const { admin } = useAdmin();
   const [localExpanded, setLocalExpanded] = useState<string | null>(null);
@@ -33,8 +36,15 @@ export default function OrdersTable({
   const toggle = (id: string) => {
     if (expanded === id) {
       select(null);
-      const button = document.getElementById(`order-toggle-${id}`) ?? trigger.current;
-      button?.focus();
+      requestAnimationFrame(() => {
+        const button = document.getElementById(`order-toggle-${id}`) ?? trigger.current;
+        if (button?.isConnected) button.focus({ preventScroll: true });
+        else
+          document
+            .querySelector<HTMLButtonElement>('[data-order-grid] button, main button')
+            ?.focus({ preventScroll: true });
+      });
+      onDetailsClose?.();
     } else {
       trigger.current =
         document.activeElement instanceof HTMLButtonElement ? document.activeElement : null;
@@ -58,7 +68,6 @@ export default function OrdersTable({
               canExpand={hasPermission(admin, 'ORDERS')}
               expanded={expanded === order.id && hasPermission(admin, 'ORDERS')}
               onToggle={() => toggle(order.id)}
-              onUpdated={onUpdated}
             />
           ))}
         </div>
@@ -66,6 +75,15 @@ export default function OrdersTable({
         <div className="rounded-3xl border border-[#e8ded1] bg-[#fcf9f3] py-10">
           <Empty description="سفارشی با این فیلترها پیدا نشد." />
         </div>
+      )}
+      {expanded && hasPermission(admin, 'ORDERS') && (
+        <OrderDetailsDialog
+          key={expanded}
+          id={expanded}
+          number={items.find((item) => item.id === expanded)?.number}
+          onClose={() => toggle(expanded)}
+          onUpdated={onUpdated}
+        />
       )}
       {onPage && (
         <Pagination

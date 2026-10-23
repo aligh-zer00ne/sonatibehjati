@@ -147,6 +147,13 @@ try {
   await editButton().click();
   let editor = page.getByRole('dialog', { name: 'ویرایش محصول', exact: true });
   await expect(editor).toBeVisible();
+  assert.match(
+    await page
+      .locator('.ant-modal-mask:visible')
+      .last()
+      .evaluate((el) => getComputedStyle(el).backdropFilter),
+    /blur\(8px\)/,
+  );
   await expect(page).toHaveURL(adminOrigin + '/admin/products?search=' + product.slug);
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 844 });

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Button, Form, Input, Select, Pagination, Tag, Empty, Radio } from 'antd';
 import { paymentRequestInputSchema } from '@behjati/shared/payment-requests';
@@ -20,6 +20,7 @@ import RichCustomerSelect from '../components/RichCustomerSelect';
 import CopyPaymentLink from '../components/CopyPaymentLink';
 import AdminIcon from '../components/AdminIcon';
 import DataState from '../components/DataState';
+import RecordDialog from '../components/RecordDialog';
 import { customerName, formatDateTime } from '../lib/format';
 const labels = { ACTIVE: 'فعال', PAID: 'پرداخت‌شده', CANCELED: 'غیرفعال', EXPIRED: 'منقضی' };
 export default function PaymentLinks() {
@@ -52,6 +53,7 @@ export default function PaymentLinks() {
   const [status, setStatus] = useState<'ACTIVE' | 'PAID' | 'CANCELED' | 'EXPIRED' | ''>(''),
     [page, setPage] = useState(1);
   const [form] = Form.useForm();
+  const [paymentDetails, setPaymentDetails] = useState<string | null>(null);
   const preset = recovered?.customerId ?? params.get('customerId') ?? '';
   const scope =
     Form.useWatch('scope', form) ??
@@ -72,6 +74,15 @@ export default function PaymentLinks() {
     !creating,
     { pollInterval: 30000 },
   );
+  useEffect(() => {
+    if (
+      paymentDetails &&
+      (creating ||
+        (list.data &&
+          !list.data.adminPaymentRequests.items.some((item) => item.id === paymentDetails)))
+    )
+      setPaymentDetails(null);
+  }, [creating, list.data, paymentDetails]);
   const [pending, setPending] = useState(false),
     [error, setError] = useState(''),
     [result, setResult] = useState<{ url: string; amount: number } | null>(null);
@@ -169,49 +180,74 @@ export default function PaymentLinks() {
                       </p>
                     )}
                     {item.payments.length > 0 && (
-                      <details className="rounded-xl bg-[#faf6ee] p-3 text-sm">
-                        <summary className="cursor-pointer font-bold">جزئیات تراکنش‌ها</summary>
-                        <div className="mt-3 space-y-3">
-                          {item.payments.map((payment) => (
-                            <div
-                              key={payment.id}
-                              className="space-y-2 border-t border-[#e8ded1] pt-3"
-                            >
-                              <p>
-                                {paymentStatusLabels[payment.status]} ·{' '}
-                                {formatDateTime(payment.createdAt)}
-                              </p>
-                              {payment.reference && (
-                                <p>
-                                  رسید بانک: <bdi>{payment.reference}</bdi>
-                                </p>
-                              )}
-                              {(pendingPaymentStates.includes(payment.status) ||
-                                payment.status === 'REVIEW_REQUIRED') && (
-                                <Button
-                                  loading={pending}
-                                  onClick={async () => {
-                                    setPending(true);
-                                    setError('');
-                                    try {
-                                      await adminRequest(RetryAdminPaymentDocument, {
-                                        paymentId: payment.id,
-                                      });
-                                      list.refresh();
-                                    } catch (e) {
-                                      setError(e instanceof Error ? e.message : 'بررسی انجام نشد.');
-                                    } finally {
-                                      setPending(false);
-                                    }
-                                  }}
-                                >
-                                  استعلام دوباره از بانک
-                                </Button>
-                              )}
+                      <>
+                        <Button
+                          icon={<AdminIcon name="receipt" />}
+                          onClick={() => setPaymentDetails(item.id)}
+                        >
+                          جزئیات تراکنش‌ها
+                        </Button>
+                        {paymentDetails === item.id && (
+                          <RecordDialog
+                            title="جزئیات تراکنش‌ها"
+                            subtitle={item.title}
+                            icon="wallet"
+                            busy={pending}
+                            onClose={() => {
+                              if (!pending) setPaymentDetails(null);
+                            }}
+                            width={800}
+                          >
+                            <div className="mb-4 rounded-2xl border border-[#e8ded1] bg-[#faf6ee] p-4 text-xl font-extrabold text-[#4e141c]">
+                              <Money compact amount={item.amount} />
                             </div>
-                          ))}
-                        </div>
-                      </details>
+                            <CopyPaymentLink url={item.url} />
+                            {error && <Alert type="error" title={error} className="!mt-3" />}
+                            <div className="mt-3 space-y-3">
+                              {item.payments.map((payment) => (
+                                <div
+                                  key={payment.id}
+                                  className="space-y-2 border-t border-[#e8ded1] pt-3"
+                                >
+                                  <p>
+                                    {paymentStatusLabels[payment.status]} ·{' '}
+                                    {formatDateTime(payment.createdAt)}
+                                  </p>
+                                  {payment.reference && (
+                                    <p>
+                                      رسید بانک: <bdi>{payment.reference}</bdi>
+                                    </p>
+                                  )}
+                                  {(pendingPaymentStates.includes(payment.status) ||
+                                    payment.status === 'REVIEW_REQUIRED') && (
+                                    <Button
+                                      loading={pending}
+                                      onClick={async () => {
+                                        setPending(true);
+                                        setError('');
+                                        try {
+                                          await adminRequest(RetryAdminPaymentDocument, {
+                                            paymentId: payment.id,
+                                          });
+                                          list.refresh();
+                                        } catch (e) {
+                                          setError(
+                                            e instanceof Error ? e.message : 'بررسی انجام نشد.',
+                                          );
+                                        } finally {
+                                          setPending(false);
+                                        }
+                                      }}
+                                    >
+                                      استعلام دوباره از بانک
+                                    </Button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </RecordDialog>
+                        )}
+                      </>
                     )}
                     <CopyPaymentLink url={item.url} />
                     {item.status === 'ACTIVE' && (

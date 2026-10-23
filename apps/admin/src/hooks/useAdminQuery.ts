@@ -6,9 +6,10 @@ export function useAdminQuery<T, V extends Record<string, unknown>>(
   document: TypedDocumentNode<T, V>,
   variables: V,
   enabled = true,
-  options: { pollInterval?: number } = {},
+  options: { pollInterval?: number; keepPreviousData?: boolean } = {},
 ) {
   const pollInterval = options.pollInterval ?? 0;
+  const retainData = options.keepPreviousData ?? Boolean(pollInterval);
   const { admin } = useAdmin();
   const adminId = admin?.id;
   const key = JSON.stringify(variables);
@@ -25,10 +26,10 @@ export function useAdminQuery<T, V extends Record<string, unknown>>(
     null,
   );
   const refresh = useCallback(() => {
-    if (!pollInterval) setResult(null);
+    if (!retainData) setResult(null);
     setFailure(null);
     setRevision((value) => value + 1);
-  }, [pollInterval]);
+  }, [retainData]);
   useEffect(() => {
     if (!pollInterval || !enabled || !adminId) return;
     const update = () => {
@@ -46,7 +47,7 @@ export function useAdminQuery<T, V extends Record<string, unknown>>(
   useEffect(() => {
     let active = true;
     setResult((previous) =>
-      pollInterval && previous?.key === key && previous.adminId === adminId ? previous : null,
+      retainData && previous?.key === key && previous.adminId === adminId ? previous : null,
     );
     setFailure(null);
     inFlight.current = !!adminId && enabled;
@@ -75,7 +76,7 @@ export function useAdminQuery<T, V extends Record<string, unknown>>(
       active = false;
       inFlight.current = false;
     };
-  }, [document, key, adminId, revision, enabled, pollInterval]);
+  }, [document, key, adminId, revision, enabled, retainData]);
   return {
     data: enabled && result?.key === key && result.adminId === adminId ? result.data : null,
     error: enabled && failure?.key === key && failure.adminId === adminId ? failure.message : '',

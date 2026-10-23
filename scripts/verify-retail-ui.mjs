@@ -285,6 +285,10 @@ try {
   await expect(label.locator('dl > div').filter({ hasText: 'هزینه ارسال' })).toContainText(/ریال/);
   await expect(label).toContainText('نشانی پستی آزمون پلاک ۱۲');
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'جزئیات سفارش', exact: true })
+    .getByRole('button', { name: 'بستن جزئیات سفارش', exact: true })
+    .click();
   // Filter buttons modify URL/backend results and remain usable on a small screen.
   await page.getByRole('button', { name: 'محل خرید', exact: true }).click();
   await page
@@ -304,7 +308,10 @@ try {
   await page.goto(base + '/admin/users');
   await page.getByRole('button', { name: 'افزودن مشتری', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'افزودن مشتری', exact: true })).toBeVisible();
-  await page.getByRole('dialog').locator('.ant-modal-close').click();
+  await page
+    .getByRole('dialog', { name: 'افزودن مشتری', exact: true })
+    .locator('.ant-modal-close')
+    .click();
   await page.goto(base + '/admin/reports');
   await page.getByRole('button', { name: 'بازه گزارش', exact: true }).hover();
   await page.getByRole('button', { name: 'امروز', exact: true }).click();

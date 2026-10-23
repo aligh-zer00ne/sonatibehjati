@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { Alert, Button, Empty, Pagination } from 'antd';
-import { Link } from 'react-router-dom';
 import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
@@ -13,11 +12,13 @@ import AdminIcon from '../components/AdminIcon';
 import PageHeading from '../components/PageHeading';
 import ProvinceOrderMap from '../components/ProvinceOrderMap';
 import DataState from '../components/DataState';
+import OrderDetailsDialog from '../components/OrderDetailsDialog';
 import { cardInteraction, cardIconInteraction } from '../lib/card-interaction';
 export default function OrdersMap() {
   const { admin } = useAdmin(),
     filters = useOrderFilters(25);
   const [province, setProvince] = useState('');
+  const [detailId, setDetailId] = useState<string | null>(null);
   const [selection, setSelection] = useState<{ id: string; key: string } | null>(null);
   const mapPanel = useRef<HTMLElement>(null);
   const query = useAdminQuery(
@@ -174,9 +175,7 @@ export default function OrdersMap() {
                       {persianDigits(selected.address.recipientPhone || selected.user.phone)}
                     </bdi>
                     {hasPermission(admin, 'ORDERS') && (
-                      <Link to={`/admin/orders/${selected.id}`}>
-                        <Button>جزئیات سفارش</Button>
-                      </Link>
+                      <Button onClick={() => setDetailId(selected.id)}>جزئیات سفارش</Button>
                     )}
                   </div>
                   {selected.address.latitude == null || selected.address.longitude == null ? (
@@ -281,6 +280,13 @@ export default function OrdersMap() {
             </aside>
           </div>
         </>
+      )}
+      {detailId && hasPermission(admin, 'ORDERS') && (
+        <OrderDetailsDialog
+          id={detailId}
+          onClose={() => setDetailId(null)}
+          onUpdated={query.refresh}
+        />
       )}
     </div>
   );

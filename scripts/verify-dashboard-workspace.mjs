@@ -252,8 +252,9 @@ try {
   await expect(page.getByRole('dialog').locator('[data-label-sheet]')).toBeVisible();
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await record.getByRole('button', { name: /جزئیات سفارش/ }).click();
-  await expect(record.getByRole('tab', { name: 'محصولات', exact: true })).toBeVisible();
-  await expect(record.getByText('تغییر وضعیت سفارش', { exact: true })).toBeVisible();
+  const detail = page.getByRole('dialog', { name: 'جزئیات سفارش', exact: true });
+  await expect(detail.getByRole('tab', { name: 'محصولات', exact: true })).toBeVisible();
+  await expect(detail.getByText('تغییر وضعیت سفارش', { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(adminOrigin + '/admin');
   await page.getByRole('button', { name: 'ثبت فروش دستی', exact: true }).click();

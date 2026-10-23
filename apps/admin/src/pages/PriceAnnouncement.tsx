@@ -241,7 +241,7 @@ export default function PriceAnnouncement() {
                       htmlFor={`price-${row.id}`}
                       className="mb-1 block text-[13px] text-[#857467] md:sr-only"
                     >
-                      قیمت جدید {row.title} (ریال)
+                      قیمت جدید (ریال)<span className="sr-only">؛ {row.title}</span>
                     </label>
                     <MoneyInput
                       id={`price-${row.id}`}

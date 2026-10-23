@@ -35,6 +35,14 @@ export default function App() {
     <ConfigProvider
       direction="rtl"
       locale={faIR}
+      modal={{
+        mask: { blur: true },
+        classNames: { mask: '!bg-[#201015]/45 !backdrop-blur-[8px]' },
+      }}
+      drawer={{
+        mask: { blur: true },
+        classNames: { mask: '!bg-[#201015]/45 !backdrop-blur-[8px]' },
+      }}
       theme={{
         token: {
           fontFamily: 'Vazirmatn Variable, sans-serif',

@@ -192,6 +192,15 @@ try {
   const first = page.getByRole('list', { name: 'سفارش‌های نقشه' }).getByRole('button').first();
   await first.click();
   await expect(page.locator('[data-selected-order]')).toBeVisible();
+  const mapURL = page.url();
+  await page.getByRole('button', { name: 'جزئیات سفارش', exact: true }).click();
+  const detail = page.getByRole('dialog', { name: 'جزئیات سفارش', exact: true });
+  await expect(detail).toBeVisible();
+  await expect(detail.getByRole('tab', { name: 'محصولات', exact: true })).toBeVisible();
+  assert.equal(page.url(), mapURL, 'map details preserve map route/filter');
+  await detail.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
+  await expect(detail).toBeHidden();
+  await expect(page.locator('[data-selected-order]')).toBeVisible();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await expect(map).toBeVisible();

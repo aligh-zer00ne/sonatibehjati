@@ -1,6 +1,7 @@
 import PageHeading from '../components/PageHeading';
 import AccountStatus from '../components/AccountStatus';
 import RetailCustomerModal from '../components/RetailCustomerModal';
+import CustomerAccountDialog from '../components/CustomerAccountDialog';
 import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
 import type { SalesChannel } from '../generated/graphql';
@@ -25,6 +26,7 @@ export default function Users() {
   const { admin } = useAdmin();
   const [params, setParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
+  const [accountId, setAccountId] = useState<string | null>(null);
   const source = params.get('source');
   const salesChannel = salesChannels.find((v) => v === source);
   const [page, setPage] = useState(1);
@@ -160,11 +162,12 @@ export default function Users() {
               render: (_, user) =>
                 hasPermission(admin, 'ORDERS') && (
                   <div className="flex flex-wrap gap-2">
-                    <Link to={`/admin/settlements/account?customerId=${user.id}`}>
-                      <Button icon={<AdminIcon name="orders" width={17} height={17} />}>
-                        حساب و فاکتورهای دستی
-                      </Button>
-                    </Link>
+                    <Button
+                      icon={<AdminIcon name="ledger" width={21} />}
+                      onClick={() => setAccountId(user.id)}
+                    >
+                      حساب و فاکتورهای دستی
+                    </Button>
                     {user.accountBalance > 0 && (
                       <Link to={`/admin/settlements/links/new?customerId=${user.id}`}>
                         <Button
@@ -180,6 +183,9 @@ export default function Users() {
             },
           ]}
         />
+      )}
+      {accountId && (
+        <CustomerAccountDialog key={accountId} id={accountId} onClose={() => setAccountId(null)} />
       )}
     </>
   );

@@ -50,7 +50,7 @@ export async function verifyLabelWorkspace(page, db, orderId) {
   await open.click();
   const workspace = page.locator('[data-label-workspace]');
   await expect(workspace).toBeVisible();
-  await expect(page.getByRole('dialog')).toHaveCount(1);
+  await expect(page.locator('[data-label-workspace]')).toHaveCount(1);
   await expect(page.getByText('شخصی‌سازی لیبل', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'ذخیره لیبل سفارش', exact: true })).toHaveCount(0);
   await expect(workspace.locator('input, textarea')).toHaveCount(0);
@@ -143,7 +143,7 @@ export async function verifyLabelWorkspace(page, db, orderId) {
   }
   await page.keyboard.press('Escape');
   await expect(workspace).toHaveCount(0);
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'جزئیات سفارش', exact: true })).toBeVisible();
   await expect(open).toBeFocused();
   await expect(page.locator('#behjati-admin-print')).toHaveCount(0);
   assert.deepEqual(

@@ -10,12 +10,18 @@ import AccountStatus from '../components/AccountStatus';
 import RichCustomerSelect from '../components/RichCustomerSelect';
 import { AccountInvoices, AccountLedger } from '../components/CustomerAccountRecords';
 import AnalyticsRefresh from '../components/AnalyticsRefresh';
-import OrderDetailsCard from '../components/OrderDetailsCard';
+import OrderDetailsDialog from '../components/OrderDetailsDialog';
 import DataState from '../components/DataState';
 import AdminIcon from '../components/AdminIcon';
-export default function Settlements() {
+export default function Settlements({
+  fixedCustomerId,
+  inDialog = false,
+}: {
+  fixedCustomerId?: string;
+  inDialog?: boolean;
+}) {
   const [params, setParams] = useSearchParams();
-  const customerId = params.get('customerId') ?? '';
+  const customerId = fixedCustomerId ?? params.get('customerId') ?? '';
   const [page, setPage] = useState(1),
     [invoicePage, setInvoicePage] = useState(1);
   const [activeTab, setActiveTab] = useState<'entries' | 'invoices'>('entries');
@@ -30,44 +36,48 @@ export default function Settlements() {
   return (
     <>
       <div data-settlements className="flex min-w-0 flex-col gap-5">
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="mb-1 text-sm font-semibold text-[#a17b3d]">حساب مشتریان فروش دستی</p>
-            <h1 className="text-[26px] font-extrabold text-[#34251e] sm:text-[30px]">
-              دریافت و پرداخت
-            </h1>
-            <p className="mt-2 text-sm leading-7 text-[#796653]">
-              مانده حساب، فاکتورهای مستقل و دریافت‌های نقدی، کارت‌خوان و چک.
-            </p>
-          </div>
-          <span className="grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[#f6e4bc] text-[#926720]">
-            <AdminIcon name="wallet" width={28} height={28} />
-          </span>
-        </header>
-        <section
-          aria-label="انتخاب حساب مشتری"
-          className="rounded-[24px] border border-[#e8ded1] bg-white p-5 shadow-[0_4px_18px_#62452f08]"
-        >
-          <label
-            htmlFor="account-customer"
-            className="mb-3 flex items-center gap-2 text-base font-extrabold"
-          >
-            <AdminIcon name="search" width={20} />
-            جستجو و انتخاب مشتری
-          </label>
-          <RichCustomerSelect
-            id="account-customer"
-            value={customerId}
-            selected={data ? { ...data.user, accountBalance: data.balance } : null}
-            onChange={(id) => {
-              setParams({ customerId: id });
-              setPage(1);
-              setInvoicePage(1);
-              setExpanded(null);
-              setActiveTab('entries');
-            }}
-          />
-        </section>
+        {!inDialog && (
+          <>
+            <header className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="mb-1 text-sm font-semibold text-[#a17b3d]">حساب مشتریان فروش دستی</p>
+                <h1 className="text-[26px] font-extrabold text-[#34251e] sm:text-[30px]">
+                  دریافت و پرداخت
+                </h1>
+                <p className="mt-2 text-sm leading-7 text-[#796653]">
+                  مانده حساب، فاکتورهای مستقل و دریافت‌های نقدی، کارت‌خوان و چک.
+                </p>
+              </div>
+              <span className="grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[#f6e4bc] text-[#926720]">
+                <AdminIcon name="wallet" width={28} height={28} />
+              </span>
+            </header>
+            <section
+              aria-label="انتخاب حساب مشتری"
+              className="rounded-[24px] border border-[#e8ded1] bg-white p-5 shadow-[0_4px_18px_#62452f08]"
+            >
+              <label
+                htmlFor="account-customer"
+                className="mb-3 flex items-center gap-2 text-base font-extrabold"
+              >
+                <AdminIcon name="search" width={20} />
+                جستجو و انتخاب مشتری
+              </label>
+              <RichCustomerSelect
+                id="account-customer"
+                value={customerId}
+                selected={data ? { ...data.user, accountBalance: data.balance } : null}
+                onChange={(id) => {
+                  setParams({ customerId: id });
+                  setPage(1);
+                  setInvoicePage(1);
+                  setExpanded(null);
+                  setActiveTab('entries');
+                }}
+              />
+            </section>
+          </>
+        )}
         {!customerId ? (
           <section className="flex flex-col items-center rounded-[26px] border border-dashed border-[#d9c7a8] bg-[#faf6ee] px-5 py-12 text-center">
             <span className="mb-5 grid size-20 place-items-center rounded-3xl border border-[#ead9b7] bg-[#f4e8d3] text-[#a17b3d]">
@@ -241,13 +251,11 @@ export default function Settlements() {
                       onExpand={(id) => setExpanded(expanded === id ? null : id)}
                     />
                     {expanded && (
-                      <div className="mt-4">
-                        <OrderDetailsCard
-                          id={expanded}
-                          onClose={() => setExpanded(null)}
-                          onUpdated={account.refresh}
-                        />
-                      </div>
+                      <OrderDetailsDialog
+                        id={expanded}
+                        onClose={() => setExpanded(null)}
+                        onUpdated={account.refresh}
+                      />
                     )}
                   </>
                 )}

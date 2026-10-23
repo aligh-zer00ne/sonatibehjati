@@ -271,7 +271,8 @@ try {
   await page.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
   await expect(page.locator('[data-label-workspace] [data-label-sheet]')).toBeVisible();
   await expect(page.getByText('شخصی‌سازی لیبل', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('dialog')).toHaveCount(1);
+  await expect(page.locator('[data-label-workspace]')).toHaveCount(1);
+  await expect(page.getByRole('dialog', { name: 'جزئیات سفارش', exact: true })).toHaveCount(1);
   await expect(page.locator('[data-label-workspace]')).toBeVisible();
   assert.match(
     await page.locator('#behjati-admin-print style').textContent(),
@@ -303,7 +304,7 @@ try {
     await page.emulateMedia({ media: 'screen' });
   }
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.locator('[data-label-workspace], [data-invoice-workspace]')).toHaveCount(0);
   assert.equal(
     mutations.length,
     beforeMutations,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Alert } from 'antd';
 import { Link } from 'react-router-dom';
 import { formatNumber } from '@behjati/shared';
 import type { AdminOrdersInput } from '../generated/graphql';
@@ -22,9 +22,14 @@ export default function DashboardOrderExplorer({
 }) {
   const [page, setPage] = useState(1);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const query = useAdminQuery(AdminOrdersDocument, {
-    input: { ...inspection.input, page, pageSize: 10 },
-  });
+  const query = useAdminQuery(
+    AdminOrdersDocument,
+    {
+      input: { ...inspection.input, page, pageSize: 10 },
+    },
+    true,
+    { keepPreviousData: true },
+  );
   const data = query.data?.adminOrders;
   const params = new URLSearchParams(
     Object.entries(inspection.input)
@@ -56,6 +61,13 @@ export default function DashboardOrderExplorer({
           </span>
         )}
       </div>
+      {data && query.error && (
+        <Alert
+          type="warning"
+          title={query.error}
+          action={<Button onClick={query.refresh}>تلاش دوباره</Button>}
+        />
+      )}
       {!data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (

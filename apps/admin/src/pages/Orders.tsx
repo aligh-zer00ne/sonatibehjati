@@ -12,13 +12,25 @@ import OrderFilters from '../components/OrderFilters';
 import OrdersTable from '../components/OrdersTable';
 import DataState from '../components/DataState';
 import AdminIcon from '../components/AdminIcon';
-export default function Orders({ scope = 'all' }: { scope?: OrderScope }) {
+export default function Orders({
+  scope = 'all',
+  initialOrderId,
+  onInitialClose,
+}: {
+  scope?: OrderScope;
+  initialOrderId?: string;
+  onInitialClose?: () => void;
+}) {
   const { admin } = useAdmin();
   const [manualOpen, setManualOpen] = useState(false);
   const filters = useOrderFilters(20, scope);
-  const query = useAdminQuery(AdminOrdersDocument, { input: filters.input }, !filters.error);
+  const query = useAdminQuery(AdminOrdersDocument, { input: filters.input }, !filters.error, {
+    keepPreviousData: true,
+  });
   const filterKey = JSON.stringify(filters.input);
-  const [selection, setSelection] = useState<{ id: string | null; filterKey: string } | null>(null);
+  const [selection, setSelection] = useState<{ id: string | null; filterKey: string } | null>(
+    initialOrderId ? { id: initialOrderId, filterKey } : null,
+  );
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -72,6 +84,13 @@ export default function Orders({ scope = 'all' }: { scope?: OrderScope }) {
         onReset={filters.reset}
         scope={scope}
       />
+      {query.data && query.error && (
+        <Alert
+          type="warning"
+          title={query.error}
+          action={<Button onClick={query.refresh}>تلاش دوباره</Button>}
+        />
+      )}
       {filters.error ? (
         <Alert title={filters.error} type="error" role="alert" />
       ) : !query.data ? (
@@ -85,6 +104,7 @@ export default function Orders({ scope = 'all' }: { scope?: OrderScope }) {
           expandedId={selection?.filterKey === filterKey ? selection.id : null}
           onExpandedChange={(id) => setSelection({ id, filterKey })}
           onUpdated={query.refresh}
+          onDetailsClose={onInitialClose}
         />
       )}
     </>

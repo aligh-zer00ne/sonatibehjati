@@ -89,6 +89,7 @@ try {
   await page.goto(listURL, { waitUntil: 'networkidle' });
   const number = new Intl.NumberFormat('fa-IR').format(order.number);
   const card = page.getByRole('article', { name: `سفارش ${number}`, exact: true });
+  const detail = page.getByRole('dialog', { name: 'جزئیات سفارش', exact: true });
   const toggle = card.getByRole('button', { name: `جزئیات سفارش ${number}`, exact: true });
   await expect(card).toBeVisible();
   assert.equal(detailRequests, 0, 'Details are fetched only when expanded');
@@ -96,36 +97,53 @@ try {
   await page.keyboard.press('Enter');
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await expect(page).toHaveURL(listURL);
-  await expect(card.getByText(title, { exact: true })).toBeVisible();
-  await card.getByRole('tab', { name: 'مشتری و ارسال', exact: true }).click();
-  await expect(card.getByText('یزد، اردکان، خیابان آزمون، پلاک ۱۰', { exact: true })).toBeVisible();
-  await expect(card.getByText('شهر تغییرکرده پس از خرید', { exact: true })).toHaveCount(0);
-  await card.getByLabel('وضعیت جدید سفارش', { exact: true }).click();
+  assert.match(
+    await page
+      .locator('.ant-modal-mask:visible')
+      .last()
+      .evaluate((el) => getComputedStyle(el).backdropFilter),
+    /blur\(8px\)/,
+  );
+  await expect(detail.getByText(title, { exact: true })).toBeVisible();
+  await detail.getByRole('tab', { name: 'مشتری و ارسال', exact: true }).click();
+  await expect(
+    detail.getByText('یزد، اردکان، خیابان آزمون، پلاک ۱۰', { exact: true }),
+  ).toBeVisible();
+  await expect(detail.getByText('شهر تغییرکرده پس از خرید', { exact: true })).toHaveCount(0);
+  await detail.getByLabel('وضعیت جدید سفارش', { exact: true }).click();
   await page.locator('.ant-select-item-option').filter({ hasText: 'در حال آماده‌سازی' }).click();
-  await card.getByRole('button', { name: 'ثبت وضعیت', exact: true }).click();
+  await detail.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
+  const unsaved = page.getByRole('dialog', { name: 'وضعیت انتخاب‌شده ثبت نشده است', exact: true });
+  await expect(unsaved).toBeVisible();
+  await unsaved.getByRole('button', { name: 'ادامه بررسی', exact: true }).click();
+  assert.equal(
+    (await db.order.findUniqueOrThrow({ where: { id: order.id } })).status,
+    'PENDING_PAYMENT',
+  );
+  await detail.getByRole('button', { name: 'ثبت وضعیت', exact: true }).click();
   await page.getByRole('button', { name: 'تأیید', exact: true }).click();
   await expect(
-    card.getByRole('heading', { name: `جزئیات سفارش ${number}`, exact: true }),
+    detail.getByRole('heading', { name: `جزئیات سفارش ${number}`, exact: true }),
   ).toBeVisible();
-  await expect(card.locator('.ant-tag').first()).toHaveText('در حال آماده‌سازی');
+  await expect(detail.locator('.ant-tag').first()).toHaveText('در حال آماده‌سازی');
   assert.equal(
     (await db.order.findUniqueOrThrow({ where: { id: order.id } })).status,
     'PROCESSING',
   );
-  await card.getByRole('tab', { name: 'تاریخچه', exact: true }).click();
-  await expect(card.getByText(owner.email, { exact: true })).toBeVisible();
+  await detail.getByRole('tab', { name: 'تاریخچه', exact: true }).click();
+  await expect(detail.getByText(owner.email, { exact: true })).toBeVisible();
   assert.equal(await db.orderStatusEvent.count({ where: { orderId: order.id } }), 1);
-  await card.getByRole('tab', { name: 'پرداخت‌ها', exact: true }).click();
-  await expect(card.getByText('پرداخت بانک تأیید نشده است', { exact: true })).toBeVisible();
-  await card.getByRole('button', { name: 'پیگیری بانک', exact: true }).click();
+  await detail.getByRole('tab', { name: 'پرداخت‌ها', exact: true }).click();
+  await expect(detail.getByText('پرداخت بانک تأیید نشده است', { exact: true })).toBeVisible();
+  await detail.getByRole('button', { name: 'پیگیری بانک', exact: true }).click();
   await expect(page.getByText('بانک در دسترس نیست.', { exact: true })).toBeVisible();
   assert.equal(bankChecks, 1, 'Bank request intercepted; no real bank call');
-  await card.getByRole('button', { name: 'چاپ فاکتور / PDF', exact: true }).click();
+  await detail.getByRole('button', { name: 'چاپ فاکتور / PDF', exact: true }).click();
   const invoice = page.getByRole('dialog', { name: `فاکتور سفارش ${number}`, exact: true });
   await expect(invoice.getByRole('cell').filter({ hasText: title })).toBeVisible();
   await expect(invoice.getByRole('button', { name: 'چاپ / ذخیره PDF', exact: true })).toBeVisible();
   await invoice.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
-  await card.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
+  await detail.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
   const label = page.getByRole('dialog', { name: `لیبل پستی سفارش ${number}`, exact: true });
   await expect(label.locator('[data-label-sheet]')).toContainText('گیرنده هنگام خرید');
   await expect(label.getByRole('button', { name: 'ذخیره لیبل سفارش', exact: true })).toHaveCount(0);
@@ -136,10 +154,11 @@ try {
     'Closing an autosizing label form must not leave horizontal overflow on a smaller viewport',
   );
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await card.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
+  await detail.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
   await expect(toggle).toBeFocused();
   await toggle.press('Space');
-  await expect(card.getByText(title, { exact: true })).toBeVisible();
+  await expect(detail.getByText(title, { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
   const secondNumber = new Intl.NumberFormat('fa-IR').format(second.number);
   const secondCard = page.getByRole('article', { name: `سفارش ${secondNumber}`, exact: true });
   await secondCard
@@ -147,20 +166,32 @@ try {
     .click();
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(
-    secondCard.getByText('این سفارش به وضعیت نهایی رسیده است.', { exact: true }),
+    detail.getByText('این سفارش به وضعیت نهایی رسیده است.', { exact: true }),
   ).toBeVisible();
+  await page.keyboard.press('Escape');
   await toggle.click();
-  await card.getByRole('tab', { name: 'محصولات', exact: true }).click();
+  await detail.getByRole('tab', { name: 'محصولات', exact: true }).click();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(listURL, { waitUntil: 'networkidle' });
     await toggle.click();
-    await expect(card.getByText(title, { exact: true })).toBeVisible();
-    await card.scrollIntoViewIfNeeded();
+    await expect(detail.getByText(title, { exact: true })).toBeVisible();
+    await detail.scrollIntoViewIfNeeded();
     await page.evaluate(() => document.fonts.ready);
-    const tabs = card.getByRole('tablist').getByRole('tab');
+    const tabs = detail.getByRole('tablist').getByRole('tab');
     await expect(tabs).toHaveCount(4);
-    const cardBox = await card.boundingBox();
+    const cardBox = await detail.boundingBox();
+    assert.ok(
+      cardBox.x >= 0 &&
+        cardBox.x + cardBox.width <= width + 1 &&
+        cardBox.y + cardBox.height <= 1000,
+      'detail dialog fits viewport',
+    );
+    assert.ok(
+      await detail
+        .locator('.ant-modal-body')
+        .evaluate((el) => el.scrollWidth <= el.clientWidth + 1),
+    );
     for (const tab of await tabs.all()) {
       const box = await tab.boundingBox();
       assert.ok(
@@ -180,16 +211,19 @@ try {
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
       `No page overflow at ${width}`,
     );
-    await expect(card.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true })).toBeVisible();
-    await card.screenshot({ path: `/tmp/behjati-order-card-${width}.png` });
+    await expect(
+      detail.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }),
+    ).toBeVisible();
+    await detail.screenshot({ path: `/tmp/behjati-order-card-${width}.png` });
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await card.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
+  await detail.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
   failDetail = true;
   await toggle.click();
-  await expect(card.getByRole('alert')).toBeVisible();
-  await card.getByRole('button', { name: 'تلاش دوباره', exact: true }).click();
-  await expect(card.getByText(title, { exact: true })).toBeVisible();
+  await expect(detail.getByRole('alert')).toBeVisible();
+  await detail.getByRole('button', { name: 'تلاش دوباره', exact: true }).click();
+  await expect(detail.getByText(title, { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'وضعیت سفارش', exact: true }).hover();
   await page.getByRole('button', { name: 'تحویل‌شده', exact: true }).click();
   await expect(card).toHaveCount(0);
@@ -203,6 +237,51 @@ try {
   await page.getByRole('button', { name: `جزئیات سفارش ${number}`, exact: true }).click();
   await expect(page).toHaveURL(adminOrigin + '/admin');
   await expect(page.getByText(title, { exact: true })).toBeVisible();
+  const manual = await createOrderFixture(customer, product);
+  await db.order.update({
+    where: { id: manual.id },
+    data: { salesChannel: 'IN_PERSON', status: 'DELIVERED' },
+  });
+  const userURL = adminOrigin + '/admin/users?search=' + customer.user.phone;
+  await page.goto(userURL);
+  const accountButton = page.getByRole('button', { name: 'حساب و فاکتورهای دستی', exact: true });
+  await accountButton.click();
+  const account = page.getByRole('dialog', { name: 'حساب و فاکتورهای مشتری', exact: true });
+  await expect(account).toBeVisible();
+  await expect(page).toHaveURL(userURL);
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect
+      .poll(
+        async () => {
+          const box = await account.boundingBox();
+          return box && box.x >= 0 && box.x + box.width <= width + 1 && box.y + box.height <= 1000;
+        },
+        { message: `customer account fits ${width}px` },
+      )
+      .toBe(true);
+    const box = await account.boundingBox();
+    assert.ok(
+      box.x >= 0 && box.x + box.width <= width + 1 && box.y + box.height <= 1000,
+      'customer account dialog fits',
+    );
+    assert.ok(
+      await account
+        .locator('.ant-modal-body')
+        .evaluate((el) => el.scrollWidth <= el.clientWidth + 1),
+    );
+  }
+  await account.getByRole('tab', { name: /فاکتورهای مستقل مشتری/ }).click();
+  await account.getByRole('button', { name: 'محصولات و چاپ فاکتور / لیبل', exact: true }).click();
+  await expect(detail).toBeVisible();
+  await expect(detail.getByRole('tab')).toHaveCount(1);
+  await expect(detail.getByText('تغییر وضعیت سفارش', { exact: true })).toHaveCount(0);
+  await detail.getByRole('button', { name: 'بستن جزئیات سفارش', exact: true }).click();
+  await expect(account).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(account).toBeHidden();
+  await expect(page).toHaveURL(userURL);
+  await expect(accountButton).toBeFocused();
   const restricted = await db.admin.create({
     data: {
       email: `restricted-${randomUUID()}@example.test`,
@@ -221,7 +300,7 @@ try {
   await expect(page.getByRole('heading', { name: 'سفارش‌ها', exact: true })).toHaveCount(0);
   assert.deepEqual(errors, []);
   console.log(
-    'Order cards passed: inline keyboard expansion, lazy fetch, immutable snapshots, audited status/list refresh, payment distinction/intercepted retry, invoice/label dialogs, terminal status, 320–1440px layouts, single expansion, errors/retry, filters, deep links/dashboard and permissions.',
+    'Order cards passed: blurred modal keyboard opening and customer account drilldown, lazy fetch, immutable snapshots, audited status/list refresh, payment distinction/intercepted retry, invoice/label dialogs, terminal status, 320–1440px layouts, single detail dialog, errors/retry, filters, deep links/dashboard and permissions.',
   );
 } finally {
   await browser?.close();
