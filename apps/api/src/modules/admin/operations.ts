@@ -79,7 +79,7 @@ export async function saveCoupon(
       validate(z.iso.datetime({ offset: true }), expectedUpdatedAt);
       await tx.$queryRaw`SELECT id FROM DiscountCode WHERE id = ${id} FOR UPDATE`;
       const existing = await tx.discountCode.findUnique({ where: { id } });
-      if (!existing) throw authError('کد تخفیف یافت نشد.', 'NOT_FOUND');
+      if (!existing || existing.deletedAt) throw authError('کد تخفیف یافت نشد.', 'NOT_FOUND');
       if (existing.updatedAt.toISOString() !== expectedUpdatedAt) throw conflict();
       if (existing.usageCount > 0 && existing.code !== data.code)
         throw authError('نام کد استفاده‌شده قابل تغییر نیست.', 'BAD_USER_INPUT');
@@ -153,5 +153,26 @@ export async function setStaffPermissions(id: string, raw: unknown) {
       data: { revokedAt },
     });
     return result;
+  });
+}
+
+export async function deleteCoupon(id: string, expectedUpdatedAt: string) {
+  validate(entityId, id);
+  validate(z.iso.datetime({ offset: true }), expectedUpdatedAt);
+  return db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM DiscountCode WHERE id=${id} FOR UPDATE`;
+    const previous = await tx.discountCode.findUnique({ where: { id } });
+    if (!previous) throw authError('کد تخفیف یافت نشد.', 'NOT_FOUND');
+    if (previous.deletedAt) return true;
+    if (previous.updatedAt.toISOString() !== expectedUpdatedAt) throw conflict();
+    await tx.discountCode.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        isActive: false,
+        updatedAt: new Date(Math.max(Date.now(), previous.updatedAt.getTime() + 1)),
+      },
+    });
+    return true;
   });
 }

@@ -743,6 +743,7 @@ extend type Mutation {
   createStaff(input: StaffInput!): AdminIdentity!
   setStaffPermissions(id: ID!, permissions: [AdminPermission!]!): AdminIdentity!
   setStaffActive(id: ID!, isActive: Boolean!): AdminIdentity!
+  deleteAdminCoupon(id: ID!, expectedUpdatedAt: String!): Boolean!
   saveAdminCoupon(id: ID, expectedUpdatedAt: String, input: AdminCouponInput!): AdminCoupon!
   createTicket(input: TicketInput!): SupportTicket!
   replyTicket(input: TicketReplyInput!): SupportTicket!

@@ -870,3 +870,7 @@ mutation SaveAdminShipment($input: AdminShipmentInput!) {
     ...AdminOrderFields
   }
 }
+
+mutation DeleteAdminCoupon($id: ID!, $expectedUpdatedAt: String!) {
+ deleteAdminCoupon(id: $id, expectedUpdatedAt: $expectedUpdatedAt)
+}

@@ -139,6 +139,7 @@ model ProductImage {
 }
 
 model DiscountCode {
+  deletedAt DateTime?
   id                String       @id @default(cuid())
   code              String       @unique
   type              DiscountType

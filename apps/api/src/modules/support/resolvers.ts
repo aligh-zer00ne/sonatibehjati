@@ -10,6 +10,7 @@ import {
   setStaffActive,
   setStaffPermissions,
   saveCoupon,
+  deleteCoupon,
   presentCoupon,
   customerExport,
 } from '../admin/operations.js';
@@ -32,9 +33,13 @@ export const supportResolvers: Resolvers = {
     },
     adminCoupons: async (_, __, ctx) => {
       await requirePermission(ctx, 'COUPONS');
-      return (await db.discountCode.findMany({ orderBy: { updatedAt: 'desc' }, take: 1000 })).map(
-        presentCoupon,
-      );
+      return (
+        await db.discountCode.findMany({
+          where: { deletedAt: null },
+          orderBy: { updatedAt: 'desc' },
+          take: 1000,
+        })
+      ).map(presentCoupon);
     },
     adminCustomerExport: async (_, { search, salesChannel }, ctx) => {
       const admin = await requirePermission(ctx, 'CUSTOMERS');
@@ -76,6 +81,11 @@ export const supportResolvers: Resolvers = {
       requireAdminOrigin(ctx);
       await requireOwner(ctx);
       return presentAdminIdentity(await setStaffActive(id, isActive));
+    },
+    deleteAdminCoupon: async (_, { id, expectedUpdatedAt }, ctx) => {
+      requireAdminOrigin(ctx);
+      await requirePermission(ctx, 'COUPONS');
+      return deleteCoupon(id, expectedUpdatedAt);
     },
     saveAdminCoupon: async (_, { id, expectedUpdatedAt, input }, ctx) => {
       requireAdminOrigin(ctx);

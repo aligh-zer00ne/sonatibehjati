@@ -1,0 +1,1 @@
+ALTER TABLE `DiscountCode` ADD COLUMN `deletedAt` DATETIME(3) NULL;

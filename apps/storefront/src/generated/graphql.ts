@@ -897,6 +897,7 @@ export type Mutation = {
   createStaff: AdminIdentity;
   createTicket: SupportTicket;
   deleteAddress: Scalars['Boolean']['output'];
+  deleteAdminCoupon: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
   moderateProductReview: ProductReview;
@@ -978,6 +979,12 @@ export type MutationCreateTicketArgs = {
 
 
 export type MutationDeleteAddressArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteAdminCouponArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
 };
 

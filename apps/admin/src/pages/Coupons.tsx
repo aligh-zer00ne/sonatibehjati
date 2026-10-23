@@ -9,6 +9,7 @@ import { couponInput } from '@behjati/shared/operations';
 import {
   AdminCouponsDocument,
   SaveAdminCouponDocument,
+  DeleteAdminCouponDocument,
   type AdminCouponFieldsFragment,
 } from '../generated/graphql';
 import { adminRequest } from '../lib/client';
@@ -24,8 +25,9 @@ export default function Coupons() {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [form] = Form.useForm();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const type = Form.useWatch('type', form);
   function edit(coupon: AdminCouponFieldsFragment | null) {
     setEditing(coupon);
@@ -156,12 +158,50 @@ export default function Coupons() {
             {
               title: 'عملیات',
               render: (_, row) => (
-                <Button
-                  icon={<AdminIcon name="edit" width={17} height={17} />}
-                  onClick={() => edit(row)}
-                >
-                  ویرایش
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    disabled={!!deleting}
+                    icon={<AdminIcon name="edit" width={17} height={17} />}
+                    onClick={() => edit(row)}
+                  >
+                    ویرایش
+                  </Button>
+                  <Button
+                    danger
+                    disabled={pending || !!deleting}
+                    loading={deleting === row.id}
+                    aria-label={`حذف کد ${row.code}`}
+                    icon={<AdminIcon name="trash" width={17} />}
+                    onClick={() =>
+                      modal.confirm({
+                        title: `کد ${row.code} حذف شود؟`,
+                        content:
+                          'پس از حذف، قابل استفاده نخواهد بود. تخفیف سفارش‌های قبلی حفظ می‌شود.',
+                        okText: 'حذف کد',
+                        cancelText: 'انصراف',
+                        okButtonProps: { danger: true },
+                        onOk: async () => {
+                          setDeleting(row.id);
+                          try {
+                            await adminRequest(DeleteAdminCouponDocument, {
+                              id: row.id,
+                              expectedUpdatedAt: row.updatedAt,
+                            });
+                            query.refresh();
+                            void message.success('کد تخفیف حذف شد.');
+                          } catch (e) {
+                            void message.error(e instanceof Error ? e.message : 'حذف انجام نشد.');
+                            throw e;
+                          } finally {
+                            setDeleting(null);
+                          }
+                        },
+                      })
+                    }
+                  >
+                    حذف
+                  </Button>
+                </div>
               ),
             },
           ]}

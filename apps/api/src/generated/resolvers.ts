@@ -899,6 +899,7 @@ export type Mutation = {
   createStaff: AdminIdentity;
   createTicket: SupportTicket;
   deleteAddress: Scalars['Boolean']['output'];
+  deleteAdminCoupon: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
   logout: Scalars['Boolean']['output'];
   moderateProductReview: ProductReview;
@@ -980,6 +981,12 @@ export type MutationCreateTicketArgs = {
 
 
 export type MutationDeleteAddressArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteAdminCouponArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
 };
 
@@ -2555,6 +2562,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   createStaff?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType, RequireFields<MutationCreateStaffArgs, 'input'>>;
   createTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationCreateTicketArgs, 'input'>>;
   deleteAddress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAddressArgs, 'id'>>;
+  deleteAdminCoupon?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAdminCouponArgs, 'expectedUpdatedAt' | 'id'>>;
   deleteAdminProduct?: Resolver<ResolversTypes['AdminProductDeletion'], ParentType, ContextType, RequireFields<MutationDeleteAdminProductArgs, 'expectedUpdatedAt' | 'id'>>;
   logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   moderateProductReview?: Resolver<ResolversTypes['ProductReview'], ParentType, ContextType, RequireFields<MutationModerateProductReviewArgs, 'expectedUpdatedAt' | 'id' | 'status'>>;
