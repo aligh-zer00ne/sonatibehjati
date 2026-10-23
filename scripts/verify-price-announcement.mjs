@@ -142,6 +142,18 @@ try {
   await page.getByRole('button', { name: 'اعلامیه قیمت', exact: true }).click();
   await expect(page).toHaveURL(/\/admin\/products\/prices$/);
   await expect(page.locator('[data-price-row]')).toHaveCount(all.length);
+  const grid = page.locator('[data-price-grid]');
+  const firstRows = grid.locator('[data-price-row]');
+  const firstBox = await firstRows.nth(0).boundingBox(),
+    nextBox = await firstRows.nth(1).boundingBox();
+  assert.ok(
+    Math.abs(firstBox.y - nextBox.y) < 2,
+    'Compact desktop editor places products side by side',
+  );
+  assert.ok(
+    (await page.locator('[data-price-announcement] > header').boundingBox()).height <= 120,
+    'Header does not consume product editing space',
+  );
   const search = page.getByLabel('جستجوی اعلامیه قیمت', { exact: true });
   await search.fill(prefix);
   await expect(page.locator('[data-price-row]')).toHaveCount(55);

@@ -96,10 +96,10 @@ export default function PriceAnnouncement() {
     }
   };
   return (
-    <section data-price-announcement className="space-y-5">
-      <header className="relative isolate overflow-hidden rounded-[26px] border border-[#a45d61]/40 bg-[linear-gradient(125deg,#701e2a,#300c14)] p-4 text-[#fff5e1] sm:p-6">
+    <section data-price-announcement className="space-y-3">
+      <header className="relative isolate overflow-hidden rounded-[26px] border border-[#a45d61]/40 bg-[linear-gradient(125deg,#701e2a,#300c14)] p-4 text-[#fff5e1] sm:p-4">
         <AmbientBackdrop />
-        <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="grid size-13 shrink-0 place-items-center rounded-2xl border border-[#f5d88f]/40 bg-[#f5d88f]/15 text-[#f5d88f]">
               <AdminIcon name="discount" width={28} />
@@ -111,20 +111,6 @@ export default function PriceAnnouncement() {
               <h1 className="text-2xl font-extrabold">اعلامیه قیمت</h1>
             </div>
           </div>
-          <Button
-            icon={<AdminIcon name="refresh" />}
-            disabled={pending}
-            onClick={refresh}
-            aria-label="دریافت آخرین قیمت‌ها"
-            className="!border-white/25 !bg-white/10 !text-[#fff5e1]"
-          >
-            <span className="hidden sm:inline">دریافت آخرین قیمت‌ها</span>
-          </Button>
-        </div>
-        <div className="relative z-10 mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-white/15 pt-3 sm:mt-4 sm:pt-4">
-          <p className="hidden text-sm leading-7 text-[#f2d6a2] sm:block">
-            قیمت‌ها را مستقیم در فهرست اصلاح کنید و همهٔ تغییرها را یکجا ذخیره کنید.
-          </p>
           <div className="flex flex-wrap gap-2 text-[13px] font-semibold">
             <span className="rounded-xl border border-white/15 bg-white/10 px-3 py-2">
               <b className="text-lg text-[#f5d88f]">{formatNumber(rows.length)}</b> کالا
@@ -134,6 +120,15 @@ export default function PriceAnnouncement() {
             </span>
             <span className="rounded-xl border border-white/15 px-3 py-2">مبالغ به ریال</span>
           </div>
+          <Button
+            icon={<AdminIcon name="refresh" />}
+            disabled={pending}
+            onClick={refresh}
+            aria-label="دریافت آخرین قیمت‌ها"
+            className="!border-white/25 !bg-white/10 !text-[#fff5e1]"
+          >
+            <span className="hidden sm:inline">دریافت آخرین قیمت‌ها</span>
+          </Button>
         </div>
       </header>
       {!query.data ? (
@@ -195,13 +190,7 @@ export default function PriceAnnouncement() {
               description="تغییرهای شما حفظ شده‌اند. برای خطای ارتباط دوباره ذخیره را بزنید؛ در صورت تغییر هم‌زمان کالا، آخرین قیمت‌ها را دریافت و دوباره بررسی کنید."
             />
           )}
-          <div className="overflow-hidden rounded-[24px] border border-[#e6dbc9] bg-white shadow-sm">
-            <div className="hidden grid-cols-[minmax(0,1fr)_minmax(140px,.5fr)_minmax(190px,.6fr)_90px] items-center gap-4 border-b border-[#e6dbc9] bg-[#f7f1e7] px-5 py-3 text-sm font-bold text-[#796653] md:grid">
-              <span>کالا</span>
-              <span>قیمت فعلی (ریال)</span>
-              <span>قیمت جدید (ریال)</span>
-              <span>تغییر</span>
-            </div>
+          <div data-price-grid className="grid items-start gap-2.5 xl:grid-cols-2 2xl:grid-cols-3">
             {!visible.length && (
               <p className="p-8 text-center text-sm text-[#857467]">
                 محصولی با این شرایط پیدا نشد.
@@ -217,21 +206,21 @@ export default function PriceAnnouncement() {
                   data-price-row={row.id}
                   role="group"
                   aria-label={row.title}
-                  className={`grid grid-cols-2 items-center gap-x-4 gap-y-3 border-b border-[#eee6d9] p-3.5 last:border-0 md:grid-cols-[minmax(0,1fr)_minmax(140px,.5fr)_minmax(190px,.6fr)_90px] md:px-5 ${draft ? 'border-s-[3px] border-s-[#c69b48] bg-[#fff9ec]' : 'border-s-[3px] border-s-transparent bg-white'}`}
+                  className={`grid grid-cols-[minmax(0,1fr)_minmax(130px,1fr)] items-center gap-x-3 gap-y-2 rounded-2xl border border-[#e6dbc9] p-3 shadow-sm ${draft ? 'border-s-[3px] border-s-[#c69b48] bg-[#fff9ec]' : 'border-s-[3px] border-s-transparent bg-white'}`}
                 >
-                  <div className="col-span-2 flex min-w-0 items-center gap-3 md:col-span-1">
+                  <div className="col-span-2 flex min-w-0 items-center gap-3">
                     <DashboardProductImage src={row.imageUrl} title={row.title} />
                     <div className="min-w-0">
                       <h2 className="text-base leading-7 font-extrabold text-[#4e141c]">
                         {row.title}
                       </h2>
-                      <p className="mt-1 text-[13px] text-[#857467]">
+                      <p className="text-[13px] text-[#857467]">
                         {row.weight} · {row.categoryTitle} {!row.isActive && <Tag>غیرفعال</Tag>}
                       </p>
                     </div>
                   </div>
                   <div className="text-sm font-semibold tabular-nums text-[#796653]">
-                    <span className="mb-1 block text-[13px] font-normal text-[#857467] md:hidden">
+                    <span className="mb-1 block text-[13px] font-normal text-[#857467]">
                       قیمت فعلی
                     </span>
                     {formatAdminPrice(row.price)}
@@ -239,7 +228,7 @@ export default function PriceAnnouncement() {
                   <div>
                     <label
                       htmlFor={`price-${row.id}`}
-                      className="mb-1 block text-[13px] text-[#857467] md:sr-only"
+                      className="mb-1 block text-[13px] text-[#857467]"
                     >
                       قیمت جدید (ریال)<span className="sr-only">؛ {row.title}</span>
                     </label>
@@ -264,7 +253,7 @@ export default function PriceAnnouncement() {
                     />
                   </div>
                   <div
-                    className={`col-span-2 flex items-center justify-between gap-2 text-[13px] md:col-span-1 md:flex-col md:items-start ${draft ? '' : 'max-md:hidden'}`}
+                    className={`col-span-2 flex items-center justify-between gap-2 border-t border-dashed border-[#e6dbc9] pt-1 text-[13px] ${draft ? '' : 'hidden'}`}
                   >
                     <span
                       className={
