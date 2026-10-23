@@ -1,4 +1,46 @@
 <!DOCTYPE html>
+<!-- Lucide icon license
+ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2026 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2026.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+The MIT License (MIT) (for portions derived from Feather)
+
+Copyright (c) 2013-2026 Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-->
+
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -39,7 +81,7 @@ h1{margin:12px 0 0;font-weight:400}
 .plaque b{display:block;font-family:'Vazirmatn',Tahoma,sans-serif;font-weight:800;font-size:1.1rem;line-height:1.7}
 .plaque span{font-size:.8rem;color:var(--sky)}
 .oct{position:relative;flex:none;width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(159,208,245,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
-.oct svg{position:relative;width:22px;height:22px;fill:none;stroke:url(#ig);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.oct svg{position:relative;width:22px;height:22px;fill:none;stroke:url(#ig);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cta{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:9px 16px;margin-bottom:12px;border-radius:24px;text-decoration:none;color:#06163a;
  background:linear-gradient(135deg,#f1f9ff,#a9d6fb 55%,#6ba9e0);box-shadow:0 16px 30px rgba(0,0,0,.45),inset 0 0 0 3px rgba(255,255,255,.55),0 0 0 1px var(--sky);
  animation:up .6s cubic-bezier(.2,.8,.2,1) .2s both;transition:transform .15s}
@@ -101,13 +143,13 @@ h1{margin:12px 0 0;font-weight:400}
 .tile:nth-child(3){--c1:#7aa7ff;--c2:#b388ff}
 .tile::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,transparent,var(--c1),var(--c2),transparent);z-index:1}
 .tile .oct{width:52px;height:52px;border:0;border-radius:16px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 8px 20px -4px var(--c1),inset 0 1px 0 rgba(255,255,255,.55);animation:bob 3.2s ease-in-out infinite;animation-delay:calc(var(--i)*.5s)}
-.tile .oct svg{width:25px;height:25px;stroke:#fff;stroke-width:1.9}
+.tile .oct svg{width:25px;height:25px;stroke:#fff;stroke-width:2}
 .tile .t{font-size:.98rem;color:#fff}
 .tile:hover{border-color:var(--c1);box-shadow:0 18px 34px rgba(0,0,0,.45),0 0 26px -4px var(--c1)}
 .tile:hover .oct{transform:scale(1.08) rotate(-4deg)}
 @keyframes bob{50%{transform:translateY(-3px)}}
 .cta .oct{width:52px;height:52px;border:0;border-radius:16px;background:linear-gradient(135deg,#ffe29a,#e0a63e);box-shadow:0 6px 16px rgba(224,166,62,.6),inset 0 1px 0 rgba(255,255,255,.75);animation:bob 3s ease-in-out infinite}
-.cta .oct svg{stroke:#3b2a05;stroke-width:1.9}
+.cta .oct svg{stroke:#3b2a05;stroke-width:2}
 .cta{animation:up .6s cubic-bezier(.2,.8,.2,1) .2s both,pulse 3s ease-in-out 1.2s infinite}
 @keyframes pulse{50%{box-shadow:0 14px 46px rgba(130,200,255,.75),inset 0 2px 0 rgba(255,255,255,.7)}}
 .end .by{margin:18px 0 0;font-size:.92rem;font-weight:600;opacity:1;color:#fff;text-shadow:0 1px 3px rgba(3,10,35,.95),0 0 14px rgba(3,10,35,.9)}
@@ -232,14 +274,14 @@ h1{font-weight:400;position:relative;z-index:2}
   <section class="plaque"><b>عطر کنجد، طعم قدیم</b><span>از اردکان تا سفره شما</span></section>
 
   <a class="cta" href="https://sonatibehjati.ir/" target="_blank" rel="noopener">
-    <span class="oct"><svg viewBox="0 0 24 24"><path d="M5.5 8.5h13l-1.1 10.6a1.7 1.7 0 0 1-1.7 1.5H8.3a1.7 1.7 0 0 1-1.7-1.5L5.5 8.5Z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/><path d="M12 11.8l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z"/></svg></span>
-    <span class="tx"><span class="t">سفارش آنلاین</span><span class="d num latin" lang="en">sonatibehjati.ir</span></span><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></svg></span>
+    <span class="oct"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag" aria-hidden="true" focusable="false"><path d="M16 10a4 4 0 0 1-8 0"></path><path d="M3.103 6.034h17.794"></path><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path></svg></span>
+    <span class="tx"><span class="t">سفارش آنلاین</span><span class="d num latin" lang="en">sonatibehjati.ir</span></span><span class="go" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left" aria-hidden="true" focusable="false"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></span>
   </a>
 
   <div class="grid">
-    <a class="tile" style="--i:0" href="https://www.instagram.com/sonatibehjati.ir/" target="_blank" rel="noopener"><span class="oct"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></span><span class="t">اینستاگرام</span><span class="d num latin" lang="en">@sonatibehjati.ir</span></a>
-    <a class="tile" style="--i:1" href="https://nshn.ir/7f_bZEYENGX9qg" target="_blank" rel="noopener"><span class="oct"><svg viewBox="0 0 24 24"><path d="M19 9.5c0 5.2-7 10.5-7 10.5S5 14.7 5 9.5a7 7 0 0 1 14 0Z"/><circle cx="12" cy="9.5" r="2.6"/><path d="M8 22h8"/></svg></span><span class="t">مسیریابی</span><span class="d">تا فروشگاه اردکان</span></a>
-    <a class="tile" style="--i:2" href="tel:+989131564876"><span class="oct"><svg viewBox="0 0 24 24"><path d="M20.5 16.4v2.7a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.8 17.3 17.3 0 0 1-5.3-5.3A17.6 17.6 0 0 1 2.7 5.1a1.8 1.8 0 0 1 1.8-2h2.7a1.8 1.8 0 0 1 1.8 1.5c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L8 10.2a14.4 14.4 0 0 0 5.3 5.3l1.2-1.2a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.5 1.9Z"/></svg></span><span class="t">تماس بگیرید</span><span class="d num">0913 156 4876</span></a>
+    <a class="tile" style="--i:0" href="https://www.instagram.com/sonatibehjati.ir/" target="_blank" rel="noopener"><span class="oct"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram" aria-hidden="true" focusable="false"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg></span><span class="t">اینستاگرام</span><span class="d num latin" lang="en">@sonatibehjati.ir</span></a>
+    <a class="tile" style="--i:1" href="https://nshn.ir/7f_bZEYENGX9qg" target="_blank" rel="noopener"><span class="oct"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin" aria-hidden="true" focusable="false"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg></span><span class="t">مسیریابی</span><span class="d">تا فروشگاه اردکان</span></a>
+    <a class="tile" style="--i:2" href="tel:+989131564876"><span class="oct"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone" aria-hidden="true" focusable="false"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg></span><span class="t">تماس بگیرید</span><span class="d num">0913 156 4876</span></a>
   </div>
 
   <div class="end">

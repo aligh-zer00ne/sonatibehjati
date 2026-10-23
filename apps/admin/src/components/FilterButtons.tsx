@@ -34,18 +34,7 @@ export function FilterBar({
         className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-1 rounded-xl border border-[#e8ded1] bg-white px-2 py-2 sm:px-3"
       >
         <span className="me-1 flex items-center gap-1.5 border-e border-[#e8ded1] pe-3 text-[13px] font-semibold text-[#76685d]">
-          <svg
-            aria-hidden="true"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-          >
-            <path d="M4 6h16M7 12h10M10 18h4" />
-          </svg>
+          <AdminIcon name="filter" width={16} />
           فیلترها
         </span>
         {children}
@@ -223,18 +212,7 @@ export function FilterChips<T extends string>({
             aria-hidden="true"
             className={`grid size-4 shrink-0 place-items-center rounded border ${value === option.value ? 'border-[#701e2a] bg-[#701e2a] text-white' : 'border-[#d7cfc5] bg-white'}`}
           >
-            {value === option.value && (
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="m3 8 3 3 7-7" />
-              </svg>
-            )}
+            {value === option.value && <AdminIcon name="check" width={11} />}
           </span>
           <span className="min-w-0 break-words">{option.label}</span>
         </button>

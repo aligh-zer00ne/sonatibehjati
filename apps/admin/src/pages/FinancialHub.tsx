@@ -8,19 +8,19 @@ const operations: { href: string; title: string; description: string; icon: Admi
     href: 'receipt',
     title: 'دریافت از مشتری',
     description: 'ثبت وجه نقد، کارت‌خوان، کارت به کارت یا چک و تسویهٔ فاکتورهای باز.',
-    icon: 'wallet',
+    icon: 'receiptIn',
   },
   {
     href: 'payment',
     title: 'پرداخت به مشتری',
     description: 'بازپرداخت بستانکاری مشتری با ثبت سند مستقل در گردش حساب.',
-    icon: 'logout',
+    icon: 'paymentOut',
   },
   {
     href: 'account',
     title: 'حساب و فاکتورها',
     description: 'ماندهٔ لحظه‌ای، جزئیات دریافت و پرداخت و فاکتورهای مستقل هر مشتری.',
-    icon: 'history',
+    icon: 'ledger',
   },
   {
     href: 'links',
@@ -70,7 +70,7 @@ export default function FinancialHub() {
             className="group relative flex min-h-[245px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] bg-white p-6 !text-[#34251e] shadow-[0_6px_22px_#62452f0a] transition duration-300 hover:-translate-y-1 hover:!border-[#c49536] hover:shadow-[0_14px_30px_#62452f18] motion-reduce:transform-none"
           >
             <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#c49536,#4e141c)]" />
-            <span className="mb-5 grid size-14 place-items-center rounded-[18px] bg-[linear-gradient(135deg,#7b3039,#4e141c)] text-[#fff0ca] shadow-[0_6px_16px_#4e141c26]">
+            <span className="mb-5 grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]">
               <AdminIcon name={item.icon} width={27} height={27} />
             </span>
             <h2 className="text-lg font-extrabold">{item.title}</h2>

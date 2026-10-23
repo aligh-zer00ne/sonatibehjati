@@ -5,31 +5,12 @@ import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import { formatNumber } from '@behjati/shared';
 import { persianDigits } from '../lib/format';
 import BrandQr from './BrandQr';
+import { Truck, MoveUp, Wine, Umbrella } from 'lucide-react';
 import TrackingBarcode from './TrackingBarcode';
 
 function Symbol({ kind }: { kind: 'truck' | 'up' | 'glass' | 'umbrella' }) {
-  const paths = {
-    truck:
-      'M2 5h12v11H2V5Zm12 4h4l4 5v2h-8M5 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm13 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6M1 9h6M1 12h4',
-    up: 'M6 21V3m-4 4 4-4 4 4M18 21V3m-4 4 4-4 4 4',
-    glass: 'M6 3h12l-1 8-5 4-5-4-1-8ZM12 15v6M7 21h10',
-    umbrella: 'M2 12a10 10 0 0 1 20 0c-3-2-5-2-10 0-5-2-7-2-10 0ZM12 12v8a2 2 0 0 0 4 0M12 2V1',
-  };
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="26"
-      height="26"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={paths[kind]} />
-    </svg>
-  );
+  const Icon = { truck: Truck, up: MoveUp, glass: Wine, umbrella: Umbrella }[kind];
+  return <Icon size={26} strokeWidth={2} aria-hidden="true" />;
 }
 
 export default function ShippingLabelSheet({
