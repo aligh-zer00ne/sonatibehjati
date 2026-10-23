@@ -232,10 +232,10 @@ export default function Reports() {
               value={report.bankRevenue}
               amount
               icon="shield"
-              detail="پرداخت‌های بانکی تأییدشده"
+              detail="پرداخت تأییدشدهٔ سفارش‌های وبسایت"
             />
             <AnalyticsMetric
-              label="دریافت ثبت‌شده توسط مدیر"
+              label="خالص حساب مشتریان"
               value={report.offlineRevenue}
               amount
               icon="person"
@@ -252,15 +252,23 @@ export default function Reports() {
               icon="trend"
               detail="میانگین فاکتورهای غیرلغوشدهٔ این بازه"
             />
+            <AnalyticsMetric
+              label="دریافت لینک عمومی"
+              value={report.paymentLinkRevenue}
+              amount
+              icon="link"
+              detail="پرداخت تأییدشدهٔ لینک‌های مبلغ دلخواه، بدون سفارش"
+            />
           </section>
           <details className="rounded-xl border border-[#e8ded1] bg-[#fcf9f3] px-4 py-3 text-xs leading-7 text-[#76685d]">
             <summary className="cursor-pointer font-semibold text-[#62452f]">
               این اعداد چطور محاسبه می‌شوند؟
             </summary>
             دریافتی بر اساس تاریخ دریافت یا پرداخت است و ارزش فاکتور بر اساس تاریخ ثبت سفارش. گزارش
-            کل، پیش‌دریافت و بازپرداخت مشتری را هم لحاظ می‌کند. با فیلتر محل خرید، ارسال یا وضعیت،
-            فقط دریافت‌های تخصیص‌یافته به فاکتورهای منطبق گزارش می‌شوند؛ جمع این فیلترها لزوماً با
-            خالص کل برابر نیست.
+            کل، پیش‌دریافت و بازپرداخت مشتری و دریافت لینک عمومی را هم لحاظ می‌کند. لینک ماندهٔ
+            مشتری در خالص حساب مشتریان ثبت می‌شود و دوباره جمع نمی‌شود. با فیلتر محل خرید، ارسال یا
+            وضعیت، فقط دریافت‌های تخصیص‌یافته به فاکتورهای منطبق گزارش می‌شوند؛ جمع این فیلترها
+            لزوماً با خالص کل برابر نیست.
           </details>
           <ReportCharts report={report} />
           <Card

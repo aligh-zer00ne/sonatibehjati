@@ -1,6 +1,7 @@
+import PageHeading from '../components/PageHeading';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, App } from 'antd';
+import { App } from 'antd';
 import {
   AdminProductDocument,
   AdminProductsDocument,
@@ -27,7 +28,9 @@ export default function ProductEdit() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Typography.Title level={2}>{id ? 'ویرایش محصول' : 'محصول جدید'}</Typography.Title>
+        <PageHeading icon="products" description="اطلاعات، تصاویر و تعرفه‌های این محصول.">
+          {id ? 'ویرایش محصول' : 'محصول جدید'}
+        </PageHeading>
         {product && <ProductPreview slug={product.slug} isActive={product.isActive} />}
       </div>
       <ProductEditor

@@ -1,7 +1,8 @@
+import PageHeading from '../components/PageHeading';
 import ManualOrderModal from '../components/ManualOrderModal';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
-import { Typography, Alert, Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminOrdersDocument } from '../generated/graphql';
@@ -22,13 +23,13 @@ export default function Orders({ scope = 'all' }: { scope?: OrderScope }) {
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <Typography.Title level={2}>
+          <PageHeading icon="orders" description="فاکتورها و جزئیات هر سفارش، در یک نگاه.">
             {scope === 'website'
               ? 'سفارش‌های وبسایت'
               : scope === 'manual'
                 ? 'سایر سفارش‌ها'
                 : 'سفارش‌ها'}
-          </Typography.Title>
+          </PageHeading>
           <p className="mb-3 text-xs leading-6 text-[#76685d]">
             {scope === 'manual'
               ? 'مدیریت سفارش‌های دستی، حضوری و اینستاگرامی'

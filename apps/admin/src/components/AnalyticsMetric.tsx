@@ -1,5 +1,4 @@
-import { formatNumber } from '@behjati/shared';
-import { formatAdminPrice } from '../lib/money';
+import AnimatedNumber from './AnimatedNumber';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
 import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
 import SurfaceGlow from './SurfaceGlow';
@@ -44,7 +43,7 @@ export default function AnalyticsMetric({
         </span>
       </div>
       <p className="break-words text-base font-extrabold tabular-nums sm:text-2xl">
-        {amount ? formatAdminPrice(value) : formatNumber(value)}
+        <AnimatedNumber value={value} amount={amount} />
       </p>
       <p
         className={`${compact ? 'mt-1' : 'mt-3'} text-xs leading-6 ${featured ? 'text-[#eed8c6]' : 'text-[#857467]'}`}

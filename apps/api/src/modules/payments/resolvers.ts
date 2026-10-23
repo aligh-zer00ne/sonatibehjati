@@ -1,3 +1,4 @@
+import { createPaymentRequest, paymentRequests, cancelPaymentRequest } from './requests.js';
 import { adminGatewayTest, startAdminGatewayTest } from './admin-test.js';
 import { db } from '../../database/client.js';
 import type { Resolvers } from '../../generated/resolvers.js';
@@ -15,6 +16,10 @@ export const paymentResolvers: Resolvers = {
   AccountOrder: fields,
   AdminOrder: fields,
   Query: {
+    adminPaymentRequests: async (_, { input }, ctx) => {
+      await requirePermission(ctx, 'ORDERS');
+      return paymentRequests(input);
+    },
     paymentAvailable,
     adminGatewayTest: async (_parent, _args, ctx) => {
       requireAdminOrigin(ctx);
@@ -23,6 +28,17 @@ export const paymentResolvers: Resolvers = {
     },
   },
   Mutation: {
+    createAdminPaymentRequest: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const admin = await requirePermission(ctx, 'ORDERS');
+      await consumeAuthLimit(`payment-links:${admin.id}`, 30, 60);
+      return createPaymentRequest(admin, input);
+    },
+    cancelAdminPaymentRequest: async (_, { id }, ctx) => {
+      requireAdminOrigin(ctx);
+      await requirePermission(ctx, 'ORDERS');
+      return cancelPaymentRequest(id);
+    },
     startAdminGatewayTest: async (_parent, _args, ctx) => {
       requireAdminOrigin(ctx);
       const owner = await requireOwner(ctx);
@@ -40,9 +56,9 @@ export const paymentResolvers: Resolvers = {
       const admin = await requirePermission(ctx, 'ORDERS');
       const payment = await db.payment.findUnique({
         where: { id: paymentId },
-        select: { orderId: true },
+        select: { orderId: true, paymentRequestId: true },
       });
-      if (payment && !payment.orderId) await requireOwner(ctx);
+      if (payment && !payment.orderId && !payment.paymentRequestId) await requireOwner(ctx);
       await consumeAuthLimit(`payment-check:${admin.id}`, 20, 60);
       return retryPayment(paymentId);
     },

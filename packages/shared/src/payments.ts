@@ -42,6 +42,7 @@ export interface PaymentResultData {
   reversedAt: string | null;
   orderId: string | null;
   orderNumber: number | null;
+  paymentRequestUrl?: string | null;
   gatewayTest: boolean;
   adminTestUrl: string | null;
   paidAt: string | null;

@@ -1,5 +1,6 @@
+import PageHeading from '../components/PageHeading';
 import { useState } from 'react';
-import { Typography, Card, Form, Input, Button, Alert, App } from 'antd';
+import { Card, Form, Input, Button, Alert, App } from 'antd';
 import { adminPasswordChangeSchema } from '@behjati/shared/admin';
 import { useAdmin } from '../auth/AdminProvider';
 import { adminRequest } from '../lib/client';
@@ -12,7 +13,9 @@ export default function Settings() {
   const [error, setError] = useState('');
   return (
     <>
-      <Typography.Title level={2}>تنظیمات حساب مدیر</Typography.Title>
+      <PageHeading icon="settings" description="اطلاعات ورود و تنظیمات شخصی حساب شما.">
+        تنظیمات حساب مدیر
+      </PageHeading>
       <Card
         title={
           <span className="flex items-center gap-2">

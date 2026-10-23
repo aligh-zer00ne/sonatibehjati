@@ -4,6 +4,7 @@ import { db } from '../../database/client.js';
 import { env } from '../../config/env.js';
 import { authError } from '../auth/errors.js';
 import { SepGateway, TokenRejected } from './sep.js';
+import { acceptPaymentRequest } from './request-accounting.js';
 
 export const sepGateway = new SepGateway(env.SEP_TEST_BASE_URL ?? 'https://sep.shaparak.ir');
 export const paymentMode = env.NODE_ENV === 'test' ? 'TEST' : 'LIVE';
@@ -43,11 +44,14 @@ export async function findPayment(id: string, key: string) {
     throw authError('پرداخت یافت نشد.', 'NOT_FOUND');
   const p = await db.payment.findUnique({
     where: { id },
-    include: { order: { select: { id: true, number: true, paidAt: true, status: true } } },
+    include: {
+      order: { select: { id: true, number: true, paidAt: true, status: true } },
+      paymentRequest: true,
+    },
   });
   if (
     !p ||
-    (!p.orderId && !p.gatewayTestAdminId) ||
+    (!p.orderId && !p.gatewayTestAdminId && !p.paymentRequestId) ||
     p.mode !== paymentMode ||
     !timingSafeEqual(Buffer.from(key), Buffer.from(p.callbackKey))
   )
@@ -58,9 +62,17 @@ async function lockPayment<T>(
   id: string,
   action: (tx: Prisma.TransactionClient, p: Payment) => Promise<T>,
 ) {
-  const row = await db.payment.findUniqueOrThrow({ where: { id }, select: { orderId: true } });
+  const row = await db.payment.findUniqueOrThrow({
+    where: { id },
+    select: { orderId: true, paymentRequest: { select: { id: true, customerId: true } } },
+  });
   return db.$transaction(
     async (tx) => {
+      if (row.paymentRequest) {
+        if (row.paymentRequest.customerId)
+          await tx.$queryRaw`SELECT id FROM User WHERE id=${row.paymentRequest.customerId} FOR UPDATE`;
+        await tx.$queryRaw`SELECT id FROM PaymentRequest WHERE id=${row.paymentRequest.id} FOR UPDATE`;
+      }
       if (row.orderId)
         await tx.$queryRaw`SELECT id FROM \`Order\` WHERE id = ${row.orderId} FOR UPDATE`;
       await tx.$queryRaw`SELECT id FROM Payment WHERE id = ${id} FOR UPDATE`;
@@ -158,7 +170,9 @@ export async function preparePayment(p: Payment, phone: string) {
       },
     });
     throw authError(
-      'اتصال به درگاه انجام نشد؛ سفارشتان محفوظ است. دوباره تلاش کنید.',
+      p.paymentRequestId
+        ? 'اتصال به درگاه انجام نشد؛ لینک محفوظ است. دوباره تلاش کنید.'
+        : 'اتصال به درگاه انجام نشد؛ سفارشتان محفوظ است. دوباره تلاش کنید.',
       'PAYMENT_UNAVAILABLE',
     );
   }
@@ -273,13 +287,15 @@ export async function verifyPayment(id: string) {
           const reason =
             detail.amount !== p.amountRials
               ? 'AMOUNT_MISMATCH'
-              : !order
-                ? 'ADMIN_GATEWAY_TEST'
-                : order.paidAt
-                  ? 'DUPLICATE_PAYMENT'
-                  : !['CREATED', 'PENDING_PAYMENT'].includes(order.status)
-                    ? 'ORDER_NOT_PAYABLE'
-                    : null;
+              : p.paymentRequestId
+                ? await acceptPaymentRequest(tx, p)
+                : !order
+                  ? 'ADMIN_GATEWAY_TEST'
+                  : order.paidAt
+                    ? 'DUPLICATE_PAYMENT'
+                    : !['CREATED', 'PENDING_PAYMENT'].includes(order.status)
+                      ? 'ORDER_NOT_PAYABLE'
+                      : null;
           await tx.payment.update({
             where: { id },
             data: {
@@ -442,10 +458,20 @@ export async function publicPayment(id: string, key: string) {
     ...paymentInfo(p),
     orderId: p.orderId,
     orderNumber: p.order?.number ?? null,
-    gatewayTest: !p.orderId,
-    adminTestUrl: !p.orderId ? `${env.ADMIN_ORIGIN}/admin/payment-test` : null,
-    paidAt: p.order?.paidAt?.toISOString() ?? null,
-    redirectUrl: p.status === 'READY' ? redirectPath(p) : null,
+    gatewayTest: !!p.gatewayTestAdminId,
+    paymentRequestUrl: p.paymentRequest
+      ? `/pay/${p.paymentRequest.id}/${p.paymentRequest.key}`
+      : null,
+    adminTestUrl: p.gatewayTestAdminId ? `${env.ADMIN_ORIGIN}/admin/payment-test` : null,
+    paidAt: (p.order?.paidAt ?? p.paymentRequest?.paidAt)?.toISOString() ?? null,
+    redirectUrl:
+      p.status === 'READY' &&
+      (!p.paymentRequest ||
+        (!p.paymentRequest.paidAt &&
+          !p.paymentRequest.canceledAt &&
+          p.paymentRequest.expiresAt > new Date()))
+        ? redirectPath(p)
+        : null,
     canRetry:
       !!p.order &&
       !p.order.paidAt &&

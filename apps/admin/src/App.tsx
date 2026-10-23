@@ -15,6 +15,9 @@ const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Products = lazy(() => import('./pages/Products'));
 const Orders = lazy(() => import('./pages/Orders'));
+const FinancialHub = lazy(() => import('./pages/FinancialHub'));
+const AccountEntryPage = lazy(() => import('./pages/AccountEntryPage'));
+const PaymentLinks = lazy(() => import('./pages/PaymentLinks'));
 const Settlements = lazy(() => import('./pages/Settlements'));
 const OrderDetails = lazy(() => import('./pages/OrderDetails'));
 const OrdersMap = lazy(() => import('./pages/OrdersMap'));
@@ -32,7 +35,7 @@ export default function App() {
       theme={{
         token: {
           fontFamily: 'Vazirmatn Variable, sans-serif',
-          fontSize: 14,
+          fontSize: 15,
           fontWeightStrong: 700,
           colorPrimary: '#96140d',
           colorText: '#34251e',
@@ -41,14 +44,20 @@ export default function App() {
           colorBgContainer: '#fffdf9',
           colorBorder: '#e8ded1',
           colorBorderSecondary: '#eee5d9',
-          borderRadius: 10,
-          controlHeight: 44,
+          borderRadius: 14,
+          controlHeight: 48,
         },
         components: {
+          Select: {
+            optionSelectedBg: '#f3ead7',
+            optionActiveBg: '#faf6ee',
+            optionSelectedColor: '#76100b',
+            optionFontSize: 15,
+          },
           Typography: { titleMarginTop: 0, titleMarginBottom: 0 },
-          Card: { headerFontSize: 14, headerHeight: 52, bodyPadding: 18 },
+          Card: { headerFontSize: 16, headerHeight: 60, bodyPadding: 22 },
           Table: { headerBg: '#f7f1e8', rowHoverBg: '#fff4e6', cellPaddingBlock: 14 },
-          Button: { primaryShadow: '0 4px 10px rgba(147,13,37,0.12)' },
+          Button: { fontWeight: 600, primaryShadow: '0 4px 10px rgba(147,13,37,0.12)' },
         },
       }}
     >
@@ -85,7 +94,18 @@ export default function App() {
                     <Route path="products/:id/edit" element={<ProductEdit />} />
                     <Route path="promotions" element={<Navigate to="/admin/products" replace />} />
                     <Route path="orders" element={<Orders />} />
-                    <Route path="settlements" element={<Settlements />} />
+                    <Route path="settlements" element={<FinancialHub />} />
+                    <Route path="settlements/account" element={<Settlements />} />
+                    <Route
+                      path="settlements/receipt"
+                      element={<AccountEntryPage key="receipt" direction="RECEIPT" />}
+                    />
+                    <Route
+                      path="settlements/payment"
+                      element={<AccountEntryPage key="payment" direction="PAYMENT" />}
+                    />
+                    <Route path="settlements/links" element={<PaymentLinks key="list" />} />
+                    <Route path="settlements/links/new" element={<PaymentLinks key="new" />} />
                     <Route
                       path="orders/website"
                       element={<Orders key="website" scope="website" />}

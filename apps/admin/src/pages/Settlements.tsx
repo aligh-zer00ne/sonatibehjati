@@ -1,74 +1,24 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Alert, Button, Form, Input, Modal, Select, Radio } from 'antd';
-import { accountEntryInputSchema } from '@behjati/shared/admin';
-import { offlinePaymentMethods, offlinePaymentMethodLabels } from '@behjati/shared/sales';
-import {
-  AdminCustomerAccountDocument,
-  AdminOrderCustomersDocument,
-  RecordAdminAccountEntryDocument,
-  type AdminAccountEntryInput,
-} from '../generated/graphql';
+import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Button } from 'antd';
+import { AdminCustomerAccountDocument } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
-import { adminRequest, AdminRequestError } from '../lib/client';
 import { customerName } from '../lib/format';
-import { Money, MoneyInput } from '../components/Money';
+import { Money } from '../components/Money';
 import AccountStatus from '../components/AccountStatus';
-import CalendarPicker from '../components/CalendarPicker';
+import RichCustomerSelect from '../components/RichCustomerSelect';
 import { AccountInvoices, AccountLedger } from '../components/CustomerAccountRecords';
 import AnalyticsRefresh from '../components/AnalyticsRefresh';
 import OrderDetailsCard from '../components/OrderDetailsCard';
 import DataState from '../components/DataState';
 import AdminIcon from '../components/AdminIcon';
-import { useAdmin } from '../auth/AdminProvider';
-
-const pendingKey = 'behjati-admin-account-request';
-
 export default function Settlements() {
-  const { admin } = useAdmin();
   const [params, setParams] = useSearchParams();
   const customerId = params.get('customerId') ?? '';
-  const [term, setTerm] = useState(''),
-    [search, setSearch] = useState('');
   const [page, setPage] = useState(1),
     [invoicePage, setInvoicePage] = useState(1);
-  const [form] = Form.useForm();
-  const [entryDirection, setEntryDirection] = useState<'RECEIPT' | 'PAYMENT'>('RECEIPT');
-  const submitLock = useRef(false);
   const [activeTab, setActiveTab] = useState<'entries' | 'invoices'>('entries');
-  const method = Form.useWatch('method', form);
-  const [submission, setSubmission] = useState<AdminAccountEntryInput | null>(() => {
-    try {
-      const stored = JSON.parse(sessionStorage.getItem(pendingKey) ?? 'null');
-      const parsed = accountEntryInputSchema.safeParse(stored?.input);
-      return stored?.adminId === admin?.id && parsed.success ? parsed.data : null;
-    } catch {
-      return null;
-    }
-  });
-  const [open, setOpen] = useState(!!submission),
-    [pending, setPending] = useState(false),
-    [error, setError] = useState('');
-  useEffect(() => {
-    if (submission && submission.customerId !== customerId)
-      setParams({ customerId: submission.customerId });
-  }, [submission, customerId, setParams]);
-  function remember(input: AdminAccountEntryInput | null) {
-    try {
-      if (input) sessionStorage.setItem(pendingKey, JSON.stringify({ adminId: admin?.id, input }));
-      else sessionStorage.removeItem(pendingKey);
-    } catch {
-      /* The in-memory UUID still protects retries when storage is unavailable. */
-    }
-  }
   const [expanded, setExpanded] = useState<string | null>(null);
-  useEffect(() => {
-    const timer = setTimeout(() => setSearch(term), 300);
-    return () => clearTimeout(timer);
-  }, [term]);
-  const customers = useAdminQuery(AdminOrderCustomersDocument, {
-    input: { search, page: 1, pageSize: 20 },
-  });
   const account = useAdminQuery(
     AdminCustomerAccountDocument,
     { customerId, page, invoicePage },
@@ -76,59 +26,6 @@ export default function Settlements() {
     { pollInterval: 30000 },
   );
   const data = account.data?.adminCustomerAccount;
-  const options = (customers.data?.adminOrderCustomers.items ?? []).map((u) => ({
-    value: u.id,
-    label: `${customerName(u)} · ${u.phone}`,
-  }));
-  if (data && !options.some((o) => o.value === data.user.id))
-    options.unshift({
-      value: data.user.id,
-      label: `${customerName(data.user)} · ${data.user.phone}`,
-    });
-  async function submit(values: Record<string, unknown>) {
-    if (submitLock.current) return;
-    submitLock.current = true;
-    let input = submission;
-    if (!input) {
-      const parsed = accountEntryInputSchema.safeParse({
-        ...values,
-        customerId,
-        requestId: crypto.randomUUID(),
-      });
-      if (!parsed.success) {
-        submitLock.current = false;
-        setError(parsed.error.issues[0]?.message ?? 'اطلاعات معتبر وارد کنید.');
-        return;
-      }
-      input = parsed.data;
-      setSubmission(input);
-      remember(input);
-    }
-    setPending(true);
-    setError('');
-    try {
-      await adminRequest(RecordAdminAccountEntryDocument, { input });
-      setOpen(false);
-      setSubmission(null);
-      remember(null);
-      form.resetFields();
-      setPage(1);
-      setInvoicePage(1);
-      account.refresh();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'ثبت انجام نشد.');
-      if (
-        e instanceof AdminRequestError &&
-        ['BAD_USER_INPUT', 'NOT_FOUND', 'REQUEST_CONFLICT'].includes(e.code)
-      ) {
-        setSubmission(null);
-        remember(null);
-      }
-    } finally {
-      submitLock.current = false;
-      setPending(false);
-    }
-  }
   return (
     <>
       <div data-settlements className="flex min-w-0 flex-col gap-5">
@@ -157,18 +54,10 @@ export default function Settlements() {
             <AdminIcon name="search" width={20} />
             جستجو و انتخاب مشتری
           </label>
-          <Select
+          <RichCustomerSelect
             id="account-customer"
-            disabled={pending || !!submission}
-            aria-label="مشتری دریافت و پرداخت"
-            showSearch
-            filterOption={false}
-            onSearch={setTerm}
-            loading={customers.refreshing}
-            value={customerId || undefined}
-            options={options}
-            className="!h-12 w-full"
-            placeholder="نام مشتری یا شماره موبایل را بنویسید…"
+            value={customerId}
+            selected={data ? { ...data.user, accountBalance: data.balance } : null}
             onChange={(id) => {
               setParams({ customerId: id });
               setPage(1);
@@ -177,14 +66,6 @@ export default function Settlements() {
               setActiveTab('entries');
             }}
           />
-          {customers.error && (
-            <Alert
-              className="!mt-3"
-              type="error"
-              title={customers.error}
-              action={<Button onClick={customers.refresh}>تلاش دوباره</Button>}
-            />
-          )}
         </section>
         {!customerId ? (
           <section className="flex flex-col items-center rounded-[26px] border border-dashed border-[#d9c7a8] bg-[#faf6ee] px-5 py-12 text-center">
@@ -248,30 +129,21 @@ export default function Settlements() {
                 ))}
               </dl>
               <div className="flex flex-wrap gap-3 border-t border-[#eee5d9] p-4 sm:px-5">
-                <Button
-                  type="primary"
-                  className="!h-12 !rounded-xl !px-5 !text-base !font-bold"
-                  icon={<AdminIcon name="plus" width={20} />}
-                  onClick={() => {
-                    setError('');
-                    if (!submission) setEntryDirection('RECEIPT');
-                    setOpen(true);
-                  }}
-                >
-                  ثبت دریافت و پرداخت
-                </Button>
-                <Button
-                  className="!h-12 !rounded-xl !px-5 !text-base !font-semibold"
-                  disabled={pending || !!submission || data.balance >= 0}
-                  icon={<AdminIcon name="logout" width={20} />}
-                  onClick={() => {
-                    setError('');
-                    setEntryDirection('PAYMENT');
-                    setOpen(true);
-                  }}
-                >
-                  پرداخت به مشتری
-                </Button>
+                <Link to={`/admin/settlements/receipt?customerId=${customerId}`}>
+                  <Button type="primary" icon={<AdminIcon name="plus" />}>
+                    ثبت دریافت از مشتری
+                  </Button>
+                </Link>
+                <Link to={`/admin/settlements/payment?customerId=${customerId}`}>
+                  <Button disabled={data.balance >= 0} icon={<AdminIcon name="logout" />}>
+                    پرداخت به مشتری
+                  </Button>
+                </Link>
+                {data.balance > 0 && (
+                  <Link to={`/admin/settlements/links/new?customerId=${customerId}`}>
+                    <Button icon={<AdminIcon name="link" />}>لینک پرداخت مانده</Button>
+                  </Link>
+                )}
                 <p className="flex items-center text-xs leading-7 text-[#857467]">
                   دریافت‌ها ابتدا قدیمی‌ترین فاکتور باز را تسویه می‌کنند؛ اضافه وجه بستانکاری مشتری
                   است.
@@ -382,96 +254,6 @@ export default function Settlements() {
           </>
         )}
       </div>
-      {open && (
-        <Modal
-          open
-          title="ثبت دریافت و پرداخت مشتری"
-          footer={null}
-          width={600}
-          maskClosable={false}
-          onCancel={() => {
-            if (!pending) {
-              setOpen(false);
-              setError('');
-            }
-          }}
-        >
-          <Form
-            clearOnDestroy
-            form={form}
-            layout="vertical"
-            initialValues={
-              submission ?? {
-                direction: entryDirection,
-                method: 'CASH',
-                amount: 0,
-                note: '',
-                chequeNumber: '',
-                chequeBank: '',
-              }
-            }
-            onFinish={submit}
-            disabled={pending || !!submission}
-          >
-            <Form.Item label="نوع عملیات" name="direction">
-              <Radio.Group
-                optionType="button"
-                buttonStyle="solid"
-                className="!flex [&_.ant-radio-button-wrapper]:!h-auto [&_.ant-radio-button-wrapper]:!min-h-12 [&_.ant-radio-button-wrapper]:!flex-1 [&_.ant-radio-button-wrapper]:!content-center [&_.ant-radio-button-wrapper]:!text-center [&_.ant-radio-button-wrapper]:!font-semibold [&_.ant-radio-button-wrapper]:!whitespace-normal [&_.ant-radio-button-wrapper]:!leading-6 [&_.ant-radio-button-wrapper]:!px-2"
-                options={[
-                  { value: 'RECEIPT', label: 'دریافت از مشتری' },
-                  { value: 'PAYMENT', label: 'پرداخت بستانکاری به مشتری' },
-                ]}
-              />
-            </Form.Item>
-            <Form.Item label="مبلغ (ریال)" name="amount" rules={[{ required: true }]}>
-              <MoneyInput />
-            </Form.Item>
-            <Form.Item label="روش دریافت / پرداخت" name="method">
-              <Select
-                options={offlinePaymentMethods.map((value) => ({
-                  value,
-                  label: offlinePaymentMethodLabels[value],
-                }))}
-              />
-            </Form.Item>
-            {method === 'CHECK' && (
-              <>
-                <div className="grid gap-x-3 sm:grid-cols-2">
-                  <Form.Item label="شماره چک" name="chequeNumber" rules={[{ required: true }]}>
-                    <Input maxLength={60} />
-                  </Form.Item>
-                  <Form.Item label="بانک" name="chequeBank">
-                    <Input maxLength={100} />
-                  </Form.Item>
-                  <Form.Item label="سررسید چک" name="chequeDueDate" rules={[{ required: true }]}>
-                    <CalendarPicker />
-                  </Form.Item>
-                </div>
-                <p className="mb-4 text-xs">مبلغ چک از زمان ثبت در ماندهٔ حساب لحاظ می‌شود.</p>
-              </>
-            )}
-            <Form.Item label="شرح" name="note">
-              <Input.TextArea maxLength={500} />
-            </Form.Item>
-            {error && <Alert className="!mb-3" type="error" title={error} role="alert" />}
-            {submission ? (
-              <Button
-                type="primary"
-                disabled={pending}
-                loading={pending}
-                onClick={() => void submit({})}
-              >
-                بررسی و ثبت مجدد همین درخواست
-              </Button>
-            ) : (
-              <Button type="primary" htmlType="submit" loading={pending}>
-                ثبت در حساب مشتری
-              </Button>
-            )}
-          </Form>
-        </Modal>
-      )}
     </>
   );
 }

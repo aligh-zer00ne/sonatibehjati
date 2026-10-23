@@ -120,7 +120,7 @@ export default function RecordCards<T extends object>({
               <article
                 key={keyOf(record)}
                 data-admin-record
-                className="relative min-w-0 overflow-hidden rounded-3xl border border-[#e8ded1] bg-[#fcf9f3] p-4 shadow-[0_4px_20px_rgba(102,3,17,0.03)] sm:p-5"
+                className="relative min-w-0 overflow-hidden rounded-3xl border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08] transition-shadow duration-300 hover:shadow-[0_12px_30px_#62452f14] sm:p-5"
               >
                 <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#96140d]" />
                 <header className="mb-3 flex items-start gap-3">
@@ -133,7 +133,7 @@ export default function RecordCards<T extends object>({
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="mb-1 text-[12px] text-[#76685d]">{titleField?.title ?? label}</p>
-                    <h3 className="[overflow-wrap:anywhere] text-sm leading-6 font-bold text-[#76100b]">
+                    <h3 className="[overflow-wrap:anywhere] text-base leading-7 font-extrabold text-[#76100b]">
                       {title}
                     </h3>
                   </div>
@@ -170,7 +170,7 @@ export default function RecordCards<T extends object>({
                   {displayFields.map((field) => (
                     <div
                       key={field.title}
-                      className={`min-w-0 rounded-xl bg-[#f4e8d3] p-3 ${isWide(field) || (narrowFields.length % 2 === 1 && field === narrowFields.at(-1)) ? 'col-span-2' : ''}`}
+                      className={`min-w-0 rounded-xl bg-[#f8f3ea] p-3 ${isWide(field) || (narrowFields.length % 2 === 1 && field === narrowFields.at(-1)) ? 'col-span-2' : ''}`}
                     >
                       <dt className="mb-1.5 flex items-center gap-1.5 text-[12px] text-[#76685d]">
                         <AdminIcon
@@ -181,7 +181,7 @@ export default function RecordCards<T extends object>({
                         />
                         {field.title}
                       </dt>
-                      <dd className="[overflow-wrap:anywhere] text-xs leading-6 text-[#62452f] [&_.ant-tag]:!whitespace-normal [&_.ant-tag]:!max-w-full">
+                      <dd className="[overflow-wrap:anywhere] text-sm leading-6 font-semibold text-[#62452f] [&_.ant-tag]:!whitespace-normal [&_.ant-tag]:!max-w-full">
                         {valueOf(field, record, index)}
                       </dd>
                     </div>

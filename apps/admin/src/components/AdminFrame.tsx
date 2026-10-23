@@ -1,3 +1,4 @@
+import AmbientBackdrop from './AmbientBackdrop';
 import DesignCredit from './DesignCredit';
 import { hasPermission, adminLanding } from '@behjati/shared/permissions';
 import { useState, useEffect } from 'react';
@@ -54,9 +55,10 @@ export default function AdminFrame() {
     <div dir="rtl" className="flex min-h-dvh min-w-0 flex-col bg-[#f6f1e9] text-[#34251e]">
       <header
         data-admin-topbar
-        className="sticky top-0 z-30 border-b border-[#b78343]/30 bg-[radial-gradient(ellipse_at_top_right,#94271b,transparent_65%),linear-gradient(120deg,#76100b,#440b08)] px-4 py-4 text-[#fff5e1] shadow-[0_8px_24px_#42000920] sm:px-6 print:!hidden"
+        className="sticky top-0 z-30 isolate border-b border-[#b78343]/30 bg-[radial-gradient(ellipse_at_top_right,#94271b,transparent_65%),linear-gradient(120deg,#76100b,#440b08)] px-4 py-4 text-[#fff5e1] shadow-[0_8px_24px_#42000920] sm:px-6 print:!hidden"
       >
-        <div className="mx-auto flex max-w-[1560px] items-center justify-between gap-3">
+        <AmbientBackdrop />
+        <div className="relative z-10 mx-auto flex max-w-[1560px] items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3 min-[1100px]:w-[210px] min-[1100px]:shrink-0">
             <Button
               type="text"
@@ -155,7 +157,7 @@ export default function AdminFrame() {
       <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 print:p-0">
         <div
           data-admin-page
-          className="mx-auto flex min-w-0 max-w-[1560px] flex-col gap-5 sm:gap-6 [&>*]:min-w-0 print:max-w-none print:gap-0"
+          className="mx-auto flex min-w-0 max-w-[1560px] flex-col gap-5 sm:gap-6 [&>*]:min-w-0 [&_.ant-card]:!rounded-[24px] [&_.ant-card]:!bg-white [&_.ant-card]:!shadow-[0_6px_22px_#62452f08] [&_.ant-form-item-label>label]:!font-semibold [&_.ant-input]:!font-medium [&_.ant-btn-primary]:!font-bold print:max-w-none print:gap-0"
         >
           <div className="flex flex-wrap items-center justify-between gap-3 print:!hidden">
             <p className="flex items-center gap-2 text-xs font-semibold text-[#796653]">
@@ -192,7 +194,12 @@ export default function AdminFrame() {
             )}
           </div>
           {error && <Alert title={error} type="error" role="alert" className="print:!hidden" />}
-          <Outlet />
+          <div
+            key={pathname}
+            className="flex min-w-0 flex-col gap-5 motion-safe:animate-surface-enter sm:gap-6"
+          >
+            <Outlet />
+          </div>
         </div>
       </main>
       <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ded1] bg-[#fffdf9]/70 px-4 py-3 text-[12px] text-[#7d746a] sm:px-6 lg:px-8 print:!hidden">

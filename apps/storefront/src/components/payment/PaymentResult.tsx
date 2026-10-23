@@ -59,6 +59,8 @@ export default function PaymentResult({
           </p>
           {verifiedTest && <p className="font-bold text-primary">بانک پرداخت تست را تأیید کرد.</p>}
         </div>
+      ) : payment.paymentRequestUrl ? (
+        <p className="font-bold">رسید لینک پرداخت سنتی بهجتی</p>
       ) : (
         <p>
           سفارش شمارهٔ <b>{formatNumber(payment.orderNumber ?? 0)}</b>
@@ -67,7 +69,9 @@ export default function PaymentResult({
       <p className="font-bold">مبلغ: {formatPrice(payment.amount)}</p>
       <p className="text-sm leading-8 text-muted-foreground">
         {succeeded
-          ? 'پرداخت شما توسط بانک تأیید و سفارش برای آماده‌سازی ثبت شد.'
+          ? payment.paymentRequestUrl
+            ? 'پرداخت توسط بانک تأیید و رسید آن ثبت شد.'
+            : 'پرداخت شما توسط بانک تأیید و سفارش برای آماده‌سازی ثبت شد.'
           : payment.status === 'REVERSED'
             ? 'درخواست برگشت وجه توسط بانک تأیید شده است. زمان نمایش مبلغ در حساب به بانک صادرکننده کارت بستگی دارد.'
             : payment.status === 'REVIEW_REQUIRED'
@@ -108,6 +112,11 @@ export default function PaymentResult({
       {payment.orderId && (
         <Button variant="outline" className="w-full" asChild>
           <Link href={`/account/orders/${payment.orderId}`}>جزئیات سفارش</Link>
+        </Button>
+      )}
+      {payment.paymentRequestUrl && (
+        <Button variant="outline" className="w-full" asChild>
+          <Link href={payment.paymentRequestUrl}>بازگشت به وضعیت لینک پرداخت</Link>
         </Button>
       )}
       {payment.gatewayTest && payment.adminTestUrl && (

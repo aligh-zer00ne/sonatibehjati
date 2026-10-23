@@ -1,8 +1,9 @@
+import PageHeading from '../components/PageHeading';
 import OrderFilters from '../components/OrderFilters';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { useRef, useState } from 'react';
-import { Typography, Alert, Card, Pagination, Button, Empty, Tag } from 'antd';
+import { Alert, Card, Pagination, Button, Empty, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import { formatNumber, orderStatusLabels } from '@behjati/shared';
 import { AdminOrdersDocument, type AdminOrdersInput } from '../generated/graphql';
@@ -48,7 +49,9 @@ export default function OrdersMap() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Typography.Title level={2}>نقشه سفارش‌ها</Typography.Title>
+          <PageHeading icon="map" description="مشاهده پراکندگی و اطلاعات ارسال سفارش‌ها.">
+            نقشه سفارش‌ها
+          </PageHeading>
           <p className="text-sm text-[#78665b]">
             یک سفارش را انتخاب کنید تا موقعیت ثبت‌شدهٔ آن روی نقشه نمایش داده شود.
           </p>

@@ -1,21 +1,10 @@
+import PageHeading from '../components/PageHeading';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { adminSections, type AdminPermission } from '@behjati/shared/permissions';
 import { useState } from 'react';
-import {
-  Alert,
-  Button,
-  Card,
-  Form,
-  Input,
-  Switch,
-  Tag,
-  Typography,
-  App,
-  Checkbox,
-  Modal,
-} from 'antd';
+import { Alert, Button, Card, Form, Input, Switch, Tag, App, Checkbox, Modal } from 'antd';
 import {
   AdminAccountsDocument,
   CreateStaffDocument,
@@ -53,7 +42,9 @@ export default function Accounts() {
   }
   return (
     <>
-      <Typography.Title level={2}>کاربران پنل</Typography.Title>
+      <PageHeading icon="shield" description="تعریف همکار و تعیین بخش‌های مجاز برای هر نفر.">
+        کاربران پنل
+      </PageHeading>
       <Alert
         type="info"
         title="مدیر به همهٔ بخش‌ها دسترسی دارد. بخش‌های مجاز هر همکار را انتخاب کنید. مدیریت کاربران پنل فقط در اختیار مدیر است؛ تغییر رمز شخصی همیشه در دسترس است."

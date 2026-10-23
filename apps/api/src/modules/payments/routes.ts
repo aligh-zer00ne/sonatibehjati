@@ -3,6 +3,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { GraphQLError } from 'graphql';
 import { z } from 'zod';
 import { env } from '../../config/env.js';
+import { publicRequest, startRequestPayment } from './requests.js';
 import { callback, findPayment, publicPayment, redirectPath, resultPath } from './service.js';
 export const paymentRoutes = express.Router();
 paymentRoutes.use('/payments/sep', (req, res, next) => {
@@ -30,7 +31,10 @@ paymentRoutes.post('/payments/sep/:action', async (req, res) => {
       })
       .strict()
       .parse(req.body);
-    if (req.params.action === 'callback') {
+    if (req.params.action === 'request-status') res.json(await publicRequest(input.id, input.key));
+    else if (req.params.action === 'request-start')
+      res.json(await startRequestPayment(input.id, input.key));
+    else if (req.params.action === 'callback') {
       if (!input.fields) {
         res.sendStatus(400);
         return;
@@ -50,7 +54,15 @@ paymentRoutes.post('/payments/sep/:action', async (req, res) => {
       const p = await findPayment(input.id, input.key);
       res.json({
         token:
-          p.status === 'READY' && p.expiresAt > new Date() && !p.order?.paidAt ? p.token : null,
+          p.status === 'READY' &&
+          p.expiresAt > new Date() &&
+          !p.order?.paidAt &&
+          (!p.paymentRequest ||
+            (!p.paymentRequest.paidAt &&
+              !p.paymentRequest.canceledAt &&
+              p.paymentRequest.expiresAt > new Date()))
+            ? p.token
+            : null,
         resultUrl: resultPath(p),
         redirectUrl: redirectPath(p),
       });
@@ -58,6 +70,8 @@ paymentRoutes.post('/payments/sep/:action', async (req, res) => {
   } catch (error) {
     res
       .status(error instanceof GraphQLError && error.extensions.code === 'NOT_FOUND' ? 404 : 400)
-      .json({ message: 'اطلاعات پرداخت معتبر نیست.' });
+      .json({
+        message: error instanceof GraphQLError ? error.message : 'اطلاعات پرداخت معتبر نیست.',
+      });
   }
 });

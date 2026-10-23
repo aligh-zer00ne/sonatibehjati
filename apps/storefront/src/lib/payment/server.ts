@@ -1,7 +1,7 @@
 import 'server-only';
 import type { PaymentResultData } from '@behjati/shared/payments';
 export async function paymentApi<T>(
-  action: 'callback' | 'status' | 'redirect',
+  action: 'callback' | 'status' | 'redirect' | 'request-status' | 'request-start',
   id: string,
   key: string,
   fields?: Record<string, string>,

@@ -553,6 +553,7 @@ type AdminStatusMetric {
   count: Int!
 }
 type AdminReport {
+  paymentLinkRevenue: Float!
   bankRevenue: Float!
   offlineRevenue: Float!
   from: String!
@@ -894,6 +895,7 @@ enum ShippingMethod {
   COURIER
 }
 enum OfflinePaymentMethod {
+  ONLINE
   CASH
   POS
   CARD_TRANSFER
@@ -1017,4 +1019,60 @@ type AdminManualQuote {
   total: Int!
   shippingMethod: ShippingMethod
   shippingWeightGrams: Int
+}
+
+enum PaymentRequestScope {
+  CUSTOMER_BALANCE
+  CUSTOM_AMOUNT
+}
+enum PaymentRequestStatus {
+  ACTIVE
+  PAID
+  EXPIRED
+  CANCELED
+}
+input AdminPaymentRequestInput {
+  requestId: ID!
+  scope: PaymentRequestScope!
+  customerId: ID
+  amount: Int!
+  title: String!
+  payerName: String
+  payerPhone: String
+  expiresInHours: Int
+}
+input AdminPaymentRequestsInput {
+  customerId: ID
+  scope: PaymentRequestScope
+  status: PaymentRequestStatus
+  page: Int
+}
+type AdminPaymentRequest {
+  id: ID!
+  scope: PaymentRequestScope!
+  customerId: ID
+  customerName: String
+  title: String!
+  amount: Int!
+  payerName: String
+  payerPhone: String
+  url: String!
+  status: PaymentRequestStatus!
+  createdAt: String!
+  expiresAt: String!
+  paidAt: String
+  payments: [PaymentInfo!]!
+}
+type AdminPaymentRequestPage {
+  items: [AdminPaymentRequest!]!
+  total: Int!
+  page: Int!
+  gatewayAvailable: Boolean!
+}
+extend type Query {
+  adminPaymentRequests(input: AdminPaymentRequestsInput!): AdminPaymentRequestPage!
+}
+extend type Mutation {
+  createAdminPaymentRequest(input: AdminPaymentRequestInput!): AdminPaymentRequest!
+  cancelAdminPaymentRequest(id: ID!): AdminPaymentRequest!
 }

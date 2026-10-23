@@ -1,8 +1,9 @@
+import PageHeading from '../components/PageHeading';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Select, Tag, Typography } from 'antd';
+import { Alert, Button, Form, Input, Modal, Select, Tag } from 'antd';
 import { formatDate } from '@behjati/shared';
 import {
   AdminTicketsDocument,
@@ -50,7 +51,9 @@ export default function Tickets() {
   }
   return (
     <>
-      <Typography.Title level={2}>پشتیبانی و تیکت‌ها</Typography.Title>
+      <PageHeading icon="support" description="پیام مشتریان و پیگیری پاسخ‌های پشتیبانی.">
+        پشتیبانی و تیکت‌ها
+      </PageHeading>
       <FilterBar>
         <FilterButton label="وضعیت تیکت" active={!!status}>
           <FilterChips<TicketStatus | ''>

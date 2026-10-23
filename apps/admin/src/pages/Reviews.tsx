@@ -1,8 +1,9 @@
+import PageHeading from '../components/PageHeading';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import { Alert, Button, Rate, Tag, Typography } from 'antd';
+import { Alert, Button, Rate, Tag } from 'antd';
 import { formatDate } from '@behjati/shared';
 import {
   AdminReviewsDocument,
@@ -38,7 +39,9 @@ export default function Reviews() {
   }
   return (
     <>
-      <Typography.Title level={2}>مدیریت نظرات محصول</Typography.Title>
+      <PageHeading icon="review" description="بررسی و مدیریت تجربهٔ خریداران محصولات.">
+        مدیریت نظرات محصول
+      </PageHeading>
       <FilterBar>
         <FilterButton label="وضعیت نظر" active={!!status}>
           <FilterChips<ReviewStatus | ''>

@@ -189,16 +189,16 @@ try {
   await expect(
     page.locator('[data-account-status="debtor"]').first().locator('.ant-tag-red'),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'ثبت دریافت و پرداخت', exact: true }).click();
-  let receipt = page.getByRole('dialog', { name: 'ثبت دریافت و پرداخت مشتری', exact: true });
+  await page.getByRole('button', { name: 'ثبت دریافت از مشتری', exact: true }).click();
+  let receipt = page.locator('[data-account-operation="RECEIPT"]');
   await receipt.getByLabel('مبلغ (ریال)', { exact: true }).fill('5500000');
-  await receipt.getByRole('button', { name: 'ثبت در حساب مشتری', exact: true }).click();
+  await receipt.getByRole('button', { name: 'ثبت دریافت از مشتری', exact: true }).click();
   await expect(
     receipt.getByRole('button', { name: 'بررسی و ثبت مجدد همین درخواست', exact: true }),
   ).toBeEnabled();
   // The server accepted the first POST but its response was lost. Reload must recover the SAME UUID.
   await page.reload();
-  receipt = page.getByRole('dialog', { name: 'ثبت دریافت و پرداخت مشتری', exact: true });
+  receipt = page.locator('[data-account-operation="RECEIPT"]');
   await expect(
     receipt.getByRole('button', { name: 'بررسی و ثبت مجدد همین درخواست', exact: true }),
   ).toBeEnabled();
@@ -226,10 +226,8 @@ try {
   await page.getByRole('tab', { name: /گردش حساب/ }).click();
   await expect(page.locator('[data-account-entry]')).toHaveCount(2);
   await page.getByRole('button', { name: 'پرداخت به مشتری', exact: true }).click();
-  const payout = page.getByRole('dialog', { name: 'ثبت دریافت و پرداخت مشتری', exact: true });
-  await expect(
-    payout.getByRole('radio', { name: 'پرداخت بستانکاری به مشتری', exact: true }),
-  ).toBeChecked();
+  const payout = page.locator('[data-account-operation="PAYMENT"]');
+  await expect(payout.getByRole('heading', { name: 'پرداخت به مشتری', exact: true })).toBeVisible();
   await payout.getByLabel('مبلغ (ریال)', { exact: true }).fill('600000');
   await payout.locator('form').evaluate((form) => {
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
@@ -312,7 +310,7 @@ try {
   await page.getByRole('button', { name: 'امروز', exact: true }).click();
   await page.keyboard.press('Escape');
   await expect(page.getByText('پرداخت موفق درگاه', { exact: true })).toBeVisible();
-  await expect(page.getByText('دریافت ثبت‌شده توسط مدیر', { exact: true })).toBeVisible();
+  await expect(page.getByText('خالص حساب مشتریان', { exact: true })).toBeVisible();
   await fits(page);
   await page.goto(base + '/admin');
   await expect(

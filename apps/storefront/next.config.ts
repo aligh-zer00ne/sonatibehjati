@@ -29,6 +29,13 @@ const config: NextConfig = {
         source,
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       })),
+      {
+        source: '/pay/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          { key: 'Referrer-Policy', value: 'no-referrer' },
+        ],
+      },
       ...['/QR', '/qr', '/qr.html'].map((source) => ({
         source,
         headers: [

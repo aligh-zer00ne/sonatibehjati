@@ -165,6 +165,10 @@ export async function cleanup() {
   await db.supportTicket.deleteMany({ where: { userId: { in: userIds } } });
   await db.offlinePayment.deleteMany({ where: { order: { userId: { in: userIds } } } });
   await db.customerAccountEntry.deleteMany({ where: { userId: { in: userIds } } });
+  await db.payment.deleteMany({
+    where: { paymentRequest: { customerId: { in: userIds } }, mode: 'TEST' },
+  });
+  await db.paymentRequest.deleteMany({ where: { customerId: { in: userIds }, mode: 'TEST' } });
   await db.orderItem.deleteMany({ where: { order: { userId: { in: userIds } } } });
   await db.order.deleteMany({ where: { userId: { in: userIds } } });
   await db.otpCode.deleteMany({ where: { phone: { in: phones }, createdAt: { gte: startedAt } } });

@@ -46,66 +46,97 @@ export async function adminReport(raw: Record<string, unknown>) {
   };
   const relatedClause = Prisma.sql`${input.status ? Prisma.sql`AND o.status = ${input.status}` : Prisma.empty} ${input.salesChannel ? Prisma.sql`AND o.salesChannel = ${input.salesChannel}` : Prisma.empty} ${input.shippingMethod ? Prisma.sql`AND o.shippingMethod = ${input.shippingMethod}` : Prisma.empty}`;
   const ledgerScope = !input.status && !input.salesChannel && !input.shippingMethod;
-  const [daily, statuses, aggregate, count, income, incomeDaily, offlineIncome, offlineDaily] =
-    await db.$transaction(async (tx) =>
-      Promise.all([
-        tx.$queryRaw<Array<{ date: string; ordersCount: bigint; orderValue: Prisma.Decimal }>>(
-          Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, COUNT(*) AS ordersCount, SUM(CASE WHEN status <> 'CANCELED' THEN total ELSE 0 END) AS orderValue FROM \`Order\` WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} ${statusClause} GROUP BY date ORDER BY date`,
-        ),
-        tx.$queryRaw<Array<{ status: (typeof orderStatuses)[number]; count: bigint }>>(
-          Prisma.sql`SELECT status, COUNT(*) AS count FROM \`Order\` WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} ${statusClause} GROUP BY status`,
-        ),
-        tx.order.aggregate({
-          where: { ...where, AND: { status: { not: 'CANCELED' } } },
-          _sum: { total: true },
-          _avg: { total: true },
-        }),
-        tx.order.count({ where }),
-        tx.payment.aggregate({
-          where: {
-            status: 'SUCCEEDED',
-            orderId: { not: null },
-            mode: paymentMode,
-            acceptedAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
-            order: relatedOrder,
-          },
-          _sum: { amountRials: true },
-        }),
-        tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
-          Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(p.acceptedAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(p.amountRials) AS revenue FROM Payment p JOIN \`Order\` o ON o.id = p.orderId WHERE p.mode = ${paymentMode} AND p.status = 'SUCCEEDED' AND p.acceptedAt >= ${where.createdAt.gte} AND p.acceptedAt < ${where.createdAt.lt} ${relatedClause} GROUP BY date ORDER BY date`,
-        ),
-        ledgerScope
-          ? tx
-              .$queryRaw<Array<{ revenue: Prisma.Decimal }>>(
-                Prisma.sql`SELECT COALESCE(SUM(CASE WHEN direction='RECEIPT' THEN amount ELSE -amount END),0) AS revenue FROM CustomerAccountEntry WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt}`,
-              )
-              .then((rows) => ({ _sum: { amount: Number(rows[0]?.revenue ?? 0) } }))
-          : tx.offlinePayment.aggregate({
-              where: {
-                voided: false,
-                createdAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
-                order: relatedOrder,
-              },
-              _sum: { amount: true },
-            }),
-        ledgerScope
-          ? tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
-              Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(CASE WHEN direction='RECEIPT' THEN amount ELSE -amount END) AS revenue FROM CustomerAccountEntry WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} GROUP BY date ORDER BY date`,
+  const [
+    daily,
+    statuses,
+    aggregate,
+    count,
+    income,
+    incomeDaily,
+    offlineIncome,
+    offlineDaily,
+    linkIncome,
+    linkDaily,
+  ] = await db.$transaction(async (tx) =>
+    Promise.all([
+      tx.$queryRaw<Array<{ date: string; ordersCount: bigint; orderValue: Prisma.Decimal }>>(
+        Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, COUNT(*) AS ordersCount, SUM(CASE WHEN status <> 'CANCELED' THEN total ELSE 0 END) AS orderValue FROM \`Order\` WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} ${statusClause} GROUP BY date ORDER BY date`,
+      ),
+      tx.$queryRaw<Array<{ status: (typeof orderStatuses)[number]; count: bigint }>>(
+        Prisma.sql`SELECT status, COUNT(*) AS count FROM \`Order\` WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} ${statusClause} GROUP BY status`,
+      ),
+      tx.order.aggregate({
+        where: { ...where, AND: { status: { not: 'CANCELED' } } },
+        _sum: { total: true },
+        _avg: { total: true },
+      }),
+      tx.order.count({ where }),
+      tx.payment.aggregate({
+        where: {
+          status: 'SUCCEEDED',
+          orderId: { not: null },
+          mode: paymentMode,
+          acceptedAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
+          order: relatedOrder,
+        },
+        _sum: { amountRials: true },
+      }),
+      tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
+        Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(p.acceptedAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(p.amountRials) AS revenue FROM Payment p JOIN \`Order\` o ON o.id = p.orderId WHERE p.mode = ${paymentMode} AND p.status = 'SUCCEEDED' AND p.acceptedAt >= ${where.createdAt.gte} AND p.acceptedAt < ${where.createdAt.lt} ${relatedClause} GROUP BY date ORDER BY date`,
+      ),
+      ledgerScope
+        ? tx
+            .$queryRaw<Array<{ revenue: Prisma.Decimal }>>(
+              Prisma.sql`SELECT COALESCE(SUM(CASE WHEN direction='RECEIPT' THEN amount ELSE -amount END),0) AS revenue FROM CustomerAccountEntry WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt}`,
             )
-          : tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
-              Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(p.createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(p.amount) AS revenue FROM OfflinePayment p JOIN \`Order\` o ON o.id=p.orderId WHERE p.voided=false AND p.createdAt >= ${where.createdAt.gte} AND p.createdAt < ${where.createdAt.lt} ${relatedClause} GROUP BY date ORDER BY date`,
-            ),
-      ]),
-    );
+            .then((rows) => ({ _sum: { amount: Number(rows[0]?.revenue ?? 0) } }))
+        : tx.offlinePayment.aggregate({
+            where: {
+              voided: false,
+              createdAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
+              order: relatedOrder,
+            },
+            _sum: { amount: true },
+          }),
+      ledgerScope
+        ? tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
+            Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(CASE WHEN direction='RECEIPT' THEN amount ELSE -amount END) AS revenue FROM CustomerAccountEntry WHERE createdAt >= ${where.createdAt.gte} AND createdAt < ${where.createdAt.lt} GROUP BY date ORDER BY date`,
+          )
+        : tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
+            Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(p.createdAt, '+00:00', '+03:30'), '%Y-%m-%d') AS date, SUM(p.amount) AS revenue FROM OfflinePayment p JOIN \`Order\` o ON o.id=p.orderId WHERE p.voided=false AND p.createdAt >= ${where.createdAt.gte} AND p.createdAt < ${where.createdAt.lt} ${relatedClause} GROUP BY date ORDER BY date`,
+          ),
+      ledgerScope
+        ? tx.payment.aggregate({
+            where: {
+              mode: paymentMode,
+              status: 'SUCCEEDED',
+              paymentRequestId: { not: null },
+              paymentRequest: { customerId: null },
+              acceptedAt: { gte: where.createdAt.gte, lt: where.createdAt.lt },
+            },
+            _sum: { amountRials: true },
+          })
+        : Promise.resolve({ _sum: { amountRials: 0n } }),
+      ledgerScope
+        ? tx.$queryRaw<Array<{ date: string; revenue: Prisma.Decimal }>>(
+            Prisma.sql`SELECT DATE_FORMAT(CONVERT_TZ(p.acceptedAt,'+00:00','+03:30'),'%Y-%m-%d') AS date,SUM(p.amountRials) AS revenue FROM Payment p JOIN PaymentRequest r ON r.id=p.paymentRequestId WHERE r.customerId IS NULL AND p.mode=${paymentMode} AND p.status='SUCCEEDED' AND p.acceptedAt>=${where.createdAt.gte} AND p.acceptedAt<${where.createdAt.lt} GROUP BY date ORDER BY date`,
+          )
+        : Promise.resolve([]),
+    ]),
+  );
   return {
     from: input.from,
     to: input.to,
     ordersCount: count,
     orderValue: aggregate._sum.total ?? 0,
     averageOrderValue: aggregate._avg.total ?? 0,
+    paymentLinkRevenue: Number((linkIncome._sum.amountRials ?? 0n) / 10n),
     bankRevenue: Number((income._sum.amountRials ?? 0n) / 10n),
     offlineRevenue: offlineIncome._sum.amount ?? 0,
-    revenue: Number((income._sum.amountRials ?? 0n) / 10n) + (offlineIncome._sum.amount ?? 0),
+    revenue:
+      Number((income._sum.amountRials ?? 0n) / 10n) +
+      (offlineIncome._sum.amount ?? 0) +
+      Number((linkIncome._sum.amountRials ?? 0n) / 10n),
     daily: dateDays(input.from, input.to).map((date) => {
       const value = daily.find((row) => row.date === date);
       return {
@@ -114,7 +145,8 @@ export async function adminReport(raw: Record<string, unknown>) {
         orderValue: Number(value?.orderValue ?? 0),
         revenue:
           Number(incomeDaily.find((row) => row.date === date)?.revenue ?? 0) / 10 +
-          Number(offlineDaily.find((row) => row.date === date)?.revenue ?? 0),
+          Number(offlineDaily.find((row) => row.date === date)?.revenue ?? 0) +
+          Number(linkDaily.find((row) => row.date === date)?.revenue ?? 0) / 10,
       };
     }),
     statuses: orderStatuses.map((status) => ({
@@ -139,6 +171,7 @@ export async function adminDashboard(salesChannel?: SalesChannel | null) {
     orderedProducts,
     offlineIncome,
     channelMetrics,
+    linkIncome,
   ] = await Promise.all([
     db.order.count({ where: channelWhere }),
     db.order.count({
@@ -212,6 +245,17 @@ export async function adminDashboard(salesChannel?: SalesChannel | null) {
         };
       }),
     ),
+    !salesChannel
+      ? db.payment.aggregate({
+          where: {
+            mode: paymentMode,
+            status: 'SUCCEEDED',
+            paymentRequestId: { not: null },
+            paymentRequest: { customerId: null },
+          },
+          _sum: { amountRials: true },
+        })
+      : Promise.resolve({ _sum: { amountRials: 0n } }),
   ]);
   const products = await db.product.findMany({
     where: { id: { in: orderedProducts.map((item) => item.productId) } },
@@ -241,7 +285,10 @@ export async function adminDashboard(salesChannel?: SalesChannel | null) {
     ordersThisMonth,
     orderValue: values._sum.total ?? 0,
     averageOrderValue: values._avg.total ?? 0,
-    revenue: Number((paidIncome._sum.amountRials ?? 0n) / 10n) + (offlineIncome._sum.amount ?? 0),
+    revenue:
+      Number((paidIncome._sum.amountRials ?? 0n) / 10n) +
+      (offlineIncome._sum.amount ?? 0) +
+      Number((linkIncome._sum.amountRials ?? 0n) / 10n),
     recentOrders: recent.items,
     report,
   };

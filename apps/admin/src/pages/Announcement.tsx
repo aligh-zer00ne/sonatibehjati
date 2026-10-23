@@ -1,5 +1,6 @@
+import PageHeading from '../components/PageHeading';
 import { useState } from 'react';
-import { Alert, App, Button, Card, Form, Input, Switch, Typography } from 'antd';
+import { Alert, App, Button, Card, Form, Input, Switch } from 'antd';
 import { announcementSchema } from '@behjati/shared/homepage';
 import {
   AdminAnnouncementDocument,
@@ -83,7 +84,9 @@ export default function Announcement() {
   const query = useAdminQuery(AdminAnnouncementDocument, {});
   return (
     <>
-      <Typography.Title level={2}>نوار اطلاع‌رسانی سایت</Typography.Title>
+      <PageHeading icon="review" description="ویرایش پیام مناسبت‌ها و جشنواره‌ها در بالای فروشگاه.">
+        نوار اطلاع‌رسانی سایت
+      </PageHeading>
       {query.data ? (
         <Editor
           key={query.data.adminHomepageContent.updatedAt ?? 'default'}

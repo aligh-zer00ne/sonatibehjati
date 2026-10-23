@@ -1,3 +1,4 @@
+import PageHeading from '../components/PageHeading';
 import AccountStatus from '../components/AccountStatus';
 import RetailCustomerModal from '../components/RetailCustomerModal';
 import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
@@ -9,7 +10,7 @@ import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Typography, Input, Button, Alert } from 'antd';
+import { Input, Button, Alert } from 'antd';
 import { formatNumber, formatDate } from '@behjati/shared';
 import {
   AdminUsersDocument,
@@ -36,7 +37,9 @@ export default function Users() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Typography.Title level={2}>کاربران</Typography.Title>
+        <PageHeading icon="users" description="حساب مشتریان، سابقه خرید و لینک پرداخت مانده.">
+          مشتریان
+        </PageHeading>
         <div className="flex flex-wrap gap-2">
           <Button type="primary" onClick={() => setCreating(true)}>
             افزودن مشتری
@@ -156,11 +159,23 @@ export default function Users() {
               title: 'عملیات',
               render: (_, user) =>
                 hasPermission(admin, 'ORDERS') && (
-                  <Link to={`/admin/settlements?customerId=${user.id}`}>
-                    <Button icon={<AdminIcon name="orders" width={17} height={17} />}>
-                      حساب و فاکتورهای دستی
-                    </Button>
-                  </Link>
+                  <div className="flex flex-wrap gap-2">
+                    <Link to={`/admin/settlements/account?customerId=${user.id}`}>
+                      <Button icon={<AdminIcon name="orders" width={17} height={17} />}>
+                        حساب و فاکتورهای دستی
+                      </Button>
+                    </Link>
+                    {user.accountBalance > 0 && (
+                      <Link to={`/admin/settlements/links/new?customerId=${user.id}`}>
+                        <Button
+                          title="ساخت لینک پرداخت مانده"
+                          icon={<AdminIcon name="link" width={18} />}
+                        >
+                          لینک پرداخت مانده
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
                 ),
             },
           ]}

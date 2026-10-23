@@ -352,6 +352,50 @@ export type AdminPasswordChangeInput = {
   newPassword: Scalars['String']['input'];
 };
 
+export type AdminPaymentRequest = {
+  __typename?: 'AdminPaymentRequest';
+  amount: Scalars['Int']['output'];
+  createdAt: Scalars['String']['output'];
+  customerId?: Maybe<Scalars['ID']['output']>;
+  customerName?: Maybe<Scalars['String']['output']>;
+  expiresAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  paidAt?: Maybe<Scalars['String']['output']>;
+  payerName?: Maybe<Scalars['String']['output']>;
+  payerPhone?: Maybe<Scalars['String']['output']>;
+  payments: Array<PaymentInfo>;
+  scope: PaymentRequestScope;
+  status: PaymentRequestStatus;
+  title: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type AdminPaymentRequestInput = {
+  amount: Scalars['Int']['input'];
+  customerId?: InputMaybe<Scalars['ID']['input']>;
+  expiresInHours?: InputMaybe<Scalars['Int']['input']>;
+  payerName?: InputMaybe<Scalars['String']['input']>;
+  payerPhone?: InputMaybe<Scalars['String']['input']>;
+  requestId: Scalars['ID']['input'];
+  scope: PaymentRequestScope;
+  title: Scalars['String']['input'];
+};
+
+export type AdminPaymentRequestPage = {
+  __typename?: 'AdminPaymentRequestPage';
+  gatewayAvailable: Scalars['Boolean']['output'];
+  items: Array<AdminPaymentRequest>;
+  page: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
+export type AdminPaymentRequestsInput = {
+  customerId?: InputMaybe<Scalars['ID']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  scope?: InputMaybe<PaymentRequestScope>;
+  status?: InputMaybe<PaymentRequestStatus>;
+};
+
 export type AdminPermission =
   | 'COUPONS'
   | 'CUSTOMERS'
@@ -434,6 +478,7 @@ export type AdminReport = {
   offlineRevenue: Scalars['Float']['output'];
   orderValue: Scalars['Float']['output'];
   ordersCount: Scalars['Int']['output'];
+  paymentLinkRevenue: Scalars['Float']['output'];
   revenue: Scalars['Float']['output'];
   statuses: Array<AdminStatusMetric>;
   to: Scalars['String']['output'];
@@ -763,9 +808,11 @@ export type Mutation = {
   adminLogin: AdminSessionPayload;
   adminLogout: Scalars['Boolean']['output'];
   adminRefresh: AdminSessionPayload;
+  cancelAdminPaymentRequest: AdminPaymentRequest;
   changeAdminPassword: Scalars['Boolean']['output'];
   createAdminCustomer: AdminUser;
   createAdminManualOrder: AdminOrder;
+  createAdminPaymentRequest: AdminPaymentRequest;
   createOrder: OrderReceipt;
   createStaff: AdminIdentity;
   createTicket: SupportTicket;
@@ -805,6 +852,11 @@ export type MutationAdminLoginArgs = {
 };
 
 
+export type MutationCancelAdminPaymentRequestArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationChangeAdminPasswordArgs = {
   input: AdminPasswordChangeInput;
 };
@@ -817,6 +869,11 @@ export type MutationCreateAdminCustomerArgs = {
 
 export type MutationCreateAdminManualOrderArgs = {
   input: AdminManualOrderInput;
+};
+
+
+export type MutationCreateAdminPaymentRequestArgs = {
+  input: AdminPaymentRequestInput;
 };
 
 
@@ -997,6 +1054,7 @@ export type OfflinePaymentMethod =
   | 'CARD_TRANSFER'
   | 'CASH'
   | 'CHECK'
+  | 'ONLINE'
   | 'POS';
 
 export type OrderAddressSnapshot = {
@@ -1090,6 +1148,16 @@ export type PaymentRedirect = {
   __typename?: 'PaymentRedirect';
   redirectUrl: Scalars['String']['output'];
 };
+
+export type PaymentRequestScope =
+  | 'CUSTOMER_BALANCE'
+  | 'CUSTOM_AMOUNT';
+
+export type PaymentRequestStatus =
+  | 'ACTIVE'
+  | 'CANCELED'
+  | 'EXPIRED'
+  | 'PAID';
 
 export type PaymentStatus =
   | 'CANCELED'
@@ -1190,6 +1258,7 @@ export type Query = {
   adminOrderCustomer: AdminUser;
   adminOrderCustomers: AdminUsersPage;
   adminOrders: AdminOrdersPage;
+  adminPaymentRequests: AdminPaymentRequestPage;
   adminProduct: Product;
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;
@@ -1262,6 +1331,11 @@ export type QueryAdminOrderCustomersArgs = {
 
 export type QueryAdminOrdersArgs = {
   input: AdminOrdersInput;
+};
+
+
+export type QueryAdminPaymentRequestsArgs = {
+  input: AdminPaymentRequestsInput;
 };
 
 
@@ -1582,6 +1656,10 @@ export type ResolversTypes = {
   AdminOrdersInput: AdminOrdersInput;
   AdminOrdersPage: ResolverTypeWrapper<AdminOrdersPage>;
   AdminPasswordChangeInput: AdminPasswordChangeInput;
+  AdminPaymentRequest: ResolverTypeWrapper<AdminPaymentRequest>;
+  AdminPaymentRequestInput: AdminPaymentRequestInput;
+  AdminPaymentRequestPage: ResolverTypeWrapper<AdminPaymentRequestPage>;
+  AdminPaymentRequestsInput: AdminPaymentRequestsInput;
   AdminPermission: AdminPermission;
   AdminProductDeletion: ResolverTypeWrapper<AdminProductDeletion>;
   AdminProductImageInput: AdminProductImageInput;
@@ -1640,6 +1718,8 @@ export type ResolversTypes = {
   OtpChallenge: ResolverTypeWrapper<OtpChallenge>;
   PaymentInfo: ResolverTypeWrapper<PaymentInfo>;
   PaymentRedirect: ResolverTypeWrapper<PaymentRedirect>;
+  PaymentRequestScope: PaymentRequestScope;
+  PaymentRequestStatus: PaymentRequestStatus;
   PaymentStatus: PaymentStatus;
   Product: ResolverTypeWrapper<Product>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
@@ -1698,6 +1778,10 @@ export type ResolversParentTypes = {
   AdminOrdersInput: AdminOrdersInput;
   AdminOrdersPage: AdminOrdersPage;
   AdminPasswordChangeInput: AdminPasswordChangeInput;
+  AdminPaymentRequest: AdminPaymentRequest;
+  AdminPaymentRequestInput: AdminPaymentRequestInput;
+  AdminPaymentRequestPage: AdminPaymentRequestPage;
+  AdminPaymentRequestsInput: AdminPaymentRequestsInput;
   AdminProductDeletion: AdminProductDeletion;
   AdminProductImageInput: AdminProductImageInput;
   AdminProductInput: AdminProductInput;
@@ -1962,6 +2046,30 @@ export type AdminOrdersPageResolvers<ContextType = AuthContext, ParentType exten
   totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type AdminPaymentRequestResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminPaymentRequest'] = ResolversParentTypes['AdminPaymentRequest']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  customerId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  customerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  expiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  paidAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  payerName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  payerPhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  payments?: Resolver<Array<ResolversTypes['PaymentInfo']>, ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['PaymentRequestScope'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['PaymentRequestStatus'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type AdminPaymentRequestPageResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminPaymentRequestPage'] = ResolversParentTypes['AdminPaymentRequestPage']> = {
+  gatewayAvailable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['AdminPaymentRequest']>, ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type AdminProductDeletionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminProductDeletion'] = ResolversParentTypes['AdminProductDeletion']> = {
   deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
@@ -1983,6 +2091,7 @@ export type AdminReportResolvers<ContextType = AuthContext, ParentType extends R
   offlineRevenue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   orderValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   ordersCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  paymentLinkRevenue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   revenue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   statuses?: Resolver<Array<ResolversTypes['AdminStatusMetric']>, ParentType, ContextType>;
   to?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2179,9 +2288,11 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   adminLogin?: Resolver<ResolversTypes['AdminSessionPayload'], ParentType, ContextType, RequireFields<MutationAdminLoginArgs, 'input'>>;
   adminLogout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   adminRefresh?: Resolver<ResolversTypes['AdminSessionPayload'], ParentType, ContextType>;
+  cancelAdminPaymentRequest?: Resolver<ResolversTypes['AdminPaymentRequest'], ParentType, ContextType, RequireFields<MutationCancelAdminPaymentRequestArgs, 'id'>>;
   changeAdminPassword?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeAdminPasswordArgs, 'input'>>;
   createAdminCustomer?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<MutationCreateAdminCustomerArgs, 'input'>>;
   createAdminManualOrder?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationCreateAdminManualOrderArgs, 'input'>>;
+  createAdminPaymentRequest?: Resolver<ResolversTypes['AdminPaymentRequest'], ParentType, ContextType, RequireFields<MutationCreateAdminPaymentRequestArgs, 'input'>>;
   createOrder?: Resolver<ResolversTypes['OrderReceipt'], ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'input'>>;
   createStaff?: Resolver<ResolversTypes['AdminIdentity'], ParentType, ContextType, RequireFields<MutationCreateStaffArgs, 'input'>>;
   createTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationCreateTicketArgs, 'input'>>;
@@ -2366,6 +2477,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminOrderCustomer?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomerArgs, 'id'>>;
   adminOrderCustomers?: Resolver<ResolversTypes['AdminUsersPage'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomersArgs, 'input'>>;
   adminOrders?: Resolver<ResolversTypes['AdminOrdersPage'], ParentType, ContextType, RequireFields<QueryAdminOrdersArgs, 'input'>>;
+  adminPaymentRequests?: Resolver<ResolversTypes['AdminPaymentRequestPage'], ParentType, ContextType, RequireFields<QueryAdminPaymentRequestsArgs, 'input'>>;
   adminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<QueryAdminProductArgs, 'id'>>;
   adminProducts?: Resolver<ResolversTypes['AdminProductsPage'], ParentType, ContextType, RequireFields<QueryAdminProductsArgs, 'input'>>;
   adminReport?: Resolver<ResolversTypes['AdminReport'], ParentType, ContextType, RequireFields<QueryAdminReportArgs, 'input'>>;
@@ -2447,6 +2559,8 @@ export type Resolvers<ContextType = AuthContext> = {
   AdminOrder?: AdminOrderResolvers<ContextType>;
   AdminOrderSummary?: AdminOrderSummaryResolvers<ContextType>;
   AdminOrdersPage?: AdminOrdersPageResolvers<ContextType>;
+  AdminPaymentRequest?: AdminPaymentRequestResolvers<ContextType>;
+  AdminPaymentRequestPage?: AdminPaymentRequestPageResolvers<ContextType>;
   AdminProductDeletion?: AdminProductDeletionResolvers<ContextType>;
   AdminProductsPage?: AdminProductsPageResolvers<ContextType>;
   AdminReport?: AdminReportResolvers<ContextType>;

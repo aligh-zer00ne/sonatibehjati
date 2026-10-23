@@ -152,6 +152,15 @@ export async function cleanupAdmin() {
   await db.payment.deleteMany({
     where: { gatewayTestAdminId: { in: admins.map((a) => a.id) }, mode: 'TEST' },
   });
+  const requestWhere = { createdByAdminId: { in: admins.map((a) => a.id) }, mode: 'TEST' };
+  await db.offlinePayment.deleteMany({
+    where: { accountEntry: { payment: { paymentRequest: requestWhere } } },
+  });
+  await db.customerAccountEntry.deleteMany({
+    where: { payment: { paymentRequest: requestWhere } },
+  });
+  await db.payment.deleteMany({ where: { paymentRequest: requestWhere, mode: 'TEST' } });
+  await db.paymentRequest.deleteMany({ where: requestWhere });
   await cleanup();
   await db.admin.deleteMany({ where: { id: { in: admins.map((admin) => admin.id) } } });
   await db.product.deleteMany({ where: { id: { in: [...products] } } });
@@ -163,6 +172,7 @@ export async function cleanupAdmin() {
     `support:${admin.id}`,
     `payment-check:${admin.id}`,
     `gateway-test:${admin.id}`,
+    `payment-links:${admin.id}`,
   ]);
   for (const ip of [
     '127.0.0.1',

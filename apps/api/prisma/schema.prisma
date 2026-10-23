@@ -39,6 +39,7 @@ enum ReviewStatus {
 }
 
 model User {
+  paymentRequests   PaymentRequest[]
   accountEntries    CustomerAccountEntry[]
   acquisitionSource SalesChannel           @default(WEBSITE)
   createdByAdminId  String?
@@ -175,32 +176,36 @@ enum PaymentMode {
 }
 
 model Payment {
-  mode               PaymentMode       @default(LIVE)
-  id                 String            @id
+  mode               PaymentMode           @default(LIVE)
+  id                 String                @id
   orderId            String?
-  order              Order?            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order              Order?                @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paymentRequestId   String?               @db.VarChar(36)
+  paymentRequest     PaymentRequest?       @relation(fields: [paymentRequestId], references: [id], onDelete: Restrict)
+  accountEntry       CustomerAccountEntry?
   gatewayTestAdminId String?
-  status             PaymentStatus     @default(CREATING)
+  status             PaymentStatus         @default(CREATING)
   amountRials        BigInt
-  terminalId         String            @db.VarChar(20)
-  callbackKey        String            @db.VarChar(64)
+  terminalId         String                @db.VarChar(20)
+  callbackKey        String                @db.VarChar(64)
   sessionKey         Int
-  token              String?           @db.VarChar(512)
-  refNum             String?           @db.VarChar(100)
-  traceNumber        String?           @db.VarChar(100)
-  rrn                String?           @db.VarChar(100)
+  token              String?               @db.VarChar(512)
+  refNum             String?               @db.VarChar(100)
+  traceNumber        String?               @db.VarChar(100)
+  rrn                String?               @db.VarChar(100)
   resultCode         Int?
-  reason             String?           @db.VarChar(50)
+  reason             String?               @db.VarChar(50)
   expiresAt          DateTime
   leaseUntil         DateTime?
   retryAt            DateTime?
   verifiedAt         DateTime?
   acceptedAt         DateTime?
   reversedAt         DateTime?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
   reference          PaymentReference?
 
+  @@index([paymentRequestId, createdAt])
   @@index([orderId, createdAt])
   @@index([gatewayTestAdminId, createdAt])
   @@index([status, retryAt])
@@ -435,6 +440,7 @@ enum ShippingMethod {
 }
 
 enum OfflinePaymentMethod {
+  ONLINE
   CASH
   POS
   CARD_TRANSFER
@@ -465,6 +471,8 @@ enum AccountEntryDirection {
 }
 
 model CustomerAccountEntry {
+  paymentId     String?               @unique
+  payment       Payment?              @relation(fields: [paymentId], references: [id], onDelete: Restrict)
   id            String                @id @db.VarChar(36)
   userId        String
   user          User                  @relation(fields: [userId], references: [id], onDelete: Restrict)
@@ -484,4 +492,30 @@ model CustomerAccountEntry {
 
   @@index([userId, createdAt])
   @@index([createdAt])
+}
+
+model PaymentRequest {
+  mode              PaymentMode @default(LIVE)
+  id                String      @id @db.VarChar(36)
+  key               String      @db.VarChar(64)
+  requestHash       String      @db.VarChar(64)
+  scope             String      @db.VarChar(30)
+  customerId        String?
+  customer          User?       @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  title             String      @db.VarChar(200)
+  amount            Int
+  payerName         String?     @db.VarChar(100)
+  payerPhone        String?     @db.VarChar(20)
+  createdByAdminId  String
+  createdByEmail    String
+  createdAt         DateTime    @default(now())
+  expiresAt         DateTime
+  canceledAt        DateTime?
+  paidAt            DateTime?
+  acceptedPaymentId String?     @unique
+  payments          Payment[]
+
+  @@index([customerId, createdAt])
+  @@index([createdAt])
+  @@index([paidAt])
 }

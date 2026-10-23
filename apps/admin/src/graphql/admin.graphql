@@ -238,6 +238,7 @@ query AdminUsers($input: AdminUsersInput!) {
   }
 }
 fragment AdminReportFields on AdminReport {
+  paymentLinkRevenue
   bankRevenue
   offlineRevenue
   from
@@ -704,5 +705,54 @@ query AdminCustomerAccount($customerId: ID!, $page: Int, $invoicePage: Int) {
 mutation RecordAdminAccountEntry($input: AdminAccountEntryInput!) {
   recordAdminAccountEntry(input: $input) {
     ...CustomerAccountFields
+  }
+}
+
+fragment AdminPaymentRequestFields on AdminPaymentRequest {
+  id
+  scope
+  customerId
+  customerName
+  title
+  amount
+  payerName
+  payerPhone
+  url
+  status
+  createdAt
+  expiresAt
+  paidAt
+  payments {
+    id
+    status
+    amount
+    reference
+    traceNumber
+    rrn
+    reason
+    bankCode
+    createdAt
+    verifiedAt
+    reversedAt
+  }
+}
+query AdminPaymentRequests($input: AdminPaymentRequestsInput!) {
+  adminPaymentRequests(input: $input) {
+    items {
+      ...AdminPaymentRequestFields
+    }
+    total
+    page
+    gatewayAvailable
+  }
+}
+mutation CreateAdminPaymentRequest($input: AdminPaymentRequestInput!) {
+  createAdminPaymentRequest(input: $input) {
+    ...AdminPaymentRequestFields
+  }
+}
+mutation CancelAdminPaymentRequest($id: ID!) {
+  cancelAdminPaymentRequest(id: $id) {
+    ...AdminPaymentRequestFields
   }
 }

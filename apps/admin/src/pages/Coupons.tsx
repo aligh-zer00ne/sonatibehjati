@@ -1,20 +1,9 @@
+import PageHeading from '../components/PageHeading';
 import { FilterChips, FilterButton, FilterBar } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import RecordCards from '../components/RecordCards';
 import { useState } from 'react';
-import {
-  Alert,
-  App,
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Switch,
-  Tag,
-  Typography,
-} from 'antd';
+import { Alert, App, Button, Form, Input, InputNumber, Modal, Select, Switch, Tag } from 'antd';
 import { formatDate, formatNumber } from '@behjati/shared';
 import { couponInput } from '@behjati/shared/operations';
 import {
@@ -57,7 +46,9 @@ export default function Coupons() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Typography.Title level={2}>کدهای تخفیف سفارش</Typography.Title>
+        <PageHeading icon="discount" description="مدیریت کدها، اعتبار و شرایط تخفیف سفارش.">
+          کدهای تخفیف سفارش
+        </PageHeading>
         <Button type="primary" onClick={() => edit(null)}>
           کد تخفیف جدید
         </Button>

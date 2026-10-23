@@ -1,3 +1,4 @@
+import PageHeading from '../components/PageHeading';
 import { FilterButton, FilterBar, FilterChips } from '../components/FilterButtons';
 import AdminIcon from '../components/AdminIcon';
 import DashboardProductImage from '../components/DashboardProductImage';
@@ -6,7 +7,7 @@ import ProductPreview from '../components/ProductPreview';
 import { Money } from '../components/Money';
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Input, Button, Tag, Space, Popconfirm, App, Typography } from 'antd';
+import { Input, Button, Tag, Space, Popconfirm, App } from 'antd';
 import { formatNumber } from '@behjati/shared';
 import {
   AdminProductsDocument,
@@ -73,7 +74,9 @@ export default function Products() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Typography.Title level={2}>محصولات</Typography.Title>
+        <PageHeading icon="products" description="محصولات، قیمت‌گذاری و موجودی فروشگاه.">
+          محصولات
+        </PageHeading>
         <div className="flex flex-wrap gap-2">
           <Button disabled={!selected.length || pending} onClick={() => setPromotionOpen(true)}>
             تخفیف / جشنواره ({formatNumber(selected.length)} محصول)

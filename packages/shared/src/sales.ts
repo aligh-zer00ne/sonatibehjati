@@ -14,7 +14,8 @@ export const shippingMethodLabels: Record<ShippingMethod, string> = {
 };
 export const offlinePaymentMethods = ['CASH', 'POS', 'CARD_TRANSFER', 'CHECK'] as const;
 export type OfflinePaymentMethod = (typeof offlinePaymentMethods)[number];
-export const offlinePaymentMethodLabels: Record<OfflinePaymentMethod, string> = {
+export const offlinePaymentMethodLabels: Record<OfflinePaymentMethod | 'ONLINE', string> = {
+  ONLINE: 'درگاه سامان (تأییدشده)',
   CASH: 'نقدی',
   POS: 'کارت‌خوان',
   CARD_TRANSFER: 'کارت به کارت',
