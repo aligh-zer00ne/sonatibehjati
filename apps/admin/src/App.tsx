@@ -51,6 +51,13 @@ export default function App() {
           controlHeight: 48,
         },
         components: {
+          Input: {
+            colorBgContainer: '#f9f6f0',
+            activeBg: '#fffdf9',
+            hoverBg: '#fcfaf6',
+            activeShadow: '0 0 0 3px #701e2a12',
+          },
+          InputNumber: { colorBgContainer: '#f9f6f0', activeShadow: '0 0 0 3px #701e2a12' },
           Select: {
             optionSelectedBg: '#f3ead7',
             optionActiveBg: '#faf6ee',

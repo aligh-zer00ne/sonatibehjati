@@ -2,6 +2,7 @@ import { useState, type Key, type ReactNode } from 'react';
 import { Checkbox, Empty, Pagination, type PaginationProps } from 'antd';
 import { formatNumber } from '@behjati/shared';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
+import { cardInteraction, cardIconInteraction } from '../lib/card-interaction';
 
 type Field<T> = {
   title: string;
@@ -120,14 +121,18 @@ export default function RecordCards<T extends object>({
               <article
                 key={keyOf(record)}
                 data-admin-record
-                className="relative min-w-0 overflow-hidden rounded-3xl border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08] transition-shadow duration-300 hover:shadow-[0_12px_30px_#62452f14] sm:p-5"
+                data-interactive-card
+                className={`${cardInteraction} min-w-0 overflow-hidden rounded-3xl border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08] sm:p-5`}
               >
                 <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701e2a]" />
                 <header className="mb-3 flex items-start gap-3">
                   {avatar ? (
                     avatar(record)
                   ) : (
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#701e2a]">
+                    <span
+                      data-card-icon
+                      className={`${cardIconInteraction} flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#701e2a]`}
+                    >
                       <AdminIcon name={icon} width={22} height={22} />
                     </span>
                   )}

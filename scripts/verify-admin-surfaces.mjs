@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
-import { startAPI, adminOrigin } from './auth-harness.mjs';
+import { startAPI, adminOrigin, db } from './auth-harness.mjs';
 import {
   createAdmin,
   loginAdmin,
   createCustomer,
   startAdmin,
   cleanupAdmin,
+  createOrderFixture,
 } from './admin-harness.mjs';
-import { verifySurfaceMotion } from './surface-motion-checks.mjs';
+import { verifySurfaceMotion, verifyCardFeedback } from './surface-motion-checks.mjs';
 let browser;
 try {
   await startAPI();
@@ -16,6 +17,8 @@ try {
   const owner = await createAdmin(),
     session = await loginAdmin(owner),
     customer = await createCustomer();
+  const product = await db.product.findFirstOrThrow({ where: { isActive: true } });
+  await createOrderFixture(customer, product);
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
     headless: true,
@@ -87,9 +90,47 @@ try {
     fullPage: true,
     animations: 'disabled',
   });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const path of [
+    '/admin/sections/catalog',
+    '/admin/sections/sales',
+    '/admin/sections/communication',
+    '/admin/sections/settings',
+    '/admin/settlements',
+  ]) {
+    await page.goto(adminOrigin + path);
+    const card = page.locator('[data-interactive-card]').first();
+    await verifyCardFeedback(page, card);
+    await verifySurfaceMotion(page, card, { tilt: false });
+    if (path === '/admin/settlements') {
+      await card.hover();
+      await page.screenshot({ path: '/tmp/behjati-reactive-finance-desktop.png', fullPage: true });
+    }
+    const href = await card.getAttribute('href');
+    await card.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(adminOrigin + href);
+  }
+  for (const [path, selector] of [
+    ['/admin/users', '[data-admin-record]'],
+    ['/admin/orders/website', '[data-order-id]'],
+    ['/admin', '[data-analytics-metric][data-interactive-card]'],
+  ]) {
+    await page.goto(adminOrigin + path);
+    await verifyCardFeedback(page, page.locator(selector).first());
+  }
+  await page.goto(adminOrigin + '/admin/settlements');
+  await page.setViewportSize({ width: 390, height: 844 });
+  const card = page.locator('[data-interactive-card]').first();
+  await verifySurfaceMotion(page, card, { tilt: false });
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+    .toBeLessThanOrEqual(1);
+  await card.hover();
+  await page.screenshot({ path: '/tmp/behjati-reactive-finance-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);
   console.log(
-    'Admin surfaces passed: burgundy catalog/sales/communication/settings/report/account/finance panels, visible autonomous network, stationary backgrounds, pointer/touch links, reduced-motion and 320–1440px bounds. No SMS/bank call.',
+    'Admin surfaces passed: burgundy catalog/sales/communication/settings/report/account/finance panels, stationary particle networks, consistent navigation/finance/customer/order/dashboard card border/shadow/wash/icon feedback, keyboard navigation, touch feedback, reduced-motion and 320–1440px bounds. No SMS/bank call.',
   );
 } finally {
   await browser?.close();

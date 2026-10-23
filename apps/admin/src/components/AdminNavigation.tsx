@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { canOpenAdminPath } from '@behjati/shared/permissions';
 import type { AdminIdentityFieldsFragment } from '../generated/graphql';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
-import SurfaceGlow from './SurfaceGlow';
-import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
+import ActionCardLink from './ActionCardLink';
+import { cardIconInteraction } from '../lib/card-interaction';
 
 type Item = { href: string; label: string; icon: AdminIconName; description: string };
 export const orderLinks: Item[] = [
@@ -203,7 +203,7 @@ export function AdminNavigationTabs({
       ),
   );
   const tabClass =
-    'flex min-h-[56px] shrink-0 items-center justify-center gap-2 rounded-full px-3 text-[14px] xl:min-h-[60px] xl:px-5 xl:text-[15px] font-bold transition-colors motion-reduce:transition-none';
+    'group flex min-h-[56px] shrink-0 items-center justify-center gap-2 rounded-full border border-transparent px-3 text-[14px] xl:min-h-[60px] xl:px-5 xl:text-[15px] font-bold transition-colors hover:border-[#edc57d]/40 motion-safe:transition-[translate,background-color,box-shadow] motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-reduce:transition-none';
   const activeClass =
     '!bg-[linear-gradient(135deg,#f6dfa0,#d3a23f)] !text-[#39270c] shadow-[0_4px_18px_#edc57d38,inset_0_1px_0_#fff8d7]';
   const inactiveClass = mobile
@@ -227,7 +227,11 @@ export function AdminNavigationTabs({
           onClick={onNavigate}
           className={`${tabClass} ${selected === '/admin' ? activeClass : inactiveClass}`}
         >
-          <AdminIcon name="home" width={20} />
+          <AdminIcon
+            name="home"
+            width={20}
+            className="motion-safe:transition-transform motion-safe:group-hover:-rotate-6 motion-safe:group-hover:scale-110"
+          />
           داشبورد
         </Link>
       )}
@@ -240,7 +244,11 @@ export function AdminNavigationTabs({
           onClick={onNavigate}
           className={`${tabClass} ${current?.id === group.id ? activeClass : inactiveClass}`}
         >
-          <AdminIcon name={group.icon} width={20} className="shrink-0" />
+          <AdminIcon
+            name={group.icon}
+            width={20}
+            className="shrink-0 motion-safe:transition-transform motion-safe:group-hover:-rotate-6 motion-safe:group-hover:scale-110"
+          />
           <span className="whitespace-nowrap">{group.shortLabel}</span>
         </Link>
       ))}
@@ -248,22 +256,22 @@ export function AdminNavigationTabs({
   );
 }
 function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => void }) {
-  const motion = useSurfaceMotion<HTMLAnchorElement>({ tilt: true });
   return (
-    <Link
-      {...motion}
+    <ActionCardLink
       to={item.href}
       aria-label={item.label}
       onClick={onNavigate}
       data-admin-navigation-card
-      className={`${surfaceCardMotion} group relative isolate flex min-h-[220px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_5px_18px_#62452f0c] hover:border-[#b78343] hover:shadow-[0_14px_30px_#62452f1c] sm:min-h-[248px] sm:p-6`}
+      className="flex min-h-[220px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_5px_18px_#62452f0c] sm:min-h-[248px] sm:p-6"
     >
-      <SurfaceGlow />
       <div
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#701e2a] to-[#dfb65c]"
       />
-      <span className="mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_14px_#b7834340]">
+      <span
+        data-card-icon
+        className={`${cardIconInteraction} mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_14px_#b7834340]`}
+      >
         <AdminIcon name={item.icon} width={27} height={27} />
       </span>
       <h2 className="text-lg leading-8 font-extrabold">{item.label}</h2>
@@ -276,7 +284,7 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
           className="motion-safe:transition-transform motion-safe:group-hover:-translate-x-1"
         />
       </span>
-    </Link>
+    </ActionCardLink>
   );
 }
 export function AdminNavigationCards({

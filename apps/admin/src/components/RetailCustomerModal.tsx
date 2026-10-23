@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AdminIcon from './AdminIcon';
 import { Alert, Button, Form, Input, Modal, Radio } from 'antd';
 import { adminCustomerInputSchema } from '@behjati/shared/admin';
 import { CreateAdminCustomerDocument } from '../generated/graphql';
@@ -19,7 +20,20 @@ export default function RetailCustomerModal({
   return (
     <Modal
       open
-      title="افزودن مشتری"
+      title={
+        <span className="flex items-center gap-3">
+          <span className="grid size-11 place-items-center rounded-2xl bg-[#701e2a] text-[#f5d88f]">
+            <AdminIcon name="person" width={22} />
+          </span>
+          <span>
+            افزودن مشتری
+            <small aria-hidden="true" className="mt-1 block text-xs font-normal text-[#857467]">
+              اطلاعات تماس و نشانی برای فاکتور و ارسال
+            </small>
+          </span>
+        </span>
+      }
+      width={720}
       footer={null}
       onCancel={() => {
         if (!pending) onClose();
@@ -66,23 +80,33 @@ export default function RetailCustomerModal({
           }
         }}
       >
-        <Form.Item label="نام" name="firstName" rules={[{ required: true }]}>
-          <Input maxLength={100} />
-        </Form.Item>
-        <Form.Item label="نام خانوادگی" name="lastName">
-          <Input maxLength={100} />
-        </Form.Item>
-        <Form.Item label="موبایل" name="phone" rules={[{ required: true }]}>
-          <Input inputMode="tel" dir="ltr" maxLength={20} />
-        </Form.Item>
-        <Form.Item label="منبع آشنایی / خرید" name="salesChannel">
-          <Radio.Group
-            options={[
-              { value: 'IN_PERSON', label: 'حضوری' },
-              { value: 'INSTAGRAM', label: 'اینستاگرام' },
-            ]}
-          />
-        </Form.Item>
+        <h3 className="mb-4 mt-5 flex items-center gap-2 text-sm font-extrabold text-[#701e2a]">
+          <AdminIcon name="person" width={18} /> مشخصات مشتری
+        </h3>
+        <div className="grid gap-x-4 sm:grid-cols-2">
+          <Form.Item label="نام" name="firstName" rules={[{ required: true }]}>
+            <Input maxLength={100} />
+          </Form.Item>
+          <Form.Item label="نام خانوادگی" name="lastName">
+            <Input maxLength={100} />
+          </Form.Item>
+          <Form.Item label="موبایل" name="phone" rules={[{ required: true }]}>
+            <Input
+              inputMode="tel"
+              dir="ltr"
+              maxLength={20}
+              prefix={<AdminIcon name="phone" width={17} />}
+            />
+          </Form.Item>
+          <Form.Item label="منبع آشنایی / خرید" name="salesChannel">
+            <Radio.Group
+              options={[
+                { value: 'IN_PERSON', label: 'حضوری' },
+                { value: 'INSTAGRAM', label: 'اینستاگرام' },
+              ]}
+            />
+          </Form.Item>
+        </div>
         {source === 'INSTAGRAM' && (
           <div className="grid gap-x-3 sm:grid-cols-2">
             {[

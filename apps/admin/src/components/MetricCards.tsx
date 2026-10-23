@@ -2,6 +2,7 @@ import { AmountInWords } from './AmountInWords';
 import { Card, Statistic } from 'antd';
 import { formatNumber } from '@behjati/shared';
 import { toRials } from '../lib/money';
+import { cardInteraction } from '../lib/card-interaction';
 export default function MetricCards({
   metrics,
 }: {
@@ -10,7 +11,7 @@ export default function MetricCards({
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {metrics.map((metric) => (
-        <Card key={metric.label}>
+        <Card key={metric.label} className={`${cardInteraction} overflow-hidden`}>
           <Statistic
             title={metric.label}
             value={metric.amount ? toRials(metric.value) : metric.value}

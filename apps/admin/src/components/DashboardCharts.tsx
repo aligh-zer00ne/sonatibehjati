@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { compactRials } from './ReportCharts';
 import { formatAdminPrice } from '../lib/money';
 import { Card, Empty } from 'antd';
@@ -24,7 +24,8 @@ import type {
 import { Money } from './Money';
 import { chartDate } from '../lib/format';
 import AdminIcon from './AdminIcon';
-const colors = ['#701e2a', '#c69b48', '#70614d', '#d09f86', '#366e58', '#b66565'];
+import AmbientBackdrop from './AmbientBackdrop';
+const colors = ['#c57d8a', '#e6c06e', '#a79b8a', '#d9af91', '#78a78e', '#cd8d88'];
 export default function DashboardCharts({
   report,
   onInspect,
@@ -40,15 +41,35 @@ export default function DashboardCharts({
     });
   const [days, setDays] = useState(7);
   const [metric, setMetric] = useState<'orderValue' | 'revenue'>('orderValue');
+  const [activeStatus, setActiveStatus] = useState<OrderStatus | null>(null);
+  const [introFinished, setIntroFinished] = useState(false);
+  const [animate, setAnimate] = useState(
+    () => !matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  useEffect(() => {
+    const media = matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setAnimate(!media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
   const gradient = useId().replace(/:/g, '');
   const series = report.daily.slice(-days);
-  const statuses = report.statuses
-    .filter((item) => item.count > 0)
-    .map((item) => ({
-      ...item,
-      name: orderStatusLabels[item.status],
-      fill: colors[report.statuses.findIndex((row) => row.status === item.status) % colors.length],
-    }));
+  const statuses = useMemo(
+    () =>
+      report.statuses
+        .filter((item) => item.count > 0)
+        .map((item) => ({
+          ...item,
+          name: orderStatusLabels[item.status],
+          fill: colors[
+            report.statuses.findIndex((row) => row.status === item.status) % colors.length
+          ],
+        })),
+    [report.statuses],
+  );
+  const highlighted = statuses.find((item) => item.status === activeStatus);
+  const share = (count: number) =>
+    report.ordersCount ? Math.round((count / report.ordersCount) * 100) : 0;
   return (
     <>
       <Card
@@ -208,8 +229,14 @@ export default function DashboardCharts({
       >
         {statuses.length ? (
           <>
-            <div className="relative h-44" dir="ltr">
-              <ResponsiveContainer width="100%" height="100%">
+            <div
+              data-dashboard-donut
+              data-donut-ready={!animate || introFinished}
+              className="relative isolate mx-auto mb-4 h-[270px] w-full overflow-hidden rounded-[24px] border border-[#d7b476]/40 bg-[radial-gradient(ellipse_at_top_right,#71333d,transparent_70%),linear-gradient(135deg,#521b25,#290c12)] shadow-[inset_0_1px_0_#fff4cd20]"
+              dir="ltr"
+            >
+              <AmbientBackdrop />
+              <ResponsiveContainer width="100%" height="100%" className="relative z-10">
                 <PieChart>
                   <Pie
                     data={statuses}
@@ -217,25 +244,36 @@ export default function DashboardCharts({
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={53}
-                    outerRadius={77}
-                    paddingAngle={2}
-                    isAnimationActive={false}
+                    innerRadius={75}
+                    outerRadius={101}
+                    paddingAngle={4}
+                    cornerRadius={6}
+                    isAnimationActive={animate && !introFinished}
+                    onAnimationEnd={() => setIntroFinished(true)}
+                    animationDuration={700}
                     rootTabIndex={-1}
                     shape={(props: PieSectorShapeProps) => {
                       const item = statuses[props.index];
                       return (
                         <Sector
                           {...props}
+                          outerRadius={
+                            (props.outerRadius ?? 101) + (activeStatus === item?.status ? 5 : 0)
+                          }
+                          opacity={activeStatus && activeStatus !== item?.status ? 0.4 : 1}
                           data-dashboard-status={item?.status}
                           role={onInspect ? 'button' : undefined}
                           tabIndex={onInspect ? 0 : -1}
                           aria-label={item ? `نمایش سفارش‌های ${item.name} در نمودار` : undefined}
                           className={
                             onInspect
-                              ? 'cursor-pointer transition-opacity hover:opacity-75 focus:outline-none focus:stroke-[#34251e] focus:stroke-2'
+                              ? 'cursor-pointer motion-safe:transition-opacity motion-safe:duration-200 focus:outline-none focus:stroke-[#34251e] focus:stroke-2'
                               : ''
                           }
+                          onMouseEnter={() => item && setActiveStatus(item.status)}
+                          onMouseLeave={() => setActiveStatus(null)}
+                          onFocus={() => item && setActiveStatus(item.status)}
+                          onBlur={() => setActiveStatus(null)}
                           onClick={(e) => {
                             e.stopPropagation();
                             if (item) inspectStatus(item.status);
@@ -253,9 +291,23 @@ export default function DashboardCharts({
                   <Tooltip formatter={(value) => formatNumber(Number(value))} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="pointer-events-none absolute inset-0 grid place-content-center text-center">
-                <b className="text-xl">{formatNumber(report.ordersCount)}</b>
-                <span className="text-[12px] text-[#7d746a]">سفارش در ۳۰ روز اخیر</span>
+              <div
+                className="pointer-events-none absolute inset-0 z-20 grid place-content-center text-center"
+                dir="rtl"
+                aria-live="polite"
+                data-donut-summary
+              >
+                <span className="mb-1 text-[11px] text-[#edc57d]">
+                  {highlighted
+                    ? `${formatNumber(share(highlighted.count))}٪ از سفارش‌ها`
+                    : 'نمای کلی سفارش‌ها'}
+                </span>
+                <b className="text-4xl font-black tabular-nums text-[#fff4d8]">
+                  {formatNumber(highlighted?.count ?? report.ordersCount)}
+                </b>
+                <span className="mt-1 max-w-32 text-[11px] text-[#f2d6a2]">
+                  {highlighted?.name ?? 'سفارش در ۳۰ روز اخیر'}
+                </span>
               </div>
             </div>
             <p className="mb-2 text-center text-[11px] text-[#857467]">
@@ -271,7 +323,11 @@ export default function DashboardCharts({
                     disabled={!onInspect}
                     aria-label={`نمایش سفارش‌های ${item.name}`}
                     onClick={() => inspectStatus(item.status)}
-                    className="flex min-h-9 w-full items-center justify-between gap-2 rounded-lg border border-transparent px-2 text-start text-xs hover:border-[#e8ded1] hover:bg-[#faf6ee] disabled:cursor-default disabled:hover:border-transparent disabled:hover:bg-transparent"
+                    onMouseEnter={() => setActiveStatus(item.status)}
+                    onMouseLeave={() => setActiveStatus(null)}
+                    onFocus={() => setActiveStatus(item.status)}
+                    onBlur={() => setActiveStatus(null)}
+                    className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-[#eee5d9] bg-[#fcfaf6] px-3 text-start text-xs hover:border-[#c69b48] hover:bg-[#faf3e5] focus-visible:border-[#c69b48] disabled:cursor-default"
                   >
                     <span className="flex items-center gap-2">
                       <span
@@ -281,7 +337,10 @@ export default function DashboardCharts({
                       {item.name}
                     </span>
                     <span className="flex items-center gap-2">
-                      <b>{formatNumber(item.count)}</b>
+                      <span className="text-[11px] text-[#857467]">
+                        {formatNumber(share(item.count))}٪
+                      </span>
+                      <b className="min-w-6 text-center text-sm">{formatNumber(item.count)}</b>
                       {onInspect && <AdminIcon name="arrow" width={13} />}
                     </span>
                   </button>

@@ -25,6 +25,7 @@ import { customerName } from '../lib/format';
 import AmbientBackdrop from '../components/AmbientBackdrop';
 import AdminSkyline from '../components/AdminSkyline';
 import MotionButton from '../components/MotionButton';
+import { cardIconInteraction } from '../lib/card-interaction';
 const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
   { label: 'سفارش‌های وبسایت', href: '/admin/orders/website', icon: 'orders' },
   { label: 'فروش دستی', href: '/admin/orders/manual', icon: 'receipt' },
@@ -228,7 +229,10 @@ export default function Dashboard() {
               className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-4 text-start shadow-[0_3px_14px_#62452f06] hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] aria-pressed:border-[#c69b48] aria-pressed:bg-[linear-gradient(135deg,#fffaf0,#f6e5bd)] aria-pressed:shadow-[0_4px_16px_#c69b4824]"
             >
               <div className="mb-2 flex items-center gap-2">
-                <span className="grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#701e2a]">
+                <span
+                  data-card-icon
+                  className={`${cardIconInteraction} grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#701e2a]`}
+                >
                   <AdminIcon
                     name={
                       c.salesChannel === 'WEBSITE'

@@ -102,7 +102,7 @@ function LoginLayout({ children }: { children: ReactNode }) {
             مشاهده فروشگاه
             <AdminIcon name="arrow" className="size-3.5" />
           </a>
-          <DesignCredit className="[&_a]:!text-inherit [&_a:hover]:!text-[#701e2a]" />
+          <DesignCredit className="rounded-full border border-[#e3d1af] bg-white/70 px-4 py-2 text-[13px] [&_a]:!font-extrabold [&_a]:!text-[#701e2a] [&_a:hover]:underline" />
         </div>
       </div>
     </main>

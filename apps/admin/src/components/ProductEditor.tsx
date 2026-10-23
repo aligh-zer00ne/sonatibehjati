@@ -1,6 +1,7 @@
 import CompactTabs from './CompactTabs';
+import AdminIcon from './AdminIcon';
 import { useState, useEffect } from 'react';
-import { Card, Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
+import { Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
 import { parseShippingWeight } from '@behjati/shared/sales';
 import { adminProductInputSchema } from '@behjati/shared/admin';
 import {
@@ -75,6 +76,9 @@ export default function ProductEditor({
       ...promotionFormValues(product),
     }),
   };
+  const title = Form.useWatch('title', form);
+  const images = Form.useWatch('images', form) as Array<{ url: string; alt: string }> | undefined;
+  const active = Form.useWatch('isActive', form);
   const price = Form.useWatch('price', form);
   const percent = Form.useWatch('discountPercent', form);
   const forgetDraft = () => {
@@ -100,20 +104,32 @@ export default function ProductEditor({
   };
   const general = (
     <>
+      <h3 className="mb-4 flex items-center gap-2 font-extrabold text-[#701e2a]">
+        <AdminIcon name="products" width={18} /> مشخصات و قیمت
+      </h3>
       <div className="grid gap-x-5 sm:grid-cols-2">
         <Form.Item
           name="title"
           label="عنوان محصول"
           rules={[{ required: true, message: 'عنوان لازم است.' }]}
         >
-          <Input maxLength={150} />
+          <Input
+            maxLength={150}
+            placeholder="مثلاً ارده سنتی ۵۰۰ گرمی"
+            prefix={<AdminIcon name="products" width={16} />}
+          />
         </Form.Item>
         <Form.Item
           name="slug"
           label="نامک انگلیسی"
           rules={[{ required: true, message: 'نامک لازم است.' }]}
         >
-          <Input dir="ltr" maxLength={150} />
+          <Input
+            dir="ltr"
+            maxLength={150}
+            placeholder="traditional-tahini"
+            prefix={<AdminIcon name="link" width={16} />}
+          />
         </Form.Item>
         <Form.Item
           name="price"
@@ -127,7 +143,11 @@ export default function ProductEditor({
           label="وزن یا حجم"
           rules={[{ required: true, message: 'وزن لازم است.' }]}
         >
-          <Input maxLength={100} />
+          <Input
+            maxLength={100}
+            placeholder="مثلاً ۵۰۰ گرم"
+            prefix={<AdminIcon name="products" width={16} />}
+          />
         </Form.Item>
         <Form.Item
           name="categoryId"
@@ -142,19 +162,37 @@ export default function ProductEditor({
           <Input maxLength={80} />
         </Form.Item>
       </div>
-      <Form.Item name="shortDescription" label="معرفی کوتاه">
-        <Input.TextArea maxLength={500} rows={2} />
-      </Form.Item>
-      <Form.Item name="description" label="توضیحات">
-        <Input.TextArea maxLength={10000} rows={5} />
-      </Form.Item>
+      <details className="mb-5 rounded-2xl border border-[#e8ded1] bg-[#fcfaf5] p-4">
+        <summary className="mb-3 cursor-pointer text-sm font-bold text-[#701e2a]">
+          معرفی و توضیحات محصول (اختیاری)
+        </summary>
+        <Form.Item name="shortDescription" label="معرفی کوتاه">
+          <Input.TextArea maxLength={500} rows={2} />
+        </Form.Item>
+        <Form.Item name="description" label="توضیحات">
+          <Input.TextArea maxLength={10000} rows={5} />
+        </Form.Item>
+      </details>
       <Form.Item name="isActive" label="فعال بودن محصول" valuePropName="checked">
         <Switch />
       </Form.Item>
     </>
   );
   return (
-    <Card>
+    <div data-product-editor>
+      <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#e5d5ba] bg-[#faf5e9] p-4">
+        <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#701e2a] text-[#f5d88f]">
+          <AdminIcon name="products" width={25} />
+        </span>
+        <div>
+          <h2 className="font-extrabold text-[#4e141c]">
+            {product ? 'ویرایش مشخصات کالا' : 'آماده‌سازی محصول برای فروش'}
+          </h2>
+          <p className="mt-1 text-xs leading-6 text-[#796653]">
+            مشخصات، تصویر و وزن بسته را کامل کنید؛ تخفیف در بخش جداگانه در دسترس است.
+          </p>
+        </div>
+      </div>
       {dirty && (
         <Alert
           type="info"
@@ -169,6 +207,7 @@ export default function ProductEditor({
       <Form
         form={form}
         layout="vertical"
+        className="[&_.ant-form-item]:!mb-4"
         initialValues={initial}
         disabled={pending}
         onValuesChange={remember}
@@ -219,9 +258,11 @@ export default function ProductEditor({
             setTab(
               issue?.path[0] === 'images'
                 ? 'images'
-                : String(issue?.path[0]).startsWith('discount')
-                  ? 'discount'
-                  : 'general',
+                : String(issue?.path[0]).startsWith('shipping')
+                  ? 'shipping'
+                  : String(issue?.path[0]).startsWith('discount')
+                    ? 'discount'
+                    : 'general',
             );
             setError(issue?.message ?? 'اطلاعات محصول را کامل کنید.');
             return;
@@ -243,69 +284,109 @@ export default function ProductEditor({
           }
         }}
       >
-        <CompactTabs
-          activeKey={tab}
-          onChange={setTab}
-          items={[
-            { key: 'general', label: 'اطلاعات کلی', forceRender: true, children: general },
-            {
-              key: 'images',
-              label: 'آپلود تصویر',
-              forceRender: true,
-              children: (
-                <ProductImagesFields
-                  disabled={pending}
-                  onUploadingChange={setUploading}
-                  onImagesChange={remember}
+        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_260px]">
+          <section className="min-w-0 rounded-[24px] border border-[#e8ded1] bg-white p-4 sm:p-6">
+            <CompactTabs
+              activeKey={tab}
+              onChange={setTab}
+              items={[
+                { key: 'general', label: 'اطلاعات کلی', forceRender: true, children: general },
+                {
+                  key: 'images',
+                  label: 'آپلود تصویر',
+                  forceRender: true,
+                  children: (
+                    <ProductImagesFields
+                      disabled={pending}
+                      onUploadingChange={setUploading}
+                      onImagesChange={remember}
+                    />
+                  ),
+                },
+                {
+                  key: 'discount',
+                  label: 'تخفیف',
+                  forceRender: true,
+                  children: (
+                    <>
+                      <PromotionFields />
+                      {typeof price === 'number' && percent > 0 && (
+                        <div className="mt-3 rounded-lg bg-[#faf0dc] p-4">
+                          <p className="mb-1 text-sm font-bold">قیمت پس از تخفیف</p>
+                          <Money
+                            amount={Math.max(1, Math.floor((price * (100 - percent)) / 100))}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ),
+                },
+                {
+                  key: 'shipping',
+                  label: 'وزن ارسال',
+                  forceRender: true,
+                  children: (
+                    <>
+                      <Alert
+                        type="info"
+                        showIcon
+                        className="!mb-5"
+                        title="تعرفه و ارسال رایگان از بخش «مدیریت ارسال» برای کل سبد تعیین می‌شود. اینجا فقط وزن واقعی هر بستهٔ محصول را وارد کنید."
+                      />
+                      <div className="grid gap-x-5 sm:grid-cols-2">
+                        <Form.Item
+                          name="shippingWeightGrams"
+                          label="وزن بسته برای ارسال (گرم)"
+                          rules={[{ required: true, type: 'number', min: 1, max: 1000000 }]}
+                          extra="وزن واقعی محصول همراه بسته‌بندی؛ برای یک کیلو، ۱۰۰۰ وارد کنید."
+                        >
+                          <InputNumber min={1} max={1000000} precision={0} className="!w-full" />
+                        </Form.Item>
+                      </div>
+                    </>
+                  ),
+                },
+              ]}
+            />
+          </section>
+          <aside
+            aria-label="خلاصه محصول"
+            className="hidden rounded-[24px] border border-[#e5d5ba] bg-[#faf5e9] p-4 xl:sticky xl:top-40 xl:block"
+          >
+            <p className="mb-3 text-xs font-bold text-[#796653]">خلاصهٔ محصول</p>
+            <div className="grid aspect-square place-items-center overflow-hidden rounded-2xl border border-[#e8ded1] bg-white">
+              {images?.[0]?.url ? (
+                <img
+                  src={images[0].url}
+                  alt={images[0].alt || 'تصویر محصول'}
+                  className="h-full w-full object-contain"
                 />
-              ),
-            },
-            {
-              key: 'discount',
-              label: 'تخفیف',
-              forceRender: true,
-              children: (
-                <>
-                  <PromotionFields />
-                  {typeof price === 'number' && percent > 0 && (
-                    <div className="mt-3 rounded-lg bg-[#faf0dc] p-4">
-                      <p className="mb-1 text-sm font-bold">قیمت پس از تخفیف</p>
-                      <Money amount={Math.max(1, Math.floor((price * (100 - percent)) / 100))} />
-                    </div>
-                  )}
-                </>
-              ),
-            },
-            {
-              key: 'shipping',
-              label: 'وزن ارسال',
-              forceRender: true,
-              children: (
-                <>
-                  <Alert
-                    type="info"
-                    showIcon
-                    className="!mb-5"
-                    title="تعرفه و ارسال رایگان از بخش «مدیریت ارسال» برای کل سبد تعیین می‌شود. اینجا فقط وزن واقعی هر بستهٔ محصول را وارد کنید."
-                  />
-                  <div className="grid gap-x-5 sm:grid-cols-2">
-                    <Form.Item
-                      name="shippingWeightGrams"
-                      label="وزن بسته برای ارسال (گرم)"
-                      rules={[{ required: true, type: 'number', min: 1, max: 1000000 }]}
-                      extra="وزن واقعی محصول همراه بسته‌بندی؛ برای یک کیلو، ۱۰۰۰ وارد کنید."
-                    >
-                      <InputNumber min={1} max={1000000} precision={0} className="!w-full" />
-                    </Form.Item>
-                  </div>
-                </>
-              ),
-            },
-          ]}
-        />
+              ) : (
+                <AdminIcon name="products" width={48} className="text-[#b49b76]" />
+              )}
+            </div>
+            <h3 className="mt-4 break-words font-extrabold text-[#4e141c]">
+              {title || 'نام محصول'}
+            </h3>
+            <p className="mt-2 text-lg font-extrabold">
+              {typeof price === 'number' ? <Money amount={price} /> : 'قیمت را وارد کنید'}
+            </p>
+            <p className="mt-3 rounded-xl border border-[#e5d5ba] bg-white px-3 py-2 text-xs text-[#796653]">
+              {active
+                ? 'پس از ذخیره در فروشگاه نمایش داده می‌شود'
+                : 'این محصول در فروشگاه نمایش داده نمی‌شود'}
+            </p>
+          </aside>
+        </div>
         {error && <Alert className="!mt-4" title={error} type="error" role="alert" showIcon />}
-        <div className="mt-5 flex flex-wrap gap-3 border-t border-[#e8ded1] bg-[#fffdf9] py-4">
-          <Button type="primary" htmlType="submit" loading={pending} disabled={uploading}>
+        <div className="sticky bottom-3 z-20 mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-[#e5d5ba] bg-white/95 p-3 shadow-[0_8px_30px_#62452f18] backdrop-blur-sm">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={pending}
+            disabled={uploading}
+            icon={<AdminIcon name="checkCircle" width={18} />}
+          >
             ذخیره محصول
           </Button>
           <Button
@@ -345,6 +426,6 @@ export default function ProductEditor({
           )}
         </div>
       </Form>
-    </Card>
+    </div>
   );
 }

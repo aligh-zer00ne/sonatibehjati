@@ -102,11 +102,12 @@ try {
   }
   await page.goto(adminOrigin + '/admin');
   await expect(page.locator('[data-admin-dashboard]')).toBeVisible();
+  await expect(page.locator('[data-dashboard-donut]')).toHaveAttribute('data-donut-ready', 'true');
   await verifyTopNavigation(page);
   const hero = page.locator('[data-admin-dashboard] > header');
   await verifySurfaceMotion(page, hero, { ambient: true });
-  await verifySurfaceMotion(page, page.locator('[data-analytics-metric]').first(), { tilt: true });
-  await verifySurfaceMotion(page, page.locator('[data-order-id]').first(), { tilt: true });
+  await verifySurfaceMotion(page, page.locator('[data-analytics-metric]').first(), { tilt: false });
+  await verifySurfaceMotion(page, page.locator('[data-order-id]').first(), { tilt: false });
   await expect(hero.locator('[data-ambient-backdrop]')).toHaveAttribute(
     'data-network-state',
     'paused',

@@ -13,6 +13,7 @@ import AdminIcon from '../components/AdminIcon';
 import PageHeading from '../components/PageHeading';
 import ProvinceOrderMap from '../components/ProvinceOrderMap';
 import DataState from '../components/DataState';
+import { cardInteraction, cardIconInteraction } from '../lib/card-interaction';
 export default function OrdersMap() {
   const { admin } = useAdmin(),
     filters = useOrderFilters(25);
@@ -98,10 +99,10 @@ export default function OrdersMap() {
             ).map(([icon, label, value]) => (
               <div
                 key={label}
-                className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-3 sm:p-4"
+                className={`${cardInteraction} min-w-0 overflow-hidden rounded-2xl border border-[#e8ded1] bg-white p-3 sm:p-4`}
               >
                 <div className="mb-2 flex items-center gap-2 text-[#9e7544]">
-                  <AdminIcon name={icon} width={18} />
+                  <AdminIcon name={icon} width={18} className={cardIconInteraction} />
                   <span className="text-[10px] leading-5 sm:text-xs">{label}</span>
                 </div>
                 <strong

@@ -3,6 +3,7 @@ import AnimatedNumber from './AnimatedNumber';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
 import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
 import SurfaceGlow from './SurfaceGlow';
+import { cardInteraction, cardIconInteraction } from '../lib/card-interaction';
 
 export default function AnalyticsMetric({
   label,
@@ -25,11 +26,12 @@ export default function AnalyticsMetric({
   onInspect?: () => void;
   actionLabel?: string;
 }) {
-  const motion = useSurfaceMotion<HTMLElement>({ tilt: !!onInspect });
+  const motion = useSurfaceMotion<HTMLElement>({ tilt: false });
   return (
     <article
       {...motion}
-      className={`${surfaceCardMotion} relative min-w-0 overflow-hidden rounded-2xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] focus-within:ring-2 focus-within:ring-[#c69b48]/40' : ''} ${featured ? 'border-[#4e141c] bg-[linear-gradient(135deg,#752632,#300c14)] text-white shadow-[0_8px_24px_#4e141c18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
+      data-interactive-card={onInspect && !featured ? true : undefined}
+      className={`${surfaceCardMotion} ${onInspect && !featured ? cardInteraction : 'group relative'} min-w-0 overflow-hidden rounded-2xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'focus-within:ring-2 focus-within:ring-[#c69b48]/40' : ''} ${featured ? 'border-[#4e141c] bg-[linear-gradient(135deg,#752632,#300c14)] text-white shadow-[0_8px_24px_#4e141c18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
       data-analytics-metric={label}
     >
       {featured && <AmbientBackdrop />}
@@ -41,7 +43,8 @@ export default function AnalyticsMetric({
           {label}
         </h2>
         <span
-          className={`grid size-9 shrink-0 place-items-center rounded-xl ${featured ? 'bg-white/10 text-[#ecc878]' : 'bg-[#f8f0e1] text-[#701e2a]'}`}
+          data-card-icon
+          className={`${onInspect ? cardIconInteraction : ''} grid size-9 shrink-0 place-items-center rounded-xl ${featured ? 'bg-white/10 text-[#ecc878]' : 'bg-[#f8f0e1] text-[#701e2a]'}`}
         >
           <AdminIcon name={icon} width={19} />
         </span>

@@ -154,7 +154,7 @@ export default function AdminFrame() {
           </p>
         </div>
       </Drawer>
-      <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 print:p-0">
+      <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 print:p-0 [&_.ant-btn]:motion-safe:transition-[translate,scale,box-shadow] [&_.ant-btn:hover:not(:disabled)]:motion-safe:-translate-y-0.5 [&_.ant-btn:active:not(:disabled)]:motion-safe:translate-y-0 [&_.ant-btn:active:not(:disabled)]:motion-safe:scale-[0.98] [&_.ant-input-affix-wrapper]:!bg-[#f9f6f0] [&_.ant-form-item-control-input_.ant-input]:!bg-[#f9f6f0] [&_.ant-checkbox-wrapper]:!leading-7">
         <div
           data-admin-page
           className="mx-auto flex min-w-0 max-w-[1560px] flex-col gap-5 sm:gap-6 [&>*]:min-w-0 [&_.ant-card]:!rounded-[24px] [&_.ant-card]:!bg-white [&_.ant-card]:!shadow-[0_6px_22px_#62452f08] [&_.ant-form-item-label>label]:!font-semibold [&_.ant-input]:!font-medium [&_.ant-btn-primary]:!font-bold print:max-w-none print:gap-0"
@@ -202,13 +202,24 @@ export default function AdminFrame() {
           </div>
         </div>
       </main>
-      <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-[#e8ded1] bg-[#fffdf9]/70 px-4 py-3 text-[12px] text-[#7d746a] sm:px-6 lg:px-8 print:!hidden">
-        <div>
-          <span>پنل مدیریت سنتی بهجتی اردکان</span>
-          <DesignCredit className="mt-1 text-[12px] text-[#76685d]" />
+      <footer className="relative flex flex-col items-center justify-center gap-3 border-t border-[#e4d6be] bg-[radial-gradient(ellipse_at_top,#f0e1c8,transparent_70%)] px-4 py-7 text-xs text-[#796653] sm:px-6 print:!hidden">
+        <div className="flex w-full max-w-2xl items-center gap-4">
+          <span
+            aria-hidden="true"
+            className="h-px flex-1 bg-gradient-to-l from-[#bd9148] to-transparent"
+          />
+          <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-[#cba86a] bg-[#701e2a] font-black text-[#f4d589] shadow-sm">
+            N
+          </span>
+          <DesignCredit className="flex flex-wrap items-center justify-center gap-x-1.5 text-[13px] font-semibold text-[#62452f] [&_a]:!font-extrabold [&_a]:!text-[#701e2a] [&_a]:decoration-[#c49536] [&_a]:underline-offset-4 hover:[&_a]:underline" />
+          <span
+            aria-hidden="true"
+            className="h-px flex-1 bg-gradient-to-r from-[#bd9148] to-transparent"
+          />
         </div>
-        <span className="flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-[#17977e]" />
+        <span className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
+          پنل مدیریت سنتی بهجتی اردکان
+          <span aria-hidden="true" className="size-1 rounded-full bg-[#c49536]" />
           {owner ? 'دسترسی مدیر' : 'دسترسی همکار'}
         </span>
       </footer>

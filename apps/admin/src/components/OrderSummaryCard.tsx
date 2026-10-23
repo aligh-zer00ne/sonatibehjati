@@ -11,6 +11,7 @@ import OrderDetailsCard from './OrderDetailsCard';
 import QuickOrderPrint from './QuickOrderPrint';
 import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
 import SurfaceGlow from './SurfaceGlow';
+import { cardInteraction, cardIconInteraction } from '../lib/card-interaction';
 
 export default function OrderSummaryCard({
   order,
@@ -30,7 +31,7 @@ export default function OrderSummaryCard({
   canExpand?: boolean;
 }) {
   const [print, setPrint] = useState<'invoice' | 'label' | null>(null);
-  const motion = useSurfaceMotion<HTMLElement>({ tilt: true, enabled: !expanded });
+  const motion = useSurfaceMotion<HTMLElement>({ tilt: false, enabled: !expanded });
   const detailsId = `order-details-${order.id}`;
   return (
     <article
@@ -39,13 +40,17 @@ export default function OrderSummaryCard({
       data-order-id={order.id}
       data-record-index={index + 1}
       aria-label={`سفارش ${formatNumber(order.number)}`}
-      className={`${surfaceCardMotion} group relative min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15 md:col-span-2 xl:col-span-3' : 'border-[#e5ded3] hover:border-[#c7ab7d] hover:shadow-[0_8px_24px_#62452f12]'}`}
+      data-interactive-card
+      className={`${surfaceCardMotion} ${cardInteraction} min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15 md:col-span-2 xl:col-span-3' : 'border-[#e5ded3]'}`}
     >
       <SurfaceGlow />
       <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701e2a]" />
       <div className="p-3.5" data-order-summary>
         <header className="flex items-center gap-2.5">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#4e141c] shadow-[0_3px_8px_#b7825b26]">
+          <span
+            data-card-icon
+            className={`${cardIconInteraction} grid size-10 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#4e141c] shadow-[0_3px_8px_#b7825b26]`}
+          >
             <AdminIcon name="person" width={21} />
           </span>
           <div className="min-w-0 flex-1">

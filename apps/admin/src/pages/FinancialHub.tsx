@@ -3,6 +3,8 @@ import { accountEntryInputSchema } from '@behjati/shared/admin';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import AmbientBackdrop from '../components/AmbientBackdrop';
+import ActionCardLink from '../components/ActionCardLink';
+import { cardIconInteraction } from '../lib/card-interaction';
 const operations: { href: string; title: string; description: string; icon: AdminIconName }[] = [
   {
     href: 'receipt',
@@ -64,13 +66,16 @@ export default function FinancialHub() {
       )}
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {operations.map((item) => (
-          <Link
+          <ActionCardLink
             key={item.href}
             to={'/admin/settlements/' + item.href}
-            className="group relative flex min-h-[245px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] bg-white p-6 !text-[#34251e] shadow-[0_6px_22px_#62452f0a] transition duration-300 hover:-translate-y-1 hover:!border-[#c49536] hover:shadow-[0_14px_30px_#62452f18] motion-reduce:transform-none"
+            className="flex min-h-[245px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] !bg-white p-6 !text-[#34251e] shadow-[0_6px_22px_#62452f0a]"
           >
             <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#c49536,#4e141c)]" />
-            <span className="mb-5 grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]">
+            <span
+              data-card-icon
+              className={`${cardIconInteraction} mb-5 grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]`}
+            >
               <AdminIcon name={item.icon} width={27} height={27} />
             </span>
             <h2 className="text-lg font-extrabold">{item.title}</h2>
@@ -79,7 +84,7 @@ export default function FinancialHub() {
               ورود به بخش
               <AdminIcon name="arrow" width={18} />
             </span>
-          </Link>
+          </ActionCardLink>
         ))}
       </div>
     </div>
