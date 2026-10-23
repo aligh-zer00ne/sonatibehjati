@@ -106,7 +106,19 @@ try {
     );
     await expect(sheet).toContainText('دریافت ثبت‌شده در فروشگاه');
     await expect(sheet).toContainText('هزینه ارسال');
-    await expect(sheet).toContainText('1234567890'.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]));
+    if (format === 'THERMAL') {
+      await expect(sheet).not.toContainText('نشانی:');
+      await expect(sheet).not.toContainText('کد پستی:');
+      await expect(sheet.getByRole('columnheader')).toHaveText([
+        'نام کالا',
+        'تعداد',
+        'فی واحد',
+        'مبلغ کل',
+      ]);
+    } else if (format === 'A4')
+      await expect(sheet).toContainText(
+        '1234567890'.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]),
+      );
     await expect(
       sheet.getByRole('link').filter({ has: page.locator('[data-brand-qr]') }),
     ).toHaveAttribute('href', 'https://sonatibehjati.ir/QR');
@@ -159,6 +171,30 @@ try {
     assert.ok(!text.includes(admin.email) && !text.includes('Save as PDF'));
     await page.emulateMedia({ media: 'screen' });
   }
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    workspace.getByRole('button', { name: 'ذخیره فایل فاکتور', exact: true }).click(),
+  ]);
+  await download.saveAs('/tmp/behjati-invoice-export.html');
+  const exported = await (
+    await import('node:fs/promises')
+  ).readFile('/tmp/behjati-invoice-export.html', 'utf8');
+  assert.ok(
+    exported.includes('ITEM-036') &&
+      exported.includes('data:image/') &&
+      exported.includes('base64'),
+  );
+  assert.ok(!exported.includes('<script') && !exported.includes(admin.email));
+  const portable = await context.newPage();
+  await portable.route('**/*', (route) => route.abort());
+  await portable.setContent(exported);
+  await expect(portable.locator('[data-invoice-line]')).toHaveCount(36);
+  assert.ok(
+    await portable
+      .locator('img')
+      .evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth > 0)),
+  );
+  await portable.close();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     for (const label of ['فاکتور A4', 'رسید ۸ سانتی']) {
@@ -216,6 +252,34 @@ try {
     snapshot,
     'Printing never changes stored invoice',
   );
+  const short = await createOrderFixture(customer, product);
+  await page.goto(`${adminOrigin}/admin/orders/${short.id}`);
+  await page.getByRole('button', { name: 'چاپ فاکتور / PDF', exact: true }).click();
+  for (const [key, label] of [
+    ['A5', 'فاکتور A5'],
+    ['A4', 'فاکتور A4'],
+    ['THERMAL', 'رسید ۸ سانتی'],
+  ]) {
+    await page.getByRole('button', { name: label, exact: true }).click();
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page.locator(`[data-invoice] [data-invoice-sheet="${key}"]`)).toBeVisible();
+    await page.screenshot({
+      path: `/tmp/behjati-invoice-reference-${key}.png`,
+      fullPage: false,
+      animations: 'disabled',
+    });
+    await page.emulateMedia({ media: 'print' });
+    await page.pdf({
+      path: `/tmp/behjati-invoice-reference-${key}.pdf`,
+      preferCSSPageSize: true,
+      printBackground: true,
+    });
+    const info = execFileSync('pdfinfo', [`/tmp/behjati-invoice-reference-${key}.pdf`], {
+      encoding: 'utf8',
+    });
+    assert.equal(Number(info.match(/Pages:\s+(\d+)/)[1]), 1, 'Normal invoices fit one sheet');
+    await page.emulateMedia({ media: 'screen' });
+  }
   assert.deepEqual(errors, []);
   console.log(
     'Invoice workspace passed: full-screen A4/A5/80mm, exact saved rial totals/discounts/shipping/receipts, long Persian text, first/last lines, real multipage PDFs and measured roll, toolbar exclusion, zoom/fit at 320–1440px, Escape/focus return, format preference, untouched label page size and zero invoice mutations. No SMS/bank call.',

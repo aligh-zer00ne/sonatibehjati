@@ -180,7 +180,9 @@ try {
   await expect(page.getByText('تغییر وضعیت سفارش', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'چاپ فاکتور / PDF', exact: true }).click();
   await expect(page.getByRole('dialog').getByText(/دریافت ثبت‌شده در فروشگاه/)).toBeVisible();
-  await expect(page.getByRole('dialog').getByText('تخفیف ردیف', { exact: false })).toBeVisible();
+  await expect(
+    page.getByRole('dialog').getByText('تخفیف ردیف', { exact: false }).first(),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await page.goto(`${base}/admin/settlements?customerId=${customer.user.id}`);
   await expect(page.locator('[data-account-status="debtor"]').first()).toBeVisible();
