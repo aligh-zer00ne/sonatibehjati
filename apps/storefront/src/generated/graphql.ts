@@ -407,6 +407,24 @@ export type AdminPermission =
   | 'SHIPPING'
   | 'TICKETS';
 
+export type AdminPriceChangeInput = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  price: Scalars['Int']['input'];
+};
+
+export type AdminPriceItem = {
+  __typename?: 'AdminPriceItem';
+  categoryTitle: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  isActive: Scalars['Boolean']['output'];
+  price: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  weight: Scalars['String']['output'];
+};
+
 export type AdminProductDeletion = {
   __typename?: 'AdminProductDeletion';
   deleted: Scalars['Boolean']['output'];
@@ -836,6 +854,7 @@ export type Mutation = {
   saveAdminShippingSettings: ShippingSettings;
   saveAnnouncement: HomepageContent;
   saveHomepageContent: HomepageContent;
+  setAdminPrices: Array<AdminPriceItem>;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
   setAdminTicketStatus: SupportTicket;
@@ -985,6 +1004,11 @@ export type MutationSaveAnnouncementArgs = {
 export type MutationSaveHomepageContentArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   input: HomepageContentInput;
+};
+
+
+export type MutationSetAdminPricesArgs = {
+  items: Array<AdminPriceChangeInput>;
 };
 
 
@@ -1268,6 +1292,7 @@ export type Query = {
   adminOrderCustomers: AdminUsersPage;
   adminOrders: AdminOrdersPage;
   adminPaymentRequests: AdminPaymentRequestPage;
+  adminPriceList: Array<AdminPriceItem>;
   adminProduct: Product;
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;

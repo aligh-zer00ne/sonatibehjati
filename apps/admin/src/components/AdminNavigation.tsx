@@ -42,6 +42,12 @@ export const navigationLinks: Item[] = [
     description: 'مدیریت کالا، قیمت، موجودی و وزن بسته',
   },
   {
+    href: '/admin/products/prices',
+    label: 'اعلامیه قیمت',
+    icon: 'discount',
+    description: 'تغییر سریع قیمت همهٔ محصولات در یک صفحه',
+  },
+  {
     href: '/admin/users',
     label: 'مشتریان',
     icon: 'users',
@@ -127,7 +133,7 @@ const definitions: Array<{
     label: 'محصولات و تخفیف‌ها',
     shortLabel: 'محصولات',
     icon: 'products',
-    paths: ['/admin/products', '/admin/coupons'],
+    paths: ['/admin/products', '/admin/products/prices', '/admin/coupons'],
   },
   {
     id: 'communication',

@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import {
   adminProductInputSchema,
+  adminPriceChangesSchema,
   adminProductsFilterSchema,
   adminPromotionInputSchema,
   adminPromotionTargetsSchema,
@@ -162,6 +163,77 @@ export async function setAdminPromotion(raw: unknown, targets: unknown) {
             data: { ...promotionData(input), updatedAt: nextVersion(previous.updatedAt) },
             include,
           }),
+        );
+      }
+      return result;
+    },
+    { timeout: 15000 },
+  );
+}
+
+const priceSelection = {
+  id: true,
+  title: true,
+  weight: true,
+  price: true,
+  isActive: true,
+  updatedAt: true,
+  category: { select: { title: true } },
+  images: { orderBy: { position: 'asc' as const }, take: 1, select: { url: true } },
+} satisfies Prisma.ProductSelect;
+function priceItem(product: Prisma.ProductGetPayload<{ select: typeof priceSelection }>) {
+  return {
+    ...product,
+    updatedAt: product.updatedAt.toISOString(),
+    categoryTitle: product.category.title,
+    imageUrl: product.images[0]?.url ?? null,
+  };
+}
+export async function adminPriceList() {
+  return (
+    await db.product.findMany({
+      select: priceSelection,
+      orderBy: [{ title: 'asc' }, { id: 'asc' }],
+    })
+  ).map(priceItem);
+}
+export async function setAdminPrices(raw: unknown) {
+  const items = validate(adminPriceChangesSchema, raw).sort((a, b) => a.id.localeCompare(b.id));
+  return db.$transaction(
+    async (tx) => {
+      const previous = [];
+      // Deterministic locks and a single transaction: a conflict rolls back the entire announcement.
+      for (const item of items) {
+        await tx.$queryRaw`SELECT id FROM Product WHERE id = ${item.id} FOR UPDATE`;
+        const product = await tx.product.findUnique({
+          where: { id: item.id },
+          select: priceSelection,
+        });
+        if (!product)
+          throw authError('یکی از محصولات دیگر موجود نیست؛ فهرست را تازه کنید.', 'NOT_FOUND');
+        // Repeating a price-only request after a lost response is a safe no-op.
+        if (
+          product.price !== item.price &&
+          product.updatedAt.toISOString() !== item.expectedUpdatedAt
+        )
+          throw authError(
+            'قیمت یا اطلاعات یکی از محصولات تغییر کرده است؛ فهرست را تازه کنید و تغییرها را بررسی کنید.',
+            'REQUEST_CONFLICT',
+          );
+        previous.push({ item, product });
+      }
+      const result = [];
+      for (const { item, product } of previous) {
+        result.push(
+          priceItem(
+            product.price === item.price
+              ? product
+              : await tx.product.update({
+                  where: { id: item.id },
+                  data: { price: item.price, updatedAt: nextVersion(product.updatedAt) },
+                  select: priceSelection,
+                }),
+          ),
         );
       }
       return result;

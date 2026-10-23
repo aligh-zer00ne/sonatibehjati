@@ -18,6 +18,8 @@ import {
 } from './auth.js';
 import {
   adminProducts,
+  adminPriceList,
+  setAdminPrices,
   adminProduct,
   setAdminPromotion,
   saveAdminProduct,
@@ -66,6 +68,10 @@ export const adminResolvers: Resolvers = {
       await requirePermission(context, 'PRODUCTS');
       return serializeDates(await adminProduct(id));
     },
+    adminPriceList: async (_, __, context) => {
+      await requirePermission(context, 'PRODUCTS');
+      return adminPriceList();
+    },
     adminProducts: async (_parent, { input }, context) => {
       await requirePermission(context, 'PRODUCTS');
       const page = await adminProducts(input);
@@ -97,6 +103,11 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    setAdminPrices: async (_, { items }, context) => {
+      requireAdminOrigin(context);
+      await requirePermission(context, 'PRODUCTS');
+      return setAdminPrices(items);
+    },
     saveAdminShippingSettings: async (_, { input, expectedUpdatedAt }, ctx) => {
       requireAdminOrigin(ctx);
       await requirePermission(ctx, 'SHIPPING');

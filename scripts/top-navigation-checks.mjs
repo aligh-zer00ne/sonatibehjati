@@ -22,7 +22,7 @@ export async function verifyTopNavigation(page) {
   assert.ok((await topbar.getByAltText('سنتی بهجتی', { exact: true }).boundingBox()).height >= 76);
   for (const [name, id, expected] of [
     ['فروش و مشتریان', 'sales', 6],
-    ['محصولات و تخفیف‌ها', 'catalog', 2],
+    ['محصولات و تخفیف‌ها', 'catalog', 3],
     ['ارتباط با مشتری', 'communication', 2],
     ['تنظیمات مدیریت', 'settings', 4],
   ]) {

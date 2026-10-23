@@ -78,6 +78,12 @@ export default function Products() {
           محصولات
         </PageHeading>
         <div className="flex flex-wrap gap-2">
+          <Button
+            icon={<AdminIcon name="discount" />}
+            onClick={() => navigate('/admin/products/prices')}
+          >
+            اعلامیه قیمت
+          </Button>
           <Button disabled={!selected.length || pending} onClick={() => setPromotionOpen(true)}>
             تخفیف / جشنواره ({formatNumber(selected.length)} محصول)
           </Button>

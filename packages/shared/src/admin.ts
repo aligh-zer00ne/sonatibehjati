@@ -116,6 +116,23 @@ export const adminPromotionTargetsSchema = z
   .min(1)
   .max(50)
   .refine((items) => new Set(items.map((item) => item.id)).size === items.length);
+export const adminPriceChangesSchema = z
+  .array(
+    z
+      .object({
+        id: text(1, 100),
+        price: z.number().int().min(0).max(2147483647),
+        expectedUpdatedAt: z.iso.datetime(),
+      })
+      .strict(),
+  )
+  .min(1)
+  .max(500)
+  .refine(
+    (items) => new Set(items.map((item) => item.id)).size === items.length,
+    'محصول تکراری است.',
+  );
+
 export const adminProductInputSchema = z
   .object({
     ...promotionFields,

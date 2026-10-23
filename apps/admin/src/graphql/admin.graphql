@@ -778,3 +778,24 @@ mutation SaveAdminShippingSettings($input: ShippingSettingsInput!, $expectedUpda
     ...ShippingSettingsFields
   }
 }
+
+fragment AdminPriceItemFields on AdminPriceItem {
+  id
+  title
+  weight
+  price
+  isActive
+  updatedAt
+  categoryTitle
+  imageUrl
+}
+query AdminPriceList {
+  adminPriceList {
+    ...AdminPriceItemFields
+  }
+}
+mutation SetAdminPrices($items: [AdminPriceChangeInput!]!) {
+  setAdminPrices(items: $items) {
+    ...AdminPriceItemFields
+  }
+}

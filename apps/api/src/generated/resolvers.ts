@@ -409,6 +409,24 @@ export type AdminPermission =
   | 'SHIPPING'
   | 'TICKETS';
 
+export type AdminPriceChangeInput = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  price: Scalars['Int']['input'];
+};
+
+export type AdminPriceItem = {
+  __typename?: 'AdminPriceItem';
+  categoryTitle: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  isActive: Scalars['Boolean']['output'];
+  price: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  weight: Scalars['String']['output'];
+};
+
 export type AdminProductDeletion = {
   __typename?: 'AdminProductDeletion';
   deleted: Scalars['Boolean']['output'];
@@ -838,6 +856,7 @@ export type Mutation = {
   saveAdminShippingSettings: ShippingSettings;
   saveAnnouncement: HomepageContent;
   saveHomepageContent: HomepageContent;
+  setAdminPrices: Array<AdminPriceItem>;
   setAdminProductActive: Product;
   setAdminPromotion: Array<Product>;
   setAdminTicketStatus: SupportTicket;
@@ -987,6 +1006,11 @@ export type MutationSaveAnnouncementArgs = {
 export type MutationSaveHomepageContentArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   input: HomepageContentInput;
+};
+
+
+export type MutationSetAdminPricesArgs = {
+  items: Array<AdminPriceChangeInput>;
 };
 
 
@@ -1270,6 +1294,7 @@ export type Query = {
   adminOrderCustomers: AdminUsersPage;
   adminOrders: AdminOrdersPage;
   adminPaymentRequests: AdminPaymentRequestPage;
+  adminPriceList: Array<AdminPriceItem>;
   adminProduct: Product;
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;
@@ -1708,6 +1733,8 @@ export type ResolversTypes = {
   AdminPaymentRequestPage: ResolverTypeWrapper<AdminPaymentRequestPage>;
   AdminPaymentRequestsInput: AdminPaymentRequestsInput;
   AdminPermission: AdminPermission;
+  AdminPriceChangeInput: AdminPriceChangeInput;
+  AdminPriceItem: ResolverTypeWrapper<AdminPriceItem>;
   AdminProductDeletion: ResolverTypeWrapper<AdminProductDeletion>;
   AdminProductImageInput: AdminProductImageInput;
   AdminProductInput: AdminProductInput;
@@ -1834,6 +1861,8 @@ export type ResolversParentTypes = {
   AdminPaymentRequestInput: AdminPaymentRequestInput;
   AdminPaymentRequestPage: AdminPaymentRequestPage;
   AdminPaymentRequestsInput: AdminPaymentRequestsInput;
+  AdminPriceChangeInput: AdminPriceChangeInput;
+  AdminPriceItem: AdminPriceItem;
   AdminProductDeletion: AdminProductDeletion;
   AdminProductImageInput: AdminProductImageInput;
   AdminProductInput: AdminProductInput;
@@ -2127,6 +2156,17 @@ export type AdminPaymentRequestPageResolvers<ContextType = AuthContext, ParentTy
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type AdminPriceItemResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminPriceItem'] = ResolversParentTypes['AdminPriceItem']> = {
+  categoryTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  weight?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
 export type AdminProductDeletionResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminProductDeletion'] = ResolversParentTypes['AdminProductDeletion']> = {
   deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
@@ -2374,6 +2414,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   saveAdminShippingSettings?: Resolver<ResolversTypes['ShippingSettings'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingSettingsArgs, 'expectedUpdatedAt' | 'input'>>;
   saveAnnouncement?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType, RequireFields<MutationSaveAnnouncementArgs, 'input'>>;
   saveHomepageContent?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType, RequireFields<MutationSaveHomepageContentArgs, 'input'>>;
+  setAdminPrices?: Resolver<Array<ResolversTypes['AdminPriceItem']>, ParentType, ContextType, RequireFields<MutationSetAdminPricesArgs, 'items'>>;
   setAdminProductActive?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSetAdminProductActiveArgs, 'expectedUpdatedAt' | 'id' | 'isActive'>>;
   setAdminPromotion?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationSetAdminPromotionArgs, 'input' | 'products'>>;
   setAdminTicketStatus?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationSetAdminTicketStatusArgs, 'expectedUpdatedAt' | 'id' | 'status'>>;
@@ -2539,6 +2580,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminOrderCustomers?: Resolver<ResolversTypes['AdminUsersPage'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomersArgs, 'input'>>;
   adminOrders?: Resolver<ResolversTypes['AdminOrdersPage'], ParentType, ContextType, RequireFields<QueryAdminOrdersArgs, 'input'>>;
   adminPaymentRequests?: Resolver<ResolversTypes['AdminPaymentRequestPage'], ParentType, ContextType, RequireFields<QueryAdminPaymentRequestsArgs, 'input'>>;
+  adminPriceList?: Resolver<Array<ResolversTypes['AdminPriceItem']>, ParentType, ContextType>;
   adminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<QueryAdminProductArgs, 'id'>>;
   adminProducts?: Resolver<ResolversTypes['AdminProductsPage'], ParentType, ContextType, RequireFields<QueryAdminProductsArgs, 'input'>>;
   adminReport?: Resolver<ResolversTypes['AdminReport'], ParentType, ContextType, RequireFields<QueryAdminReportArgs, 'input'>>;
@@ -2642,6 +2684,7 @@ export type Resolvers<ContextType = AuthContext> = {
   AdminOrdersPage?: AdminOrdersPageResolvers<ContextType>;
   AdminPaymentRequest?: AdminPaymentRequestResolvers<ContextType>;
   AdminPaymentRequestPage?: AdminPaymentRequestPageResolvers<ContextType>;
+  AdminPriceItem?: AdminPriceItemResolvers<ContextType>;
   AdminProductDeletion?: AdminProductDeletionResolvers<ContextType>;
   AdminProductsPage?: AdminProductsPageResolvers<ContextType>;
   AdminReport?: AdminReportResolvers<ContextType>;

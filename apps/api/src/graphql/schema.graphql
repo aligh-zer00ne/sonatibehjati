@@ -47,6 +47,7 @@ type Query {
   adminManualQuote(input: AdminManualQuoteInput!): AdminManualQuote!
   adminMe: AdminIdentity
   adminProducts(input: AdminProductsInput!): AdminProductsPage!
+  adminPriceList: [AdminPriceItem!]!
   adminProduct(id: ID!): Product!
   adminOrders(input: AdminOrdersInput!): AdminOrdersPage!
   adminOrder(id: ID!): AdminOrder!
@@ -141,6 +142,7 @@ type Mutation {
     expectedUpdatedAt: String
   ): AdminShippingLabel!
   saveAdminProduct(id: ID, expectedUpdatedAt: String, input: AdminProductInput!): Product!
+  setAdminPrices(items: [AdminPriceChangeInput!]!): [AdminPriceItem!]!
   setAdminProductActive(id: ID!, isActive: Boolean!, expectedUpdatedAt: String!): Product!
   deleteAdminProduct(id: ID!, expectedUpdatedAt: String!): AdminProductDeletion!
   updateAdminOrderStatus(input: AdminOrderStatusInput!): AdminOrder!
@@ -1116,4 +1118,20 @@ extend type Mutation {
     input: ShippingSettingsInput!
     expectedUpdatedAt: String!
   ): ShippingSettings!
+}
+
+input AdminPriceChangeInput {
+  id: ID!
+  price: Int!
+  expectedUpdatedAt: String!
+}
+type AdminPriceItem {
+  id: ID!
+  title: String!
+  weight: String!
+  price: Int!
+  isActive: Boolean!
+  updatedAt: String!
+  categoryTitle: String!
+  imageUrl: String
 }

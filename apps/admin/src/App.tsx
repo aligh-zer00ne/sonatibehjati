@@ -15,6 +15,7 @@ const Reviews = lazy(() => import('./pages/Reviews'));
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Products = lazy(() => import('./pages/Products'));
+const PriceAnnouncement = lazy(() => import('./pages/PriceAnnouncement'));
 const Orders = lazy(() => import('./pages/Orders'));
 const FinancialHub = lazy(() => import('./pages/FinancialHub'));
 const AccountEntryPage = lazy(() => import('./pages/AccountEntryPage'));
@@ -92,6 +93,7 @@ export default function App() {
                     </Route>
                     <Route path="products" element={<Products />} />
                     <Route path="products/new" element={<ProductEdit />} />
+                    <Route path="products/prices" element={<PriceAnnouncement />} />
                     <Route path="products/:id/edit" element={<ProductEdit />} />
                     <Route path="promotions" element={<Navigate to="/admin/products" replace />} />
                     <Route path="orders" element={<Orders />} />
