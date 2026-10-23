@@ -1,18 +1,33 @@
-import { formatAdminPrice } from '../lib/money';
-import DesignCredit from './DesignCredit';
+import type { ReactNode } from 'react';
+import { BRAND_NAME, formatNumber } from '@behjati/shared';
 import type { ShippingLabelValues } from '@behjati/shared/admin';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
-import { formatNumber } from '@behjati/shared';
+import { formatAdminPrice } from '../lib/money';
 import { persianDigits } from '../lib/format';
+import AdminIcon from './AdminIcon';
 import BrandQr from './BrandQr';
-import { Truck, MoveUp, Wine, Umbrella } from 'lucide-react';
 import TrackingBarcode from './TrackingBarcode';
+import DesignCredit from './DesignCredit';
 
-function Symbol({ kind }: { kind: 'truck' | 'up' | 'glass' | 'umbrella' }) {
-  const Icon = { truck: Truck, up: MoveUp, glass: Wine, umbrella: Umbrella }[kind];
-  return <Icon size={26} strokeWidth={2} aria-hidden="true" />;
+function Block({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
+  return (
+    <section className="min-w-0 overflow-hidden rounded-[1.8mm] border-[0.35mm] border-black">
+      <h2 className="flex items-center gap-[1.5mm] bg-black px-[2mm] py-[0.5mm] text-[1.12em] font-extrabold text-white">
+        {icon}
+        {title}
+      </h2>
+      <div className="px-[2mm] py-[0.6mm]">{children}</div>
+    </section>
+  );
 }
-
+function Detail({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex items-baseline justify-between gap-[1.5mm] border-b border-dashed border-black/25 py-[0.3mm] last:border-0">
+      <dt className="shrink-0 text-[0.9em] font-medium">{label}</dt>
+      <dd className="min-w-0 text-end font-bold [overflow-wrap:anywhere]">{children}</dd>
+    </div>
+  );
+}
 export default function ShippingLabelSheet({
   order,
   values,
@@ -20,141 +35,124 @@ export default function ShippingLabelSheet({
   order: AdminOrderFieldsFragment;
   values: ShippingLabelValues;
 }) {
-  const quantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+  const large = values.paperSize === 'A5';
+  const icon = (name: Parameters<typeof AdminIcon>[0]['name']) => (
+    <AdminIcon name={name} size={large ? 19 : 14} />
+  );
+  const party = (recipient: boolean) => {
+    const name = recipient ? values.recipientName : values.senderName;
+    const phone = recipient ? values.recipientPhone : values.senderPhone;
+    const address = recipient ? values.recipientAddress : values.senderAddress;
+    const postal = recipient ? values.recipientPostalCode : values.senderPostalCode;
+    return (
+      <Block title={recipient ? 'گیرنده' : 'فرستنده'} icon={icon(recipient ? 'person' : 'home')}>
+        <dl>
+          <Detail label="نام">{name}</Detail>
+          <Detail label="تلفن">
+            <bdi dir="ltr">{persianDigits(phone || '—')}</bdi>
+          </Detail>
+          <div className="border-b border-dashed border-black/25 py-[0.6mm]">
+            <dt className="inline text-[0.9em] font-medium">نشانی: </dt>
+            <dd className="inline whitespace-pre-wrap font-bold [overflow-wrap:anywhere]">
+              {address || 'ثبت نشده'}
+            </dd>
+          </div>
+          <Detail label="کد پستی">
+            <bdi dir="ltr">{persianDigits(postal || '—')}</bdi>
+          </Detail>
+        </dl>
+      </Block>
+    );
+  };
   return (
     <article
       data-label-sheet
       dir="rtl"
-      className="mx-auto max-w-[210mm] break-inside-avoid rounded-xl border border-black bg-white p-3 text-[10px] leading-[1.8] text-black shadow-sm [print-color-adjust:exact] print:w-full print:max-w-none print:p-[2mm] print:text-[7pt] print:leading-[1.4] print:shadow-none"
+      className={`mx-auto w-full rounded-[2.5mm] border-[0.5mm] border-black bg-white p-[1.5mm] leading-[1.35] text-black [print-color-adjust:exact] print:w-auto print:rounded-[1.8mm] print:p-[1.5mm] ${large ? 'text-[12px]' : 'text-[8.5px]'}`}
     >
-      <header className="mb-3 grid grid-cols-[1fr_1fr_1fr] items-center gap-3 print:mb-[1.5mm]">
-        <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-black p-2 text-center font-bold print:p-[1mm]">
-          <Symbol kind="truck" />
-          <p>
-            ارسال با
-            <br />
-            {values.carrier || 'پست'}
-          </p>
-        </div>
-        <div className="text-center text-[1.15em] font-bold">
-          <p>
-            با عشق از اردکان
-            <br />
-            برای شما ♥
-          </p>
-          <div className="mx-auto mt-1 w-3/4 -rotate-3 border-b-2 border-black" />
-        </div>
-        <div className="flex flex-col items-center border-s border-black px-2 text-center">
+      <header className="mb-[1.5mm] flex items-center justify-between gap-[3mm] border-b-[0.35mm] border-black pb-[1mm]">
+        <div className="flex min-w-0 flex-1 items-center gap-[1.5mm]">
           <img
-            src="/images/logo-footer.svg"
+            src="/images/logo-brand.png"
             alt="لوگوی سنتی بهجتی"
-            className="h-16 w-auto object-contain print:h-[13mm]"
+            className={
+              large
+                ? 'size-[21mm] shrink-0 object-contain grayscale'
+                : 'size-[11mm] shrink-0 object-contain grayscale'
+            }
           />
-          <p className="mt-1 text-[0.85em] font-bold">فرآورده‌های کنجدی سنتی بهجتی اردکان</p>
+          <div className="min-w-0">
+            <p className="text-[1.5em] leading-[1.5] font-black">{BRAND_NAME}</p>
+            <p className="text-[0.95em] font-semibold">فرآورده‌های کنجدی سنتی اردکان</p>
+            <p dir="ltr" className="mt-[0.5mm] flex items-center justify-end gap-1 font-bold">
+              sonatibehjati.ir {icon('globe')}
+            </p>
+          </div>
+        </div>
+        <div className="flex shrink-0 items-stretch text-center text-[0.8em] font-bold">
+          <div className="flex flex-col items-center justify-center gap-[1mm] border-s border-black px-[2mm]">
+            {icon('heart')}
+            <span>
+              با عشق
+              <br />
+              از اردکان
+            </span>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-[1mm] border-s border-black px-[2mm]">
+            {icon('truck')}
+            <span>
+              مرسولهٔ
+              <br />
+              سنتی بهجتی
+            </span>
+          </div>
         </div>
       </header>
-      <div className="grid grid-cols-[1.15fr_0.85fr] gap-2">
-        <section className="min-w-0 overflow-hidden rounded-lg border-2 border-black">
-          <h2 className="ms-auto w-2/3 rounded-es-xl bg-black px-3 py-1 print:py-[0.5mm] text-[1.2em] font-bold text-white">
-            گیرنده
-          </h2>
-          <dl className="space-y-1 print:space-y-0 px-3 pb-2 print:px-[2mm] print:pb-[1mm] print:[&>div]:py-[0.5mm] [&>div]:border-b [&>div]:border-black/20 [&>div]:py-1 [&>div:last-child]:border-0">
-            <div>
-              <dt className="inline">نام و نام خانوادگی: </dt>
-              <dd className="inline font-bold">{values.recipientName}</dd>
-            </div>
-            <div>
-              <dt>آدرس:</dt>
-              <dd className="break-words whitespace-pre-wrap font-medium">
-                {values.recipientAddress}
-              </dd>
-            </div>
-            <div>
-              <dt className="inline">کد پستی: </dt>
-              <dd className="inline font-bold">
-                <bdi>{persianDigits(values.recipientPostalCode || '—')}</bdi>
-              </dd>
-            </div>
-            <div>
-              <dt className="inline">تلفن: </dt>
-              <dd className="inline font-bold">
-                <bdi>{persianDigits(values.recipientPhone || '—')}</bdi>
-              </dd>
-            </div>
-          </dl>
-        </section>
-        <div className="flex min-w-0 flex-col gap-2">
-          <section className="flex-1 rounded-lg border border-black/50 p-2 print:p-[1mm]">
-            <h2 className="mb-1 text-[1.1em] font-bold">فرستنده</h2>
-            <p className="break-words font-bold">{values.senderName}</p>
-            <p className="break-words whitespace-pre-wrap">
-              {values.senderAddress || 'اردکان، یزد، ایران'}
-            </p>
-            {values.senderPhone && (
-              <p>
-                تلفن: <bdi>{persianDigits(values.senderPhone)}</bdi>
-              </p>
-            )}
-            {values.senderPostalCode && (
-              <p>
-                کد پستی: <bdi>{persianDigits(values.senderPostalCode)}</bdi>
-              </p>
-            )}
-          </section>
-          <section className="grid grid-cols-[1fr_auto] gap-2 rounded-lg border border-black/50 p-2 print:p-[1mm]">
-            <div className="min-w-0">
-              <h2 className="font-bold">محتویات</h2>
-              <p className="break-words">{values.packageContent || 'محصولات کنجدی'}</p>
-              {values.packageWeight && <p>وزن: {values.packageWeight}</p>}
-              <p>هزینهٔ ارسال: {formatAdminPrice(order.shipping)}</p>
-            </div>
-            <div className="border-s border-black ps-2 text-center">
-              <p>تعداد اقلام</p>
-              <b className="text-[1.6em]">{formatNumber(quantity)}</b>
-            </div>
-          </section>
-        </div>
+      <div className="grid grid-cols-[1.12fr_1fr] items-stretch gap-[1.5mm]">
+        {party(true)}
+        {party(false)}
       </div>
-      <footer className="mt-2 flex items-center gap-2 rounded-lg border border-black/50 p-2 print:p-[1mm]">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          {(
-            [
-              ['up', 'بالا باشد'],
-              ['umbrella', 'دور از رطوبت'],
-              ['glass', 'شکننده'],
-            ] as const
-          ).map(([kind, label]) => (
-            <div
-              key={kind}
-              className="flex min-w-0 flex-1 flex-col items-center rounded-md border border-black p-1 text-center text-[0.8em] font-bold"
-            >
-              <Symbol kind={kind} />
-              <span>{label}</span>
+      <div className="mt-[1.5mm] grid grid-cols-[1.12fr_1fr] items-stretch gap-[1.5mm]">
+        <Block title="اطلاعات مرسوله" icon={icon('truck')}>
+          <dl>
+            <Detail label="شماره سفارش">{formatNumber(order.number)}</Detail>
+            <Detail label="روش ارسال">{values.carrier || 'ثبت نشده'}</Detail>
+            <Detail label="وزن بسته">{values.packageWeight || 'ثبت نشده'}</Detail>
+            <Detail label="هزینه ارسال">{formatAdminPrice(order.shipping)}</Detail>
+          </dl>
+        </Block>
+        <Block title="محتویات بسته" icon={icon('products')}>
+          <p className="whitespace-pre-wrap font-bold [overflow-wrap:anywhere]">
+            {values.packageContent || 'محتویات ثبت نشده'}
+          </p>
+          <div className="mt-[1mm] flex items-end justify-between gap-[1.5mm] border-t border-dashed border-black/25 pt-[1mm]">
+            <div className="min-w-0 flex-1">
+              {values.trackingNumber ? (
+                <>
+                  <p className="text-[0.85em] font-bold">کد رهگیری مرسوله</p>
+                  <TrackingBarcode value={values.trackingNumber} compact />
+                </>
+              ) : (
+                <p className="font-bold">راه‌های ارتباطی</p>
+              )}
+              <p dir="ltr" className="mt-[0.5mm] text-[0.8em]">
+                sonatibehjati.ir/QR
+              </p>
             </div>
-          ))}
-        </div>
-        <p className="max-w-[22%] rounded-lg bg-black p-2 text-center text-[0.9em] text-white">
-          لطفاً در تحویل کالا
-          <br />
-          ملاحظه شود.
-        </p>
-        <BrandQr className="w-[23%] max-w-[30mm] print:max-w-[22mm]" />
-        <div className="min-w-0 flex-1">
-          {values.trackingNumber ? (
-            <TrackingBarcode value={values.trackingNumber} />
-          ) : (
-            <p className="text-center">
-              سفارش شماره <b>{formatNumber(order.number)}</b>
-            </p>
-          )}
-        </div>
-      </footer>
+            <BrandQr className={large ? 'w-[20mm] grayscale' : 'w-[15mm] grayscale'} />
+          </div>
+        </Block>
+      </div>
       {values.note && (
-        <p className="mt-2 print:mt-[1mm] break-words whitespace-pre-wrap text-[0.95em] font-bold">
+        <p className="mt-[1.5mm] rounded-[1mm] border border-dashed border-black/40 px-[2mm] py-[0.6mm] whitespace-pre-wrap font-bold [overflow-wrap:anywhere]">
           {values.note}
         </p>
       )}
-      <DesignCredit className="mt-2 border-t border-black/20 pt-1 text-center text-[10px] print:mt-[1mm] print:text-[8px]" />
+      <footer className="mt-[1.5mm] flex items-center justify-between gap-[1.5mm] border-t-[0.35mm] border-black pt-[1mm] text-[0.85em] font-semibold">
+        <span className="flex items-center gap-1">{icon('heart')} با تشکر از اعتماد شما</span>
+        <span>لطفاً هنگام تحویل، محتویات بسته را بررسی کنید.</span>
+      </footer>
+      <DesignCredit className="mt-[0.5mm] text-center text-[0.75em] [&_a]:!text-black" />
     </article>
   );
 }

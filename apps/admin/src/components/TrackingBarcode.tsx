@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { code128, drawingSVG } from 'bwip-js/browser';
 
-export default function TrackingBarcode({ value }: { value: string }) {
+export default function TrackingBarcode({
+  value,
+  compact = false,
+}: {
+  value: string;
+  compact?: boolean;
+}) {
   const text = value
     .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
     .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
@@ -37,7 +43,11 @@ export default function TrackingBarcode({ value }: { value: string }) {
         <img
           src={source}
           alt={`بارکد رهگیری ${text}`}
-          className="mx-auto h-9 w-full object-fill print:h-[12mm]"
+          className={
+            compact
+              ? 'mx-auto h-[6mm] w-full object-fill'
+              : 'mx-auto h-9 w-full object-fill print:h-[12mm]'
+          }
         />
       )}
       <p className="mt-1 break-all font-mono text-[0.85em]">{value}</p>

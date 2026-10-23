@@ -62,7 +62,7 @@ const properties = [
 ];
 async function embed(url: string) {
   const response = await fetch(url);
-  if (!response.ok) throw new Error('فایل‌های فاکتور دریافت نشدند.');
+  if (!response.ok) throw new Error('فایل‌های برگه دریافت نشدند.');
   const blob = await response.blob();
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();

@@ -282,7 +282,7 @@ try {
   assert.equal(instaOrder.addressSnapshot.postalCode, '1234567890');
   await page.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
   const label = page.getByRole('dialog').locator('[data-label-sheet]');
-  await expect(label.getByText(/هزینهٔ ارسال:/)).toContainText(/ریال/);
+  await expect(label.locator('dl > div').filter({ hasText: 'هزینه ارسال' })).toContainText(/ریال/);
   await expect(label).toContainText('نشانی پستی آزمون پلاک ۱۲');
   await page.getByRole('dialog').locator('.ant-modal-close').click();
   // Filter buttons modify URL/backend results and remain usable on a small screen.

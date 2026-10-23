@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { chromium, expect } from '@playwright/test';
+import { verifyLabelWorkspace } from './verify-label-workspace.mjs';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
 import {
   createAdmin,
@@ -237,10 +238,14 @@ try {
   // A label retains its independent 150x100mm print configuration.
   await page.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
   await expect(page.locator('[data-label-sheet]').first()).toBeVisible();
+  await expect(page.locator('#behjati-admin-print')).toHaveCount(0);
+  await page.getByRole('button', { name: 'چاپ لیبل / PDF', exact: true }).click();
+  await expect(page.locator('[data-label-workspace]')).toBeVisible();
   assert.match(
     await page.locator('#behjati-admin-print style').textContent(),
     /size: 150mm 100mm; margin: 4mm/,
   );
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await page.getByRole('dialog').locator('.ant-modal-close').click();
   assert.equal(
     mutations.length,
@@ -280,6 +285,8 @@ try {
     assert.equal(Number(info.match(/Pages:\s+(\d+)/)[1]), 1, 'Normal invoices fit one sheet');
     await page.emulateMedia({ media: 'screen' });
   }
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
+  await verifyLabelWorkspace(page, db, short.id);
   assert.deepEqual(errors, []);
   console.log(
     'Invoice workspace passed: full-screen A4/A5/80mm, exact saved rial totals/discounts/shipping/receipts, long Persian text, first/last lines, real multipage PDFs and measured roll, toolbar exclusion, zoom/fit at 320–1440px, Escape/focus return, format preference, untouched label page size and zero invoice mutations. No SMS/bank call.',
