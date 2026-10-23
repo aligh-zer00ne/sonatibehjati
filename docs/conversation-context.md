@@ -495,3 +495,7 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 ## Template-page navigation follow-up (2026-10-23)
 
 - Visual review caught the new template route inheriting Dashboard as its active tab/breadcrumb because AdminFrame omitted the first navigation item with slice(1). Match routes after excluding the actual dashboard href instead; do not depend on array order. The template workflow now asserts Management is the active tab on /admin/message-templates. Preserve the existing route/permission guards and mobile navigation.
+
+## Slight desktop trust-badge increase (2026-10-23)
+
+- User explicitly requested only a small desktop enlargement of Enamad and SEP. Increase the existing md badge frames from 44 to 48px, Enamad artwork from 40 to 44px and SEP CSS width from 36 to 40px (actual flex-constrained artwork 34→38px). Keep mobile classes, assets and trust links intact. Lint, storefront typecheck/build and production-browser measurements at 390/767/768/1024/1440px pass: mobile frames remain 64px, desktop frames are 48px and no horizontal overflow occurs. No new permanent test, business/API/schema change or production deployment.

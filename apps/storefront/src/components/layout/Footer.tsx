@@ -112,14 +112,14 @@ export default function Footer() {
           >
             <div
               data-slot="footer-sep-badge"
-              className="flex size-16 shrink-0 items-center justify-center rounded border border-[#f4d493]/30 bg-[#fff8ed] p-1 md:size-11"
+              className="flex size-16 shrink-0 items-center justify-center rounded border border-[#f4d493]/30 bg-[#fff8ed] p-1 md:size-12"
             >
               <Image
                 src="/images/sep-logo.png"
                 alt="لوگوی پرداخت الکترونیک سامان کیش"
                 width={78}
                 height={49}
-                className="h-auto w-14 object-contain md:w-9"
+                className="h-auto w-14 object-contain md:w-10"
               />
             </div>
             <EnamadBadge compact />
