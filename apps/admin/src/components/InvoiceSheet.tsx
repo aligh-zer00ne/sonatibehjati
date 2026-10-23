@@ -37,8 +37,8 @@ export default function InvoiceSheet({
     minute: '2-digit',
     timeZone: 'Asia/Tehran',
   }).format(new Date(order.createdAt));
-  const box = 'overflow-hidden rounded-lg border border-[#c9d9e6]';
-  const heading = `flex items-center gap-2 border-b border-[#dce6ef] bg-[#eff5fa] font-extrabold ${compact ? 'px-2 py-1' : 'px-3 py-2'}`;
+  const box = 'overflow-hidden rounded-lg border border-[#777777]';
+  const heading = `flex items-center gap-2 border-b border-[#b5b5b5] bg-[#f4f4f4] font-extrabold ${compact ? 'px-2 py-1' : 'px-3 py-2'}`;
   const payment = (
     <>
       <h2 className={heading}>
@@ -71,7 +71,7 @@ export default function InvoiceSheet({
     <article
       data-invoice-sheet={format}
       dir="rtl"
-      className={`box-border bg-white font-sans leading-[1.8] text-[#12365a] [overflow-wrap:anywhere] [&_dd]:m-0 [&_p]:m-0 print:!min-h-0 print:!w-auto print:!p-0 ${thermal ? 'w-[80mm] p-[4mm] text-[10px]' : large ? 'min-h-[297mm] w-[210mm] p-[12mm] text-[12px]' : 'min-h-[210mm] w-[148mm] p-[8mm] text-[10px]'}`}
+      className={`box-border bg-white font-sans leading-[1.8] text-[#111111] [overflow-wrap:anywhere] [&_a]:!text-inherit [&_dd]:m-0 [&_p]:m-0 print:!min-h-0 print:!w-auto print:!p-0 ${thermal ? 'w-[80mm] p-[4mm] text-[10px]' : large ? 'min-h-[297mm] w-[210mm] p-[12mm] text-[12px]' : 'min-h-[210mm] w-[148mm] p-[8mm] text-[10px]'}`}
     >
       <header className="break-inside-avoid">
         <div
@@ -81,7 +81,7 @@ export default function InvoiceSheet({
             <img
               src="/images/logo-brand.png"
               alt={BRAND_NAME}
-              className={`${thermal ? 'h-[17mm]' : large ? 'h-[24mm]' : 'h-[16mm]'} w-auto shrink-0 object-contain`}
+              className={`${thermal ? 'h-[17mm]' : large ? 'h-[24mm]' : 'h-[16mm]'} w-auto shrink-0 object-contain grayscale`}
             />
             <div data-invoice-seller aria-label="مشخصات فروشنده" className="min-w-0">
               <h1
@@ -104,7 +104,7 @@ export default function InvoiceSheet({
             </div>
           </div>
           {!thermal && (
-            <div className="relative shrink-0 overflow-hidden rounded-ee-[24px] rounded-ss-lg bg-[linear-gradient(130deg,#234f7e,#10335b)] px-3 py-4 text-[0.85em] text-white">
+            <div className="relative shrink-0 overflow-hidden rounded-ee-[24px] rounded-ss-lg border border-[#777777] bg-[#f0f0f0] px-3 py-4 text-[0.85em] text-[#111111]">
               <p className="flex items-center gap-2">
                 <AdminIcon name="globe" width={15} />
                 <span dir="ltr">sonatibehjati.ir</span>
@@ -117,7 +117,7 @@ export default function InvoiceSheet({
           )}
         </div>
         <div
-          className={`${thermal ? 'mb-3 border-y border-[#234f7e] py-2 text-center' : compact ? 'mb-3 grid grid-cols-[1fr_auto] items-center gap-3 border-b-2 border-[#8eafc8] pb-3' : 'mb-4 grid grid-cols-[1fr_auto] items-center gap-3 border-b-2 border-[#8eafc8] pb-4'}`}
+          className={`${thermal ? 'mb-3 border-y border-[#444444] py-2 text-center' : compact ? 'mb-3 grid grid-cols-[1fr_auto] items-center gap-3 border-b-2 border-[#555555] pb-3' : 'mb-4 grid grid-cols-[1fr_auto] items-center gap-3 border-b-2 border-[#555555] pb-4'}`}
         >
           <div className="text-center">
             <h2
@@ -137,8 +137,8 @@ export default function InvoiceSheet({
             )}
           </div>
           {!thermal && (
-            <dl className="min-w-[33mm] rounded-lg border border-[#c9d9e6] bg-[#f4f8fc] p-2.5 text-[0.9em]">
-              <div className="flex items-center justify-between gap-4 border-b border-[#dce6ef] pb-1.5">
+            <dl className="min-w-[33mm] rounded-lg border border-[#777777] bg-[#f4f4f4] p-2.5 text-[0.9em]">
+              <div className="flex items-center justify-between gap-4 border-b border-[#b5b5b5] pb-1.5">
                 <dt className="flex items-center gap-1">
                   <AdminIcon name="calendar" width={13} />
                   تاریخ صدور
@@ -161,7 +161,7 @@ export default function InvoiceSheet({
         className={`${box} ${compact ? 'mb-3' : 'mb-4'} break-inside-avoid`}
       >
         <h2 className={heading}>
-          <span className="grid size-[1.8em] shrink-0 place-items-center rounded-full bg-[#173f6a] text-white">
+          <span className="grid size-[1.8em] shrink-0 place-items-center rounded-full bg-[#eeeeee] text-[#111111]">
             <AdminIcon name="person" width={thermal ? 13 : 17} />
           </span>
           مشخصات مشتری
@@ -192,7 +192,7 @@ export default function InvoiceSheet({
       <div className={`${box} ${compact ? 'mb-3' : 'mb-4'}`}>
         <table
           aria-label="اقلام فاکتور"
-          className={`w-full table-fixed border-collapse ${thermal ? 'text-[9px] leading-[1.65]' : 'text-[0.95em]'} [&_th]:border-e [&_th]:border-white/25 [&_th]:px-1 [&_th]:py-1.5 [&_td]:border-e [&_td]:border-b [&_td]:border-[#dce6ef] [&_td]:px-1 [&_td]:py-1.5 [&_td]:align-top [&_tr:last-child_td]:border-b-0 [&_td:last-child]:border-e-0 [&_th:last-child]:border-e-0`}
+          className={`w-full table-fixed border-collapse ${thermal ? 'text-[9px] leading-[1.65]' : 'text-[0.95em]'} [&_th]:border-e [&_th]:border-white/25 [&_th]:px-1 [&_th]:py-1.5 [&_td]:border-e [&_td]:border-b [&_td]:border-[#b5b5b5] [&_td]:px-1 [&_td]:py-1.5 [&_td]:align-top [&_tr:last-child_td]:border-b-0 [&_td:last-child]:border-e-0 [&_th:last-child]:border-e-0`}
         >
           <colgroup>
             {!thermal && <col className="w-[6%]" />}
@@ -201,7 +201,7 @@ export default function InvoiceSheet({
             <col className={thermal ? 'w-[25%]' : 'w-[24%]'} />
             <col className={thermal ? 'w-[27%]' : 'w-[27%]'} />
           </colgroup>
-          <thead className="table-header-group bg-[#173f6a] text-center font-bold text-white">
+          <thead className="table-header-group bg-[#eeeeee] text-center font-bold text-[#111111]">
             <tr>
               {!thermal && <th>#</th>}
               <th>نام کالا</th>
@@ -233,12 +233,12 @@ export default function InvoiceSheet({
               <tr
                 key={item.id}
                 data-invoice-line
-                className="break-inside-avoid bg-[#f5f9fc] text-center even:bg-white"
+                className="break-inside-avoid bg-[#f7f7f7] text-center even:bg-white"
               >
                 {!thermal && <td>{formatNumber(index + 1)}</td>}
                 <td className="text-right">
                   <b>{item.productTitle}</b>
-                  <span className="mt-0.5 block text-[0.9em] text-[#476783]">
+                  <span className="mt-0.5 block text-[0.9em] text-[#333333]">
                     {item.productWeight}
                   </span>
                   {!!item.discountAmount && (
@@ -258,7 +258,7 @@ export default function InvoiceSheet({
 
       <div className="break-inside-avoid">
         <div className={`grid gap-3 ${thermal ? 'grid-cols-1' : 'grid-cols-2'}`}>
-          <section className={`${box} bg-[#f8fbfd]`}>
+          <section className={`${box} bg-[#fafafa]`}>
             {!thermal && (
               <h2 className={heading}>
                 <AdminIcon name="coins" width={19} />
@@ -276,7 +276,7 @@ export default function InvoiceSheet({
               ).map(([label, value], index) => (
                 <div
                   key={label}
-                  className={`flex items-baseline justify-between gap-2 ${index === 3 ? 'mt-2 rounded-md bg-[#173f6a] px-2.5 py-2 text-[1.1em] font-black text-white' : compact ? 'border-b border-[#dce6ef] px-1 py-0.5' : 'border-b border-[#dce6ef] px-1 py-1.5'}`}
+                  className={`flex items-baseline justify-between gap-2 ${index === 3 ? 'mt-2 rounded-md bg-[#eeeeee] px-2.5 py-2 text-[1.1em] font-black text-[#111111]' : compact ? 'border-b border-[#b5b5b5] px-1 py-0.5' : 'border-b border-[#b5b5b5] px-1 py-1.5'}`}
                 >
                   <dt>{label}</dt>
                   <dd data-amount={value} className="tabular-nums">
@@ -289,13 +289,13 @@ export default function InvoiceSheet({
           {!thermal && <section className={box}>{payment}</section>}
         </div>
         <p
-          className={`flex items-start gap-2 rounded-lg border border-[#c9d9e6] bg-[#f1f7fc] font-semibold ${compact ? 'mt-2 px-2 py-1' : 'mt-3 px-3 py-2'}`}
+          className={`flex items-start gap-2 rounded-lg border border-[#777777] bg-[#f4f4f4] font-semibold ${compact ? 'mt-2 px-2 py-1' : 'mt-3 px-3 py-2'}`}
         >
           <AdminIcon name="wallet" width={thermal ? 13 : 17} className="mt-0.5 shrink-0" />
           <span>مبلغ به حروف: {amountToPersianWords(toRials(order.total), 'ریال')}</span>
         </p>
         {thermal && (
-          <div className="mt-2 border-y border-dashed border-[#a8bfd2] py-1.5 text-[8px]">
+          <div className="mt-2 border-y border-dashed border-[#777777] py-1.5 text-[8px]">
             <p>
               {manual
                 ? `دریافت ثبت‌شده در فروشگاه: ${formatAdminPrice(order.offlinePaidAmount)} · مانده: ${formatAdminPrice(balance)}`
@@ -306,40 +306,37 @@ export default function InvoiceSheet({
           </div>
         )}
         <footer className={compact ? 'mt-2' : 'mt-3'}>
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-[#c9d9e6] bg-[#f1f7fc] p-2.5">
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-[#777777] bg-[#f4f4f4] p-2.5">
             <div className="min-w-0">
               <p className="flex items-center gap-1.5 text-[1.1em] font-extrabold">
                 <AdminIcon name="qrcode" width={thermal ? 14 : 20} />
                 {compact ? 'با تشکر از خرید شما' : 'با عشق از اردکان، برای شما'}
               </p>
               <p className="mt-1 text-[0.85em]">برای مشاهدهٔ راه‌های ارتباطی، QR را اسکن کنید.</p>
-              <p dir="ltr" className="mt-1 text-right text-[0.9em] font-bold text-[#23659a]">
+              <p dir="ltr" className="mt-1 text-right text-[0.9em] font-bold text-[#333333]">
                 sonatibehjati.ir/QR
               </p>
             </div>
             <BrandQr
-              className={`${thermal ? 'w-[20mm]' : compact ? 'w-[21mm]' : 'w-[25mm]'} rounded-md border border-[#94afc5] bg-white p-1 grayscale`}
+              className={`${thermal ? 'w-[20mm]' : compact ? 'w-[21mm]' : 'w-[25mm]'} rounded-md border border-[#666666] bg-white p-1 grayscale`}
             />
           </div>
           {!compact && (
             <>
               <div className="mt-3 flex items-center gap-2">
-                <span className="h-px flex-1 bg-[#c9d9e6]" />
+                <span className="h-px flex-1 bg-[#777777]" />
                 <AdminIcon name="sprout" width={thermal ? 16 : 22} />
-                <span className="h-px flex-1 bg-[#c9d9e6]" />
+                <span className="h-px flex-1 bg-[#777777]" />
               </div>
               <p className="mt-1 text-center text-[1.1em] font-extrabold">با تشکر از خرید شما</p>
               <p className="text-center text-[0.85em]">فرآورده‌های کنجدی سنتی بهجتی اردکان</p>
             </>
           )}
-          <DesignCredit className="mt-2 text-center text-[8px] text-[#476783]" />
+          <DesignCredit className="mt-2 text-center text-[8px] text-[#333333]" />
           {large && (
-            <div
-              aria-hidden="true"
-              className={`relative mt-3 ${compact ? 'h-[3mm]' : 'h-[5mm]'} overflow-hidden`}
-            >
-              <span className="absolute inset-x-0 bottom-0 h-[4mm] rounded-t-[65%] bg-[#6995c0]" />
-              <span className="absolute -right-4 bottom-0 left-0 h-[3mm] rounded-t-[80%] bg-[#173f6a]" />
+            <div aria-hidden="true" className="relative mt-3 h-[2mm] overflow-hidden">
+              <span className="absolute inset-x-0 bottom-0 h-px bg-[#777777]" />
+              <span className="absolute inset-x-0 top-0 h-px bg-[#b5b5b5]" />
             </div>
           )}
         </footer>

@@ -107,6 +107,21 @@ try {
     );
     await expect(sheet).toContainText('دریافت ثبت‌شده در فروشگاه');
     await expect(sheet).toContainText('هزینه ارسال');
+    const coloredText = await sheet
+      .locator('p,b,th,td,h1,h2,a,dt,dd,span')
+      .evaluateAll((elements) =>
+        elements
+          .filter((el) => {
+            const rgb = getComputedStyle(el)
+              .color.match(/[\d.]+/g)
+              ?.slice(0, 3)
+              .map(Number);
+            return rgb?.length === 3 && (rgb[0] !== rgb[1] || rgb[1] !== rgb[2]);
+          })
+          .map((el) => ({ text: el.textContent.slice(0, 50), color: getComputedStyle(el).color })),
+      );
+    assert.deepEqual(coloredText, [], `${format}: monochrome text stays legible without color ink`);
+    await expect(sheet.locator('thead')).toHaveCSS('color', 'rgb(17, 17, 17)');
     if (format === 'THERMAL') {
       await expect(sheet).not.toContainText('نشانی:');
       await expect(sheet).not.toContainText('کد پستی:');
@@ -151,6 +166,20 @@ try {
       displayHeaderFooter: false,
     });
     const info = execFileSync('pdfinfo', [file], { encoding: 'utf8' });
+    if (format === 'A5') {
+      const noBackground = '/tmp/behjati-invoice-A5-no-background.pdf';
+      await page.pdf({
+        path: noBackground,
+        preferCSSPageSize: true,
+        printBackground: false,
+        displayHeaderFooter: false,
+      });
+      const plain = execFileSync('pdftotext', ['-layout', noBackground, '-'], {
+        encoding: 'utf8',
+      }).replace(/[\u202a-\u202e\u2066-\u2069]/g, '');
+      assert.match(plain, /ITEM-\s*001/);
+      assert.match(plain, /ITEM-\s*036/);
+    }
     const dimensions = info.match(/Page size:\s+([\d.]+) x ([\d.]+)/);
     assert.ok(dimensions && Math.abs(Number(dimensions[1]) - (widthMm * 72) / 25.4) < 1);
     if (heightMm) {
