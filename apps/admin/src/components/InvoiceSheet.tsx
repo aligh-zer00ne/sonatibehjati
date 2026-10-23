@@ -302,7 +302,7 @@ export default function InvoiceSheet({
               </p>
             </div>
             <BrandQr
-              className={`${thermal ? 'w-[20mm]' : compact ? 'w-[21mm]' : 'w-[25mm]'} rounded-md border border-[#666666] bg-white p-1 grayscale`}
+              className={`${thermal ? 'w-[24mm]' : compact ? 'w-[24mm]' : 'w-[28mm]'} rounded-md border border-[#666666] bg-white p-1 grayscale`}
             />
           </div>
           {!compact && (

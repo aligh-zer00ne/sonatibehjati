@@ -5,8 +5,8 @@ import QRCode from 'qrcode';
 const current = await readFile('apps/storefront/public/images/brand-qr.svg', 'utf8').catch(
   () => '',
 );
-if (current.includes('data-qr-source="supplied-pdf"')) {
-  console.info('Supplied PDF QR preserved; no generic regeneration.');
+if (current.includes('data-qr-source="supplied-')) {
+  console.info('Supplied artwork QR preserved; no generic regeneration.');
   process.exit(0);
 }
 const target = 'https://sonatibehjati.ir/QR';

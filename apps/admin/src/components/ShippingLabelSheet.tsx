@@ -150,15 +150,7 @@ export default function ShippingLabelSheet({
             </dl>
           </section>
           <section className="flex min-w-0 flex-col items-center justify-center gap-[1mm] rounded-[2mm] border-[0.4mm] border-black p-[1mm] text-center text-[0.8em] font-bold">
-            <BrandQr className={large ? 'w-[22mm] grayscale' : 'w-[16mm] grayscale'} />
-            <p>
-              راه‌های ارتباطی
-              <br />
-              سنتی بهجتی
-            </p>
-            <p dir="ltr" className="text-[0.8em]">
-              sonatibehjati.ir/QR
-            </p>
+            <BrandQr className={large ? 'w-[26mm] grayscale' : 'w-[22mm] grayscale'} />
           </section>
         </div>
         <Block title="محتویات مرسوله" icon={icon('products')}>
