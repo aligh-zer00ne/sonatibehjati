@@ -9,6 +9,18 @@ vi.mock('../../database/client.js', () => ({
   db: { $transaction: async (callback: (value: typeof tx) => unknown) => callback(tx) },
 }));
 vi.mock('../../config/env.js', () => ({ env: { SHIPPING_COST: 35000 } }));
+vi.mock('./shipping-settings.js', () => ({
+  loadShippingSettings: async () => ({
+    freeShippingThreshold: null,
+    methods: ['POST', 'TIPAX', 'COURIER'].map((method) => ({
+      method,
+      enabled: true,
+      baseCost: 35000,
+      additionalKgCost: 0,
+      freeShippingEligible: true,
+    })),
+  }),
+}));
 import { quoteCheckout, createOrder } from './service.js';
 const input = { addressId: 'address', items: [{ productId: 'product', quantity: 2 }] };
 const orderInput = {

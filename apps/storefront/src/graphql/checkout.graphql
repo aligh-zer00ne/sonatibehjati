@@ -12,6 +12,9 @@ fragment CheckoutAddress on Address {
   isDefault
 }
 query MyAddresses {
+  shippingOptions {
+    availableMethods
+  }
   myAddresses {
     ...CheckoutAddress
   }
@@ -34,6 +37,9 @@ mutation DeleteCheckoutAddress($id: ID!) {
 }
 query CheckoutQuote($input: CheckoutInput!) {
   checkoutQuote(input: $input) {
+    freeShippingApplied
+    freeShippingThreshold
+    freeShippingRemaining
     shippingMethod
     shippingWeightGrams
     addressId

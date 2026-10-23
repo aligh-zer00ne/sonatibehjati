@@ -12,7 +12,8 @@
     "./permissions": "./src/permissions.ts",
     "./homepage": "./src/homepage.ts",
     "./operations": "./src/operations.ts",
-    "./sales": "./src/sales.ts"
+    "./sales": "./src/sales.ts",
+    "./shipping": "./src/shipping.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

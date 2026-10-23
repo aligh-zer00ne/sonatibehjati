@@ -223,6 +223,7 @@ export async function proxyAuth(request: Request, input: ProxyInput) {
       'PRODUCT_UNAVAILABLE',
       'REQUEST_CONFLICT',
       'PRICE_CHANGED',
+      'SHIPPING_UNAVAILABLE',
       'LOCATION_UNAVAILABLE',
       'PAYMENT_DISABLED',
       'PAYMENT_UNAVAILABLE',

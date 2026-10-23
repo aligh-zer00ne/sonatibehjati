@@ -7,6 +7,7 @@ import ProtectedAdmin from './auth/ProtectedAdmin';
 import OwnerOnly from './auth/OwnerOnly';
 import AdminFrame from './components/AdminFrame';
 const Announcement = lazy(() => import('./pages/Announcement'));
+const Shipping = lazy(() => import('./pages/Shipping'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Coupons = lazy(() => import('./pages/Coupons'));
 const Tickets = lazy(() => import('./pages/Tickets'));
@@ -37,7 +38,7 @@ export default function App() {
           fontFamily: 'Vazirmatn Variable, sans-serif',
           fontSize: 15,
           fontWeightStrong: 700,
-          colorPrimary: '#96140d',
+          colorPrimary: '#701734',
           colorText: '#34251e',
           colorTextSecondary: '#6c5a4c',
           colorBgLayout: '#f6f1e9',
@@ -51,7 +52,7 @@ export default function App() {
           Select: {
             optionSelectedBg: '#f3ead7',
             optionActiveBg: '#faf6ee',
-            optionSelectedColor: '#76100b',
+            optionSelectedColor: '#58132b',
             optionFontSize: 15,
           },
           Typography: { titleMarginTop: 0, titleMarginBottom: 0 },
@@ -113,6 +114,7 @@ export default function App() {
                     <Route path="orders/manual" element={<Orders key="manual" scope="manual" />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
+                    <Route path="shipping" element={<Shipping />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="sections/:section" element={<AdminSection />} />
                     <Route path="tickets" element={<Tickets />} />

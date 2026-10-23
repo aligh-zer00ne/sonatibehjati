@@ -21,7 +21,7 @@ export async function verifyTopNavigation(page) {
     ['فروش و مشتریان', 'sales', 6],
     ['محصولات و تخفیف‌ها', 'catalog', 2],
     ['ارتباط با مشتری', 'communication', 2],
-    ['تنظیمات مدیریت', 'settings', 3],
+    ['تنظیمات مدیریت', 'settings', 4],
   ]) {
     const link = nav.getByRole('link', { name, exact: true });
     await link.focus();

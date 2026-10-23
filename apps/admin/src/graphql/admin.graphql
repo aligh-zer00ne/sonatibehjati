@@ -756,3 +756,25 @@ mutation CancelAdminPaymentRequest($id: ID!) {
     ...AdminPaymentRequestFields
   }
 }
+
+fragment ShippingSettingsFields on ShippingSettings {
+  freeShippingThreshold
+  updatedAt
+  methods {
+    method
+    enabled
+    baseCost
+    additionalKgCost
+    freeShippingEligible
+  }
+}
+query AdminShippingSettings {
+  adminShippingSettings {
+    ...ShippingSettingsFields
+  }
+}
+mutation SaveAdminShippingSettings($input: ShippingSettingsInput!, $expectedUpdatedAt: String!) {
+  saveAdminShippingSettings(input: $input, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...ShippingSettingsFields
+  }
+}

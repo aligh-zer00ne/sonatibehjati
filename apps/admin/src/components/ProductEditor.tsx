@@ -1,5 +1,6 @@
+import CompactTabs from './CompactTabs';
 import { useState, useEffect } from 'react';
-import { Card, Tabs, Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
+import { Card, Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
 import { parseShippingWeight } from '@behjati/shared/sales';
 import { adminProductInputSchema } from '@behjati/shared/admin';
 import {
@@ -192,8 +193,6 @@ export default function ProductEditor({
             price,
             weight,
             shippingWeightGrams,
-            shippingBaseCost,
-            shippingAdditionalKgCost,
             shortDescription,
             description,
             categoryId,
@@ -204,8 +203,6 @@ export default function ProductEditor({
           const parsed = adminProductInputSchema.safeParse({
             ...promotionFormInput(raw),
             shippingWeightGrams,
-            shippingBaseCost,
-            shippingAdditionalKgCost,
             title,
             slug,
             price,
@@ -246,7 +243,7 @@ export default function ProductEditor({
           }
         }}
       >
-        <Tabs
+        <CompactTabs
           activeKey={tab}
           onChange={setTab}
           items={[
@@ -281,7 +278,7 @@ export default function ProductEditor({
             },
             {
               key: 'shipping',
-              label: 'هزینه و وزن ارسال',
+              label: 'وزن ارسال',
               forceRender: true,
               children: (
                 <>
@@ -289,7 +286,7 @@ export default function ProductEditor({
                     type="info"
                     showIcon
                     className="!mb-5"
-                    title="قیمت پایه شامل یک کیلو اول بسته است. برای هر کیلو اضافهٔ شروع‌شده، نرخ اضافه محاسبه می‌شود. در سبد چندمحصولی، بیشترین تعرفه برای وزن کل بسته اعمال می‌شود."
+                    title="تعرفه و ارسال رایگان از بخش «مدیریت ارسال» برای کل سبد تعیین می‌شود. اینجا فقط وزن واقعی هر بستهٔ محصول را وارد کنید."
                   />
                   <div className="grid gap-x-5 sm:grid-cols-2">
                     <Form.Item
@@ -299,20 +296,6 @@ export default function ProductEditor({
                       extra="وزن واقعی محصول همراه بسته‌بندی؛ برای یک کیلو، ۱۰۰۰ وارد کنید."
                     >
                       <InputNumber min={1} max={1000000} precision={0} className="!w-full" />
-                    </Form.Item>
-                    <Form.Item
-                      name="shippingBaseCost"
-                      label="هزینهٔ پایهٔ ارسال (ریال)"
-                      rules={[{ required: true, type: 'number', min: 0 }]}
-                    >
-                      <MoneyInput disabled={pending} />
-                    </Form.Item>
-                    <Form.Item
-                      name="shippingAdditionalKgCost"
-                      label="هزینهٔ هر کیلو اضافه (ریال)"
-                      rules={[{ required: true, type: 'number', min: 0 }]}
-                    >
-                      <MoneyInput disabled={pending} />
                     </Form.Item>
                   </div>
                 </>

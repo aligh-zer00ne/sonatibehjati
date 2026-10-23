@@ -59,6 +59,7 @@ export default function Checkout() {
   );
   const [addresses, setAddresses] = useState<CheckoutAddressFragment[]>([]);
   const [addressId, setAddressId] = useState('');
+  const [availableMethods, setAvailableMethods] = useState<ShippingMethod[]>([...shippingMethods]);
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>('POST');
   const [editing, setEditing] = useState<CheckoutAddressFragment | null | undefined>(undefined);
   const [addressLoading, setAddressLoading] = useState(true);
@@ -122,6 +123,11 @@ export default function Checkout() {
         }
       }
       const result = await authRequest(MyAddressesDocument, {});
+      const methods = result.shippingOptions?.availableMethods ?? [...shippingMethods];
+      setAvailableMethods(methods);
+      setShippingMethod((current) =>
+        methods.includes(current) ? current : (methods[0] ?? 'POST'),
+      );
       setAddresses(result.myAddresses);
       setAddressId((id) =>
         result.myAddresses.some((address) => address.id === id)
@@ -156,6 +162,22 @@ export default function Checkout() {
         if (active) {
           setQuote(null);
           setError(error instanceof Error ? error.message : 'خلاصه دریافت نشد.');
+          if (error instanceof AuthRequestError && error.code === 'SHIPPING_UNAVAILABLE') {
+            void authRequest(MyAddressesDocument, {})
+              .then((result) => {
+                if (!active) return;
+                const methods = result.shippingOptions?.availableMethods;
+                if (methods?.length) {
+                  setAvailableMethods(methods);
+                  setShippingMethod((current) =>
+                    methods.includes(current) ? current : methods[0]!,
+                  );
+                }
+              })
+              .catch(() => {
+                /* The original quote error remains visible. */
+              });
+          }
         }
       })
       .finally(() => {
@@ -332,7 +354,7 @@ export default function Checkout() {
         <fieldset className="space-y-2.5 border-t border-border pt-4" disabled={pending}>
           <legend className="px-1 text-sm font-bold">روش ارسال سفارش</legend>
           <div className="grid grid-cols-3 gap-1 rounded-2xl bg-surface/70 p-1">
-            {shippingMethods.map((method) => {
+            {availableMethods.map((method) => {
               const Icon = shippingIcons[method];
               return (
                 <label key={method} className="relative min-w-0 cursor-pointer">
@@ -431,6 +453,31 @@ export default function Checkout() {
                 </li>
               ))}
             </ul>
+            {currentQuote.freeShippingThreshold !== null &&
+              currentQuote.freeShippingThreshold !== undefined && (
+                <div
+                  role="status"
+                  className="rounded-2xl border border-primary/15 bg-primary/5 p-4 text-sm leading-8"
+                >
+                  <p className="font-bold text-primary">
+                    {currentQuote.freeShippingApplied
+                      ? 'ارسال این سفارش رایگان است'
+                      : `${formatPrice(currentQuote.freeShippingRemaining ?? 0)} تا ارسال رایگان`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    حداقل خرید پس از تخفیف: {formatPrice(currentQuote.freeShippingThreshold)}
+                  </p>
+                  <progress
+                    className="mt-3 h-1.5 w-full accent-primary"
+                    max={currentQuote.freeShippingThreshold}
+                    value={Math.min(
+                      currentQuote.freeShippingThreshold,
+                      currentQuote.subtotal - currentQuote.discount,
+                    )}
+                    aria-label="پیشرفت تا ارسال رایگان"
+                  />
+                </div>
+              )}
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between gap-3">
                 <dt>روش ارسال</dt>
@@ -447,7 +494,11 @@ export default function Checkout() {
                   className={`flex justify-between gap-3 ${label === 'مبلغ نهایی' ? 'border-t border-border pt-4 font-extrabold text-primary' : ''}`}
                 >
                   <dt>{label}</dt>
-                  <dd>{formatPrice(Number(value))}</dd>
+                  <dd>
+                    {label === 'هزینهٔ ارسال' && Number(value) === 0
+                      ? 'رایگان'
+                      : formatPrice(Number(value))}
+                  </dd>
                 </div>
               ))}
             </dl>

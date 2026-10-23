@@ -406,6 +406,7 @@ export type AdminPermission =
   | 'PRODUCTS'
   | 'REPORTS'
   | 'REVIEWS'
+  | 'SHIPPING'
   | 'TICKETS';
 
 export type AdminProductDeletion = {
@@ -699,6 +700,9 @@ export type CheckoutQuote = {
   __typename?: 'CheckoutQuote';
   addressId: Scalars['ID']['output'];
   discount: Scalars['Int']['output'];
+  freeShippingApplied: Scalars['Boolean']['output'];
+  freeShippingRemaining?: Maybe<Scalars['Int']['output']>;
+  freeShippingThreshold?: Maybe<Scalars['Int']['output']>;
   items: Array<CheckoutLine>;
   shipping: Scalars['Int']['output'];
   shippingMethod?: Maybe<ShippingMethod>;
@@ -831,6 +835,7 @@ export type Mutation = {
   saveAdminCoupon: AdminCoupon;
   saveAdminProduct: Product;
   saveAdminShippingLabel: AdminShippingLabel;
+  saveAdminShippingSettings: ShippingSettings;
   saveAnnouncement: HomepageContent;
   saveHomepageContent: HomepageContent;
   setAdminProductActive: Product;
@@ -964,6 +969,12 @@ export type MutationSaveAdminShippingLabelArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   input: AdminShippingLabelInput;
   orderId: Scalars['ID']['input'];
+};
+
+
+export type MutationSaveAdminShippingSettingsArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  input: ShippingSettingsInput;
 };
 
 
@@ -1263,6 +1274,7 @@ export type Query = {
   adminProducts: AdminProductsPage;
   adminReport: AdminReport;
   adminReviews: ReviewPage;
+  adminShippingSettings: ShippingSettings;
   adminTicket: SupportTicket;
   adminTickets: TicketPage;
   adminUser: AdminUser;
@@ -1288,6 +1300,7 @@ export type Query = {
   productsByIds: Array<Product>;
   promotionalProducts: Array<Product>;
   reverseLocation?: Maybe<Scalars['String']['output']>;
+  shippingOptions: ShippingOptions;
 };
 
 
@@ -1489,6 +1502,40 @@ export type ShippingMethod =
   | 'COURIER'
   | 'POST'
   | 'TIPAX';
+
+export type ShippingOptions = {
+  __typename?: 'ShippingOptions';
+  availableMethods: Array<ShippingMethod>;
+};
+
+export type ShippingRule = {
+  __typename?: 'ShippingRule';
+  additionalKgCost: Scalars['Int']['output'];
+  baseCost: Scalars['Int']['output'];
+  enabled: Scalars['Boolean']['output'];
+  freeShippingEligible: Scalars['Boolean']['output'];
+  method: ShippingMethod;
+};
+
+export type ShippingRuleInput = {
+  additionalKgCost: Scalars['Int']['input'];
+  baseCost: Scalars['Int']['input'];
+  enabled: Scalars['Boolean']['input'];
+  freeShippingEligible: Scalars['Boolean']['input'];
+  method: ShippingMethod;
+};
+
+export type ShippingSettings = {
+  __typename?: 'ShippingSettings';
+  freeShippingThreshold?: Maybe<Scalars['Int']['output']>;
+  methods: Array<ShippingRule>;
+  updatedAt: Scalars['String']['output'];
+};
+
+export type ShippingSettingsInput = {
+  freeShippingThreshold?: InputMaybe<Scalars['Int']['input']>;
+  methods: Array<ShippingRuleInput>;
+};
 
 export type StaffInput = {
   email: Scalars['String']['input'];
@@ -1735,6 +1782,11 @@ export type ResolversTypes = {
   ReviewStatus: ReviewStatus;
   SalesChannel: SalesChannel;
   ShippingMethod: ShippingMethod;
+  ShippingOptions: ResolverTypeWrapper<ShippingOptions>;
+  ShippingRule: ResolverTypeWrapper<ShippingRule>;
+  ShippingRuleInput: ShippingRuleInput;
+  ShippingSettings: ResolverTypeWrapper<ShippingSettings>;
+  ShippingSettingsInput: ShippingSettingsInput;
   StaffInput: StaffInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   SupportTicket: ResolverTypeWrapper<SupportTicket>;
@@ -1844,6 +1896,11 @@ export type ResolversParentTypes = {
   ReviewFilter: ReviewFilter;
   ReviewInput: ReviewInput;
   ReviewPage: ReviewPage;
+  ShippingOptions: ShippingOptions;
+  ShippingRule: ShippingRule;
+  ShippingRuleInput: ShippingRuleInput;
+  ShippingSettings: ShippingSettings;
+  ShippingSettingsInput: ShippingSettingsInput;
   StaffInput: StaffInput;
   String: Scalars['String']['output'];
   SupportTicket: SupportTicket;
@@ -2221,6 +2278,9 @@ export type CheckoutLineResolvers<ContextType = AuthContext, ParentType extends 
 export type CheckoutQuoteResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['CheckoutQuote'] = ResolversParentTypes['CheckoutQuote']> = {
   addressId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   discount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  freeShippingApplied?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  freeShippingRemaining?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  freeShippingThreshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes['CheckoutLine']>, ParentType, ContextType>;
   shipping?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   shippingMethod?: Resolver<Maybe<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
@@ -2311,6 +2371,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   saveAdminCoupon?: Resolver<ResolversTypes['AdminCoupon'], ParentType, ContextType, RequireFields<MutationSaveAdminCouponArgs, 'input'>>;
   saveAdminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSaveAdminProductArgs, 'input'>>;
   saveAdminShippingLabel?: Resolver<ResolversTypes['AdminShippingLabel'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingLabelArgs, 'input' | 'orderId'>>;
+  saveAdminShippingSettings?: Resolver<ResolversTypes['ShippingSettings'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingSettingsArgs, 'expectedUpdatedAt' | 'input'>>;
   saveAnnouncement?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType, RequireFields<MutationSaveAnnouncementArgs, 'input'>>;
   saveHomepageContent?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType, RequireFields<MutationSaveHomepageContentArgs, 'input'>>;
   setAdminProductActive?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSetAdminProductActiveArgs, 'expectedUpdatedAt' | 'id' | 'isActive'>>;
@@ -2482,6 +2543,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminProducts?: Resolver<ResolversTypes['AdminProductsPage'], ParentType, ContextType, RequireFields<QueryAdminProductsArgs, 'input'>>;
   adminReport?: Resolver<ResolversTypes['AdminReport'], ParentType, ContextType, RequireFields<QueryAdminReportArgs, 'input'>>;
   adminReviews?: Resolver<ResolversTypes['ReviewPage'], ParentType, ContextType, RequireFields<QueryAdminReviewsArgs, 'input'>>;
+  adminShippingSettings?: Resolver<ResolversTypes['ShippingSettings'], ParentType, ContextType>;
   adminTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<QueryAdminTicketArgs, 'id'>>;
   adminTickets?: Resolver<ResolversTypes['TicketPage'], ParentType, ContextType, RequireFields<QueryAdminTicketsArgs, 'input'>>;
   adminUser?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<QueryAdminUserArgs, 'id'>>;
@@ -2507,6 +2569,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   productsByIds?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductsByIdsArgs, 'ids'>>;
   promotionalProducts?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
   reverseLocation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryReverseLocationArgs, 'latitude' | 'longitude'>>;
+  shippingOptions?: Resolver<ResolversTypes['ShippingOptions'], ParentType, ContextType>;
 };
 
 export type ReviewPageResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['ReviewPage'] = ResolversParentTypes['ReviewPage']> = {
@@ -2514,6 +2577,24 @@ export type ReviewPageResolvers<ContextType = AuthContext, ParentType extends Re
   page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   pageSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type ShippingOptionsResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['ShippingOptions'] = ResolversParentTypes['ShippingOptions']> = {
+  availableMethods?: Resolver<Array<ResolversTypes['ShippingMethod']>, ParentType, ContextType>;
+};
+
+export type ShippingRuleResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['ShippingRule'] = ResolversParentTypes['ShippingRule']> = {
+  additionalKgCost?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  baseCost?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  freeShippingEligible?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  method?: Resolver<ResolversTypes['ShippingMethod'], ParentType, ContextType>;
+};
+
+export type ShippingSettingsResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['ShippingSettings'] = ResolversParentTypes['ShippingSettings']> = {
+  freeShippingThreshold?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  methods?: Resolver<Array<ResolversTypes['ShippingRule']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type SupportTicketResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['SupportTicket'] = ResolversParentTypes['SupportTicket']> = {
@@ -2598,6 +2679,9 @@ export type Resolvers<ContextType = AuthContext> = {
   ProductReview?: ProductReviewResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ReviewPage?: ReviewPageResolvers<ContextType>;
+  ShippingOptions?: ShippingOptionsResolvers<ContextType>;
+  ShippingRule?: ShippingRuleResolvers<ContextType>;
+  ShippingSettings?: ShippingSettingsResolvers<ContextType>;
   SupportTicket?: SupportTicketResolvers<ContextType>;
   TicketMessage?: TicketMessageResolvers<ContextType>;
   TicketPage?: TicketPageResolvers<ContextType>;

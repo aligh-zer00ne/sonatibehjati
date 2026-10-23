@@ -30,10 +30,16 @@ export const navigationLinks: Item[] = [
     description: 'ثبت وجه نقد، چک و کارت‌خوان و بررسی مانده حساب',
   },
   {
+    href: '/admin/shipping',
+    label: 'مدیریت ارسال',
+    icon: 'truck',
+    description: 'تعرفهٔ کل بسته، روش‌های ارسال و شرط ارسال رایگان',
+  },
+  {
     href: '/admin/products',
     label: 'محصولات',
     icon: 'products',
-    description: 'مدیریت کالا، قیمت، موجودی و هزینه ارسال',
+    description: 'مدیریت کالا، قیمت، موجودی و وزن بسته',
   },
   {
     href: '/admin/users',
@@ -135,7 +141,13 @@ const definitions: Array<{
     label: 'تنظیمات مدیریت',
     shortLabel: 'مدیریت',
     icon: 'settings',
-    paths: ['/admin/announcement', '/admin/accounts', '/admin/settings', '/admin/payment-test'],
+    paths: [
+      '/admin/shipping',
+      '/admin/announcement',
+      '/admin/accounts',
+      '/admin/settings',
+      '/admin/payment-test',
+    ],
   },
 ];
 export function availableNavigation(admin: AdminIdentityFieldsFragment | null) {
@@ -182,7 +194,7 @@ export function AdminNavigationTabs({
   const activeClass =
     '!bg-[linear-gradient(135deg,#f6dfa0,#d3a23f)] !text-[#39270c] shadow-[0_4px_18px_#edc57d38,inset_0_1px_0_#fff8d7]';
   const inactiveClass = mobile
-    ? '!bg-[#f4ebdd] !text-[#76100b]'
+    ? '!bg-[#f4ebdd] !text-[#58132b]'
     : '!bg-white/[0.05] !text-[#fff5e1] hover:!bg-white/15';
   return (
     <nav
@@ -236,9 +248,9 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
       <SurfaceGlow />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#96140d] to-[#dfb65c]"
+        className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#701734] to-[#dfb65c]"
       />
-      <span className="mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#76100b] shadow-[0_6px_14px_#b7834340]">
+      <span className="mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#58132b] shadow-[0_6px_14px_#b7834340]">
         <AdminIcon name={item.icon} width={27} height={27} />
       </span>
       <h2 className="text-lg leading-8 font-extrabold">{item.label}</h2>

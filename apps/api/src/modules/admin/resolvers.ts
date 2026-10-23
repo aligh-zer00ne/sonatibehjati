@@ -1,3 +1,4 @@
+import { readShippingSettings, saveShippingSettings } from '../checkout/shipping-settings.js';
 import {
   createAdminCustomer,
   manualQuote,
@@ -31,6 +32,14 @@ import { serializeProduct as serializeDates } from '../products/presentation.js'
 import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepage.js';
 export const adminResolvers: Resolvers = {
   Query: {
+    shippingOptions: async () => {
+      const settings = await readShippingSettings();
+      return { availableMethods: settings.methods.filter((m) => m.enabled).map((m) => m.method) };
+    },
+    adminShippingSettings: async (_, __, ctx) => {
+      await requirePermission(ctx, 'SHIPPING');
+      return readShippingSettings();
+    },
     adminCustomerAccount: async (_, { customerId, page, invoicePage }, ctx) => {
       await requirePermission(ctx, 'ORDERS');
       return customerAccount(customerId, page ?? 1, invoicePage ?? 1);
@@ -88,6 +97,11 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    saveAdminShippingSettings: async (_, { input, expectedUpdatedAt }, ctx) => {
+      requireAdminOrigin(ctx);
+      await requirePermission(ctx, 'SHIPPING');
+      return saveShippingSettings(input, expectedUpdatedAt);
+    },
     recordAdminAccountEntry: async (_, { input }, ctx) => {
       requireAdminOrigin(ctx);
       const admin = await requirePermission(ctx, 'ORDERS');

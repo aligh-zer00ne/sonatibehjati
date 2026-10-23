@@ -22,6 +22,16 @@ export const adminQueries = {
 };
 export const admins = [];
 export const products = new Set();
+let shippingBackup;
+export async function shippingFixture(data) {
+  if (shippingBackup === undefined)
+    shippingBackup = await db.shippingSettings.findUnique({ where: { id: 'store' } });
+  return db.shippingSettings.upsert({
+    where: { id: 'store' },
+    create: { id: 'store', data },
+    update: { data, updatedAt: new Date() },
+  });
+}
 export const adminGql = (
   query,
   variables = {},
@@ -149,6 +159,15 @@ export async function startAdmin() {
   await ready(adminOrigin + '/login');
 }
 export async function cleanupAdmin() {
+  if (shippingBackup !== undefined) {
+    if (shippingBackup)
+      await db.shippingSettings.upsert({
+        where: { id: 'store' },
+        create: shippingBackup,
+        update: { data: shippingBackup.data, updatedAt: shippingBackup.updatedAt },
+      });
+    else await db.shippingSettings.deleteMany({ where: { id: 'store' } });
+  }
   await db.payment.deleteMany({
     where: { gatewayTestAdminId: { in: admins.map((a) => a.id) }, mode: 'TEST' },
   });

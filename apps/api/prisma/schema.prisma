@@ -221,6 +221,7 @@ model PaymentReference {
 }
 
 model Order {
+  shippingPolicySnapshot   Json?
   salesChannel             SalesChannel        @default(WEBSITE)
   shippingMethod           ShippingMethod?     @default(POST)
   shippingWeightGrams      Int?
@@ -419,6 +420,12 @@ model ProductReview {
   @@unique([userId, productId])
   @@index([productId, status, createdAt])
   @@index([status, createdAt])
+}
+
+model ShippingSettings {
+  id        String   @id
+  data      Json
+  updatedAt DateTime @updatedAt
 }
 
 model HomepageContent {

@@ -28,7 +28,7 @@ export default function ProductEdit() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <PageHeading icon="products" description="اطلاعات، تصاویر و تعرفه‌های این محصول.">
+        <PageHeading icon="products" description="اطلاعات، تصاویر و وزن ارسال این محصول.">
           {id ? 'ویرایش محصول' : 'محصول جدید'}
         </PageHeading>
         {product && <ProductPreview slug={product.slug} isActive={product.isActive} />}

@@ -219,6 +219,9 @@ type CheckoutQuote {
   discount: Int!
   shipping: Int!
   total: Int!
+  freeShippingApplied: Boolean!
+  freeShippingThreshold: Int
+  freeShippingRemaining: Int
 }
 type OrderReceipt {
   salesChannel: SalesChannel!
@@ -320,6 +323,7 @@ enum AdminRole {
   STAFF
 }
 enum AdminPermission {
+  SHIPPING
   DASHBOARD
   ORDERS
   ORDER_MAP
@@ -1075,4 +1079,41 @@ extend type Query {
 extend type Mutation {
   createAdminPaymentRequest(input: AdminPaymentRequestInput!): AdminPaymentRequest!
   cancelAdminPaymentRequest(id: ID!): AdminPaymentRequest!
+}
+
+input ShippingRuleInput {
+  method: ShippingMethod!
+  enabled: Boolean!
+  baseCost: Int!
+  additionalKgCost: Int!
+  freeShippingEligible: Boolean!
+}
+input ShippingSettingsInput {
+  freeShippingThreshold: Int
+  methods: [ShippingRuleInput!]!
+}
+type ShippingRule {
+  method: ShippingMethod!
+  enabled: Boolean!
+  baseCost: Int!
+  additionalKgCost: Int!
+  freeShippingEligible: Boolean!
+}
+type ShippingSettings {
+  freeShippingThreshold: Int
+  methods: [ShippingRule!]!
+  updatedAt: String!
+}
+type ShippingOptions {
+  availableMethods: [ShippingMethod!]!
+}
+extend type Query {
+  adminShippingSettings: ShippingSettings!
+  shippingOptions: ShippingOptions!
+}
+extend type Mutation {
+  saveAdminShippingSettings(
+    input: ShippingSettingsInput!
+    expectedUpdatedAt: String!
+  ): ShippingSettings!
 }

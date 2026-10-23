@@ -2,13 +2,10 @@ import { createHash } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { addressInputSchema, checkoutInputSchema, createOrderInputSchema } from '@behjati/shared';
 import { db } from '../../database/client.js';
-import { env } from '../../config/env.js';
+import { loadShippingSettings } from './shipping-settings.js';
+import { calculateStoreShipping } from '@behjati/shared/shipping';
 import { authError } from '../auth/errors.js';
-import {
-  calculatePackageShipping,
-  parseShippingWeight,
-  type ShippingMethod,
-} from '@behjati/shared/sales';
+import { parseShippingWeight, type ShippingMethod } from '@behjati/shared/sales';
 import { activeProductPromotion } from '@behjati/shared/promotions';
 import { discountAmount } from './pricing.js';
 const invalid = () => authError('اطلاعات سفارش را بررسی کنید.', 'BAD_USER_INPUT');
@@ -57,7 +54,6 @@ export async function priceCart(
     items: CheckoutInput['items'];
     discountCode: string;
     shippingMethod: ShippingMethod;
-    pickup?: boolean;
   },
 ) {
   const ids = input.items.map((line) => line.productId).sort();
@@ -99,21 +95,23 @@ export async function priceCart(
   }
   let tariff;
   try {
-    tariff = calculatePackageShipping(
-      input.items.map((line) => ({
-        ...products.find((product) => product.id === line.productId)!,
-        quantity: line.quantity,
-        ...(input.pickup ? { shippingBaseCost: 0, shippingAdditionalKgCost: 0 } : {}),
-      })),
-      input.pickup ? 0 : env.SHIPPING_COST,
-    );
-  } catch {
+    const { updatedAt, ...settings } = await loadShippingSettings(tx);
+    tariff = {
+      ...calculateStoreShipping(items, settings, input.shippingMethod, subtotal - discount),
+      policyUpdatedAt: updatedAt,
+    };
+  } catch (error) {
+    if (error instanceof Error && error.message === 'SHIPPING_METHOD_DISABLED')
+      throw authError(
+        'روش ارسال انتخاب‌شده فعلاً فعال نیست؛ روش دیگری انتخاب کنید.',
+        'SHIPPING_UNAVAILABLE',
+      );
     throw authError(
       'اطلاعات ارسال برخی محصولات کامل نیست؛ با پشتیبانی فروشگاه تماس بگیرید.',
       'SHIPPING_UNAVAILABLE',
     );
   }
-  const shippingCost = input.pickup ? 0 : tariff.cost;
+  const shippingCost = tariff.cost;
   const total = subtotal - discount + shippingCost;
   if (
     ![subtotal, total, ...items.map((line) => line.lineTotal)].every(
@@ -129,8 +127,11 @@ export async function priceCart(
       discount,
       shipping: shippingCost,
       total,
-      shippingMethod: input.pickup ? null : input.shippingMethod,
+      shippingMethod: input.shippingMethod,
       shippingWeightGrams: tariff.weightGrams,
+      freeShippingApplied: tariff.freeShippingApplied,
+      freeShippingThreshold: tariff.freeShippingThreshold,
+      freeShippingRemaining: tariff.freeShippingRemaining,
     },
     tariff,
   };
@@ -212,6 +213,14 @@ export async function createOrder(userId: string, raw: unknown) {
           status: 'PENDING_PAYMENT',
           shippingMethod: input.shippingMethod,
           shippingWeightGrams: quote.shippingWeightGrams,
+          shippingPolicySnapshot: {
+            policyUpdatedAt: tariff.policyUpdatedAt ?? null,
+            baseCost: tariff.baseCost,
+            additionalKgCost: tariff.additionalKgCost,
+            freeShippingThreshold: tariff.freeShippingThreshold,
+            freeShippingApplied: tariff.freeShippingApplied,
+            qualifyingSubtotal: quote.subtotal - quote.discount,
+          },
           shippingBaseCost: tariff.baseCost,
           shippingAdditionalKgCost: tariff.additionalKgCost,
           subtotal: quote.subtotal,
