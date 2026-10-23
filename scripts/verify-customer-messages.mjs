@@ -271,6 +271,11 @@ try {
   await page.getByRole('button', { name: 'ورود به پنل', exact: true }).click();
   await expect(page).toHaveURL(adminOrigin + '/admin');
   await page.goto(adminOrigin + '/admin/message-templates');
+  await expect(
+    page
+      .locator('#admin-desktop-navigation')
+      .getByRole('link', { name: 'تنظیمات مدیریت', exact: true }),
+  ).toHaveAttribute('aria-current', 'location');
   await page.getByLabel('عنوان قالب', { exact: true }).fill('قالب پرداخت ویرایش‌شده');
   await page.getByRole('button', { name: 'ذخیره قالب‌ها', exact: true }).click();
   await expect(page.getByText('قالب پیام‌ها ذخیره شد.', { exact: true })).toBeVisible();

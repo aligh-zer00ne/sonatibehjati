@@ -35,7 +35,7 @@ export default function AdminFrame() {
     ? searchScope
     : searchOptions[0]?.value;
   const selected =
-    [...navigationLinks.slice(1), ...orderLinks]
+    [...navigationLinks.filter((item) => item.href !== '/admin'), ...orderLinks]
       .sort((a, b) => b.href.length - a.href.length)
       .find(({ href }) => pathname === href || pathname.startsWith(href + '/'))?.href ??
     (pathname.startsWith('/admin/sections/') ? pathname : '/admin');
