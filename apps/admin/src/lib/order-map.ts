@@ -1,72 +1,173 @@
-import { formatAdminPrice as formatPrice } from './money';
-import { formatNumber, orderStatusLabels } from '@behjati/shared';
-import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
-import { amountToPersianWords } from './numbers';
+import { formatNumber } from '@behjati/shared';
+import type { AdminOrdersMapQuery, AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import { customerName } from './format';
-export interface OrderMapAdapter {
-  create(
-    container: HTMLElement,
-    orders: AdminOrderSummaryFieldsFragment[],
-    onOpen: (id: string) => void,
-    signal: AbortSignal,
-  ): Promise<{ destroy: () => void }>;
-}
-export const orderMapAdapter: OrderMapAdapter = {
-  async create(container, orders, onOpen, signal) {
-    const L = await import('leaflet');
-    signal.throwIfAborted();
-    const map = L.map(container, {
-      center: [32.31, 54.01],
-      zoom: 11,
-      // Leaflet's deferred zoom callback can outlive a map removed during order selection.
-      zoomAnimation: false,
-      fadeAnimation: !matchMedia('(prefers-reduced-motion: reduce)').matches,
-    });
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 19,
-    }).addTo(map);
-    const icon = L.icon({
-      iconUrl: '/map/marker-icon.png',
-      shadowUrl: '/map/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
-    });
-    const positions: Array<[number, number]> = [];
-    for (const order of orders) {
-      if (order.address.latitude == null || order.address.longitude == null) continue;
-      const point: [number, number] = [order.address.latitude, order.address.longitude];
-      positions.push(point);
-      const popup = document.createElement('div');
-      popup.dir = 'rtl';
-      for (const text of [
-        `سفارش ${formatNumber(order.number)}`,
-        customerName(order.user),
-        formatPrice(order.total),
-        amountToPersianWords(order.total * 10, 'ریال'),
-        orderStatusLabels[order.status],
-        [order.address.province, order.address.city, order.address.postalAddress]
-          .filter(Boolean)
-          .join('، '),
-      ]) {
-        const paragraph = document.createElement('p');
-        paragraph.textContent = text;
-        popup.append(paragraph);
-      }
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = 'جزئیات سفارش';
-      button.className = 'min-h-11 rounded-lg border border-slate-300 px-3 font-bold';
-      button.addEventListener('click', () => onOpen(order.id));
-      popup.append(button);
-      L.marker(point, { icon, title: `سفارش ${formatNumber(order.number)}`, keyboard: true })
-        .addTo(map)
-        .bindPopup(popup);
-    }
-    if (positions.length)
-      map.fitBounds(L.latLngBounds(positions), { padding: [35, 35], maxZoom: 14, animate: false });
-    return { destroy: () => map.remove() };
-  },
+import '@neshan-maps-platform/leaflet/dist/leaflet.css';
+import type { GridLayer, Marker } from 'leaflet';
+type Data = AdminOrdersMapQuery['adminOrdersMap'];
+export type OrderMapData = {
+  provinces: Data['provinces'];
+  orders: Data['items'];
+  province: string;
+  selectedId?: string;
 };
+export async function createOrderMap(
+  container: HTMLElement,
+  key: string,
+  signal: AbortSignal,
+  onProvince: (code: string) => void,
+  onOrder: (id: string) => void,
+  onError: () => void,
+  onReady: () => void,
+) {
+  const { default: sdk } = await import('@neshan-maps-platform/leaflet');
+  signal.throwIfAborted();
+  const map = sdk.map(container, {
+    key,
+    maptype: 'dreamy',
+    poi: false,
+    traffic: false,
+    center: [32.5, 54],
+    zoom: 5,
+    minZoom: 4,
+    maxZoom: 18,
+    scrollWheelZoom: false,
+  });
+  const resize = new ResizeObserver(() => map.invalidateSize({ pan: false }));
+  resize.observe(container);
+  let markers: Marker[] = [];
+  let changingMarkers = false;
+  map.on('layerremove', ({ layer }) => {
+    if (!changingMarkers && markers.includes(layer as Marker)) onError();
+  });
+  const loadTimer = setTimeout(onError, 12000);
+  const ready = () => {
+    clearTimeout(loadTimer);
+    onReady();
+  };
+  const watchLayer = (layer: GridLayer) => {
+    if (typeof layer.getTileSize !== 'function') return;
+    layer.on('tileerror', onError);
+    layer.on('tileload', ready);
+  };
+  map.eachLayer((layer) => watchLayer(layer as GridLayer));
+  map.on('layeradd', ({ layer }) => watchLayer(layer as GridLayer));
+  const reset = () =>
+    map.fitBounds(
+      [
+        [24.5, 44],
+        [40, 63.5],
+      ],
+      { padding: [25, 25], animate: false },
+    );
+  let lastFocus = '';
+  const point = (order: AdminOrderSummaryFieldsFragment) =>
+    order.address.latitude != null &&
+    order.address.longitude != null &&
+    Math.abs(order.address.latitude) <= 85 &&
+    Math.abs(order.address.longitude) <= 180
+      ? ([order.address.longitude, order.address.latitude] as [number, number])
+      : null;
+  return {
+    update(data: OrderMapData) {
+      changingMarkers = true;
+      const focused = container.contains(document.activeElement)
+        ? (document.activeElement as HTMLElement).dataset.mapItem
+        : undefined;
+      markers.forEach((marker) => marker.remove());
+      markers = [];
+      const provinces = data.provinces.filter(
+        (p) => p.locatedCount && p.latitude != null && p.longitude != null && p.code !== 'unknown',
+      );
+      if (!data.selectedId)
+        for (const p of provinces) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.dataset.mapItem = p.code;
+          button.dir = 'rtl';
+          button.setAttribute('aria-label', `${p.name}: ${formatNumber(p.count)} سفارش`);
+          button.className =
+            'min-h-11 cursor-pointer rounded-full border-2 border-white bg-[#701e2a] px-3 py-2 font-sans text-sm font-extrabold text-white shadow-lg';
+          button.textContent = `${p.name} · ${formatNumber(p.count)}`;
+          button.onclick = () => onProvince(p.code);
+          markers.push(
+            sdk
+              .marker([p.latitude!, p.longitude!], {
+                icon: sdk.divIcon({
+                  html: button,
+                  className: '!border-0 !bg-transparent',
+                  iconSize: undefined,
+                }),
+                keyboard: false,
+              })
+              .addTo(map),
+          );
+        }
+      for (const order of data.orders) {
+        const coordinates = point(order);
+        if (!coordinates) continue;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.mapItem = order.id;
+        button.dir = 'rtl';
+        button.setAttribute('aria-label', `نمایش موقعیت سفارش ${formatNumber(order.number)}`);
+        button.className = `grid min-h-10 min-w-10 cursor-pointer place-items-center rounded-full border-2 border-white px-2 font-sans text-xs font-extrabold shadow-lg ${data.selectedId === order.id ? 'bg-[#701e2a] text-white' : 'bg-[#edc16c] text-[#39270c]'}`;
+        button.textContent = formatNumber(order.number);
+        button.onclick = () => onOrder(order.id);
+        const popup = document.createElement('div');
+        popup.dir = 'rtl';
+        popup.className = 'font-sans text-sm leading-7';
+        const title = document.createElement('strong');
+        title.textContent = `سفارش ${formatNumber(order.number)}`;
+        const name = document.createElement('p');
+        name.textContent = customerName(order.user);
+        const address = document.createElement('p');
+        address.textContent = [
+          order.address.province,
+          order.address.city,
+          order.address.postalAddress,
+        ]
+          .filter(Boolean)
+          .join('، ');
+        popup.append(title, name, address);
+        markers.push(
+          sdk
+            .marker([coordinates[1], coordinates[0]], {
+              icon: sdk.divIcon({
+                html: button,
+                className: '!border-0 !bg-transparent',
+                iconSize: undefined,
+              }),
+              keyboard: false,
+              zIndexOffset: data.selectedId === order.id ? 1000 : 0,
+            })
+            .bindPopup(popup)
+            .addTo(map),
+        );
+      }
+      if (focused)
+        [...container.querySelectorAll<HTMLElement>('[data-map-item]')]
+          .find((element) => element.dataset.mapItem === focused)
+          ?.focus({ preventScroll: true });
+      const selected = data.orders.find((order) => order.id === data.selectedId);
+      changingMarkers = false;
+      const province = data.provinces.find((p) => p.code === data.province);
+      const focus = `${data.province}:${data.selectedId || ''}`;
+      if (focus === lastFocus) return;
+      lastFocus = focus;
+      if (selected && point(selected)) {
+        const [lng, lat] = point(selected)!;
+        map.setView([lat, lng], 12, { animate: false });
+      } else if (province?.locatedCount && province.longitude != null && province.latitude != null)
+        map.setView([province.latitude, province.longitude], 7, { animate: false });
+      else reset();
+    },
+    reset,
+    destroy() {
+      changingMarkers = true;
+      clearTimeout(loadTimer);
+      resize.disconnect();
+      markers.forEach((marker) => marker.remove());
+      map.remove();
+    },
+  };
+}

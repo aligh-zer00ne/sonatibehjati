@@ -294,6 +294,16 @@ export type AdminOrder = {
   user: AuthUser;
 };
 
+export type AdminOrderProvince = {
+  __typename?: 'AdminOrderProvince';
+  code: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  locatedCount: Scalars['Int']['output'];
+  longitude?: Maybe<Scalars['Float']['output']>;
+  name: Scalars['String']['output'];
+};
+
 export type AdminOrderSort =
   | 'NEWEST'
   | 'OLDEST'
@@ -335,6 +345,19 @@ export type AdminOrdersInput = {
   status?: InputMaybe<OrderStatus>;
   to?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type AdminOrdersMapResult = {
+  __typename?: 'AdminOrdersMapResult';
+  items: Array<AdminOrderSummary>;
+  locatedCount: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  pageTotal: Scalars['Int']['output'];
+  provinces: Array<AdminOrderProvince>;
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+  unknownCount: Scalars['Int']['output'];
 };
 
 export type AdminOrdersPage = {
@@ -1300,6 +1323,7 @@ export type Query = {
   adminOrderCustomer: AdminUser;
   adminOrderCustomers: AdminUsersPage;
   adminOrders: AdminOrdersPage;
+  adminOrdersMap: AdminOrdersMapResult;
   adminPaymentRequests: AdminPaymentRequestPage;
   adminPriceList: Array<AdminPriceItem>;
   adminProduct: Product;
@@ -1377,6 +1401,12 @@ export type QueryAdminOrderCustomersArgs = {
 
 export type QueryAdminOrdersArgs = {
   input: AdminOrdersInput;
+};
+
+
+export type QueryAdminOrdersMapArgs = {
+  input: AdminOrdersInput;
+  province?: InputMaybe<Scalars['String']['input']>;
 };
 
 

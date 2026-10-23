@@ -1,210 +1,331 @@
-import PageHeading from '../components/PageHeading';
-import OrderFilters from '../components/OrderFilters';
-import { hasPermission } from '@behjati/shared/permissions';
-import { useAdmin } from '../auth/AdminProvider';
 import { useRef, useState } from 'react';
-import { Alert, Card, Pagination, Button, Empty, Tag } from 'antd';
+import { Alert, Button, Empty, Pagination } from 'antd';
 import { Link } from 'react-router-dom';
 import { formatNumber, orderStatusLabels } from '@behjati/shared';
-import { AdminOrdersDocument, type AdminOrdersInput } from '../generated/graphql';
+import { hasPermission } from '@behjati/shared/permissions';
+import { useAdmin } from '../auth/AdminProvider';
+import { AdminOrdersMapDocument, type AdminOrdersInput } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
 import { useOrderFilters } from '../hooks/useOrderFilters';
 import { customerName, persianDigits } from '../lib/format';
+import OrderFilters from '../components/OrderFilters';
 import AdminIcon from '../components/AdminIcon';
+import PageHeading from '../components/PageHeading';
+import ProvinceOrderMap from '../components/ProvinceOrderMap';
 import OrdersMapView from '../components/OrdersMapView';
 import DataState from '../components/DataState';
-
 export default function OrdersMap() {
-  const { admin } = useAdmin();
-  const filters = useOrderFilters(50);
-  const query = useAdminQuery(AdminOrdersDocument, { input: filters.input }, !filters.error);
-  const result = query.data?.adminOrders;
-  const filterKey = JSON.stringify(filters.input);
-  const [selection, setSelection] = useState<{ id: string; filterKey: string } | null>(null);
+  const { admin } = useAdmin(),
+    filters = useOrderFilters(25);
+  const [province, setProvince] = useState(''),
+    [mode, setMode] = useState<'provinces' | 'neshan'>('provinces');
+  const [selection, setSelection] = useState<{ id: string; key: string } | null>(null);
   const mapPanel = useRef<HTMLElement>(null);
-  const points =
-    result?.items.filter(
-      (order) => order.address.latitude != null && order.address.longitude != null,
-    ) ?? [];
+  const query = useAdminQuery(
+    AdminOrdersMapDocument,
+    { input: filters.input, province: province || null },
+    !filters.error,
+    { pollInterval: 30000 },
+  );
+  const data = query.data?.adminOrdersMap;
+  const filterKey = JSON.stringify([filters.input, province]);
   const selected =
-    selection?.filterKey === filterKey
-      ? points.find((order) => order.id === selection.id)
-      : undefined;
-
-  const selectOrder = (id: string) => {
-    setSelection({ id, filterKey });
-    if (matchMedia('(max-width: 767px)').matches) {
-      mapPanel.current?.scrollIntoView({
-        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-        block: 'start',
-      });
-    }
-  };
-  const updateFilters = (patch: Partial<AdminOrdersInput>, reset = true) => {
+    selection?.key === filterKey ? data?.items.find((o) => o.id === selection.id) : undefined;
+  const current = data?.provinces.find((p) => p.code === province);
+  const ranked =
+    data?.provinces
+      .filter((p) => p.count)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'fa')) ?? [];
+  const update = (patch: Partial<AdminOrdersInput>, reset = true) => {
     setSelection(null);
     filters.update(patch, reset);
   };
-
+  const selectProvince = (code: string) => {
+    setProvince(code === province ? '' : code);
+    setSelection(null);
+    filters.update({ page: 1 });
+  };
+  const selectOrder = (id: string, fromList = false) => {
+    setSelection({ id, key: filterKey });
+    const order = data?.items.find((item) => item.id === id);
+    if (
+      fromList &&
+      String(import.meta.env.VITE_NESHAN_MAP_KEY ?? '').trim() &&
+      order?.address.latitude != null &&
+      order.address.longitude != null &&
+      Math.abs(order.address.latitude) <= 85 &&
+      Math.abs(order.address.longitude) <= 180
+    )
+      setMode('neshan');
+    if (fromList && window.innerWidth < 1280)
+      mapPanel.current?.scrollIntoView({
+        block: 'start',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
+  };
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <PageHeading icon="map" description="مشاهده پراکندگی و اطلاعات ارسال سفارش‌ها.">
-            نقشه سفارش‌ها
-          </PageHeading>
-          <p className="text-sm text-[#78665b]">
-            یک سفارش را انتخاب کنید تا موقعیت ثبت‌شدهٔ آن روی نقشه نمایش داده شود.
-          </p>
-        </div>
-        {hasPermission(admin, 'ORDERS') && (
-          <Link to="/admin/orders">
-            <Button>فهرست همهٔ سفارش‌ها</Button>
-          </Link>
-        )}
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <PageHeading icon="map" description="پراکندگی کل سفارش‌ها، آمار استان‌ها و مقصد هر مرسوله.">
+          نقشه سفارش‌ها
+        </PageHeading>
+        <Button
+          icon={<AdminIcon name="refresh" width={18} />}
+          loading={query.refreshing}
+          onClick={query.refresh}
+        >
+          به‌روزرسانی
+        </Button>
       </div>
       <OrderFilters
         key={String(filters.input.search) + String(filters.input.city)}
         input={filters.input}
-        onChange={updateFilters}
+        onChange={update}
         onReset={() => {
+          setProvince('');
           setSelection(null);
           filters.reset();
         }}
       />
       {filters.error ? (
-        <Alert title={filters.error} type="error" role="alert" />
-      ) : !result ? (
+        <Alert type="error" title={filters.error} role="alert" />
+      ) : !data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
         <>
-          <div className="grid items-start gap-4 md:grid-cols-[minmax(240px,0.8fr)_minmax(0,1.4fr)]">
-            <Card
-              title="انتخاب سفارش"
-              extra={
-                <span className="text-xs text-[#78665b]">
-                  {formatNumber(points.length)} موقعیت در این صفحه
-                </span>
-              }
-              className="min-w-0"
-            >
-              {points.length ? (
-                <ul
-                  aria-label="سفارش‌های دارای موقعیت"
-                  className="m-0 max-h-72 list-none space-y-2 overflow-y-auto p-1 md:max-h-[540px]"
+          {query.error && <Alert type="warning" title={query.error} role="alert" />}
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            {(
+              [
+                ['orders', 'کل سفارش‌ها', data.total],
+                [
+                  'map',
+                  'استان‌های دارای سفارش',
+                  data.provinces.filter((p) => p.code !== 'unknown' && p.count).length,
+                ],
+                ['pin', 'بدون موقعیت دقیق', data.total - data.locatedCount],
+              ] as const
+            ).map(([icon, label, value]) => (
+              <div
+                key={label}
+                className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-3 sm:p-4"
+              >
+                <div className="mb-2 flex items-center gap-2 text-[#9e7544]">
+                  <AdminIcon name={icon} width={18} />
+                  <span className="text-[10px] leading-5 sm:text-xs">{label}</span>
+                </div>
+                <strong
+                  data-map-metric={icon}
+                  className="text-xl font-extrabold text-[#701e2a] sm:text-2xl"
                 >
-                  {points.map((order) => {
-                    const active = selected?.id === order.id;
-                    return (
+                  {formatNumber(value)}
+                </strong>
+              </div>
+            ))}
+          </div>
+          <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.8fr)_minmax(270px,1fr)]">
+            <section
+              ref={mapPanel}
+              className="min-w-0 scroll-mt-36 rounded-[24px] border border-[#e8ded1] bg-white p-3 sm:p-5"
+            >
+              <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-extrabold">
+                    {current ? `سفارش‌های ${current.name}` : 'پراکندگی سفارش‌ها در ایران'}
+                  </h2>
+                  <p className="mt-1 text-xs leading-6 text-[#857467]">
+                    آمار از تمام نتایج فیلتر محاسبه می‌شود.
+                  </p>
+                </div>
+                <div
+                  role="group"
+                  aria-label="نمای نقشه"
+                  className="flex rounded-full bg-[#f2eadf] p-1"
+                >
+                  {(
+                    [
+                      ['provinces', 'استان‌ها'],
+                      ['neshan', 'نقشه نشان'],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={mode === value}
+                      onClick={() => setMode(value)}
+                      className="min-h-10 cursor-pointer rounded-full px-4 text-xs font-bold text-[#857467] aria-pressed:bg-[#701e2a] aria-pressed:text-white"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </header>
+              {mode === 'provinces' ? (
+                <ProvinceOrderMap
+                  provinces={data.provinces}
+                  selected={province}
+                  onSelect={selectProvince}
+                />
+              ) : (
+                <OrdersMapView
+                  data={{
+                    provinces: data.provinces,
+                    orders: data.items,
+                    province,
+                    selectedId: selected?.id,
+                  }}
+                  onProvince={selectProvince}
+                  onOrder={(id) => selectOrder(id)}
+                />
+              )}
+              {current && (
+                <Button
+                  className="!mt-3"
+                  icon={<AdminIcon name="close" width={15} />}
+                  onClick={() => selectProvince(province)}
+                >
+                  حذف انتخاب استان {current.name}
+                </Button>
+              )}
+              <p className="mt-3 text-[11px] leading-6 text-[#857467]">
+                تعداد استان‌ها شامل سفارش‌های بدون مختصات هم هست. در نمای نشان، نشانگرهای طلایی
+                مقصدهای همین صفحه‌اند؛ نشانگر زرشکی، مجموع سفارش‌های استان را نشان می‌دهد.
+              </p>
+              {selected && (
+                <section
+                  data-selected-order
+                  className="mt-4 rounded-2xl border border-[#dbc390] bg-[#fcf8ef] p-4"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <strong>
+                      سفارش {formatNumber(selected.number)} · {customerName(selected.user)}
+                    </strong>
+                    <span className="text-xs text-[#857467]">
+                      {orderStatusLabels[selected.status]}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm leading-7">
+                    {[
+                      selected.address.province,
+                      selected.address.city,
+                      selected.address.postalAddress,
+                    ]
+                      .filter(Boolean)
+                      .join('، ')}
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                    <bdi className="text-sm">
+                      {persianDigits(selected.address.recipientPhone || selected.user.phone)}
+                    </bdi>
+                    {hasPermission(admin, 'ORDERS') && (
+                      <Link to={`/admin/orders/${selected.id}`}>
+                        <Button>جزئیات سفارش</Button>
+                      </Link>
+                    )}
+                  </div>
+                  {selected.address.latitude == null || selected.address.longitude == null ? (
+                    <p className="mt-2 text-xs text-[#857467]">
+                      این سفارش موقعیت دقیق ثبت‌شده ندارد.
+                    </p>
+                  ) : null}
+                </section>
+              )}
+            </section>
+            <aside className="min-w-0 space-y-4">
+              <section className="rounded-[24px] border border-[#e8ded1] bg-white p-4">
+                <h2 className="mb-3 font-extrabold">سهم استان‌ها</h2>
+                {ranked.length ? (
+                  <ul className="max-h-[330px] space-y-1 overflow-y-auto">
+                    {ranked.map((p) => (
+                      <li key={p.code}>
+                        <button
+                          type="button"
+                          aria-label={`فیلتر استان ${p.name}`}
+                          aria-pressed={province === p.code}
+                          onClick={() => selectProvince(p.code)}
+                          className="w-full cursor-pointer rounded-xl px-2 py-2 text-right hover:bg-[#fcf8ef] aria-pressed:bg-[#f4e8d3]"
+                        >
+                          <span className="flex justify-between gap-3 text-xs font-bold">
+                            <span>{p.name}</span>
+                            <span>{formatNumber(p.count)} سفارش</span>
+                          </span>
+                          <span className="mt-2 block h-1 rounded-full bg-[#f0e7db]">
+                            <span
+                              className="block h-full rounded-full bg-[#701e2a]"
+                              style={{
+                                width: `${Math.max(2, (p.count / Math.max(1, data.total)) * 100)}%`,
+                              }}
+                            />
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="سفارشی در این فیلتر وجود ندارد."
+                  />
+                )}
+              </section>
+              <section className="rounded-[24px] border border-[#e8ded1] bg-white p-4">
+                <header className="mb-3 flex items-center justify-between gap-3">
+                  <h2 className="font-extrabold">{current?.name || 'فهرست سفارش‌ها'}</h2>
+                  <span className="text-xs text-[#857467]">
+                    {formatNumber(data.pageTotal)} سفارش
+                  </span>
+                </header>
+                {data.items.length ? (
+                  <ul
+                    aria-label="سفارش‌های نقشه"
+                    className="max-h-[400px] space-y-2 overflow-y-auto"
+                  >
+                    {data.items.map((order) => (
                       <li key={order.id}>
                         <button
                           type="button"
                           aria-label={`نمایش موقعیت سفارش ${formatNumber(order.number)}`}
-                          aria-pressed={active}
-                          onClick={() => selectOrder(order.id)}
-                          className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border p-3 text-right transition-colors ${active ? 'border-[#a12637] bg-[#fff0ee]' : 'border-[#ede4da] bg-[#fffcf8] hover:border-[#c88e87] hover:bg-[#fff5ef]'}`}
+                          aria-pressed={selected?.id === order.id}
+                          onClick={() => selectOrder(order.id, true)}
+                          className="flex w-full cursor-pointer items-start gap-2 rounded-2xl border border-[#eee5d9] p-3 text-right hover:bg-[#fcf8ef] aria-pressed:border-[#bc8b42] aria-pressed:bg-[#fcf4e6]"
                         >
-                          <span
-                            className={`mt-1 shrink-0 ${active ? 'text-[#701e2a]' : 'text-[#a38b77]'}`}
-                          >
-                            <AdminIcon name="map" />
-                          </span>
-                          <span className="min-w-0 flex-1 space-y-1">
-                            <span className="block font-bold text-[#631521]">
-                              سفارش {formatNumber(order.number)}
-                            </span>
-                            <span className="block break-words text-sm">
-                              {customerName(order.user)}
-                            </span>
-                            <span className="block break-words text-xs text-[#78665b]">
-                              {order.address.province}، {order.address.city}
-                            </span>
-                            <span className="block text-xs text-[#78665b]">
+                          <AdminIcon
+                            name="pin"
+                            width={17}
+                            className="mt-1 shrink-0 text-[#a47a42]"
+                          />
+                          <span className="min-w-0 flex-1">
+                            <strong className="block text-xs">
+                              {customerName(order.user)} · {formatNumber(order.number)}
+                            </strong>
+                            <span className="mt-1 block text-[11px] leading-6 text-[#857467]">
+                              {order.address.city || order.address.province || 'مقصد ثبت نشده'} ·{' '}
                               {orderStatusLabels[order.status]}
                             </span>
-                            {active && (
-                              <span className="block text-xs font-bold text-[#701e2a]">
-                                در حال نمایش روی نقشه
-                              </span>
-                            )}
                           </span>
                         </button>
                       </li>
-                    );
-                  })}
-                </ul>
-              ) : (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="در این صفحه سفارشی با موقعیت ثبت‌شده وجود ندارد."
-                />
-              )}
-              <p className="mb-0 mt-4 text-xs leading-6 text-[#78665b]">
-                فقط سفارش‌های دارای موقعیت قابل انتخاب‌اند.
-                {result.items.length > points.length &&
-                  ` ${formatNumber(result.items.length - points.length)} سفارش این صفحه موقعیت ثبت‌شده ندارند؛ آن‌ها را در فهرست همهٔ سفارش‌ها ببینید.`}
-              </p>
-            </Card>
-            <section
-              ref={mapPanel}
-              className="min-w-0 scroll-mt-24"
-              aria-label="موقعیت سفارش انتخاب‌شده"
-            >
-              <Card
-                title={selected ? `موقعیت سفارش ${formatNumber(selected.number)}` : 'موقعیت سفارش'}
-              >
-                {selected ? (
-                  <>
-                    <div className="mb-4 space-y-2 text-sm">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <strong>{customerName(selected.user)}</strong>
-                        <Tag>{orderStatusLabels[selected.status]}</Tag>
-                      </div>
-                      <p className="m-0 break-words leading-7 text-[#78665b]">
-                        {[
-                          selected.address.province,
-                          selected.address.city,
-                          selected.address.postalAddress,
-                        ]
-                          .filter(Boolean)
-                          .join('، ')}
-                      </p>
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <span dir="ltr">
-                          {persianDigits(selected.address.recipientPhone ?? selected.user.phone)}
-                        </span>
-                        {hasPermission(admin, 'ORDERS') && (
-                          <Link to={`/admin/orders/${selected.id}`}>
-                            <Button>جزئیات سفارش</Button>
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                    <OrdersMapView key={selected.id} order={selected} />
-                  </>
+                    ))}
+                  </ul>
                 ) : (
-                  <div className="flex min-h-64 flex-col items-center justify-center gap-4 px-3 text-center md:min-h-[440px]">
-                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#f8eee5] text-[#9c2835]">
-                      <AdminIcon name="map" width={32} height={32} />
-                    </span>
-                    <p className="m-0 font-bold">ابتدا یک سفارش انتخاب کنید</p>
-                    <p className="m-0 max-w-72 text-sm leading-7 text-[#78665b]">
-                      با انتخاب سفارش از فهرست، نقشهٔ همان مقصد و نشانی آن در این بخش نمایش داده
-                      می‌شود.
-                    </p>
-                  </div>
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="سفارشی وجود ندارد." />
                 )}
-              </Card>
-            </section>
+                {data.pageTotal > 25 && (
+                  <Pagination
+                    className="!mt-4"
+                    simple
+                    current={data.page}
+                    pageSize={25}
+                    total={data.pageTotal}
+                    showSizeChanger={false}
+                    onChange={(page) => update({ page }, false)}
+                  />
+                )}
+              </section>
+            </aside>
           </div>
-          {result.total > 50 && (
-            <Pagination
-              current={result.page}
-              pageSize={50}
-              total={result.total}
-              showSizeChanger={false}
-              onChange={(page) => updateFilters({ page }, false)}
-            />
-          )}
         </>
       )}
     </div>

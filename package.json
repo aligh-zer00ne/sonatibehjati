@@ -81,7 +81,8 @@
     "verify:admin-surfaces": "node --env-file=apps/api/.env scripts/verify-admin-surfaces.mjs",
     "verify:invoice-workspace": "node --env-file=apps/api/.env scripts/verify-invoice-workspace.mjs",
     "verify:price-announcement": "node --env-file=apps/api/.env scripts/verify-price-announcement.mjs",
-    "verify:store-information": "node --env-file=apps/api/.env scripts/verify-store-information.mjs"
+    "verify:store-information": "node --env-file=apps/api/.env scripts/verify-store-information.mjs",
+    "verify:order-map": "node --env-file=apps/api/.env scripts/verify-order-map.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

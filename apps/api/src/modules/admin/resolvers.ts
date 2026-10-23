@@ -1,3 +1,4 @@
+import { adminOrdersMap } from './order-map.js';
 import { readStoreInformation, saveStoreInformation } from './store-information.js';
 import { readShippingSettings, saveShippingSettings } from '../checkout/shipping-settings.js';
 import {
@@ -36,6 +37,10 @@ import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepa
 export const adminResolvers: Resolvers = {
   AdminOrder: { storeInformation: () => readStoreInformation() },
   Query: {
+    adminOrdersMap: async (_, { input, province }, ctx) => {
+      await requirePermission(ctx, 'ORDER_MAP');
+      return adminOrdersMap(input, province);
+    },
     adminStoreInformation: async (_, __, ctx) => {
       await requirePermission(ctx, 'STORE_INFO');
       return readStoreInformation();

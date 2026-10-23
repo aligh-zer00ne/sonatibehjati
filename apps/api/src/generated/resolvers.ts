@@ -296,6 +296,16 @@ export type AdminOrder = {
   user: AuthUser;
 };
 
+export type AdminOrderProvince = {
+  __typename?: 'AdminOrderProvince';
+  code: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  locatedCount: Scalars['Int']['output'];
+  longitude?: Maybe<Scalars['Float']['output']>;
+  name: Scalars['String']['output'];
+};
+
 export type AdminOrderSort =
   | 'NEWEST'
   | 'OLDEST'
@@ -337,6 +347,19 @@ export type AdminOrdersInput = {
   status?: InputMaybe<OrderStatus>;
   to?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type AdminOrdersMapResult = {
+  __typename?: 'AdminOrdersMapResult';
+  items: Array<AdminOrderSummary>;
+  locatedCount: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  pageSize: Scalars['Int']['output'];
+  pageTotal: Scalars['Int']['output'];
+  provinces: Array<AdminOrderProvince>;
+  total: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+  unknownCount: Scalars['Int']['output'];
 };
 
 export type AdminOrdersPage = {
@@ -1302,6 +1325,7 @@ export type Query = {
   adminOrderCustomer: AdminUser;
   adminOrderCustomers: AdminUsersPage;
   adminOrders: AdminOrdersPage;
+  adminOrdersMap: AdminOrdersMapResult;
   adminPaymentRequests: AdminPaymentRequestPage;
   adminPriceList: Array<AdminPriceItem>;
   adminProduct: Product;
@@ -1379,6 +1403,12 @@ export type QueryAdminOrderCustomersArgs = {
 
 export type QueryAdminOrdersArgs = {
   input: AdminOrdersInput;
+};
+
+
+export type QueryAdminOrdersMapArgs = {
+  input: AdminOrdersInput;
+  province?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1749,10 +1779,12 @@ export type ResolversTypes = {
   AdminOfflinePayment: ResolverTypeWrapper<AdminOfflinePayment>;
   AdminOfflinePaymentInput: AdminOfflinePaymentInput;
   AdminOrder: ResolverTypeWrapper<AdminOrderSource>;
+  AdminOrderProvince: ResolverTypeWrapper<AdminOrderProvince>;
   AdminOrderSort: AdminOrderSort;
   AdminOrderStatusInput: AdminOrderStatusInput;
   AdminOrderSummary: ResolverTypeWrapper<AdminOrderSummary>;
   AdminOrdersInput: AdminOrdersInput;
+  AdminOrdersMapResult: ResolverTypeWrapper<AdminOrdersMapResult>;
   AdminOrdersPage: ResolverTypeWrapper<AdminOrdersPage>;
   AdminPasswordChangeInput: AdminPasswordChangeInput;
   AdminPaymentRequest: ResolverTypeWrapper<AdminPaymentRequest>;
@@ -1881,9 +1913,11 @@ export type ResolversParentTypes = {
   AdminOfflinePayment: AdminOfflinePayment;
   AdminOfflinePaymentInput: AdminOfflinePaymentInput;
   AdminOrder: AdminOrderSource;
+  AdminOrderProvince: AdminOrderProvince;
   AdminOrderStatusInput: AdminOrderStatusInput;
   AdminOrderSummary: AdminOrderSummary;
   AdminOrdersInput: AdminOrdersInput;
+  AdminOrdersMapResult: AdminOrdersMapResult;
   AdminOrdersPage: AdminOrdersPage;
   AdminPasswordChangeInput: AdminPasswordChangeInput;
   AdminPaymentRequest: AdminPaymentRequest;
@@ -2142,6 +2176,15 @@ export type AdminOrderResolvers<ContextType = AuthContext, ParentType extends Re
   user?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType>;
 };
 
+export type AdminOrderProvinceResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminOrderProvince'] = ResolversParentTypes['AdminOrderProvince']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  latitude?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  locatedCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  longitude?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
 export type AdminOrderSummaryResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminOrderSummary'] = ResolversParentTypes['AdminOrderSummary']> = {
   address?: Resolver<ResolversTypes['OrderAddressSnapshot'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2154,6 +2197,18 @@ export type AdminOrderSummaryResolvers<ContextType = AuthContext, ParentType ext
   status?: Resolver<ResolversTypes['OrderStatus'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['AuthUser'], ParentType, ContextType>;
+};
+
+export type AdminOrdersMapResultResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminOrdersMapResult'] = ResolversParentTypes['AdminOrdersMapResult']> = {
+  items?: Resolver<Array<ResolversTypes['AdminOrderSummary']>, ParentType, ContextType>;
+  locatedCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageTotal?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  provinces?: Resolver<Array<ResolversTypes['AdminOrderProvince']>, ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  unknownCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AdminOrdersPageResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['AdminOrdersPage'] = ResolversParentTypes['AdminOrdersPage']> = {
@@ -2612,6 +2667,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminOrderCustomer?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomerArgs, 'id'>>;
   adminOrderCustomers?: Resolver<ResolversTypes['AdminUsersPage'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomersArgs, 'input'>>;
   adminOrders?: Resolver<ResolversTypes['AdminOrdersPage'], ParentType, ContextType, RequireFields<QueryAdminOrdersArgs, 'input'>>;
+  adminOrdersMap?: Resolver<ResolversTypes['AdminOrdersMapResult'], ParentType, ContextType, RequireFields<QueryAdminOrdersMapArgs, 'input'>>;
   adminPaymentRequests?: Resolver<ResolversTypes['AdminPaymentRequestPage'], ParentType, ContextType, RequireFields<QueryAdminPaymentRequestsArgs, 'input'>>;
   adminPriceList?: Resolver<Array<ResolversTypes['AdminPriceItem']>, ParentType, ContextType>;
   adminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<QueryAdminProductArgs, 'id'>>;
@@ -2723,7 +2779,9 @@ export type Resolvers<ContextType = AuthContext> = {
   AdminManualQuote?: AdminManualQuoteResolvers<ContextType>;
   AdminOfflinePayment?: AdminOfflinePaymentResolvers<ContextType>;
   AdminOrder?: AdminOrderResolvers<ContextType>;
+  AdminOrderProvince?: AdminOrderProvinceResolvers<ContextType>;
   AdminOrderSummary?: AdminOrderSummaryResolvers<ContextType>;
+  AdminOrdersMapResult?: AdminOrdersMapResultResolvers<ContextType>;
   AdminOrdersPage?: AdminOrdersPageResolvers<ContextType>;
   AdminPaymentRequest?: AdminPaymentRequestResolvers<ContextType>;
   AdminPaymentRequestPage?: AdminPaymentRequestPageResolvers<ContextType>;

@@ -257,71 +257,52 @@ try {
     'PROCESSING',
   );
   await goto(`/admin/orders/map?userId=${customer.user.id}`);
-  const mapList = page.getByRole('list', { name: 'سفارش‌های دارای موقعیت' });
+  // Detailed provider/error/aggregation cases live in verify:order-map.
+  const mapList = page.getByRole('list', { name: 'سفارش‌های نقشه' });
   const orderNumber = new Intl.NumberFormat('fa-IR').format(order.number);
   const otherNumber = new Intl.NumberFormat('fa-IR').format(otherLocation.number);
-  const selectLocation = page.getByRole('button', {
+  const selectLocation = mapList.getByRole('button', {
     name: `نمایش موقعیت سفارش ${orderNumber}`,
     exact: true,
   });
-  const selectOtherLocation = page.getByRole('button', {
+  const selectOtherLocation = mapList.getByRole('button', {
     name: `نمایش موقعیت سفارش ${otherNumber}`,
     exact: true,
   });
-  await expect(mapList.getByRole('button')).toHaveCount(2);
-  await expect(page.getByText('ابتدا یک سفارش انتخاب کنید', { exact: true })).toBeVisible();
-  await expect(page.locator('.leaflet-container')).toHaveCount(0);
-  assert.equal(mapTileRequests, 0, 'Map tiles must not load before selecting an order');
+  await expect(mapList.getByRole('button')).toHaveCount(3);
+  await expect(page.locator('[data-order-province-map] [role="button"]')).toHaveCount(31);
+  await expect(page.locator('[data-map-metric="orders"]')).toHaveText('۳');
+  await expect(page.locator('[data-map-metric="pin"]')).toHaveText('۱');
+  assert.equal(mapTileRequests, 0, 'Province view does not load OSM map tiles');
   await selectOtherLocation.click();
   await expect(selectOtherLocation).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
-  await page.locator('.leaflet-marker-icon').click();
-  await expect(page.locator('.leaflet-popup-content')).toContainText('میبد');
-  await page.locator('.leaflet-control-zoom-in').click();
+  await expect(page.locator('[data-selected-order]')).toContainText('میبد');
   await selectLocation.click();
   await expect(selectLocation).toHaveAttribute('aria-pressed', 'true');
   await expect(selectOtherLocation).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.getByRole('region', { name: 'نقشه سفارش‌ها', exact: true })).toBeVisible();
-  await expect(page.locator('.leaflet-container')).toHaveCSS('direction', 'rtl');
-  await expect(page.locator('.leaflet-container')).toHaveCSS('font-family', /Vazirmatn/);
-  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
-  await page.locator('.leaflet-marker-icon').click();
-  await expect(page.locator('.leaflet-popup-content')).toContainText('اردکان');
-  await expect(page.locator('.leaflet-popup-content')).not.toContainText('میبد');
-  await expect(page.locator('[data-admin-sidebar] a[aria-current="page"]')).toHaveCSS(
-    'box-shadow',
-    'none',
-  );
-  await expect(page.locator('[data-admin-sidebar] a[aria-current="page"]')).toHaveCSS(
-    'background-color',
-    'rgb(177, 107, 102)',
-  );
+  await expect(page.locator('[data-selected-order]')).toContainText('اردکان');
   await page.screenshot({ path: '/tmp/behjati-orders-map-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await selectOtherLocation.click();
-  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
     .toBe(true);
   await page.screenshot({ path: '/tmp/behjati-orders-map-mobile.png', fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.getByLabel('شهر مقصد', { exact: true }).fill('میبد');
-  await page.getByLabel('شهر مقصد', { exact: true }).press('Enter');
+  await goto(`/admin/orders/map?userId=${customer.user.id}&city=${encodeURIComponent('میبد')}`);
   await expect(mapList.getByRole('button')).toHaveCount(1);
-  await expect(page.getByText('ابتدا یک سفارش انتخاب کنید', { exact: true })).toBeVisible();
-  await expect(page.locator('.leaflet-container')).toHaveCount(0);
   await selectOtherLocation.click();
-  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(1);
-  await page.getByLabel('شهر مقصد', { exact: true }).fill('شهر بدون سفارش');
-  await page.getByLabel('شهر مقصد', { exact: true }).press('Enter');
-  await expect(
-    page.getByText('در این صفحه سفارشی با موقعیت ثبت‌شده وجود ندارد.', { exact: true }),
-  ).toBeVisible();
-  await expect(page.locator('.leaflet-container')).toHaveCount(0);
+  await expect(page.locator('[data-selected-order]')).toContainText('میبد');
+  await goto(
+    `/admin/orders/map?userId=${customer.user.id}&city=${encodeURIComponent('شهر بدون سفارش')}`,
+  );
+  await expect(page.getByText('سفارشی وجود ندارد.', { exact: true })).toBeVisible();
   await goto(`/admin/orders/map?userId=${customer.user.id}`);
   await selectLocation.click();
-  await page.locator('.leaflet-marker-icon').click();
-  await page.locator('.leaflet-popup-content button').click();
+  await page
+    .locator('[data-selected-order]')
+    .getByRole('link', { name: 'جزئیات سفارش', exact: true })
+    .click();
   await expect(page).toHaveURL(adminOrigin + `/admin/orders/${order.id}`);
   await goto('/admin/users');
   await page.getByLabel('جستجوی کاربر').fill(customer.user.phone);

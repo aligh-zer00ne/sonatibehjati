@@ -821,3 +821,26 @@ mutation SaveAdminStoreInformation($input: StoreInformationInput!, $expectedUpda
     ...StoreInformationFields
   }
 }
+
+query AdminOrdersMap($input: AdminOrdersInput!, $province: String) {
+  adminOrdersMap(input: $input, province: $province) {
+    total
+    locatedCount
+    unknownCount
+    page
+    pageSize
+    pageTotal
+    totalPages
+    provinces {
+      code
+      name
+      count
+      locatedCount
+      latitude
+      longitude
+    }
+    items {
+      ...AdminOrderSummaryFields
+    }
+  }
+}

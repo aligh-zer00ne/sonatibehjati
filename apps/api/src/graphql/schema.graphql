@@ -1161,3 +1161,26 @@ extend type Mutation {
     expectedUpdatedAt: String
   ): StoreInformation!
 }
+
+type AdminOrderProvince {
+  code: String!
+  name: String!
+  count: Int!
+  locatedCount: Int!
+  latitude: Float
+  longitude: Float
+}
+type AdminOrdersMapResult {
+  total: Int!
+  locatedCount: Int!
+  unknownCount: Int!
+  provinces: [AdminOrderProvince!]!
+  items: [AdminOrderSummary!]!
+  page: Int!
+  pageSize: Int!
+  pageTotal: Int!
+  totalPages: Int!
+}
+extend type Query {
+  adminOrdersMap(input: AdminOrdersInput!, province: String): AdminOrdersMapResult!
+}
