@@ -41,6 +41,14 @@ describe('Admin input boundaries', () => {
     ])
       expect(adminProductInputSchema.safeParse({ ...product, ...patch }).success).toBe(false);
   });
+  it('normalizes ordinary English slug input and explains unsupported text in Persian', () => {
+    expect(adminProductInputSchema.parse({ ...product, slug: '  My_Product ۵۰۰  ' }).slug).toBe(
+      'my-product-500',
+    );
+    const invalid = adminProductInputSchema.safeParse({ ...product, slug: 'ارده سنتی' });
+    expect(invalid.success).toBe(false);
+    if (!invalid.success) expect(invalid.error.issues[0]?.message).toContain('حروف انگلیسی');
+  });
   it('rejects unsafe asset schemes and permits local or HTTPS assets', () => {
     for (const url of [
       'javascript:alert(1)',

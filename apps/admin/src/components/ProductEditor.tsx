@@ -3,7 +3,7 @@ import AdminIcon from './AdminIcon';
 import { useState, useEffect, useImperativeHandle, useId, type Ref } from 'react';
 import { Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
 import { parseShippingWeight } from '@behjati/shared/sales';
-import { adminProductInputSchema } from '@behjati/shared/admin';
+import { adminProductInputSchema, productSlugSchema } from '@behjati/shared/admin';
 import {
   SaveAdminProductDocument,
   type AdminProductFieldsFragment,
@@ -33,6 +33,9 @@ export default function ProductEditor({
   closeRef?: Ref<ProductEditorHandle>;
 }) {
   const activeId = useId();
+  const [automaticSlug] = useState(
+    () => `product-${crypto.randomUUID().replace(/-/g, '').slice(0, 12)}`,
+  );
   const { admin } = useAdmin();
   const { modal } = App.useApp();
   const [form] = Form.useForm();
@@ -140,7 +143,18 @@ export default function ProductEditor({
         <Form.Item
           name="slug"
           label="نامک انگلیسی"
-          rules={[{ required: true, message: 'نامک لازم است.' }]}
+          extra="اختیاری؛ اگر خالی بماند، خودکار ساخته می‌شود."
+          rules={[
+            {
+              validator: (_, value: string | undefined) => {
+                if (!value?.trim()) return Promise.resolve();
+                const parsed = productSlugSchema.safeParse(value);
+                return parsed.success
+                  ? Promise.resolve()
+                  : Promise.reject(new Error(parsed.error.issues[0]?.message));
+              },
+            },
+          ]}
         >
           <Input
             dir="ltr"
@@ -268,7 +282,7 @@ export default function ProductEditor({
             ...promotionFormInput(raw),
             shippingWeightGrams,
             title,
-            slug,
+            slug: typeof slug === 'string' && slug.trim() ? slug : (product?.slug ?? automaticSlug),
             price,
             weight,
             shortDescription,
@@ -292,6 +306,8 @@ export default function ProductEditor({
             setError(issue?.message ?? 'اطلاعات محصول را کامل کنید.');
             return;
           }
+          form.setFieldValue('slug', parsed.data.slug);
+          remember();
           setPending(true);
           try {
             const result = await adminRequest(SaveAdminProductDocument, {

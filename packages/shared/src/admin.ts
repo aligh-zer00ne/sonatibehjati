@@ -133,11 +133,31 @@ export const adminPriceChangesSchema = z
     'محصول تکراری است.',
   );
 
+export const productSlugSchema = z
+  .string()
+  .trim()
+  .transform((value) =>
+    normalizeDigits(value)
+      .toLowerCase()
+      .replace(/[\s_]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, ''),
+  )
+  .pipe(
+    z
+      .string()
+      .min(1, 'نامک محصول را وارد کنید.')
+      .max(150, 'نامک حداکثر ۱۵۰ حرف است.')
+      .regex(
+        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+        'نامک را با حروف انگلیسی، عدد و خط تیره بنویسید؛ مثال: tahini-500.',
+      ),
+  );
 export const adminProductInputSchema = z
   .object({
     ...promotionFields,
     title: text(2, 150),
-    slug: text(1, 150).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    slug: productSlugSchema,
     price: z.number().int().min(0).max(2147483647),
     weight: text(1, 100),
     shippingWeightGrams: z.number().int().positive().max(1000000).optional(),

@@ -229,7 +229,9 @@ try {
   await page.goto(adminOrigin + '/admin/products/new');
   newSlug = 'panel-new-' + randomBytes(6).toString('hex');
   await page.getByLabel('عنوان محصول', { exact: true }).fill('محصول جدید بازبینی');
-  await page.getByLabel('نامک انگلیسی', { exact: true }).fill(newSlug);
+  await page
+    .getByLabel('نامک انگلیسی', { exact: true })
+    .fill(newSlug.toUpperCase().replace(/-/g, ' '));
   await page.getByLabel('قیمت (ریال)', { exact: true }).fill('2500000');
   await page.getByLabel('وزن یا حجم', { exact: true }).fill('یک کیلوگرم');
   await page
