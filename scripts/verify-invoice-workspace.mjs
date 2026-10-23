@@ -237,16 +237,41 @@ try {
   await workspace.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   // A label retains its independent 150x100mm print configuration.
   await page.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
-  await expect(page.locator('[data-label-sheet]').first()).toBeVisible();
-  await expect(page.locator('#behjati-admin-print')).toHaveCount(0);
-  await page.getByRole('button', { name: 'چاپ لیبل / PDF', exact: true }).click();
+  await expect(page.locator('[data-label-workspace] [data-label-sheet]')).toBeVisible();
+  await expect(page.getByText('شخصی‌سازی لیبل', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toHaveCount(1);
   await expect(page.locator('[data-label-workspace]')).toBeVisible();
   assert.match(
     await page.locator('#behjati-admin-print style').textContent(),
     /size: 150mm 100mm; margin: 4mm/,
   );
+  for (const label of ['لیبل A5', 'لیبل ۱۵ × ۱۰']) {
+    const labelWorkspace = page.locator('[data-label-workspace]');
+    await labelWorkspace.getByRole('button', { name: label, exact: true }).click();
+    await expect(labelWorkspace.locator('[data-label-item]')).toHaveCount(36);
+    await page.evaluate(() => document.fonts.ready);
+    await expect(
+      labelWorkspace.getByRole('button', { name: 'چاپ / ذخیره PDF', exact: true }),
+    ).toBeEnabled();
+    await page.emulateMedia({ media: 'print' });
+    const path =
+      label === 'لیبل A5'
+        ? '/tmp/behjati-label-long-A5.pdf'
+        : '/tmp/behjati-label-long-THERMAL.pdf';
+    await page.pdf({ path, preferCSSPageSize: true, printBackground: true });
+    const text = execFileSync('pdftotext', ['-layout', path, '-'], { encoding: 'utf8' }).replace(
+      /[\u202a-\u202e\u2066-\u2069]/g,
+      '',
+    );
+    for (let item = 1; item <= 36; item++)
+      assert.ok(
+        new RegExp(`ITEM-\\s*${String(item).padStart(3, '0')}`).test(text),
+        `Long label retains item ${item}`,
+      );
+    await page.emulateMedia({ media: 'screen' });
+  }
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
-  await page.getByRole('dialog').locator('.ant-modal-close').click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   assert.equal(
     mutations.length,
     beforeMutations,

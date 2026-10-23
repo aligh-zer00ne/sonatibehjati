@@ -144,14 +144,7 @@ export default function OrderSummaryCard({
         )}
       </div>
       {print && canExpand && (
-        <QuickOrderPrint
-          id={order.id}
-          view={print}
-          onClose={() => {
-            setPrint(null);
-            if (print === 'label') onUpdated?.();
-          }}
-        />
+        <QuickOrderPrint id={order.id} view={print} onClose={() => setPrint(null)} />
       )}
     </article>
   );

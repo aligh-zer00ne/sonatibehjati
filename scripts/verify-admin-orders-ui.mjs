@@ -127,9 +127,9 @@ try {
   await invoice.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await card.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
   const label = page.getByRole('dialog', { name: `لیبل پستی سفارش ${number}`, exact: true });
-  await expect(label.getByLabel('نام گیرنده', { exact: true })).toHaveValue('گیرنده هنگام خرید');
-  await expect(label.getByRole('button', { name: 'ذخیره لیبل سفارش', exact: true })).toBeVisible();
-  await label.locator('.ant-modal-close').click();
+  await expect(label.locator('[data-label-sheet]')).toContainText('گیرنده هنگام خرید');
+  await expect(label.getByRole('button', { name: 'ذخیره لیبل سفارش', exact: true })).toHaveCount(0);
+  await label.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await page.setViewportSize({ width: 320, height: 1000 });
   assert.ok(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),

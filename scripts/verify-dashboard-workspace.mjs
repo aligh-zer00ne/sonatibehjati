@@ -213,7 +213,7 @@ try {
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await record.getByRole('button', { name: /چاپ لیبل سفارش/ }).click();
   await expect(page.getByRole('dialog').locator('[data-label-sheet]')).toBeVisible();
-  await page.getByRole('dialog').locator('.ant-modal-close').click();
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await record.getByRole('button', { name: /جزئیات سفارش/ }).click();
   await expect(record.getByRole('tab', { name: 'محصولات', exact: true })).toBeVisible();
   await expect(record.getByText('تغییر وضعیت سفارش', { exact: true })).toBeVisible();

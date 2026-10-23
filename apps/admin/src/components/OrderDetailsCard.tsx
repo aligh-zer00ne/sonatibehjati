@@ -495,13 +495,7 @@ export default function OrderDetailsCard({
               <Invoice order={order} onClose={() => setPrintView(null)} />
             )}
             {printView === 'label' && (
-              <ShippingLabel
-                order={order}
-                onClose={() => {
-                  setPrintView(null);
-                  query.refresh();
-                }}
-              />
+              <ShippingLabel order={order} onClose={() => setPrintView(null)} />
             )}
           </Suspense>
         </>

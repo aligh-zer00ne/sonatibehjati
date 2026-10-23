@@ -284,7 +284,7 @@ try {
   const label = page.getByRole('dialog').locator('[data-label-sheet]');
   await expect(label.locator('dl > div').filter({ hasText: 'هزینه ارسال' })).toContainText(/ریال/);
   await expect(label).toContainText('نشانی پستی آزمون پلاک ۱۲');
-  await page.getByRole('dialog').locator('.ant-modal-close').click();
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   // Filter buttons modify URL/backend results and remain usable on a small screen.
   await page.getByRole('button', { name: 'محل خرید', exact: true }).click();
   await page

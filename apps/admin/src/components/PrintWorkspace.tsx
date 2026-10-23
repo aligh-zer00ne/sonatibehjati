@@ -22,6 +22,7 @@ export default function PrintWorkspace({
   onFormatChange,
   children,
   kind = 'invoice',
+  allowPages = false,
   onClose,
 }: {
   title: string;
@@ -32,6 +33,7 @@ export default function PrintWorkspace({
   onFormatChange: (format: string) => void;
   children: ReactNode;
   kind?: 'invoice' | 'label';
+  allowPages?: boolean;
   onClose: () => void;
 }) {
   const [returnFocus] = useState(() =>
@@ -265,7 +267,7 @@ export default function PrintWorkspace({
                 aria-label="چاپ / ذخیره PDF"
                 icon={<AdminIcon name="print" width={19} />}
                 loading={pending}
-                disabled={overflow}
+                disabled={overflow && !allowPages}
                 onClick={() => void print()}
                 className="!h-10 !rounded-xl !border-0 !bg-[linear-gradient(135deg,#f6dfa0,#c49536)] !px-4 !font-bold !text-[#39270c]"
               >
@@ -275,7 +277,7 @@ export default function PrintWorkspace({
                 aria-label="ذخیره PDF"
                 title="ذخیره PDF از پنجرهٔ چاپ مرورگر"
                 icon={<AdminIcon name="pdf" width={18} />}
-                disabled={pending || overflow}
+                disabled={pending || (overflow && !allowPages)}
                 onClick={() => {
                   setNotice('برای ذخیرهٔ PDF، در پنجرهٔ چاپ مقصد Save as PDF را انتخاب کنید.');
                   void print();
@@ -322,7 +324,11 @@ export default function PrintWorkspace({
           <Alert
             role="alert"
             type="warning"
-            title="اطلاعات از یک برگه بیشتر شده است. قالب A5 را انتخاب کنید یا متن لیبل را کوتاه‌تر کنید؛ چاپ تا رفع این مورد غیرفعال است."
+            title={
+              allowPages
+                ? 'اطلاعات از یک برگه بیشتر است؛ برای فضای بیشتر A5 را انتخاب کنید. چاپ با حفظ تمام اقلام در چند صفحه ادامه می‌یابد.'
+                : 'اطلاعات از یک برگه بیشتر شده است. قالب A5 را انتخاب کنید یا متن لیبل را کوتاه‌تر کنید؛ چاپ تا رفع این مورد غیرفعال است.'
+            }
             className="!shrink-0 !rounded-none"
           />
         )}
