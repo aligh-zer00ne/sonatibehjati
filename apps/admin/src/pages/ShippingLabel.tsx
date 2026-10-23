@@ -18,13 +18,16 @@ export default function ShippingLabel({
     order.shippingLabel?.paperSize === 'A5' ? 'A5' : 'THERMAL',
   );
   const saved = order.shippingLabel;
+  const store = order.storeInformation;
   // Recipient, contents, carrier and money always come from the actual order snapshot.
   // Retain previously recorded sender/tracking metadata without requiring another form.
   const values: ShippingLabelValues = {
-    senderName: saved?.senderName || BRAND_NAME,
-    senderPhone: saved?.senderPhone || '09131564876',
-    senderAddress: saved?.senderAddress || 'اردکان، استان یزد، ایران',
-    senderPostalCode: saved?.senderPostalCode || '',
+    senderName: store.isConfigured ? store.name : saved?.senderName || store.name || BRAND_NAME,
+    senderPhone: store.isConfigured ? store.phone : saved?.senderPhone || store.phone,
+    senderAddress: store.isConfigured ? store.address : saved?.senderAddress || store.address,
+    senderPostalCode: store.isConfigured
+      ? store.postalCode
+      : saved?.senderPostalCode || store.postalCode,
     recipientName: order.address.recipientName || customerName(order.user),
     recipientPhone: order.address.recipientPhone || order.user.phone,
     recipientAddress: [order.address.province, order.address.city, order.address.postalAddress]

@@ -30,6 +30,12 @@ export const navigationLinks: Item[] = [
     description: 'ثبت وجه نقد، چک و کارت‌خوان و بررسی مانده حساب',
   },
   {
+    href: '/admin/store-information',
+    label: 'اطلاعات فروشگاه',
+    icon: 'home',
+    description: 'نام، تلفن، نشانی و کد پستی فرستنده روی لیبل‌ها',
+  },
+  {
     href: '/admin/shipping',
     label: 'مدیریت ارسال',
     icon: 'truck',
@@ -148,6 +154,7 @@ const definitions: Array<{
     shortLabel: 'مدیریت',
     icon: 'settings',
     paths: [
+      '/admin/store-information',
       '/admin/shipping',
       '/admin/announcement',
       '/admin/accounts',

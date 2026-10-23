@@ -3,4 +3,6 @@ export type ReceiptSource = Omit<OrderReceipt, 'paidAt' | 'payments'> & { paidAt
 export type AccountOrderSource = Omit<AccountOrder, 'paidAt' | 'payments'> & {
   paidAt?: Date | null;
 };
-export type AdminOrderSource = Omit<AdminOrder, 'paidAt' | 'payments'> & { paidAt?: Date | null };
+export type AdminOrderSource = Omit<AdminOrder, 'paidAt' | 'payments' | 'storeInformation'> & {
+  paidAt?: Date | null;
+};

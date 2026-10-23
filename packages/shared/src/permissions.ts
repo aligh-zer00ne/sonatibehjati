@@ -9,6 +9,7 @@ export const adminSections = [
   { permission: 'COUPONS', label: 'کدهای تخفیف', href: '/admin/coupons' },
   { permission: 'TICKETS', label: 'پشتیبانی و تیکت‌ها', href: '/admin/tickets' },
   { permission: 'REVIEWS', label: 'نظرات محصولات', href: '/admin/reviews' },
+  { permission: 'STORE_INFO', label: 'اطلاعات فروشگاه', href: '/admin/store-information' },
   { permission: 'SHIPPING', label: 'مدیریت ارسال', href: '/admin/shipping' },
   { permission: 'HOMEPAGE', label: 'نوار اطلاع‌رسانی سایت', href: '/admin/announcement' },
 ] as const;

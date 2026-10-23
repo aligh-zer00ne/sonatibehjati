@@ -287,6 +287,7 @@ export type AdminOrder = {
   shippingWeightGrams?: Maybe<Scalars['Int']['output']>;
   status: OrderStatus;
   statusEvents: Array<OrderStatusEvent>;
+  storeInformation: StoreInformation;
   subtotal: Scalars['Int']['output'];
   total: Scalars['Int']['output'];
   updatedAt: Scalars['String']['output'];
@@ -405,6 +406,7 @@ export type AdminPermission =
   | 'REPORTS'
   | 'REVIEWS'
   | 'SHIPPING'
+  | 'STORE_INFO'
   | 'TICKETS';
 
 export type AdminPriceChangeInput = {
@@ -852,6 +854,7 @@ export type Mutation = {
   saveAdminProduct: Product;
   saveAdminShippingLabel: AdminShippingLabel;
   saveAdminShippingSettings: ShippingSettings;
+  saveAdminStoreInformation: StoreInformation;
   saveAnnouncement: HomepageContent;
   saveHomepageContent: HomepageContent;
   setAdminPrices: Array<AdminPriceItem>;
@@ -992,6 +995,12 @@ export type MutationSaveAdminShippingLabelArgs = {
 export type MutationSaveAdminShippingSettingsArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   input: ShippingSettingsInput;
+};
+
+
+export type MutationSaveAdminStoreInformationArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  input: StoreInformationInput;
 };
 
 
@@ -1298,6 +1307,7 @@ export type Query = {
   adminReport: AdminReport;
   adminReviews: ReviewPage;
   adminShippingSettings: ShippingSettings;
+  adminStoreInformation: StoreInformation;
   adminTicket: SupportTicket;
   adminTickets: TicketPage;
   adminUser: AdminUser;
@@ -1564,6 +1574,23 @@ export type StaffInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   permissions?: InputMaybe<Array<AdminPermission>>;
+};
+
+export type StoreInformation = {
+  __typename?: 'StoreInformation';
+  address: Scalars['String']['output'];
+  isConfigured: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  phone: Scalars['String']['output'];
+  postalCode: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type StoreInformationInput = {
+  address: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
+  postalCode: Scalars['String']['input'];
 };
 
 export type SupportTicket = {

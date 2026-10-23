@@ -325,6 +325,7 @@ enum AdminRole {
   STAFF
 }
 enum AdminPermission {
+  STORE_INFO
   SHIPPING
   DASHBOARD
   ORDERS
@@ -480,6 +481,7 @@ type AdminOrderSummary {
   address: OrderAddressSnapshot!
 }
 type AdminOrder {
+  storeInformation: StoreInformation!
   offlinePayments: [AdminOfflinePayment!]!
   salesChannel: SalesChannel!
   shippingMethod: ShippingMethod
@@ -1134,4 +1136,28 @@ type AdminPriceItem {
   updatedAt: String!
   categoryTitle: String!
   imageUrl: String
+}
+
+input StoreInformationInput {
+  name: String!
+  phone: String!
+  address: String!
+  postalCode: String!
+}
+type StoreInformation {
+  name: String!
+  phone: String!
+  address: String!
+  postalCode: String!
+  isConfigured: Boolean!
+  updatedAt: String
+}
+extend type Query {
+  adminStoreInformation: StoreInformation!
+}
+extend type Mutation {
+  saveAdminStoreInformation(
+    input: StoreInformationInput!
+    expectedUpdatedAt: String
+  ): StoreInformation!
 }

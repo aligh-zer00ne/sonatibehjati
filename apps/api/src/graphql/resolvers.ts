@@ -17,7 +17,7 @@ export const resolvers: Resolvers = {
   },
   OrderReceipt: paymentResolvers.OrderReceipt,
   AccountOrder: paymentResolvers.AccountOrder,
-  AdminOrder: paymentResolvers.AdminOrder,
+  AdminOrder: { ...paymentResolvers.AdminOrder, ...adminResolvers.AdminOrder },
   Mutation: {
     ...paymentResolvers.Mutation,
     ...authResolvers.Mutation,

@@ -7,6 +7,7 @@ import ProtectedAdmin from './auth/ProtectedAdmin';
 import OwnerOnly from './auth/OwnerOnly';
 import AdminFrame from './components/AdminFrame';
 const Announcement = lazy(() => import('./pages/Announcement'));
+const StoreInformation = lazy(() => import('./pages/StoreInformation'));
 const Shipping = lazy(() => import('./pages/Shipping'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Coupons = lazy(() => import('./pages/Coupons'));
@@ -116,6 +117,7 @@ export default function App() {
                     <Route path="orders/manual" element={<Orders key="manual" scope="manual" />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
+                    <Route path="store-information" element={<StoreInformation />} />
                     <Route path="shipping" element={<Shipping />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="sections/:section" element={<AdminSection />} />

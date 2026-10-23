@@ -526,3 +526,10 @@ model PaymentRequest {
   @@index([createdAt])
   @@index([paidAt])
 }
+
+model StoreInformation {
+  id           String   @id @db.VarChar(191)
+  data         Json
+  isConfigured Boolean  @default(false)
+  updatedAt    DateTime @updatedAt
+}

@@ -140,6 +140,9 @@ fragment AdminOrderSummaryFields on AdminOrderSummary {
   }
 }
 fragment AdminOrderFields on AdminOrder {
+  storeInformation {
+    ...StoreInformationFields
+  }
   offlinePayments {
     id
     amount
@@ -797,5 +800,24 @@ query AdminPriceList {
 mutation SetAdminPrices($items: [AdminPriceChangeInput!]!) {
   setAdminPrices(items: $items) {
     ...AdminPriceItemFields
+  }
+}
+
+fragment StoreInformationFields on StoreInformation {
+  name
+  phone
+  address
+  postalCode
+  isConfigured
+  updatedAt
+}
+query AdminStoreInformation {
+  adminStoreInformation {
+    ...StoreInformationFields
+  }
+}
+mutation SaveAdminStoreInformation($input: StoreInformationInput!, $expectedUpdatedAt: String) {
+  saveAdminStoreInformation(input: $input, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...StoreInformationFields
   }
 }

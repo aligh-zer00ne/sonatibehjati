@@ -1,3 +1,4 @@
+import { readStoreInformation, saveStoreInformation } from './store-information.js';
 import { readShippingSettings, saveShippingSettings } from '../checkout/shipping-settings.js';
 import {
   createAdminCustomer,
@@ -33,7 +34,12 @@ import { saveShippingLabel } from './shipping-labels.js';
 import { serializeProduct as serializeDates } from '../products/presentation.js';
 import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepage.js';
 export const adminResolvers: Resolvers = {
+  AdminOrder: { storeInformation: () => readStoreInformation() },
   Query: {
+    adminStoreInformation: async (_, __, ctx) => {
+      await requirePermission(ctx, 'STORE_INFO');
+      return readStoreInformation();
+    },
     shippingOptions: async () => {
       const settings = await readShippingSettings();
       return { availableMethods: settings.methods.filter((m) => m.enabled).map((m) => m.method) };
@@ -103,6 +109,11 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    saveAdminStoreInformation: async (_, { input, expectedUpdatedAt }, ctx) => {
+      requireAdminOrigin(ctx);
+      await requirePermission(ctx, 'STORE_INFO');
+      return saveStoreInformation(input, expectedUpdatedAt);
+    },
     setAdminPrices: async (_, { items }, context) => {
       requireAdminOrigin(context);
       await requirePermission(context, 'PRODUCTS');

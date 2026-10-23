@@ -13,7 +13,8 @@
     "./homepage": "./src/homepage.ts",
     "./operations": "./src/operations.ts",
     "./sales": "./src/sales.ts",
-    "./shipping": "./src/shipping.ts"
+    "./shipping": "./src/shipping.ts",
+    "./store-information": "./src/store-information.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
