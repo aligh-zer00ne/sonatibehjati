@@ -12,9 +12,10 @@ const links = [
   ['/support', 'پشتیبانی'],
 ] as const;
 
+const socialContactPhone = '09912823448';
 const socialMarks = [
-  { name: 'ایتا', image: '/images/eitaa-social.svg', href: undefined },
-  { name: 'تلگرام', image: '/images/telegram-social.svg', href: undefined },
+  { name: 'ایتا', image: '/images/eitaa-social.svg', href: `tel:${socialContactPhone}` },
+  { name: 'تلگرام', image: '/images/telegram-social.svg', href: `tel:${socialContactPhone}` },
   { name: 'واتساپ', image: '/images/whatsapp-social.svg', href: undefined },
   { name: 'اینستاگرام', image: '/images/instagram-social.svg', href: BUSINESS.instagram },
 ] as const;
@@ -70,6 +71,7 @@ export default function Footer() {
               aria-label="شبکه‌های اجتماعی سنتی بهجتی"
             >
               {socialMarks.map(({ name, image, href }) => {
+                const isPhoneLink = href?.startsWith('tel:') ?? false;
                 const icon = (
                   <Image
                     src={image}
@@ -83,10 +85,14 @@ export default function Footer() {
                   <a
                     key={name}
                     href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`${name} رسمی سنتی بهجتی`}
-                    aria-label={name}
+                    target={isPhoneLink ? undefined : '_blank'}
+                    rel={isPhoneLink ? undefined : 'noopener noreferrer'}
+                    title={
+                      isPhoneLink
+                        ? `${name}؛ تماس با ${socialContactPhone}`
+                        : `${name} رسمی سنتی بهجتی`
+                    }
+                    aria-label={isPhoneLink ? `${name}؛ تماس با ${socialContactPhone}` : name}
                     className="grid size-11 shrink-0 place-items-center"
                   >
                     {icon}

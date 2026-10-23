@@ -499,3 +499,7 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 ## Slight desktop trust-badge increase (2026-10-23)
 
 - User explicitly requested only a small desktop enlargement of Enamad and SEP. Increase the existing md badge frames from 44 to 48px, Enamad artwork from 40 to 44px and SEP CSS width from 36 to 40px (actual flex-constrained artwork 34→38px). Keep mobile classes, assets and trust links intact. Lint, storefront typecheck/build and production-browser measurements at 390/767/768/1024/1440px pass: mobile frames remain 64px, desktop frames are 48px and no horizontal overflow occurs. No new permanent test, business/API/schema change or production deployment.
+
+## Footer Eitaa/Telegram phone links (2026-10-23)
+
+- User explicitly wants the Eitaa and Telegram footer icons to open the phone dialer/contact action with 09912823448. Replace these two inactive marks with native tel:09912823448 anchors; do not invent messenger usernames or change the central business/store contact data. No new tab for phone links; include the number and contact action in accessible labels/titles. Instagram keeps its existing official external link and WhatsApp remains as before. Lint, storefront typecheck/build and production-browser mouse/keyboard checks at 390/1440px pass; tel dispatch was intercepted so no actual call or external app was opened. No new permanent tests, backend change or production deployment.
