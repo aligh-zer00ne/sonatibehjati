@@ -85,7 +85,16 @@ try {
     .inputValue();
   assert.match(url, new RegExp('^' + origin + '/pay/'));
   await page.getByRole('button', { name: 'کپی لینک', exact: true }).click();
-  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), url);
+  const composer = page.getByRole('dialog', { name: 'ارسال لینک پرداخت', exact: true });
+  await expect(composer).toBeVisible();
+  await composer.getByRole('button', { name: 'کپی لینک با متن قالب', exact: true }).click();
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  assert.ok(copied.includes(url) && copied.length > url.length);
+  assert.equal(
+    copied,
+    await composer.getByRole('textbox', { name: 'متن آماده پیام' }).inputValue(),
+  );
+  await composer.getByRole('button', { name: 'بستن ارسال لینک پرداخت', exact: true }).click();
   await page.screenshot({ path: '/tmp/behjati-payment-link-created.png', fullPage: true });
   const payer = await browser.newContext({ viewport: { width: 390, height: 844 } }),
     publicPage = await payer.newPage();

@@ -1,54 +1,49 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Button } from 'antd';
 import AdminIcon from './AdminIcon';
-export default function CopyPaymentLink({ url }: { url: string }) {
-  const input = useRef<HTMLInputElement>(null);
-  const [message, setMessage] = useState('');
+import CustomerMessage from './CustomerMessage';
+import { formatAdminPrice } from '../lib/money';
+export default function CopyPaymentLink({
+  url,
+  amount,
+  name,
+  phone,
+}: {
+  url: string;
+  amount: number;
+  name?: string | null;
+  phone?: string | null;
+}) {
+  const [open, setOpen] = useState(false);
   return (
     <div className="space-y-2">
-      <div className="flex min-w-0 flex-wrap gap-2">
-        <input
-          aria-label="آدرس لینک پرداخت"
-          ref={input}
-          value={url}
-          readOnly
-          dir="ltr"
-          className="min-h-12 min-w-0 flex-1 rounded-xl border border-[#e8ded1] bg-[#faf6ee] px-3 text-sm"
-        />
+      <input
+        aria-label="آدرس لینک پرداخت"
+        value={url}
+        readOnly
+        dir="ltr"
+        className="min-h-11 w-full min-w-0 rounded-xl border border-[#e8ded1] bg-[#faf6ee] px-3 text-sm"
+      />
+      <div className="flex flex-wrap gap-2">
         <Button
-          className="!h-12 !rounded-xl !font-bold"
-          icon={<AdminIcon name="copy" width={19} />}
-          onClick={async () => {
-            try {
-              await navigator.clipboard.writeText(url);
-              setMessage('لینک کپی شد.');
-            } catch {
-              input.current?.focus();
-              input.current?.select();
-              setMessage('لینک انتخاب شد؛ آن را کپی کنید.');
-            }
-          }}
+          onClick={() => setOpen(true)}
+          type="primary"
+          icon={<AdminIcon name="share" width={19} />}
         >
+          ارسال لینک
+        </Button>
+        <Button onClick={() => setOpen(true)} icon={<AdminIcon name="copy" width={19} />}>
           کپی لینک
         </Button>
-        {typeof navigator.share === 'function' && (
-          <Button
-            className="!h-12 !rounded-xl"
-            icon={<AdminIcon name="share" width={19} />}
-            onClick={() => {
-              void navigator.share({ title: 'پرداخت به سنتی بهجتی', url }).catch((e) => {
-                if (e instanceof Error && e.name !== 'AbortError')
-                  setMessage('اشتراک‌گذاری انجام نشد؛ لینک را کپی کنید.');
-              });
-            }}
-          >
-            اشتراک‌گذاری
-          </Button>
-        )}
       </div>
-      <p role="status" className="text-xs text-[#796653]">
-        {message}
-      </p>
+      {open && (
+        <CustomerMessage
+          kind="PAYMENT"
+          phone={phone ?? ''}
+          values={{ نام_مشتری: name || 'مشتری', مبلغ: formatAdminPrice(amount), لینک_پرداخت: url }}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </div>
   );
 }

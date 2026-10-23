@@ -74,6 +74,7 @@ const icons = {
   trend: TrendingUp,
   download: Download,
   support: Headset,
+  message: MessageSquare,
   review: MessageSquare,
   home: House,
   orders: ShoppingCart,

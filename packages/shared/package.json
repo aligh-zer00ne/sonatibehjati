@@ -15,7 +15,8 @@
     "./sales": "./src/sales.ts",
     "./shipping": "./src/shipping.ts",
     "./store-information": "./src/store-information.ts",
-    "./provinces": "./src/provinces.ts"
+    "./provinces": "./src/provinces.ts",
+    "./message-templates": "./src/message-templates.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

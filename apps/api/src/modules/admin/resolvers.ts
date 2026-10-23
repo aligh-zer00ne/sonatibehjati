@@ -1,3 +1,5 @@
+import { readMessageTemplates, saveMessageTemplates } from './message-templates.js';
+import { saveShipment } from './shipments.js';
 import { adminOrdersMap } from './order-map.js';
 import { readStoreInformation, saveStoreInformation } from './store-information.js';
 import { readShippingSettings, saveShippingSettings } from '../checkout/shipping-settings.js';
@@ -37,6 +39,10 @@ import { homepageContent, saveHomepageContent, saveAnnouncement } from './homepa
 export const adminResolvers: Resolvers = {
   AdminOrder: { storeInformation: () => readStoreInformation() },
   Query: {
+    adminMessageTemplates: async (_, __, ctx) => {
+      await requirePermission(ctx, 'ORDERS', 'MESSAGES');
+      return readMessageTemplates();
+    },
     adminOrdersMap: async (_, { input, province }, ctx) => {
       await requirePermission(ctx, 'ORDER_MAP');
       return adminOrdersMap(input, province);
@@ -114,6 +120,16 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    saveAdminMessageTemplates: async (_, { items, expectedUpdatedAt }, ctx) => {
+      requireAdminOrigin(ctx);
+      await requirePermission(ctx, 'MESSAGES');
+      return saveMessageTemplates(items, expectedUpdatedAt);
+    },
+    saveAdminShipment: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const admin = await requirePermission(ctx, 'ORDERS');
+      return saveShipment(admin.id, input);
+    },
     saveAdminStoreInformation: async (_, { input, expectedUpdatedAt }, ctx) => {
       requireAdminOrigin(ctx);
       await requirePermission(ctx, 'STORE_INFO');

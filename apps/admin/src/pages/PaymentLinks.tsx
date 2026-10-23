@@ -85,7 +85,12 @@ export default function PaymentLinks() {
   }, [creating, list.data, paymentDetails]);
   const [pending, setPending] = useState(false),
     [error, setError] = useState(''),
-    [result, setResult] = useState<{ url: string; amount: number } | null>(null);
+    [result, setResult] = useState<{
+      url: string;
+      amount: number;
+      name?: string | null;
+      phone?: string | null;
+    } | null>(null);
   const request = useRef<AdminPaymentRequestInput | null>(recovered),
     lock = useRef(false);
   const actualAmount = request.current?.amount ?? (scope === 'CUSTOMER_BALANCE' ? balance : amount);
@@ -201,7 +206,12 @@ export default function PaymentLinks() {
                             <div className="mb-4 rounded-2xl border border-[#e8ded1] bg-[#faf6ee] p-4 text-xl font-extrabold text-[#4e141c]">
                               <Money compact amount={item.amount} />
                             </div>
-                            <CopyPaymentLink url={item.url} />
+                            <CopyPaymentLink
+                              url={item.url}
+                              amount={item.amount}
+                              name={item.customerName ?? item.payerName}
+                              phone={item.payerPhone}
+                            />
                             {error && <Alert type="error" title={error} className="!mt-3" />}
                             <div className="mt-3 space-y-3">
                               {item.payments.map((payment) => (
@@ -249,7 +259,12 @@ export default function PaymentLinks() {
                         )}
                       </>
                     )}
-                    <CopyPaymentLink url={item.url} />
+                    <CopyPaymentLink
+                      url={item.url}
+                      amount={item.amount}
+                      name={item.customerName ?? item.payerName}
+                      phone={item.payerPhone}
+                    />
                     {item.status === 'ACTIVE' && (
                       <Button
                         danger
@@ -300,7 +315,12 @@ export default function PaymentLinks() {
             <div className="text-2xl font-extrabold text-[#4e141c]">
               <Money compact amount={result.amount} />
             </div>
-            <CopyPaymentLink url={result.url} />
+            <CopyPaymentLink
+              url={result.url}
+              amount={result.amount}
+              name={result.name}
+              phone={result.phone}
+            />
             <Button onClick={() => navigate('/admin/settlements/links')}>مشاهده لینک‌ها</Button>
           </div>
         ) : (
@@ -340,7 +360,13 @@ export default function PaymentLinks() {
                   }
                   setPending(true);
                   const data = await adminRequest(CreateAdminPaymentRequestDocument, { input });
-                  setResult(data.createAdminPaymentRequest);
+                  setResult({
+                    ...data.createAdminPaymentRequest,
+                    name:
+                      data.createAdminPaymentRequest.customerName ??
+                      data.createAdminPaymentRequest.payerName,
+                    phone: data.createAdminPaymentRequest.payerPhone,
+                  });
                   request.current = null;
                   remember(null);
                 } catch (e) {

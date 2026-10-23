@@ -1,3 +1,5 @@
+import { hasPermission } from '@behjati/shared/permissions';
+import { useAdmin } from '../auth/AdminProvider';
 import { useState } from 'react';
 import AccountStatus from './AccountStatus';
 import { formatAdminPrice } from '../lib/money';
@@ -27,6 +29,7 @@ export default function OrderSummaryCard({
   index?: number;
   canExpand?: boolean;
 }) {
+  const { admin } = useAdmin();
   const [print, setPrint] = useState<'invoice' | 'label' | null>(null);
   const motion = useSurfaceMotion<HTMLElement>({ tilt: false, enabled: !expanded });
   const detailsId = `order-details-${order.id}`;
@@ -83,6 +86,11 @@ export default function OrderSummaryCard({
             )}
           </div>
         </div>
+        {order.salesChannel === 'INSTAGRAM' && ['SHIPPED', 'DELIVERED'].includes(order.status) && (
+          <div className="mt-2">
+            <OrderStatus status={order.status} />
+          </div>
+        )}
         <dl className="mt-2 grid grid-cols-2 gap-2 text-xs">
           <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
             <dt className="flex items-center gap-1 text-[13px] text-[#857467]">
@@ -104,7 +112,9 @@ export default function OrderSummaryCard({
           </div>
         </dl>
         {canExpand && (
-          <div className="mt-2.5 grid grid-cols-[1.4fr_1fr_1fr] gap-1.5 border-t border-dashed border-[#e8ded1] pt-2.5">
+          <div
+            className={`mt-2.5 grid ${order.salesChannel === 'IN_PERSON' ? 'grid-cols-[1.4fr_1fr_1fr]' : 'grid-cols-[1.4fr_1fr_1fr_1fr]'} gap-1.5 border-t border-dashed border-[#e8ded1] pt-2.5`}
+          >
             <button
               id={`order-toggle-${order.id}`}
               type="button"
@@ -118,6 +128,17 @@ export default function OrderSummaryCard({
               <AdminIcon name="receipt" width={20} />
               <span>{expanded ? 'بستن' : 'جزئیات'}</span>
             </button>
+            {order.salesChannel !== 'IN_PERSON' && hasPermission(admin, 'ORDERS') && (
+              <button
+                type="button"
+                aria-label={`ارسال و رهگیری سفارش ${formatNumber(order.number)}`}
+                title="ارسال و رهگیری؛ پیام به مشتری"
+                onClick={onToggle}
+                className="grid min-h-11 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b]"
+              >
+                <AdminIcon name="message" width={21} />
+              </button>
+            )}
             <button
               type="button"
               aria-label={`چاپ فاکتور سفارش ${formatNumber(order.number)}`}

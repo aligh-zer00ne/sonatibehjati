@@ -30,6 +30,7 @@ const ProductEdit = lazy(() => import('./pages/ProductEdit'));
 const PaymentTest = lazy(() => import('./pages/PaymentTest'));
 const Settings = lazy(() => import('./pages/Settings'));
 const AdminSection = lazy(() => import('./pages/AdminSection'));
+const MessageTemplates = lazy(() => import('./pages/MessageTemplates'));
 export default function App() {
   return (
     <ConfigProvider
@@ -133,6 +134,7 @@ export default function App() {
                     <Route path="orders/manual" element={<Orders key="manual" scope="manual" />} />
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
+                    <Route path="message-templates" element={<MessageTemplates />} />
                     <Route path="store-information" element={<StoreInformation />} />
                     <Route path="shipping" element={<Shipping />} />
                     <Route path="settings" element={<Settings />} />

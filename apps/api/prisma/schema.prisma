@@ -533,3 +533,9 @@ model StoreInformation {
   isConfigured Boolean  @default(false)
   updatedAt    DateTime @updatedAt
 }
+
+model MessageTemplateSettings {
+  id        String   @id @db.VarChar(191)
+  data      Json
+  updatedAt DateTime @updatedAt
+}

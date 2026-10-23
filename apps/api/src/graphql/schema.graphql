@@ -325,6 +325,7 @@ enum AdminRole {
   STAFF
 }
 enum AdminPermission {
+  MESSAGES
   STORE_INFO
   SHIPPING
   DASHBOARD
@@ -1183,4 +1184,43 @@ type AdminOrdersMapResult {
 }
 extend type Query {
   adminOrdersMap(input: AdminOrdersInput!, province: String): AdminOrdersMapResult!
+}
+
+enum MessageKind {
+  PAYMENT
+  SHIPPING
+}
+input MessageTemplateInput {
+  id: ID!
+  kind: MessageKind!
+  title: String!
+  body: String!
+}
+type MessageTemplate {
+  id: ID!
+  kind: MessageKind!
+  title: String!
+  body: String!
+}
+type MessageTemplateSettings {
+  items: [MessageTemplate!]!
+  updatedAt: String
+  storeName: String!
+}
+input AdminShipmentInput {
+  orderId: ID!
+  shippingMethod: ShippingMethod!
+  trackingNumber: String!
+  expectedUpdatedAt: String!
+  expectedLabelUpdatedAt: String
+}
+extend type Query {
+  adminMessageTemplates: MessageTemplateSettings!
+}
+extend type Mutation {
+  saveAdminMessageTemplates(
+    items: [MessageTemplateInput!]!
+    expectedUpdatedAt: String
+  ): MessageTemplateSettings!
+  saveAdminShipment(input: AdminShipmentInput!): AdminOrder!
 }

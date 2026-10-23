@@ -60,3 +60,11 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 جزئیات سفارش‌های وبسایت و دستی از فهرست، داشبورد، حساب مشتری و نقشه، روی همان صفحه در پنجره باز می‌شود. مسیر مستقیم سفارش هم همین پنجره را روی فهرست می‌آورد. تغییر وضعیت سفارش بالای جزئیات، تب‌های اطلاعات و دکمه‌های چاپ در دسترس‌اند؛ سفارش دستی همچنان فقط محصولات و چاپ دارد. انتخاب وضعیت ثبت‌نشده هنگام بستن تأیید می‌گیرد و حین ثبت، پیگیری بانک یا چاپ، بستن پنجرهٔ والد محافظت می‌شود. به‌روزرسانی فهرست پنجره را از بین نمی‌برد و فیلترها حفظ می‌شوند.
 
 حساب و فاکتورهای مشتری از کارت مشتری و جزئیات تراکنش‌های لینک پرداخت نیز در پنجره باز می‌شوند. بخش‌های اصلی و فرم‌های مستقل دریافت و پرداخت مسیرهای اصلی خود را دارند. پنجره‌های موجود، از جمله ویرایش محصول، مشتری، تخفیف و کاربران نیز پس‌زمینهٔ تار یکسان دارند. بدنهٔ پنجره در موبایل پیمایش می‌شود؛ Escape، ضربدر، فوکوس و بازگشت به دکمهٔ قبلی بررسی می‌شوند. چاپ تمام‌صفحه روی پنجرهٔ سفارش باز می‌شود و با بستن چاپ، به همان جزئیات برمی‌گردید؛ فرم قدیمی شخصی‌سازی لیبل برنمی‌گردد.
+
+## Customer message templates and shipping
+
+Management → قالب پیام‌ها (`/admin/message-templates`) owns reusable payment and shipment text. Grant MESSAGES to staff who may edit templates; ORDERS alone can use them. Insert supported Persian placeholders using the buttons; payment text must retain `{لینک_پرداخت}` and shipping text `{کد_رهگیری}`. Choose a saved template in the payment-link/order composer, review its real values, then copy the whole text, share it or open SMS on the phone. The site never treats opening a composer as confirmed sending. No SMS provider configuration is required for this feature.
+
+Website and Instagram details keep carrier/tracking beside the main actions. Saving a tracking code atomically records SHIPPED plus an audit entry, subject to current order/label versions and the existing website bank-confirmation rule. Printing and notifications use those same saved values. In-person orders have no shipment notification action. Historical shipping charges and payments are unchanged.
+
+Deployment needs additive migration `202610230005_message_templates`, handled by `deploy/update-production.sh`. Verification: `npm run verify:customer-messages`, `npm run verify:payment-links-ui`, `npm run verify:admin-orders-ui` and `npm run verify:retail-ui`. Tests use temporary records and mock native sharing/bank/SMS; no external message is sent.

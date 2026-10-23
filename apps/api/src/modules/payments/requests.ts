@@ -32,6 +32,7 @@ async function presented(id: string) {
     customerName: r.customer
       ? [r.customer.firstName, r.customer.lastName].filter(Boolean).join(' ') || r.customer.phone
       : null,
+    payerPhone: r.payerPhone || r.customer?.phone || null,
     url: env.STOREFRONT_ORIGIN + requestPath(r),
     createdAt: r.createdAt.toISOString(),
     expiresAt: r.expiresAt.toISOString(),

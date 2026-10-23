@@ -1,3 +1,6 @@
+import ShipmentEditor from './ShipmentEditor';
+import { useAdmin } from '../auth/AdminProvider';
+import { hasPermission } from '@behjati/shared/permissions';
 import AccountStatus from './AccountStatus';
 import { formatAdminPrice as formatPrice } from '../lib/money';
 import OfflineReceipts from './OfflineReceipts';
@@ -48,7 +51,7 @@ function OrderDetailTabs({
       <div
         role="tablist"
         aria-label="بخش‌های جزئیات سفارش"
-        className={`mb-3 grid ${items.length === 1 ? 'grid-cols-1' : 'grid-cols-4'} gap-1 border-b border-[#e8ded1] pb-3 sm:gap-2`}
+        className={`mb-3 grid ${items.length === 1 ? 'grid-cols-1' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-4'} gap-1 border-b border-[#e8ded1] pb-3 sm:gap-2`}
       >
         {items.map((item, index) => (
           <button
@@ -131,7 +134,10 @@ export default function OrderDetailsCard({
   closeRef?: Ref<OrderDetailsHandle>;
   onBusyChange?: (busy: boolean) => void;
 }) {
-  const query = useAdminQuery(AdminOrderDocument, { id });
+  const query = useAdminQuery(AdminOrderDocument, { id }, true, { keepPreviousData: true });
+  const { admin } = useAdmin();
+  const [shipmentBusy, setShipmentBusy] = useState(false);
+  const [shipmentDirty, setShipmentDirty] = useState(false);
   const [printView, setPrintView] = useState<'invoice' | 'label' | null>(null);
   const [status, setStatus] = useState<Status | null>(null);
   const [pending, setPending] = useState(false);
@@ -139,16 +145,18 @@ export default function OrderDetailsCard({
   const [tab, setTab] = useState('products');
   const { message, modal } = App.useApp();
   const order = query.data?.adminOrder;
-  const busy = pending || Boolean(paymentPending) || Boolean(printView);
+  const busy = pending || shipmentBusy || Boolean(paymentPending) || Boolean(printView);
   useEffect(() => {
     onBusyChange?.(busy);
   }, [busy, onBusyChange]);
   const requestClose = () => {
     if (busy) return;
-    if (status && status !== order?.status) {
+    if (shipmentDirty || (status && status !== order?.status)) {
       modal.confirm({
-        title: 'وضعیت انتخاب‌شده ثبت نشده است',
-        content: 'با بستن پنجره، وضعیت سفارش تغییر نمی‌کند.',
+        title: shipmentDirty
+          ? 'اطلاعات ارسال هنوز ذخیره نشده است'
+          : 'وضعیت انتخاب‌شده ثبت نشده است',
+        content: 'با بستن پنجره، تغییرهای ثبت‌نشده کنار گذاشته می‌شوند.',
         okText: 'بستن جزئیات',
         cancelText: 'ادامه بررسی',
         onOk: onClose,
@@ -261,8 +269,20 @@ export default function OrderDetailsCard({
               )}
             </div>
           )}
+          {order.salesChannel !== 'IN_PERSON' && hasPermission(admin, 'ORDERS') && (
+            <ShipmentEditor
+              key={order.updatedAt}
+              order={order}
+              onBusyChange={setShipmentBusy}
+              onDirtyChange={setShipmentDirty}
+              onSaved={() => {
+                query.refresh();
+                onUpdated?.();
+              }}
+            />
+          )}
           <OrderDetailTabs
-            activeKey={order.salesChannel === 'WEBSITE' ? tab : 'products'}
+            activeKey={order.salesChannel !== 'IN_PERSON' ? tab : 'products'}
             onChange={setTab}
             items={[
               {
@@ -507,7 +527,12 @@ export default function OrderDetailsCard({
                   <p className="py-3 text-xs text-[#76685d]">هنوز تغییری توسط مدیر ثبت نشده است.</p>
                 ),
               },
-            ].filter((item) => order.salesChannel === 'WEBSITE' || item.key === 'products')}
+            ].filter(
+              (item) =>
+                order.salesChannel === 'WEBSITE' ||
+                item.key === 'products' ||
+                (order.salesChannel === 'INSTAGRAM' && item.key === 'shipping'),
+            )}
           />
           <div
             className={`mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#e8ded1] pt-3 ${inDialog ? 'sticky -bottom-3 z-10 rounded-xl bg-white/95 pb-3 backdrop-blur-sm sm:-bottom-5 sm:pb-5' : ''}`}

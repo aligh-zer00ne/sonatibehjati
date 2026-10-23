@@ -423,6 +423,7 @@ export type AdminPermission =
   | 'CUSTOMERS'
   | 'DASHBOARD'
   | 'HOMEPAGE'
+  | 'MESSAGES'
   | 'ORDERS'
   | 'ORDER_MAP'
   | 'PRODUCTS'
@@ -543,6 +544,14 @@ export type AdminSessionPayload = {
   accessExpiresAt: Scalars['String']['output'];
   accessToken: Scalars['String']['output'];
   admin: AdminIdentity;
+};
+
+export type AdminShipmentInput = {
+  expectedLabelUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  expectedUpdatedAt: Scalars['String']['input'];
+  orderId: Scalars['ID']['input'];
+  shippingMethod: ShippingMethod;
+  trackingNumber: Scalars['String']['input'];
 };
 
 export type AdminShippingLabel = {
@@ -848,6 +857,32 @@ export type LabelPaperSize =
   | 'A5'
   | 'THERMAL';
 
+export type MessageKind =
+  | 'PAYMENT'
+  | 'SHIPPING';
+
+export type MessageTemplate = {
+  __typename?: 'MessageTemplate';
+  body: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  kind: MessageKind;
+  title: Scalars['String']['output'];
+};
+
+export type MessageTemplateInput = {
+  body: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  kind: MessageKind;
+  title: Scalars['String']['input'];
+};
+
+export type MessageTemplateSettings = {
+  __typename?: 'MessageTemplateSettings';
+  items: Array<MessageTemplate>;
+  storeName: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   adminLogin: AdminSessionPayload;
@@ -874,7 +909,9 @@ export type Mutation = {
   retryAdminPayment: PaymentInfo;
   saveAddress: Address;
   saveAdminCoupon: AdminCoupon;
+  saveAdminMessageTemplates: MessageTemplateSettings;
   saveAdminProduct: Product;
+  saveAdminShipment: AdminOrder;
   saveAdminShippingLabel: AdminShippingLabel;
   saveAdminShippingSettings: ShippingSettings;
   saveAdminStoreInformation: StoreInformation;
@@ -1001,10 +1038,21 @@ export type MutationSaveAdminCouponArgs = {
 };
 
 
+export type MutationSaveAdminMessageTemplatesArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  items: Array<MessageTemplateInput>;
+};
+
+
 export type MutationSaveAdminProductArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   input: AdminProductInput;
+};
+
+
+export type MutationSaveAdminShipmentArgs = {
+  input: AdminShipmentInput;
 };
 
 
@@ -1319,6 +1367,7 @@ export type Query = {
   adminHomepageContent: HomepageContent;
   adminManualQuote: AdminManualQuote;
   adminMe?: Maybe<AdminIdentity>;
+  adminMessageTemplates: MessageTemplateSettings;
   adminOrder: AdminOrder;
   adminOrderCustomer: AdminUser;
   adminOrderCustomers: AdminUsersPage;

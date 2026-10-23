@@ -21,6 +21,12 @@ export const orderLinks: Item[] = [
   },
 ];
 export const navigationLinks: Item[] = [
+  {
+    href: '/admin/message-templates',
+    label: 'قالب پیام‌ها',
+    icon: 'message',
+    description: 'متن آمادهٔ پرداخت و ارسال سفارش، با مشخصات واقعی مشتری',
+  },
   { href: '/admin', label: 'داشبورد', icon: 'home', description: 'نمای کلی عملکرد فروشگاه' },
   { href: '/admin/orders', label: 'سفارش‌ها', icon: 'orders', description: '' },
   {
@@ -154,6 +160,7 @@ const definitions: Array<{
     shortLabel: 'مدیریت',
     icon: 'settings',
     paths: [
+      '/admin/message-templates',
       '/admin/store-information',
       '/admin/shipping',
       '/admin/announcement',

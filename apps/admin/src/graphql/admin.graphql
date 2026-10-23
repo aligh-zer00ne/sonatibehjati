@@ -844,3 +844,29 @@ query AdminOrdersMap($input: AdminOrdersInput!, $province: String) {
     }
   }
 }
+
+fragment MessageTemplateSettingsFields on MessageTemplateSettings {
+  items {
+    id
+    kind
+    title
+    body
+  }
+  updatedAt
+  storeName
+}
+query AdminMessageTemplates {
+  adminMessageTemplates {
+    ...MessageTemplateSettingsFields
+  }
+}
+mutation SaveAdminMessageTemplates($items: [MessageTemplateInput!]!, $expectedUpdatedAt: String) {
+  saveAdminMessageTemplates(items: $items, expectedUpdatedAt: $expectedUpdatedAt) {
+    ...MessageTemplateSettingsFields
+  }
+}
+mutation SaveAdminShipment($input: AdminShipmentInput!) {
+  saveAdminShipment(input: $input) {
+    ...AdminOrderFields
+  }
+}

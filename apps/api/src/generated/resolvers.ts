@@ -425,6 +425,7 @@ export type AdminPermission =
   | 'CUSTOMERS'
   | 'DASHBOARD'
   | 'HOMEPAGE'
+  | 'MESSAGES'
   | 'ORDERS'
   | 'ORDER_MAP'
   | 'PRODUCTS'
@@ -545,6 +546,14 @@ export type AdminSessionPayload = {
   accessExpiresAt: Scalars['String']['output'];
   accessToken: Scalars['String']['output'];
   admin: AdminIdentity;
+};
+
+export type AdminShipmentInput = {
+  expectedLabelUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  expectedUpdatedAt: Scalars['String']['input'];
+  orderId: Scalars['ID']['input'];
+  shippingMethod: ShippingMethod;
+  trackingNumber: Scalars['String']['input'];
 };
 
 export type AdminShippingLabel = {
@@ -850,6 +859,32 @@ export type LabelPaperSize =
   | 'A5'
   | 'THERMAL';
 
+export type MessageKind =
+  | 'PAYMENT'
+  | 'SHIPPING';
+
+export type MessageTemplate = {
+  __typename?: 'MessageTemplate';
+  body: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  kind: MessageKind;
+  title: Scalars['String']['output'];
+};
+
+export type MessageTemplateInput = {
+  body: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  kind: MessageKind;
+  title: Scalars['String']['input'];
+};
+
+export type MessageTemplateSettings = {
+  __typename?: 'MessageTemplateSettings';
+  items: Array<MessageTemplate>;
+  storeName: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   adminLogin: AdminSessionPayload;
@@ -876,7 +911,9 @@ export type Mutation = {
   retryAdminPayment: PaymentInfo;
   saveAddress: Address;
   saveAdminCoupon: AdminCoupon;
+  saveAdminMessageTemplates: MessageTemplateSettings;
   saveAdminProduct: Product;
+  saveAdminShipment: AdminOrder;
   saveAdminShippingLabel: AdminShippingLabel;
   saveAdminShippingSettings: ShippingSettings;
   saveAdminStoreInformation: StoreInformation;
@@ -1003,10 +1040,21 @@ export type MutationSaveAdminCouponArgs = {
 };
 
 
+export type MutationSaveAdminMessageTemplatesArgs = {
+  expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
+  items: Array<MessageTemplateInput>;
+};
+
+
 export type MutationSaveAdminProductArgs = {
   expectedUpdatedAt?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   input: AdminProductInput;
+};
+
+
+export type MutationSaveAdminShipmentArgs = {
+  input: AdminShipmentInput;
 };
 
 
@@ -1321,6 +1369,7 @@ export type Query = {
   adminHomepageContent: HomepageContent;
   adminManualQuote: AdminManualQuote;
   adminMe?: Maybe<AdminIdentity>;
+  adminMessageTemplates: MessageTemplateSettings;
   adminOrder: AdminOrder;
   adminOrderCustomer: AdminUser;
   adminOrderCustomers: AdminUsersPage;
@@ -1805,6 +1854,7 @@ export type ResolversTypes = {
   AdminReportInput: AdminReportInput;
   AdminRole: AdminRole;
   AdminSessionPayload: ResolverTypeWrapper<AdminSessionPayload>;
+  AdminShipmentInput: AdminShipmentInput;
   AdminShippingLabel: ResolverTypeWrapper<AdminShippingLabel>;
   AdminShippingLabelInput: AdminShippingLabelInput;
   AdminStatusMetric: ResolverTypeWrapper<AdminStatusMetric>;
@@ -1839,6 +1889,10 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   LabelPaperSize: LabelPaperSize;
+  MessageKind: MessageKind;
+  MessageTemplate: ResolverTypeWrapper<MessageTemplate>;
+  MessageTemplateInput: MessageTemplateInput;
+  MessageTemplateSettings: ResolverTypeWrapper<MessageTemplateSettings>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   MyOrdersInput: MyOrdersInput;
   MyOrdersPage: ResolverTypeWrapper<MyOrdersPage>;
@@ -1936,6 +1990,7 @@ export type ResolversParentTypes = {
   AdminReport: AdminReport;
   AdminReportInput: AdminReportInput;
   AdminSessionPayload: AdminSessionPayload;
+  AdminShipmentInput: AdminShipmentInput;
   AdminShippingLabel: AdminShippingLabel;
   AdminShippingLabelInput: AdminShippingLabelInput;
   AdminStatusMetric: AdminStatusMetric;
@@ -1968,6 +2023,9 @@ export type ResolversParentTypes = {
   HomepageContentInput: HomepageContentInput;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  MessageTemplate: MessageTemplate;
+  MessageTemplateInput: MessageTemplateInput;
+  MessageTemplateSettings: MessageTemplateSettings;
   Mutation: Record<PropertyKey, never>;
   MyOrdersInput: MyOrdersInput;
   MyOrdersPage: MyOrdersPage;
@@ -2471,6 +2529,19 @@ export type HomepageContentResolvers<ContextType = AuthContext, ParentType exten
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
+export type MessageTemplateResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['MessageTemplate'] = ResolversParentTypes['MessageTemplate']> = {
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  kind?: Resolver<ResolversTypes['MessageKind'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type MessageTemplateSettingsResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['MessageTemplateSettings'] = ResolversParentTypes['MessageTemplateSettings']> = {
+  items?: Resolver<Array<ResolversTypes['MessageTemplate']>, ParentType, ContextType>;
+  storeName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = AuthContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   adminLogin?: Resolver<ResolversTypes['AdminSessionPayload'], ParentType, ContextType, RequireFields<MutationAdminLoginArgs, 'input'>>;
   adminLogout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -2496,7 +2567,9 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   retryAdminPayment?: Resolver<ResolversTypes['PaymentInfo'], ParentType, ContextType, RequireFields<MutationRetryAdminPaymentArgs, 'paymentId'>>;
   saveAddress?: Resolver<ResolversTypes['Address'], ParentType, ContextType, RequireFields<MutationSaveAddressArgs, 'input'>>;
   saveAdminCoupon?: Resolver<ResolversTypes['AdminCoupon'], ParentType, ContextType, RequireFields<MutationSaveAdminCouponArgs, 'input'>>;
+  saveAdminMessageTemplates?: Resolver<ResolversTypes['MessageTemplateSettings'], ParentType, ContextType, RequireFields<MutationSaveAdminMessageTemplatesArgs, 'items'>>;
   saveAdminProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationSaveAdminProductArgs, 'input'>>;
+  saveAdminShipment?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationSaveAdminShipmentArgs, 'input'>>;
   saveAdminShippingLabel?: Resolver<ResolversTypes['AdminShippingLabel'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingLabelArgs, 'input' | 'orderId'>>;
   saveAdminShippingSettings?: Resolver<ResolversTypes['ShippingSettings'], ParentType, ContextType, RequireFields<MutationSaveAdminShippingSettingsArgs, 'expectedUpdatedAt' | 'input'>>;
   saveAdminStoreInformation?: Resolver<ResolversTypes['StoreInformation'], ParentType, ContextType, RequireFields<MutationSaveAdminStoreInformationArgs, 'input'>>;
@@ -2663,6 +2736,7 @@ export type QueryResolvers<ContextType = AuthContext, ParentType extends Resolve
   adminHomepageContent?: Resolver<ResolversTypes['HomepageContent'], ParentType, ContextType>;
   adminManualQuote?: Resolver<ResolversTypes['AdminManualQuote'], ParentType, ContextType, RequireFields<QueryAdminManualQuoteArgs, 'input'>>;
   adminMe?: Resolver<Maybe<ResolversTypes['AdminIdentity']>, ParentType, ContextType>;
+  adminMessageTemplates?: Resolver<ResolversTypes['MessageTemplateSettings'], ParentType, ContextType>;
   adminOrder?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<QueryAdminOrderArgs, 'id'>>;
   adminOrderCustomer?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomerArgs, 'id'>>;
   adminOrderCustomers?: Resolver<ResolversTypes['AdminUsersPage'], ParentType, ContextType, RequireFields<QueryAdminOrderCustomersArgs, 'input'>>;
@@ -2808,6 +2882,8 @@ export type Resolvers<ContextType = AuthContext> = {
   CustomerExport?: CustomerExportResolvers<ContextType>;
   HeroSlide?: HeroSlideResolvers<ContextType>;
   HomepageContent?: HomepageContentResolvers<ContextType>;
+  MessageTemplate?: MessageTemplateResolvers<ContextType>;
+  MessageTemplateSettings?: MessageTemplateSettingsResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   MyOrdersPage?: MyOrdersPageResolvers<ContextType>;
   OrderAddressSnapshot?: OrderAddressSnapshotResolvers<ContextType>;
