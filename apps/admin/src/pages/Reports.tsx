@@ -1,3 +1,4 @@
+import AmbientBackdrop from '../components/AmbientBackdrop';
 import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
 import {
   salesChannels,
@@ -68,12 +69,13 @@ export default function Reports() {
   };
   return (
     <div className="space-y-5" data-admin-reports>
-      <header className="relative overflow-hidden rounded-3xl bg-[#76100b] p-5 text-white sm:p-7">
+      <header className="relative isolate overflow-hidden rounded-3xl bg-[#58132b] p-5 text-white sm:p-7">
+        <AmbientBackdrop />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -end-12 -top-20 size-72 rounded-full border-[36px] border-[#e8bd70]/10"
         />
-        <div className="relative flex flex-wrap items-start justify-between gap-4">
+        <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
           <div>
             <span className="text-xs tracking-wide text-[#edc994]">
               تصویر روشن از عملکرد فروشگاه
@@ -93,7 +95,7 @@ export default function Reports() {
             خروجی CSV
           </Button>
         </div>
-        <div className="relative mt-5 flex flex-wrap gap-2" aria-label="بازه‌های سریع گزارش">
+        <div className="relative z-10 mt-5 flex flex-wrap gap-2" aria-label="بازه‌های سریع گزارش">
           {[
             { days: 1, label: 'امروز' },
             { days: 7, label: '۷ روز اخیر' },
@@ -188,7 +190,7 @@ export default function Reports() {
         <Button
           type="text"
           size="small"
-          className="!ms-auto !text-[12px] !text-[#96140d]"
+          className="!ms-auto !text-[12px] !text-[#701734]"
           onClick={() => {
             setRange(defaultReportRange());
             setStatus('');

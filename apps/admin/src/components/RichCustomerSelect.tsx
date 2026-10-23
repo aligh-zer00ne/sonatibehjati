@@ -66,7 +66,7 @@ export default function RichCustomerSelect({
         const u = option.data.user;
         return (
           <div className="flex min-h-16 items-center gap-3 py-2">
-            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#76100b]">
+            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#58132b]">
               <AdminIcon name="person" />
             </span>
             <div className="min-w-0 flex-1">

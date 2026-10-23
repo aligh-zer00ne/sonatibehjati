@@ -170,9 +170,9 @@ export function FilterButton({
             changeOpen(true);
           }
         }}
-        className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${active ? 'bg-[#fcf4e9] text-[#96140d]' : open ? 'bg-[#f7f4ef] text-[#34251e]' : 'text-[#624f42] hover:bg-[#f7f4ef]'}`}
+        className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${active ? 'bg-[#fcf4e9] text-[#701734]' : open ? 'bg-[#f7f4ef] text-[#34251e]' : 'text-[#624f42] hover:bg-[#f7f4ef]'}`}
       >
-        {active && <span aria-hidden="true" className="size-1.5 rounded-full bg-[#96140d]" />}
+        {active && <span aria-hidden="true" className="size-1.5 rounded-full bg-[#701734]" />}
         <span className="sm:hidden">{compactLabel}</span>
         <span className="hidden sm:inline">{label}</span>
         <AdminIcon
@@ -217,11 +217,11 @@ export function FilterChips<T extends string>({
             onChange(option.value);
             close?.();
           }}
-          className={`flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-start text-[13px] font-medium transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${value === option.value ? 'bg-[#fcf4e9] text-[#96140d]' : 'text-[#624f42] hover:bg-[#f7f4ef]'} ${close ? 'w-full' : 'border border-[#e8ded1]'}`}
+          className={`flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-start text-[13px] font-medium transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${value === option.value ? 'bg-[#fcf4e9] text-[#701734]' : 'text-[#624f42] hover:bg-[#f7f4ef]'} ${close ? 'w-full' : 'border border-[#e8ded1]'}`}
         >
           <span
             aria-hidden="true"
-            className={`grid size-4 shrink-0 place-items-center rounded border ${value === option.value ? 'border-[#96140d] bg-[#96140d] text-white' : 'border-[#d7cfc5] bg-white'}`}
+            className={`grid size-4 shrink-0 place-items-center rounded border ${value === option.value ? 'border-[#701734] bg-[#701734] text-white' : 'border-[#d7cfc5] bg-white'}`}
           >
             {value === option.value && (
               <svg

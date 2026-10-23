@@ -42,10 +42,10 @@ export default function OrderSummaryCard({
       className={`${surfaceCardMotion} group relative min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15 md:col-span-2 xl:col-span-3' : 'border-[#e5ded3] hover:border-[#c7ab7d] hover:shadow-[0_8px_24px_#62452f12]'}`}
     >
       <SurfaceGlow />
-      <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#96140d]" />
+      <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701734]" />
       <div className="p-3.5" data-order-summary>
         <header className="flex items-center gap-2.5">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#76100b] shadow-[0_3px_8px_#b7825b26]">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#58132b] shadow-[0_3px_8px_#b7825b26]">
             <AdminIcon name="person" width={21} />
           </span>
           <div className="min-w-0 flex-1">
@@ -61,7 +61,7 @@ export default function OrderSummaryCard({
           </div>
           <span className="shrink-0 rounded-lg border border-[#e8ded1] bg-[#faf6ee] px-2 py-1 text-center">
             <small className="block text-[9px] text-[#857467]">{compact ? 'ردیف' : 'سفارش'}</small>
-            <b className="text-xs text-[#76100b]" data-record-number>
+            <b className="text-xs text-[#58132b]" data-record-number>
               {formatNumber(compact ? index + 1 : order.number)}
             </b>
           </span>
@@ -69,7 +69,7 @@ export default function OrderSummaryCard({
         <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#e8d9bf] bg-gradient-to-l from-[#f4e8d3] to-[#fbf8f0] px-3 py-2">
           <div className="min-w-0">
             <span className="block text-[10px] text-[#857467]">مبلغ سفارش</span>
-            <b className="block break-words text-base leading-7 tabular-nums text-[#76100b]">
+            <b className="block break-words text-base leading-7 tabular-nums text-[#58132b]">
               {formatAdminPrice(order.total)}
             </b>
           </div>
@@ -110,7 +110,7 @@ export default function OrderSummaryCard({
               aria-expanded={expanded}
               aria-controls={detailsId}
               onClick={onToggle}
-              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#76100b] transition hover:border-[#b7825b] hover:bg-[#f0e0c7] aria-expanded:border-[#c69b48] aria-expanded:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-expanded:shadow-[0_3px_10px_#c69b4830] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#58132b] transition hover:border-[#b7825b] hover:bg-[#f0e0c7] aria-expanded:border-[#c69b48] aria-expanded:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-expanded:shadow-[0_3px_10px_#c69b4830] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
             >
               <AdminIcon name="receipt" width={16} />
               <span>{expanded ? 'بستن' : 'جزئیات'}</span>
@@ -120,7 +120,7 @@ export default function OrderSummaryCard({
               aria-label={`چاپ فاکتور سفارش ${formatNumber(order.number)}`}
               title="چاپ فاکتور"
               onClick={() => setPrint('invoice')}
-              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#76100b]"
+              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#58132b]"
             >
               <AdminIcon name="print" width={17} />
             </button>
@@ -129,7 +129,7 @@ export default function OrderSummaryCard({
               aria-label={`چاپ لیبل سفارش ${formatNumber(order.number)}`}
               title="لیبل پستی"
               onClick={() => setPrint('label')}
-              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#76100b]"
+              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#58132b]"
             >
               <AdminIcon name="truck" width={17} />
             </button>

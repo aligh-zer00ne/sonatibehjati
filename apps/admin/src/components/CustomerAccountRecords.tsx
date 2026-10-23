@@ -42,10 +42,10 @@ export function AccountInvoices({
               data-account-invoice
               className="relative overflow-hidden rounded-[22px] border border-[#e8ded1] bg-white p-4 shadow-[0_4px_16px_#62452f08]"
             >
-              <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#96140d] to-[#dfb65c]" />
+              <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#701734] to-[#dfb65c]" />
               <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h3 className="flex items-center gap-2 font-extrabold">
-                  <AdminIcon name="receipt" className="text-[#96140d]" />
+                  <AdminIcon name="receipt" className="text-[#701734]" />
                   فاکتور {formatNumber(invoice.number)}
                 </h3>
                 <AccountStatus balance={invoice.total - invoice.offlinePaidAmount} amount={false} />
@@ -53,7 +53,7 @@ export function AccountInvoices({
               <dl className="grid gap-3 rounded-2xl bg-[#faf6ee] p-3">
                 <div className="flex flex-wrap justify-between gap-2">
                   <dt className="text-sm text-[#796653]">مبلغ فاکتور</dt>
-                  <dd className="text-base font-extrabold text-[#76100b]">
+                  <dd className="text-base font-extrabold text-[#58132b]">
                     <Money compact amount={invoice.total} />
                   </dd>
                 </div>
@@ -107,7 +107,7 @@ export function AccountLedger({
             <header className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span
-                  className={`grid size-11 shrink-0 place-items-center rounded-2xl ${entry.direction === 'RECEIPT' ? 'bg-[#f2e5cd] text-[#926720]' : 'bg-[#fbece7] text-[#96140d]'}`}
+                  className={`grid size-11 shrink-0 place-items-center rounded-2xl ${entry.direction === 'RECEIPT' ? 'bg-[#f2e5cd] text-[#926720]' : 'bg-[#fbece7] text-[#701734]'}`}
                 >
                   <AdminIcon
                     name={entry.direction === 'RECEIPT' ? 'wallet' : 'logout'}
@@ -122,7 +122,7 @@ export function AccountLedger({
                 </div>
               </div>
               <p
-                className={`text-lg font-extrabold ${entry.direction === 'RECEIPT' ? 'text-[#926720]' : 'text-[#96140d]'}`}
+                className={`text-lg font-extrabold ${entry.direction === 'RECEIPT' ? 'text-[#926720]' : 'text-[#701734]'}`}
               >
                 <Money compact amount={entry.amount} />
               </p>
@@ -142,7 +142,7 @@ export function AccountLedger({
               <p className="mt-3 break-words text-sm leading-7 text-[#796653]">{entry.note}</p>
             )}
             <details className="mt-3 border-t border-dashed border-[#e8ded1] pt-3 text-sm text-[#796653]">
-              <summary className="cursor-pointer font-semibold text-[#76100b]">
+              <summary className="cursor-pointer font-semibold text-[#58132b]">
                 جزئیات سند و تخصیص به فاکتورها
               </summary>
               <div className="mt-3 space-y-2 leading-7">

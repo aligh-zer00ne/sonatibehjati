@@ -126,7 +126,7 @@ export default function OrderFilters({
       <Button
         type="text"
         size="small"
-        className="!ms-auto !text-[12px] !text-[#96140d]"
+        className="!ms-auto !text-[12px] !text-[#701734]"
         onClick={onReset}
       >
         پاک کردن فیلترها

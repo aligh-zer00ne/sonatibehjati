@@ -33,7 +33,7 @@ export default function OfflineReceipts({
       className="mb-4 rounded-xl border border-[#e5d7c2] bg-[#fcf9f3] p-3"
       aria-label="دریافت‌های خارج از سایت"
     >
-      <h4 className="mb-2 font-bold text-[#76100b]">دریافت خارج از سایت</h4>
+      <h4 className="mb-2 font-bold text-[#58132b]">دریافت خارج از سایت</h4>
       <p className="mb-2 text-sm">
         دریافتی: <Money amount={order.offlinePaidAmount} /> · مانده: <Money amount={remaining} />
       </p>

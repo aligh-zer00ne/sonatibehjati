@@ -82,7 +82,7 @@ export default function Dashboard() {
   );
   return (
     <div className="flex flex-col gap-4 motion-safe:animate-surface-enter" data-admin-dashboard>
-      <header className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#a94d31]/40 bg-[radial-gradient(ellipse_at_top_right,#a13521,transparent_65%),linear-gradient(125deg,#83160e,#4b0c09)] px-5 py-6 text-[#fff5e1] shadow-[0_12px_28px_-12px_#76100b50] sm:px-7 sm:py-7">
+      <header className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#a45473]/40 bg-[radial-gradient(ellipse_at_top_right,#823652,transparent_65%),linear-gradient(125deg,#641a38,#280b18)] px-5 py-6 text-[#fff5e1] shadow-[0_12px_28px_-12px_#58132b50] sm:px-7 sm:py-7">
         <AmbientBackdrop />
         <div
           aria-hidden="true"
@@ -228,7 +228,7 @@ export default function Dashboard() {
               className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-4 text-start shadow-[0_3px_14px_#62452f06] hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] aria-pressed:border-[#c69b48] aria-pressed:bg-[linear-gradient(135deg,#fffaf0,#f6e5bd)] aria-pressed:shadow-[0_4px_16px_#c69b4824]"
             >
               <div className="mb-2 flex items-center gap-2">
-                <span className="grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#96140d]">
+                <span className="grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#701734]">
                   <AdminIcon
                     name={
                       c.salesChannel === 'WEBSITE'

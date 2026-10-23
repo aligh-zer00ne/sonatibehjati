@@ -230,7 +230,7 @@ export default function ManualOrderModal({
         >
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e8ded1] px-4 py-3">
             <h3 className="flex items-center gap-2 font-bold">
-              <AdminIcon name="products" className="text-[#96140d]" />
+              <AdminIcon name="products" className="text-[#701734]" />
               اقلام فاکتور
             </h3>
             <span className="rounded-full bg-[#f4e8d3] px-3 py-1 text-xs text-[#62452f]">
@@ -255,7 +255,7 @@ export default function ManualOrderModal({
               allowClear
               filterOption={false}
               placeholder="نام کالا را بنویسید و به فاکتور اضافه کنید…"
-              prefix={<AdminIcon name="search" width={20} className="text-[#96140d]" />}
+              prefix={<AdminIcon name="search" width={20} className="text-[#701734]" />}
               value={null}
               searchValue={productTerm}
               onSearch={setProductTerm}
@@ -291,7 +291,7 @@ export default function ManualOrderModal({
                         {p.weight} · {formatAdminPrice(p.price)}
                       </span>
                     </div>
-                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#f4e8d3] text-[#96140d]">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#f4e8d3] text-[#701734]">
                       {line ? formatNumber(line.quantity) : <AdminIcon name="plus" width={17} />}
                     </span>
                   </div>

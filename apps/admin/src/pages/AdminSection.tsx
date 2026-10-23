@@ -1,3 +1,4 @@
+import AmbientBackdrop from '../components/AmbientBackdrop';
 import { Navigate, useParams } from 'react-router-dom';
 import { adminLanding } from '@behjati/shared/permissions';
 import { formatNumber } from '@behjati/shared';
@@ -16,8 +17,9 @@ export default function AdminSection() {
       data-admin-section={group.id}
       className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 motion-safe:animate-surface-enter"
     >
-      <header className="flex min-h-[180px] flex-wrap items-center justify-between gap-5 rounded-[26px] border border-[#a94d31]/40 bg-[radial-gradient(ellipse_at_top_right,#a13521,transparent_65%),linear-gradient(125deg,#83160e,#4b0c09)] p-6 text-[#fff5e1] shadow-[0_12px_30px_-14px_#76100b60] sm:p-8">
-        <div>
+      <header className="relative isolate overflow-hidden flex min-h-[180px] flex-wrap items-center justify-between gap-5 rounded-[26px] border border-[#a45473]/40 bg-[radial-gradient(ellipse_at_top_right,#823652,transparent_65%),linear-gradient(125deg,#641a38,#280b18)] p-6 text-[#fff5e1] shadow-[0_12px_30px_-14px_#58132b60] sm:p-8">
+        <AmbientBackdrop />
+        <div className="relative z-10">
           <p className="mb-2 text-sm text-[#edc57d]">فضای مدیریت سنتی بهجتی</p>
           <h1 className="text-[26px] leading-normal font-extrabold sm:text-[30px]">
             {group.label}
@@ -26,7 +28,7 @@ export default function AdminSection() {
             برای شروع، بخش موردنظر را از کارت‌های زیر انتخاب کنید.
           </p>
         </div>
-        <div className="flex items-center gap-3 rounded-2xl border border-[#edc57d]/25 bg-white/10 px-4 py-3">
+        <div className="relative z-10 flex items-center gap-3 rounded-2xl border border-[#edc57d]/25 bg-white/10 px-4 py-3">
           <AdminIcon name={group.icon} width={28} height={28} className="text-[#edc57d]" />
           <span className="text-sm font-semibold">{formatNumber(count)} بخش در دسترس</span>
         </div>

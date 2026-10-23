@@ -33,7 +33,7 @@
     touch-action: manipulation;
   }
   :focus-visible {
-    outline: 2px solid #96140d;
+    outline: 2px solid #701734;
     outline-offset: 3px;
   }
 }

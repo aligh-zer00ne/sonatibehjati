@@ -122,18 +122,18 @@ export default function RecordCards<T extends object>({
                 data-admin-record
                 className="relative min-w-0 overflow-hidden rounded-3xl border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08] transition-shadow duration-300 hover:shadow-[0_12px_30px_#62452f14] sm:p-5"
               >
-                <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#96140d]" />
+                <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701734]" />
                 <header className="mb-3 flex items-start gap-3">
                   {avatar ? (
                     avatar(record)
                   ) : (
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#96140d]">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#701734]">
                       <AdminIcon name={icon} width={22} height={22} />
                     </span>
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="mb-1 text-[12px] text-[#76685d]">{titleField?.title ?? label}</p>
-                    <h3 className="[overflow-wrap:anywhere] text-base leading-7 font-extrabold text-[#76100b]">
+                    <h3 className="[overflow-wrap:anywhere] text-base leading-7 font-extrabold text-[#58132b]">
                       {title}
                     </h3>
                   </div>
@@ -161,7 +161,7 @@ export default function RecordCards<T extends object>({
                       <AdminIcon name={fieldIcon(featured.title)} width={14} height={14} />
                       {featured.title}
                     </p>
-                    <div className="[overflow-wrap:anywhere] text-base font-bold text-[#96140d]">
+                    <div className="[overflow-wrap:anywhere] text-base font-bold text-[#701734]">
                       {valueOf(featured, record, index)}
                     </div>
                   </div>

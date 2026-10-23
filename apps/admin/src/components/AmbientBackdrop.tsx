@@ -41,7 +41,7 @@ export default function AmbientBackdrop() {
         }
       }
       const reach = Math.max(72, Math.min(135, width / 5));
-      context.lineWidth = 0.7;
+      context.lineWidth = 0.95;
       for (let i = 0; i < points.length; i++) {
         const a = points[i]!;
         let neighbors = 0;
@@ -50,7 +50,7 @@ export default function AmbientBackdrop() {
           const distance = Math.hypot(a.x - b.x, a.y - b.y);
           if (distance >= reach) continue;
           neighbors++;
-          context.strokeStyle = `rgba(237,197,125,${(1 - distance / reach) * 0.2})`;
+          context.strokeStyle = `rgba(237,197,125,${(1 - distance / reach) * 0.36})`;
           context.beginPath();
           context.moveTo(a.x, a.y);
           context.lineTo(b.x, b.y);
@@ -76,7 +76,7 @@ export default function AmbientBackdrop() {
           context.stroke();
         }
         if (links) {
-          context.fillStyle = 'rgba(255,225,161,0.65)';
+          context.fillStyle = 'rgba(255,225,161,0.85)';
           context.beginPath();
           context.arc(pointer.x, pointer.y, 2, 0, Math.PI * 2);
           context.fill();
@@ -84,7 +84,7 @@ export default function AmbientBackdrop() {
       }
       setState('networkLinks', String(links));
       for (const point of points) {
-        context.fillStyle = 'rgba(242,208,148,0.6)';
+        context.fillStyle = 'rgba(242,208,148,0.82)';
         context.beginPath();
         context.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
         context.fill();
@@ -92,7 +92,8 @@ export default function AmbientBackdrop() {
     };
     const animate = (timestamp: number) => {
       if (!running()) {
-        frame = 0;
+        // Also reconcile here if a browser delays a media/visibility change event.
+        sync();
         return;
       }
       if (timestamp - lastPaint >= 1000 / 30) paint(timestamp, true);

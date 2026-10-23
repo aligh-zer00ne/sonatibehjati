@@ -141,7 +141,7 @@ export default function ManualOrderLines({
             </div>
             <div className="col-start-3 row-start-3 min-w-0 self-center text-end lg:col-auto lg:row-auto">
               <span className="mb-1 block text-xs text-[#857467] lg:hidden">خالص ردیف</span>
-              <b className="block break-words text-xs tabular-nums text-[#76100b] lg:text-sm">
+              <b className="block break-words text-xs tabular-nums text-[#58132b] lg:text-sm">
                 {(() => {
                   const gross = l.unitPrice * l.quantity;
                   const discount =

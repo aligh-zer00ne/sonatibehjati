@@ -55,7 +55,7 @@ export default function AdminFrame() {
     <div dir="rtl" className="flex min-h-dvh min-w-0 flex-col bg-[#f6f1e9] text-[#34251e]">
       <header
         data-admin-topbar
-        className="sticky top-0 z-30 isolate border-b border-[#b78343]/30 bg-[radial-gradient(ellipse_at_top_right,#94271b,transparent_65%),linear-gradient(120deg,#76100b,#440b08)] px-4 py-4 text-[#fff5e1] shadow-[0_8px_24px_#42000920] sm:px-6 print:!hidden"
+        className="sticky top-0 z-30 isolate border-b border-[#b78343]/30 bg-[radial-gradient(ellipse_at_top_right,#762b49,transparent_65%),linear-gradient(120deg,#58132b,#250916)] px-4 py-4 text-[#fff5e1] shadow-[0_8px_24px_#42000920] sm:px-6 print:!hidden"
       >
         <AmbientBackdrop />
         <div className="relative z-10 mx-auto flex max-w-[1560px] items-center justify-between gap-3">
@@ -163,7 +163,7 @@ export default function AdminFrame() {
             <p className="flex items-center gap-2 text-xs font-semibold text-[#796653]">
               <AdminIcon name="home" width={16} />
               مدیریت فروشگاه<span className="text-[#b7a48e]">/</span>
-              <span className="text-[#76100b]">
+              <span className="text-[#58132b]">
                 {[...navigationLinks, ...orderLinks].find((item) => item.href === selected)
                   ?.label ??
                   navigation.groups.find((item) => selected === `/admin/sections/${item.id}`)
