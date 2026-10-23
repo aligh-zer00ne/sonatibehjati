@@ -208,6 +208,13 @@ try {
   await expect(
     page.locator('[data-account-status="creditor"]').first().locator('.ant-tag-gold'),
   ).toBeVisible();
+  await page.getByRole('tab', { name: /گردش حساب/ }).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.getByRole('tab', { name: /فاکتورهای مستقل مشتری/ })).toBeFocused();
+  await expect(page.getByRole('tab', { name: /فاکتورهای مستقل مشتری/ })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
   await expect(
     page.locator('[data-account-status="settled"]').first().locator('.ant-tag-green'),
   ).toBeVisible();
@@ -216,12 +223,32 @@ try {
   assert.equal(order.paidAt, null);
   assert.equal(order.status, 'DELIVERED');
   assert.equal(await db.customerAccountEntry.count({ where: { userId: customer.user.id } }), 2);
+  await page.getByRole('tab', { name: /گردش حساب/ }).click();
+  await expect(page.locator('[data-account-entry]')).toHaveCount(2);
+  await page.getByRole('button', { name: 'پرداخت به مشتری', exact: true }).click();
+  const payout = page.getByRole('dialog', { name: 'ثبت دریافت و پرداخت مشتری', exact: true });
+  await expect(
+    payout.getByRole('radio', { name: 'پرداخت بستانکاری به مشتری', exact: true }),
+  ).toBeChecked();
+  await payout.getByLabel('مبلغ (ریال)', { exact: true }).fill('600000');
+  await payout.locator('form').evaluate((form) => {
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  });
+  await expect(payout).toHaveCount(0);
+  await expect(page.locator('[data-account-status="settled"]').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'پرداخت به مشتری', exact: true })).toBeDisabled();
+  assert.equal(await db.customerAccountEntry.count({ where: { userId: customer.user.id } }), 3);
+
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await fits(page);
   }
   await page.setViewportSize({ width: 390, height: 900 });
+  await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: '/tmp/behjati-customer-accounts-mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: '/tmp/behjati-customer-accounts-desktop.png', fullPage: true });
   // Instagram customer entry captures and reuses postal details; shipping is explicitly entered in rial.
   const instagramPhone = phone();
   await page.goto(base + '/admin/orders/manual');
