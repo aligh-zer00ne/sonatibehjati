@@ -12,13 +12,11 @@ import OrderFilters from '../components/OrderFilters';
 import AdminIcon from '../components/AdminIcon';
 import PageHeading from '../components/PageHeading';
 import ProvinceOrderMap from '../components/ProvinceOrderMap';
-import OrdersMapView from '../components/OrdersMapView';
 import DataState from '../components/DataState';
 export default function OrdersMap() {
   const { admin } = useAdmin(),
     filters = useOrderFilters(25);
-  const [province, setProvince] = useState(''),
-    [mode, setMode] = useState<'provinces' | 'neshan'>('provinces');
+  const [province, setProvince] = useState('');
   const [selection, setSelection] = useState<{ id: string; key: string } | null>(null);
   const mapPanel = useRef<HTMLElement>(null);
   const query = useAdminQuery(
@@ -47,16 +45,6 @@ export default function OrdersMap() {
   };
   const selectOrder = (id: string, fromList = false) => {
     setSelection({ id, key: filterKey });
-    const order = data?.items.find((item) => item.id === id);
-    if (
-      fromList &&
-      String(import.meta.env.VITE_NESHAN_MAP_KEY ?? '').trim() &&
-      order?.address.latitude != null &&
-      order.address.longitude != null &&
-      Math.abs(order.address.latitude) <= 85 &&
-      Math.abs(order.address.longitude) <= 180
-    )
-      setMode('neshan');
     if (fromList && window.innerWidth < 1280)
       mapPanel.current?.scrollIntoView({
         block: 'start',
@@ -139,47 +127,12 @@ export default function OrdersMap() {
                     آمار از تمام نتایج فیلتر محاسبه می‌شود.
                   </p>
                 </div>
-                <div
-                  role="group"
-                  aria-label="نمای نقشه"
-                  className="flex rounded-full bg-[#f2eadf] p-1"
-                >
-                  {(
-                    [
-                      ['provinces', 'استان‌ها'],
-                      ['neshan', 'نقشه نشان'],
-                    ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      aria-pressed={mode === value}
-                      onClick={() => setMode(value)}
-                      className="min-h-10 cursor-pointer rounded-full px-4 text-xs font-bold text-[#857467] aria-pressed:bg-[#701e2a] aria-pressed:text-white"
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
               </header>
-              {mode === 'provinces' ? (
-                <ProvinceOrderMap
-                  provinces={data.provinces}
-                  selected={province}
-                  onSelect={selectProvince}
-                />
-              ) : (
-                <OrdersMapView
-                  data={{
-                    provinces: data.provinces,
-                    orders: data.items,
-                    province,
-                    selectedId: selected?.id,
-                  }}
-                  onProvince={selectProvince}
-                  onOrder={(id) => selectOrder(id)}
-                />
-              )}
+              <ProvinceOrderMap
+                provinces={data.provinces}
+                selected={province}
+                onSelect={selectProvince}
+              />
               {current && (
                 <Button
                   className="!mt-3"
@@ -190,8 +143,8 @@ export default function OrdersMap() {
                 </Button>
               )}
               <p className="mt-3 text-[11px] leading-6 text-[#857467]">
-                تعداد استان‌ها شامل سفارش‌های بدون مختصات هم هست. در نمای نشان، نشانگرهای طلایی
-                مقصدهای همین صفحه‌اند؛ نشانگر زرشکی، مجموع سفارش‌های استان را نشان می‌دهد.
+                رنگ پررنگ‌تر یعنی سفارش بیشتر؛ آمار هر استان سفارش‌های بدون مختصات را هم شامل
+                می‌شود.
               </p>
               {selected && (
                 <section
