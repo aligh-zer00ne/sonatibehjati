@@ -325,3 +325,30 @@ export const offlinePaymentInputSchema = z
     expectedUpdatedAt: z.iso.datetime(),
   })
   .strict();
+
+export const adminCustomerEditSchema = z
+  .object({
+    id: text(1, 100),
+    expectedRevision: z.string().regex(/^[a-f0-9]{64}$/),
+    requestId: z.string().uuid(),
+    phone: phoneSchema,
+    firstName: text(1, 100),
+    lastName: text(0, 100).default(''),
+    email: z.union([z.literal(''), z.email().max(254)]).default(''),
+    address: addressInputSchema.nullish(),
+  })
+  .strict();
+export const manualOrderEditSchema = manualQuoteInputSchema
+  .safeExtend({
+    orderId: text(1, 100),
+    expectedUpdatedAt: z.iso.datetime(),
+    requestId: z.string().uuid(),
+    customerId: text(1, 100),
+    salesChannel: z.enum(['INSTAGRAM', 'IN_PERSON']),
+    address: addressInputSchema.nullish(),
+    expectedTotal: z.number().int().min(0).max(2147483647),
+  })
+  .refine((v) => v.pickup || !!v.address, {
+    message: 'نشانی ارسال را وارد کنید.',
+    path: ['address'],
+  });

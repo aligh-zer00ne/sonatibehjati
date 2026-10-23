@@ -1,3 +1,4 @@
+import { customerRevision } from './customer-revision.js';
 import { accountBalance } from './customer-accounts.js';
 import type { Prisma, SalesChannel } from '@prisma/client';
 import { authError } from '../auth/errors.js';
@@ -48,8 +49,9 @@ export async function adminUsers(raw: Record<string, unknown>) {
           lastName: true,
           email: true,
           createdAt: true,
+          updatedAt: true,
           acquisitionSource: true,
-          addresses: { take: 1, orderBy: { isDefault: 'desc' } },
+          addresses: { take: 1, orderBy: [{ isDefault: 'desc' }, { id: 'asc' }] },
           orders: { select: { salesChannel: true }, distinct: ['salesChannel'] },
           _count: { select: { orders: true } },
         },
@@ -67,6 +69,7 @@ export async function adminUsers(raw: Record<string, unknown>) {
     return {
       items: await Promise.all(
         users.map(async (user) => ({
+          editRevision: customerRevision(user, user.addresses[0] ?? null),
           accountBalance: await accountBalance(tx, user.id),
           defaultAddress: user.addresses[0] ?? null,
           ...user,
@@ -101,8 +104,9 @@ export async function adminUser(id: string) {
       lastName: true,
       email: true,
       createdAt: true,
+      updatedAt: true,
       acquisitionSource: true,
-      addresses: { take: 1, orderBy: { isDefault: 'desc' } },
+      addresses: { take: 1, orderBy: [{ isDefault: 'desc' }, { id: 'asc' }] },
       orders: { select: { salesChannel: true }, distinct: ['salesChannel'] },
       _count: { select: { orders: true } },
     },
@@ -114,6 +118,7 @@ export async function adminUser(id: string) {
   });
   return {
     ...user,
+    editRevision: customerRevision(user, user.addresses[0] ?? null),
     accountBalance: await accountBalance(db, user.id),
     defaultAddress: user.addresses[0] ?? null,
     salesChannels: [

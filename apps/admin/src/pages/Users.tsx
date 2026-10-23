@@ -1,3 +1,4 @@
+import CustomerEditDialog from '../components/CustomerEditDialog';
 import PageHeading from '../components/PageHeading';
 import AccountStatus from '../components/AccountStatus';
 import RetailCustomerModal from '../components/RetailCustomerModal';
@@ -26,6 +27,7 @@ export default function Users() {
   const { admin } = useAdmin();
   const [params, setParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
   const source = params.get('source');
   const salesChannel = salesChannels.find((v) => v === source);
@@ -33,9 +35,14 @@ export default function Users() {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState('');
   const search = (params.get('search') ?? '').slice(0, 100);
-  const query = useAdminQuery(AdminUsersDocument, {
-    input: { page, pageSize: 20, search, salesChannel },
-  });
+  const query = useAdminQuery(
+    AdminUsersDocument,
+    {
+      input: { page, pageSize: 20, search, salesChannel },
+    },
+    true,
+    { keepPreviousData: true },
+  );
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -128,6 +135,14 @@ export default function Users() {
           />
         </FilterButton>
       </FilterBar>
+      {query.data && query.error && (
+        <Alert
+          type="error"
+          role="alert"
+          title={query.error}
+          action={<Button onClick={query.refresh}>تلاش دوباره</Button>}
+        />
+      )}
       {!query.data ? (
         <DataState error={query.error} retry={query.refresh} />
       ) : (
@@ -159,29 +174,49 @@ export default function Users() {
             },
             {
               title: 'عملیات',
-              render: (_, user) =>
-                hasPermission(admin, 'ORDERS') && (
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      icon={<AdminIcon name="ledger" width={21} />}
-                      onClick={() => setAccountId(user.id)}
-                    >
-                      حساب و فاکتورهای دستی
-                    </Button>
-                    {user.accountBalance > 0 && (
-                      <Link to={`/admin/settlements/links/new?customerId=${user.id}`}>
-                        <Button
-                          title="ساخت لینک پرداخت مانده"
-                          icon={<AdminIcon name="link" width={18} />}
-                        >
-                          لینک پرداخت مانده
-                        </Button>
-                      </Link>
-                    )}
-                  </div>
-                ),
+              render: (_, user) => (
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    aria-label={`ویرایش مشتری ${customerName(user)}`}
+                    icon={<AdminIcon name="edit" width={19} />}
+                    onClick={() => setEditingId(user.id)}
+                  >
+                    ویرایش
+                  </Button>
+                  {hasPermission(admin, 'ORDERS') && (
+                    <>
+                      <Button
+                        icon={<AdminIcon name="ledger" width={21} />}
+                        onClick={() => setAccountId(user.id)}
+                      >
+                        حساب و فاکتورهای دستی
+                      </Button>
+                      {user.accountBalance > 0 && (
+                        <Link to={`/admin/settlements/links/new?customerId=${user.id}`}>
+                          <Button
+                            title="ساخت لینک پرداخت مانده"
+                            icon={<AdminIcon name="link" width={18} />}
+                          >
+                            لینک پرداخت مانده
+                          </Button>
+                        </Link>
+                      )}
+                    </>
+                  )}
+                </div>
+              ),
             },
           ]}
+        />
+      )}
+      {editingId && (
+        <CustomerEditDialog
+          id={editingId}
+          onClose={() => setEditingId(null)}
+          onSaved={() => {
+            setEditingId(null);
+            query.refresh();
+          }}
         />
       )}
       {accountId && (

@@ -94,7 +94,10 @@ export async function adminOrder(id: string) {
     where: { id },
     include: {
       shippingLabel: true,
-      offlinePayments: { orderBy: [{ createdAt: 'desc' }, { id: 'desc' }] },
+      offlinePayments: {
+        where: { voided: false },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      },
       user: { select: customerSelect },
       items: { orderBy: { id: 'asc' } },
       statusEvents: {

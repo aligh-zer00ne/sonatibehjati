@@ -68,6 +68,7 @@ export default function OrdersTable({
               canExpand={hasPermission(admin, 'ORDERS')}
               expanded={expanded === order.id && hasPermission(admin, 'ORDERS')}
               onToggle={() => toggle(order.id)}
+              onUpdated={onUpdated}
             />
           ))}
         </div>

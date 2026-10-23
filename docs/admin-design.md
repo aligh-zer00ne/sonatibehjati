@@ -68,3 +68,11 @@ Management → قالب پیام‌ها (`/admin/message-templates`) owns reusab
 Website and Instagram details keep carrier/tracking beside the main actions. Saving a tracking code atomically records SHIPPED plus an audit entry, subject to current order/label versions and the existing website bank-confirmation rule. Printing and notifications use those same saved values. In-person orders have no shipment notification action. Historical shipping charges and payments are unchanged.
 
 Deployment needs additive migration `202610230005_message_templates`, handled by `deploy/update-production.sh`. Verification: `npm run verify:customer-messages`, `npm run verify:payment-links-ui`, `npm run verify:admin-orders-ui` and `npm run verify:retail-ui`. Tests use temporary records and mock native sharing/bank/SMS; no external message is sent.
+
+## Correcting customers and manual invoices
+
+Customer cards expose an edit form for identity, phone/email and default address. Saved order destinations remain independent snapshots. Customer permission controls this action; edits use the real record/address revision, avoid account merging and revoke old sessions after phone changes.
+
+Manual-order cards and details expose invoice editing over the retained list. The operator can correct items, quantities, prices, discounts and destination/shipping with an actual recalculated preview. Existing receipts retain their original ledger amount: any allocation exceeding the revised invoice becomes customer credit. Website/bank invoices and paid-invoice transfers between customers are guarded. Every successful correction records an atomic before/after audit and an idempotent request ID.
+
+Coupon cards now offer confirmed deletion: the code disappears from the list and stops applying to future purchases, while historical invoices keep their real discount/reference. Database migrations `202610230006_coupon_deletion` and `202610230007_admin_record_changes` run through the normal deployment script. Verify with `npm run verify:coupon-deletion` and `npm run verify:record-editing`; tests use temporary data and do not send SMS or bank payments.

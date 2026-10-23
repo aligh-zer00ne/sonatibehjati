@@ -84,7 +84,9 @@
     "verify:store-information": "node --env-file=apps/api/.env scripts/verify-store-information.mjs",
     "verify:order-map": "node --env-file=apps/api/.env scripts/verify-order-map.mjs",
     "verify:panel-review": "node --env-file=apps/api/.env scripts/verify-panel-review.mjs",
-    "verify:customer-messages": "node --env-file=apps/api/.env scripts/verify-customer-messages.mjs"
+    "verify:customer-messages": "node --env-file=apps/api/.env scripts/verify-customer-messages.mjs",
+    "verify:coupon-deletion": "node --env-file=apps/api/.env scripts/verify-coupon-deletion.mjs",
+    "verify:record-editing": "node --env-file=apps/api/.env scripts/verify-record-editing.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

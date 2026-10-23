@@ -44,7 +44,7 @@ type Product {
 type Query {
   adminOrderCustomers(input: AdminUsersInput!): AdminUsersPage!
   adminOrderCustomer(id: ID!): AdminUser!
-  adminManualQuote(input: AdminManualQuoteInput!): AdminManualQuote!
+  adminManualQuote(input: AdminManualQuoteInput!, orderId: ID): AdminManualQuote!
   adminMe: AdminIdentity
   adminProducts(input: AdminProductsInput!): AdminProductsPage!
   adminPriceList: [AdminPriceItem!]!
@@ -524,6 +524,7 @@ input AdminUsersInput {
   search: String
 }
 type AdminUser {
+  editRevision: String
   accountBalance: Float!
   defaultAddress: Address
   acquisitionSource: SalesChannel!
@@ -1224,4 +1225,33 @@ extend type Mutation {
     expectedUpdatedAt: String
   ): MessageTemplateSettings!
   saveAdminShipment(input: AdminShipmentInput!): AdminOrder!
+}
+
+input AdminCustomerEditInput {
+  id: ID!
+  expectedRevision: String!
+  requestId: ID!
+  phone: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  address: AddressInput
+}
+input AdminManualOrderEditInput {
+  discountCode: String = ""
+  orderId: ID!
+  expectedUpdatedAt: String!
+  requestId: ID!
+  customerId: ID!
+  salesChannel: SalesChannel!
+  items: [AdminManualLineInput!]!
+  manualShippingCost: Int!
+  shippingMethod: ShippingMethod!
+  pickup: Boolean!
+  address: AddressInput
+  expectedTotal: Int!
+}
+extend type Mutation {
+  editAdminCustomer(input: AdminCustomerEditInput!): AdminUser!
+  editAdminManualOrder(input: AdminManualOrderEditInput!): AdminOrder!
 }

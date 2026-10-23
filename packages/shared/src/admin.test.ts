@@ -7,6 +7,8 @@ import {
   adminReportFilterSchema,
   orderStatusTransitions,
   defaultReportRange,
+  adminCustomerEditSchema,
+  manualOrderEditSchema,
 } from './admin';
 const product = {
   title: 'محصول نمونه',
@@ -88,5 +90,45 @@ describe('Admin input boundaries', () => {
     expect(orderStatusTransitions.CANCELED).toEqual([]);
     expect(orderStatusTransitions.PENDING_PAYMENT).not.toContain('DELIVERED');
     expect(orderStatusTransitions.SHIPPED).toEqual(['DELIVERED']);
+  });
+});
+
+describe('Customer and manual invoice corrections', () => {
+  const customer = {
+    id: 'customer',
+    expectedRevision: 'a'.repeat(64),
+    requestId: '050b6ed8-92ab-4e1d-95d1-665c649d3661',
+    firstName: 'مشتری',
+    lastName: '',
+    phone: '۰۹۱۲۳۴۵۶۷۸۹',
+    email: '',
+    address: null,
+  };
+  it('requires a record revision and validates customer identity without accepting permissions', () => {
+    expect(adminCustomerEditSchema.parse(customer).phone).toBe('09123456789');
+    for (const patch of [{ expectedRevision: '' }, { phone: '123' }, { role: 'OWNER' }])
+      expect(adminCustomerEditSchema.safeParse({ ...customer, ...patch }).success).toBe(false);
+  });
+  it('bounds edited lines and disallows injecting a received amount into invoice correction', () => {
+    const invoice = {
+      orderId: 'order',
+      expectedUpdatedAt: new Date().toISOString(),
+      requestId: customer.requestId,
+      customerId: customer.id,
+      salesChannel: 'IN_PERSON',
+      pickup: true,
+      shippingMethod: 'POST',
+      manualShippingCost: 0,
+      items: [{ productId: 'product', quantity: 1, unitPrice: 100 }],
+      expectedTotal: 100,
+    };
+    expect(manualOrderEditSchema.safeParse(invoice).success).toBe(true);
+    for (const patch of [
+      { receivedAmount: 100 },
+      { items: [] },
+      { salesChannel: 'WEBSITE' },
+      { expectedTotal: -1 },
+    ])
+      expect(manualOrderEditSchema.safeParse({ ...invoice, ...patch }).success).toBe(false);
   });
 });

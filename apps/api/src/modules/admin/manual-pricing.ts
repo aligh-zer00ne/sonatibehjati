@@ -1,16 +1,26 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma, OrderItem } from '@prisma/client';
 import { manualQuoteInputSchema } from '@behjati/shared/admin';
 import { authError } from '../auth/errors.js';
 import { validate, omitNulls } from './validation.js';
-export async function priceManualOrder(tx: Prisma.TransactionClient, raw: Record<string, unknown>) {
+export async function priceManualOrder(
+  tx: Prisma.TransactionClient,
+  raw: Record<string, unknown>,
+  existing: OrderItem[] = [],
+) {
   const input = validate(manualQuoteInputSchema, omitNulls(raw));
   const ids = input.items.map((i) => i.productId).sort();
   for (const id of ids) await tx.$queryRaw`SELECT id FROM Product WHERE id=${id} FOR UPDATE`;
-  const products = await tx.product.findMany({ where: { id: { in: ids }, isActive: true } });
+  const products = await tx.product.findMany({
+    where: {
+      id: { in: ids },
+      OR: [{ isActive: true }, { id: { in: existing.map((i) => i.productId) } }],
+    },
+  });
   if (products.length !== ids.length)
     throw authError('یکی از محصولات دیگر فعال نیست.', 'BAD_USER_INPUT');
   const items = input.items.map((line) => {
     const product = products.find((p) => p.id === line.productId)!;
+    const historic = existing.find((i) => i.productId === line.productId);
     const unitPrice = line.unitPrice ?? product.price;
     const lineSubtotal = unitPrice * line.quantity;
     const discountAmount = line.discountPercent
@@ -24,8 +34,8 @@ export async function priceManualOrder(tx: Prisma.TransactionClient, raw: Record
       throw authError('مبلغ یا تخفیف ردیف معتبر نیست.', 'BAD_USER_INPUT');
     return {
       productId: product.id,
-      title: product.title,
-      weight: product.weight,
+      title: historic?.productTitle ?? product.title,
+      weight: historic?.productWeight ?? product.weight,
       imageUrl: null,
       quantity: line.quantity,
       unitPrice,
@@ -33,7 +43,7 @@ export async function priceManualOrder(tx: Prisma.TransactionClient, raw: Record
       discountAmount,
       discountPercent: line.discountPercent ?? null,
       lineTotal: lineSubtotal - discountAmount,
-      shippingWeightGrams: product.shippingWeightGrams,
+      shippingWeightGrams: historic ? historic.shippingWeightGrams : product.shippingWeightGrams,
     };
   });
   const subtotal = items.reduce((s, i) => s + i.lineSubtotal, 0),

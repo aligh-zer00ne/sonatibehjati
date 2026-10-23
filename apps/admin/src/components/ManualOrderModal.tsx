@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Form, Input, Modal, Select } from 'antd';
-import { manualOrderInputSchema, manualQuoteInputSchema } from '@behjati/shared/admin';
+import { Alert, App, Button, Form, Input, Modal, Select } from 'antd';
+import {
+  manualOrderInputSchema,
+  manualOrderEditSchema,
+  manualQuoteInputSchema,
+} from '@behjati/shared/admin';
 import {
   shippingMethods,
   shippingMethodLabels,
@@ -14,6 +18,9 @@ import {
   AdminOrderCustomerDocument,
   ManualCatalogDocument,
   CreateAdminManualOrderDocument,
+  EditAdminManualOrderDocument,
+  type AdminManualOrderEditInput,
+  type AdminOrderFieldsFragment,
   type AdminManualOrderInput,
   type ShippingMethod,
   type OfflinePaymentMethod,
@@ -33,13 +40,17 @@ import { formatNumber } from '@behjati/shared';
 export default function ManualOrderModal({
   onClose,
   onSaved,
+  editingOrder,
 }: {
   onClose: () => void;
   onSaved: (id: string) => void;
+  editingOrder?: AdminOrderFieldsFragment;
 }) {
   const { admin } = useAdmin();
+  const { modal } = App.useApp();
+  const [dirty, setDirty] = useState(false);
   const [form] = Form.useForm();
-  const [customerId, setCustomerId] = useState('');
+  const [customerId, setCustomerId] = useState(editingOrder?.user.id ?? '');
   const [term, setTerm] = useState('');
   const [search, setSearch] = useState('');
   const [productTerm, setProductTerm] = useState('');
@@ -53,18 +64,29 @@ export default function ManualOrderModal({
       discountKind: 'PERCENT' | 'FIXED';
       discountValue: number;
     }>
-  >([]);
-  const [channel, setChannel] = useState<SalesChannel>('IN_PERSON');
-  const [pickup, setPickup] = useState(true);
-  const [method, setMethod] = useState<ShippingMethod>('POST');
+  >(() =>
+    (editingOrder?.items ?? []).map((i) => ({
+      productId: i.productId,
+      title: i.productTitle,
+      quantity: i.quantity,
+      unitPrice: i.unitPrice,
+      discountKind: i.discountPercent ? 'PERCENT' : 'FIXED',
+      discountValue: i.discountPercent || i.discountAmount || 0,
+    })),
+  );
+  const [channel, setChannel] = useState<SalesChannel>(editingOrder?.salesChannel ?? 'IN_PERSON');
+  const [pickup, setPickup] = useState(editingOrder ? !editingOrder.shippingMethod : true);
+  const [method, setMethod] = useState<ShippingMethod>(editingOrder?.shippingMethod ?? 'POST');
   const [received, setReceived] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<OfflinePaymentMethod>('POS');
-  const [shippingCost, setShippingCost] = useState(0);
+  const [shippingCost, setShippingCost] = useState(editingOrder?.shipping ?? 0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [addCustomer, setAddCustomer] = useState(false);
   // Keep the exact payload and UUID after a transport failure: retry cannot duplicate the sale.
-  const [submission, setSubmission] = useState<AdminManualOrderInput | null>(null);
+  const [submission, setSubmission] = useState<
+    AdminManualOrderInput | AdminManualOrderEditInput | null
+  >(null);
   useEffect(() => {
     const t = setTimeout(() => setSearch(term), 300);
     return () => clearTimeout(t);
@@ -96,13 +118,13 @@ export default function ManualOrderModal({
   const validQuote = manualQuoteInputSchema.safeParse(quoteInput);
   const quote = useAdminQuery(
     AdminManualQuoteDocument,
-    { input: quoteInput },
+    { input: quoteInput, orderId: editingOrder?.id },
     lines.length > 0 && validQuote.success,
   );
   const price = quote.data?.adminManualQuote;
   useEffect(() => {
     const customer = selected.data?.adminOrderCustomer;
-    if (!customer || pickup) return;
+    if (!customer || pickup || (editingOrder && customer.id === editingOrder.user.id)) return;
     form.setFieldsValue(
       customer.defaultAddress ?? {
         recipientName: [customer.firstName, customer.lastName].filter(Boolean).join(' '),
@@ -113,8 +135,9 @@ export default function ManualOrderModal({
         postalAddress: '',
       },
     );
-  }, [selected.data, pickup, form]);
+  }, [selected.data, pickup, form, editingOrder]);
   function updateLine(id: string, patch: Partial<(typeof lines)[number]>) {
+    setDirty(true);
     setLines((value) =>
       value.map((line) => (line.productId === id ? { ...line, ...patch } : line)),
     );
@@ -129,16 +152,27 @@ export default function ManualOrderModal({
         setError('مشتری و محصولات را انتخاب کنید.');
         return;
       }
-      const parsed = manualOrderInputSchema.safeParse({
-        ...quoteInput,
-        customerId,
-        salesChannel: channel,
-        address: pickup ? null : { ...values, title: 'نشانی سفارش', isDefault: false },
-        receivedAmount: received,
-        paymentMethod: received ? paymentMethod : null,
-        requestId: crypto.randomUUID(),
-        expectedTotal: price.total,
-      });
+      const parsed = editingOrder
+        ? manualOrderEditSchema.safeParse({
+            ...quoteInput,
+            orderId: editingOrder.id,
+            expectedUpdatedAt: editingOrder.updatedAt,
+            customerId,
+            salesChannel: channel,
+            address: pickup ? null : { ...values, title: 'نشانی سفارش', isDefault: false },
+            requestId: crypto.randomUUID(),
+            expectedTotal: price.total,
+          })
+        : manualOrderInputSchema.safeParse({
+            ...quoteInput,
+            customerId,
+            salesChannel: channel,
+            address: pickup ? null : { ...values, title: 'نشانی سفارش', isDefault: false },
+            receivedAmount: received,
+            paymentMethod: received ? paymentMethod : null,
+            requestId: crypto.randomUUID(),
+            expectedTotal: price.total,
+          });
       if (!parsed.success) {
         setError(parsed.error.issues[0]?.message ?? 'اطلاعات را بررسی کنید.');
         return;
@@ -149,8 +183,17 @@ export default function ManualOrderModal({
     setPending(true);
     setError('');
     try {
-      const result = await adminRequest(CreateAdminManualOrderDocument, { input });
-      onSaved(result.createAdminManualOrder.id);
+      if (editingOrder) {
+        const result = await adminRequest(EditAdminManualOrderDocument, {
+          input: input as AdminManualOrderEditInput,
+        });
+        onSaved(result.editAdminManualOrder.id);
+      } else {
+        const result = await adminRequest(CreateAdminManualOrderDocument, {
+          input: input as AdminManualOrderInput,
+        });
+        onSaved(result.createAdminManualOrder.id);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'ثبت انجام نشد.');
       if (
@@ -161,6 +204,7 @@ export default function ManualOrderModal({
           'INVALID_DISCOUNT',
           'SHIPPING_UNAVAILABLE',
           'NOT_FOUND',
+          'REQUEST_CONFLICT',
         ].includes(e.code)
       ) {
         setSubmission(null);
@@ -170,20 +214,42 @@ export default function ManualOrderModal({
       setPending(false);
     }
   }
+  const requestClose = () => {
+    if (pending) return;
+    if (editingOrder && (dirty || submission))
+      modal.confirm({
+        title: 'اصلاحات فاکتور ذخیره نشده است',
+        okText: 'بستن بدون ذخیره',
+        cancelText: 'ادامه ویرایش',
+        onOk: onClose,
+      });
+    else onClose();
+  };
   return (
     <Modal
       open
-      title="ثبت سفارش حضوری / اینستاگرام"
+      title={
+        editingOrder
+          ? `ویرایش فاکتور سفارش ${formatNumber(editingOrder.number)}`
+          : 'ثبت سفارش حضوری / اینستاگرام'
+      }
       width={1200}
       style={{ top: 24 }}
       footer={null}
       maskClosable={false}
-      onCancel={() => {
-        if (!pending) onClose();
-      }}
+      keyboard={!pending}
+      closable={!pending}
+      onCancel={requestClose}
       destroyOnHidden
     >
-      <Form form={form} layout="vertical" onFinish={submit} disabled={pending || !!submission}>
+      <Form
+        form={form}
+        initialValues={editingOrder?.address}
+        layout="vertical"
+        onValuesChange={() => setDirty(true)}
+        onFinish={submit}
+        disabled={pending || !!submission}
+      >
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-[minmax(0,1fr)_200px_auto]">
           <Form.Item label="مشتری" className="!col-span-2 !mb-3 sm:!col-span-1">
             <Select
@@ -193,7 +259,10 @@ export default function ManualOrderModal({
               filterOption={false}
               value={customerId || undefined}
               onSearch={setTerm}
-              onChange={setCustomerId}
+              onChange={(id) => {
+                setCustomerId(id);
+                setDirty(true);
+              }}
               options={options.map((u) => ({
                 value: u.id,
                 label: `${customerName(u)} · ${u.phone}`,
@@ -203,6 +272,7 @@ export default function ManualOrderModal({
           <Form.Item label="محل خرید" htmlFor="manual-channel" className="!mb-3">
             <Select
               id="manual-channel"
+              disabled={!!editingOrder}
               value={channel}
               onChange={(value) => {
                 setChannel(value);
@@ -224,6 +294,22 @@ export default function ManualOrderModal({
             </Button>
           )}
         </div>
+        {editingOrder?.salesChannel === 'INSTAGRAM' && (
+          <Form.Item label="تحویل یا ارسال">
+            <Select
+              aria-label="تحویل یا ارسال فاکتور"
+              value={pickup ? 'PICKUP' : 'SHIPPING'}
+              options={[
+                { value: 'PICKUP', label: 'تحویل حضوری' },
+                { value: 'SHIPPING', label: 'ارسال مرسوله' },
+              ]}
+              onChange={(v) => {
+                setPickup(v === 'PICKUP');
+                setDirty(true);
+              }}
+            />
+          </Form.Item>
+        )}
         <section
           className="mb-5 rounded-xl border border-[#ddd3c5] bg-[#faf8f4]"
           aria-label="انتخاب کالا و اقلام فاکتور"
@@ -298,6 +384,7 @@ export default function ManualOrderModal({
                 );
               }}
               onSelect={(id) => {
+                setDirty(true);
                 const p = products.data?.catalog.items.find((p) => p.id === id);
                 if (!p) return;
                 setLines((value) => {
@@ -327,7 +414,10 @@ export default function ManualOrderModal({
             <ManualOrderLines
               lines={lines}
               updateLine={updateLine}
-              removeLine={(id) => setLines((value) => value.filter((l) => l.productId !== id))}
+              removeLine={(id) => {
+                setDirty(true);
+                setLines((value) => value.filter((l) => l.productId !== id));
+              }}
             />
           </div>
         </section>
@@ -345,14 +435,20 @@ export default function ManualOrderModal({
               <MoneyInput
                 id="manual-shipping-cost"
                 value={shippingCost}
-                onChange={(v) => setShippingCost(v ?? 0)}
+                onChange={(v) => {
+                  setDirty(true);
+                  setShippingCost(v ?? 0);
+                }}
               />
             </Form.Item>
             <Form.Item label="شیوه ارسال" htmlFor="manual-carrier">
               <Select
                 id="manual-carrier"
                 value={method}
-                onChange={setMethod}
+                onChange={(v) => {
+                  setMethod(v);
+                  setDirty(true);
+                }}
                 options={shippingMethods.map((value) => ({
                   value,
                   label: shippingMethodLabels[value],
@@ -393,34 +489,43 @@ export default function ManualOrderModal({
             ))}
           </dl>
         )}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Form.Item label="مبلغ دریافت‌شده (ریال)" htmlFor="manual-received">
-            <MoneyInput
-              id="manual-received"
-              compact
-              value={received}
-              onChange={(v) => setReceived(v ?? 0)}
-            />
-          </Form.Item>
-          <Form.Item label="نوع پرداخت خارج از سایت" htmlFor="manual-payment-method">
-            <Select
-              id="manual-payment-method"
-              disabled={!received || pending || !!submission}
-              value={paymentMethod}
-              onChange={setPaymentMethod}
-              options={offlinePaymentMethods
-                .filter((value) => value !== 'CHECK')
-                .map((value) => ({
-                  value,
-                  label: offlinePaymentMethodLabels[value],
-                }))}
-            />
-          </Form.Item>
-        </div>
-        <p className="mb-3 text-xs leading-6 text-[#76685d]">
-          این دریافت توسط مدیر ثبت می‌شود. دریافت‌های بعدی و چک را در بخش «دریافت و پرداخت» ثبت
-          کنید.
-        </p>
+        {!editingOrder && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Form.Item label="مبلغ دریافت‌شده (ریال)" htmlFor="manual-received">
+              <MoneyInput
+                id="manual-received"
+                compact
+                value={received}
+                onChange={(v) => setReceived(v ?? 0)}
+              />
+            </Form.Item>
+            <Form.Item label="نوع پرداخت خارج از سایت" htmlFor="manual-payment-method">
+              <Select
+                id="manual-payment-method"
+                disabled={!received || pending || !!submission}
+                value={paymentMethod}
+                onChange={setPaymentMethod}
+                options={offlinePaymentMethods
+                  .filter((value) => value !== 'CHECK')
+                  .map((value) => ({
+                    value,
+                    label: offlinePaymentMethodLabels[value],
+                  }))}
+              />
+            </Form.Item>
+          </div>
+        )}
+        {editingOrder ? (
+          <p className="my-3 rounded-xl bg-[#faf6ee] p-3 text-sm leading-7">
+            دریافت ثبت‌شده: <Money amount={editingOrder.offlinePaidAmount} />؛ اگر مبلغ فاکتور کمتر
+            از دریافتی شود، اضافهٔ دریافت در حساب مشتری باقی می‌ماند.
+          </p>
+        ) : (
+          <p className="mb-3 text-xs leading-6 text-[#76685d]">
+            این دریافت توسط مدیر ثبت می‌شود. دریافت‌های بعدی و چک را در بخش «دریافت و پرداخت» ثبت
+            کنید.
+          </p>
+        )}
         {error && <Alert className="!mb-3" type="error" title={error} role="alert" />}
         {submission ? (
           <div className="flex flex-wrap gap-2">
@@ -430,7 +535,9 @@ export default function ManualOrderModal({
               disabled={pending}
               onClick={() => void submit({})}
             >
-              تلاش دوباره برای ثبت همین سفارش
+              {editingOrder
+                ? 'بررسی و تلاش دوباره برای اصلاح فاکتور'
+                : 'تلاش دوباره برای ثبت همین سفارش'}
             </Button>
             <p className="text-xs leading-6">
               نتیجهٔ درخواست مشخص نشده است؛ برای جلوگیری از سفارش تکراری، همین درخواست را دوباره
@@ -444,7 +551,7 @@ export default function ManualOrderModal({
             disabled={!price || !customerId}
             loading={pending}
           >
-            ثبت نهایی سفارش
+            {editingOrder ? 'ذخیره اصلاحات فاکتور' : 'ثبت نهایی سفارش'}
           </Button>
         )}
       </Form>

@@ -1,3 +1,4 @@
+import ManualOrderModal from './ManualOrderModal';
 import ShipmentEditor from './ShipmentEditor';
 import { useAdmin } from '../auth/AdminProvider';
 import { hasPermission } from '@behjati/shared/permissions';
@@ -138,6 +139,7 @@ export default function OrderDetailsCard({
   const { admin } = useAdmin();
   const [shipmentBusy, setShipmentBusy] = useState(false);
   const [shipmentDirty, setShipmentDirty] = useState(false);
+  const [editingInvoice, setEditingInvoice] = useState(false);
   const [printView, setPrintView] = useState<'invoice' | 'label' | null>(null);
   const [status, setStatus] = useState<Status | null>(null);
   const [pending, setPending] = useState(false);
@@ -145,7 +147,8 @@ export default function OrderDetailsCard({
   const [tab, setTab] = useState('products');
   const { message, modal } = App.useApp();
   const order = query.data?.adminOrder;
-  const busy = pending || shipmentBusy || Boolean(paymentPending) || Boolean(printView);
+  const busy =
+    editingInvoice || pending || shipmentBusy || Boolean(paymentPending) || Boolean(printView);
   useEffect(() => {
     onBusyChange?.(busy);
   }, [busy, onBusyChange]);
@@ -276,6 +279,26 @@ export default function OrderDetailsCard({
               onBusyChange={setShipmentBusy}
               onDirtyChange={setShipmentDirty}
               onSaved={() => {
+                query.refresh();
+                onUpdated?.();
+              }}
+            />
+          )}
+          {order.salesChannel !== 'WEBSITE' && hasPermission(admin, 'ORDERS') && (
+            <Button
+              className="!mb-3"
+              icon={<AdminIcon name="edit" />}
+              onClick={() => setEditingInvoice(true)}
+            >
+              ویرایش فاکتور
+            </Button>
+          )}
+          {editingInvoice && (
+            <ManualOrderModal
+              editingOrder={order}
+              onClose={() => setEditingInvoice(false)}
+              onSaved={() => {
+                setEditingInvoice(false);
                 query.refresh();
                 onUpdated?.();
               }}

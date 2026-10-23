@@ -631,8 +631,8 @@ query ManualCatalog($input: CatalogInput!) {
     total
   }
 }
-query AdminManualQuote($input: AdminManualQuoteInput!) {
-  adminManualQuote(input: $input) {
+query AdminManualQuote($input: AdminManualQuoteInput!, $orderId: ID) {
+  adminManualQuote(input: $input, orderId: $orderId) {
     subtotal
     discount
     shipping
@@ -872,5 +872,43 @@ mutation SaveAdminShipment($input: AdminShipmentInput!) {
 }
 
 mutation DeleteAdminCoupon($id: ID!, $expectedUpdatedAt: String!) {
- deleteAdminCoupon(id: $id, expectedUpdatedAt: $expectedUpdatedAt)
+  deleteAdminCoupon(id: $id, expectedUpdatedAt: $expectedUpdatedAt)
+}
+
+fragment AdminEditableCustomerFields on AdminUser {
+  id
+  editRevision
+  phone
+  firstName
+  lastName
+  email
+  acquisitionSource
+  defaultAddress {
+    id
+    title
+    recipientName
+    recipientPhone
+    province
+    city
+    postalAddress
+    postalCode
+    latitude
+    longitude
+    isDefault
+  }
+}
+query AdminEditableCustomer($id: ID!) {
+  adminUser(id: $id) {
+    ...AdminEditableCustomerFields
+  }
+}
+mutation EditAdminCustomer($input: AdminCustomerEditInput!) {
+  editAdminCustomer(input: $input) {
+    ...AdminEditableCustomerFields
+  }
+}
+mutation EditAdminManualOrder($input: AdminManualOrderEditInput!) {
+  editAdminManualOrder(input: $input) {
+    ...AdminOrderFields
+  }
 }

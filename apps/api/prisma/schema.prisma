@@ -139,7 +139,7 @@ model ProductImage {
 }
 
 model DiscountCode {
-  deletedAt DateTime?
+  deletedAt         DateTime?
   id                String       @id @default(cuid())
   code              String       @unique
   type              DiscountType
@@ -539,4 +539,18 @@ model MessageTemplateSettings {
   id        String   @id @db.VarChar(191)
   data      Json
   updatedAt DateTime @updatedAt
+}
+
+model AdminRecordChange {
+  id          String   @id @db.VarChar(36)
+  entityType  String   @db.VarChar(30)
+  entityId    String   @db.VarChar(191)
+  adminId     String   @db.VarChar(191)
+  adminEmail  String   @db.VarChar(254)
+  requestHash String   @db.VarChar(64)
+  before      Json
+  after       Json
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
 }

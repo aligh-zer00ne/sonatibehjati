@@ -146,6 +146,17 @@ export type AdminCouponInput = {
   value: Scalars['Int']['input'];
 };
 
+export type AdminCustomerEditInput = {
+  address?: InputMaybe<AddressInput>;
+  email: Scalars['String']['input'];
+  expectedRevision: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  lastName: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
+  requestId: Scalars['ID']['input'];
+};
+
 export type AdminCustomerInput = {
   address?: InputMaybe<AddressInput>;
   firstName: Scalars['String']['input'];
@@ -215,6 +226,21 @@ export type AdminManualLineInput = {
   productId: Scalars['ID']['input'];
   quantity: Scalars['Int']['input'];
   unitPrice?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type AdminManualOrderEditInput = {
+  address?: InputMaybe<AddressInput>;
+  customerId: Scalars['ID']['input'];
+  discountCode?: InputMaybe<Scalars['String']['input']>;
+  expectedTotal: Scalars['Int']['input'];
+  expectedUpdatedAt: Scalars['String']['input'];
+  items: Array<AdminManualLineInput>;
+  manualShippingCost: Scalars['Int']['input'];
+  orderId: Scalars['ID']['input'];
+  pickup: Scalars['Boolean']['input'];
+  requestId: Scalars['ID']['input'];
+  salesChannel: SalesChannel;
+  shippingMethod: ShippingMethod;
 };
 
 export type AdminManualOrderInput = {
@@ -611,6 +637,7 @@ export type AdminUser = {
   acquisitionSource: SalesChannel;
   createdAt: Scalars['String']['output'];
   defaultAddress?: Maybe<Address>;
+  editRevision?: Maybe<Scalars['String']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -899,6 +926,8 @@ export type Mutation = {
   deleteAddress: Scalars['Boolean']['output'];
   deleteAdminCoupon: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
+  editAdminCustomer: AdminUser;
+  editAdminManualOrder: AdminOrder;
   logout: Scalars['Boolean']['output'];
   moderateProductReview: ProductReview;
   recordAdminAccountEntry: CustomerAccount;
@@ -992,6 +1021,16 @@ export type MutationDeleteAdminCouponArgs = {
 export type MutationDeleteAdminProductArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationEditAdminCustomerArgs = {
+  input: AdminCustomerEditInput;
+};
+
+
+export type MutationEditAdminManualOrderArgs = {
+  input: AdminManualOrderEditInput;
 };
 
 
@@ -1437,6 +1476,7 @@ export type QueryAdminDashboardArgs = {
 
 export type QueryAdminManualQuoteArgs = {
   input: AdminManualQuoteInput;
+  orderId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 

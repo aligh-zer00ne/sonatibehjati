@@ -1,3 +1,5 @@
+import { editCustomer } from './customer-editing.js';
+import { editManualOrder, manualEditQuote } from './manual-editing.js';
 import { readMessageTemplates, saveMessageTemplates } from './message-templates.js';
 import { saveShipment } from './shipments.js';
 import { adminOrdersMap } from './order-map.js';
@@ -71,9 +73,9 @@ export const adminResolvers: Resolvers = {
       await requirePermission(ctx, 'ORDERS');
       return adminUser(id);
     },
-    adminManualQuote: async (_, { input }, ctx) => {
+    adminManualQuote: async (_, { input, orderId }, ctx) => {
       await requirePermission(ctx, 'ORDERS');
-      return manualQuote(input);
+      return orderId ? manualEditQuote(orderId, input) : manualQuote(input);
     },
     homepageContent: () => homepageContent(),
     adminHomepageContent: async (_, __, ctx) => {
@@ -120,6 +122,16 @@ export const adminResolvers: Resolvers = {
     },
   },
   Mutation: {
+    editAdminCustomer: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const admin = await requirePermission(ctx, 'CUSTOMERS');
+      return editCustomer(admin, input);
+    },
+    editAdminManualOrder: async (_, { input }, ctx) => {
+      requireAdminOrigin(ctx);
+      const admin = await requirePermission(ctx, 'ORDERS');
+      return editManualOrder(admin, input);
+    },
     saveAdminMessageTemplates: async (_, { items, expectedUpdatedAt }, ctx) => {
       requireAdminOrigin(ctx);
       await requirePermission(ctx, 'MESSAGES');

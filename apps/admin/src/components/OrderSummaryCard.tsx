@@ -1,3 +1,4 @@
+import ManualOrderEditDialog from './ManualOrderEditDialog';
 import { hasPermission } from '@behjati/shared/permissions';
 import { useAdmin } from '../auth/AdminProvider';
 import { useState } from 'react';
@@ -21,6 +22,7 @@ export default function OrderSummaryCard({
   compact = false,
   index = 0,
   canExpand = true,
+  onUpdated,
 }: {
   order: AdminOrderSummaryFieldsFragment;
   expanded: boolean;
@@ -28,8 +30,10 @@ export default function OrderSummaryCard({
   compact?: boolean;
   index?: number;
   canExpand?: boolean;
+  onUpdated?: () => void;
 }) {
   const { admin } = useAdmin();
+  const [editing, setEditing] = useState(false);
   const [print, setPrint] = useState<'invoice' | 'label' | null>(null);
   const motion = useSurfaceMotion<HTMLElement>({ tilt: false, enabled: !expanded });
   const detailsId = `order-details-${order.id}`;
@@ -113,7 +117,7 @@ export default function OrderSummaryCard({
         </dl>
         {canExpand && (
           <div
-            className={`mt-2.5 grid ${order.salesChannel === 'IN_PERSON' ? 'grid-cols-[1.4fr_1fr_1fr]' : 'grid-cols-[1.4fr_1fr_1fr_1fr]'} gap-1.5 border-t border-dashed border-[#e8ded1] pt-2.5`}
+            className={`mt-2.5 grid ${order.salesChannel === 'IN_PERSON' ? 'grid-cols-4' : order.salesChannel === 'INSTAGRAM' ? 'grid-cols-5' : 'grid-cols-[1.4fr_1fr_1fr_1fr]'} gap-1.5 border-t border-dashed border-[#e8ded1] pt-2.5`}
           >
             <button
               id={`order-toggle-${order.id}`}
@@ -126,8 +130,21 @@ export default function OrderSummaryCard({
               className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#4e141c] transition hover:border-[#b7825b] hover:bg-[#f0e0c7] aria-expanded:border-[#c69b48] aria-expanded:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-expanded:shadow-[0_3px_10px_#c69b4830] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
             >
               <AdminIcon name="receipt" width={20} />
-              <span>{expanded ? 'بستن' : 'جزئیات'}</span>
+              <span className={order.salesChannel !== 'WEBSITE' ? 'sr-only' : ''}>
+                {expanded ? 'بستن' : 'جزئیات'}
+              </span>
             </button>
+            {order.salesChannel !== 'WEBSITE' && hasPermission(admin, 'ORDERS') && (
+              <button
+                type="button"
+                aria-label={`ویرایش سفارش ${formatNumber(order.number)}`}
+                title="ویرایش فاکتور"
+                onClick={() => setEditing(true)}
+                className="grid min-h-11 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b]"
+              >
+                <AdminIcon name="edit" width={21} />
+              </button>
+            )}
             {order.salesChannel !== 'IN_PERSON' && hasPermission(admin, 'ORDERS') && (
               <button
                 type="button"
@@ -160,6 +177,16 @@ export default function OrderSummaryCard({
           </div>
         )}
       </div>
+      {editing && (
+        <ManualOrderEditDialog
+          id={order.id}
+          onClose={() => setEditing(false)}
+          onSaved={() => {
+            setEditing(false);
+            onUpdated?.();
+          }}
+        />
+      )}
       {print && canExpand && (
         <QuickOrderPrint id={order.id} view={print} onClose={() => setPrint(null)} />
       )}
