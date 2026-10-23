@@ -21,6 +21,7 @@ export default function InvoiceSheet({
   order: AdminOrderFieldsFragment;
   format: InvoiceFormat;
 }) {
+  const store = order.storeInformation;
   const compact = format === 'A5';
   const thermal = format === 'THERMAL',
     large = format === 'A4',
@@ -82,15 +83,23 @@ export default function InvoiceSheet({
               alt={BRAND_NAME}
               className={`${thermal ? 'h-[17mm]' : large ? 'h-[24mm]' : 'h-[16mm]'} w-auto shrink-0 object-contain`}
             />
-            <div className="min-w-0">
+            <div data-invoice-seller aria-label="مشخصات فروشنده" className="min-w-0">
               <h1
                 className={`${thermal ? 'text-[13px]' : large ? 'text-[21px]' : 'text-[15px]'} font-black leading-[1.6]`}
               >
-                {BRAND_NAME}
+                {store.name || BRAND_NAME}
               </h1>
-              <p className="mt-1">فرآورده‌های کنجدی سنتی اردکان</p>
-              <p dir="ltr" className="mt-1 text-right font-bold text-[#23659a]">
-                sonatibehjati.ir
+              <p className="mt-1 text-[0.8em] leading-[1.5]">
+                تلفن: <bdi dir="ltr">{persianDigits(store.phone)}</bdi>
+                {store.postalCode && (
+                  <>
+                    {' '}
+                    · کد پستی: <bdi dir="ltr">{persianDigits(store.postalCode)}</bdi>
+                  </>
+                )}
+              </p>
+              <p className="mt-0.5 text-[0.8em] leading-[1.5] whitespace-pre-wrap">
+                نشانی فروشنده: {store.address}
               </p>
             </div>
           </div>

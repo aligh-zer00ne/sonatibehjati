@@ -179,7 +179,7 @@ try {
     .fill('اردکان، خیابان جدید فروشگاه، پلاک ۲۴ STORE-NEW-ADDRESS');
   await page.getByRole('button', { name: 'ذخیره اطلاعات فروشگاه', exact: true }).click();
   await expect(
-    page.getByText('اطلاعات فروشگاه ذخیره شد و روی لیبل‌ها استفاده می‌شود.', { exact: true }),
+    page.getByText('اطلاعات فروشگاه ذخیره شد و در فاکتور و لیبل استفاده می‌شود.', { exact: true }),
   ).toBeVisible();
   await page.reload();
   await expect(page.getByLabel('نام فروشگاه', { exact: true })).toHaveValue('سنتی بهجتی STORE-NEW');
@@ -196,6 +196,12 @@ try {
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
       `Settings fit ${width}px`,
     );
+    if (width === 390) {
+      await expect(page.locator('[data-store-preview]')).toBeHidden();
+      await page.getByRole('button', { name: 'پیش‌نمایش اطلاعات روی چاپ', exact: true }).click();
+      await expect(page.locator('[data-store-preview]')).toBeVisible();
+      await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
+    }
     if (width === 390 || width === 1440)
       await page.screenshot({
         path: `/tmp/behjati-store-information-${width}.png`,
@@ -209,6 +215,15 @@ try {
   await expect(label).toContainText('STORE-NEW-ADDRESS');
   await expect(label).toContainText(customer.snapshot.recipientName);
   await expect(page.locator('[data-label-workspace] input')).toHaveCount(0);
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
+  await page.getByRole('button', { name: 'چاپ فاکتور / PDF', exact: true }).click();
+  for (const format of ['فاکتور A4', 'فاکتور A5', 'رسید ۸ سانتی']) {
+    await page.getByRole('button', { name: format, exact: true }).click();
+    const seller = page.locator('[data-invoice-workspace] [data-invoice-seller]');
+    await expect(seller).toContainText('STORE-NEW');
+    await expect(seller).toContainText('STORE-NEW-ADDRESS');
+    await expect(seller).toContainText('۸۹۵۱۸۱۲۳۴۵');
+  }
   await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   assert.deepEqual(
     await db.order.findUniqueOrThrow({ where: { id: order.id }, include: { items: true } }),

@@ -26,13 +26,23 @@ function StoreForm({
   const [form] = Form.useForm<StoreInformationValues>();
   const [version, setVersion] = useState(initial.updatedAt);
   const [configured, setConfigured] = useState(initial.isConfigured);
+  const [showPreview, setShowPreview] = useState(false);
+  const [savedValues, setSavedValues] = useState({
+    name: initial.name,
+    phone: initial.phone,
+    address: initial.address,
+    postalCode: initial.postalCode,
+  });
   const [pending, setPending] = useState(false),
     [error, setError] = useState('');
   const lock = useRef(false);
   const { message, modal } = App.useApp();
   const values = { ...initial, ...Form.useWatch([], form) };
+  const dirty = (Object.keys(savedValues) as Array<keyof StoreInformationValues>).some(
+    (key) => values[key] !== savedValues[key],
+  );
   return (
-    <div className="grid items-start gap-6 xl:grid-cols-[1.4fr_1fr]">
+    <div className="grid items-start gap-5 xl:grid-cols-[1.5fr_1fr]">
       <Form
         form={form}
         layout="vertical"
@@ -55,8 +65,9 @@ function StoreForm({
             });
             setVersion(result.saveAdminStoreInformation.updatedAt);
             setConfigured(true);
+            setSavedValues(parsed.data);
             form.setFieldsValue(parsed.data);
-            void message.success('اطلاعات فروشگاه ذخیره شد و روی لیبل‌ها استفاده می‌شود.');
+            void message.success('اطلاعات فروشگاه ذخیره شد و در فاکتور و لیبل استفاده می‌شود.');
           } catch (e) {
             setError(e instanceof Error ? e.message : 'ذخیره انجام نشد.');
           } finally {
@@ -64,12 +75,26 @@ function StoreForm({
             setPending(false);
           }
         }}
-        className="rounded-[24px] border border-[#e8ded1] bg-white !p-5 shadow-sm sm:!p-7"
+        className="min-w-0 rounded-[24px] border border-[#e8ded1] bg-white !p-5 shadow-sm sm:!p-6 [&_.ant-form-item]:!mb-4"
       >
-        <h2 className="mb-2 text-lg font-extrabold">مشخصات فروشگاه و فرستنده</h2>
-        <p className="mb-6 text-sm leading-8 text-[#857467]">
-          این اطلاعات یک‌بار ثبت می‌شود و در بخش فرستندهٔ لیبل سفارش‌ها قرار می‌گیرد.
-        </p>
+        <header className="mb-5 flex items-center gap-3 border-b border-[#eee5d9] pb-4">
+          <img
+            src="/images/logo-brand.png"
+            alt="سنتی بهجتی"
+            className="size-14 shrink-0 rounded-2xl border border-[#e8ded1] bg-[#fffcf8] p-1.5 object-contain"
+          />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-base font-extrabold">هویت و نشانی فروشگاه</h2>
+            <p className="mt-1 text-xs leading-6 text-[#857467]">
+              اطلاعات فروشنده در فاکتور و فرستنده در لیبل
+            </p>
+          </div>
+          <span
+            className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${dirty ? 'bg-[#fff1d5] text-[#886113]' : configured ? 'bg-[#e8f1e9] text-[#38634a]' : 'bg-[#f4eee6] text-[#857467]'}`}
+          >
+            {dirty ? 'ذخیره‌نشده' : configured ? 'ثبت‌شده' : 'تکمیل شود'}
+          </span>
+        </header>
         <Form.Item
           label="نام فروشگاه"
           name="name"
@@ -81,9 +106,9 @@ function StoreForm({
             autoComplete="organization"
           />
         </Form.Item>
-        <div className="grid gap-x-4 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-x-3">
           <Form.Item
-            label="شماره تماس فروشگاه"
+            label="شماره تماس"
             name="phone"
             rules={[{ required: true, whitespace: true, message: 'شماره تماس را وارد کنید.' }]}
           >
@@ -92,15 +117,21 @@ function StoreForm({
               dir="ltr"
               inputMode="tel"
               autoComplete="tel"
-              prefix={<AdminIcon name="phone" width={18} />}
+              aria-label="شماره تماس فروشگاه"
             />
           </Form.Item>
           <Form.Item
-            label="کد پستی فروشگاه"
+            label="کد پستی"
             name="postalCode"
             rules={[{ required: true, message: 'کد پستی ده‌رقمی را وارد کنید.' }]}
           >
-            <Input maxLength={10} dir="ltr" inputMode="numeric" autoComplete="postal-code" />
+            <Input
+              aria-label="کد پستی فروشگاه"
+              maxLength={10}
+              dir="ltr"
+              inputMode="numeric"
+              autoComplete="postal-code"
+            />
           </Form.Item>
         </div>
         <Form.Item
@@ -109,10 +140,10 @@ function StoreForm({
           rules={[
             { required: true, whitespace: true, message: 'نشانی کامل فروشگاه را وارد کنید.' },
           ]}
-          extra="استان، شهر، خیابان و پلاک را کامل بنویسید."
+          extra="استان، شهر، خیابان و پلاک"
         >
           <Input.TextArea
-            autoSize={{ minRows: 3, maxRows: 6 }}
+            autoSize={{ minRows: 2, maxRows: 5 }}
             maxLength={600}
             showCount
             autoComplete="street-address"
@@ -143,31 +174,45 @@ function StoreForm({
           />
         )}
         <Button
-          type="primary"
-          htmlType="submit"
-          loading={pending}
-          icon={<AdminIcon name="check" />}
-          className="!mt-3 !h-[52px] !w-full !font-bold"
+          type="text"
+          htmlType="button"
+          aria-expanded={showPreview}
+          aria-controls="store-print-preview"
+          onClick={() => setShowPreview((value) => !value)}
+          icon={<AdminIcon name="eye" width={18} />}
+          className="!mb-3 !w-full !text-[#701e2a] xl:!hidden"
         >
-          ذخیره اطلاعات فروشگاه
+          {showPreview ? 'بستن پیش‌نمایش چاپ' : 'پیش‌نمایش اطلاعات روی چاپ'}
         </Button>
+        <div className="sticky bottom-0 z-10 -mx-1 mt-2 border-t border-[#eee5d9] bg-white/95 px-1 pt-3 pb-1 backdrop-blur-sm">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={pending}
+            icon={<AdminIcon name="check" width={20} />}
+            className="!h-12 !w-full !font-bold"
+          >
+            ذخیره اطلاعات فروشگاه
+          </Button>
+        </div>
       </Form>
       <aside
         data-store-preview
-        className="space-y-5 rounded-[24px] border border-[#dbc390] bg-[#fcf8ef] p-5 sm:p-6 xl:sticky xl:top-36"
+        id="store-print-preview"
+        className={`${showPreview ? 'block' : 'hidden'} space-y-4 rounded-[24px] border border-[#e8ded1] bg-[#fcf8ef] p-5 xl:sticky xl:top-36 xl:block`}
       >
         <div className="flex items-center gap-3">
           <span className="grid size-12 place-items-center rounded-2xl bg-[#f4e8d3] text-[#701e2a]">
             <AdminIcon name="print" />
           </span>
-          <h2 className="text-lg font-extrabold">پیش‌نمایش فرستنده روی لیبل</h2>
+          <h2 className="text-base font-extrabold">پیش‌نمایش اطلاعات چاپ</h2>
         </div>
         <section className="overflow-hidden rounded-2xl border-2 border-black bg-white text-black">
           <h3 className="flex items-center gap-2 bg-black px-4 py-2 font-extrabold text-white">
             <AdminIcon name="home" width={19} />
             فرستنده
           </h3>
-          <dl className="space-y-3 p-4 text-sm leading-7 [overflow-wrap:anywhere]">
+          <dl className="space-y-2 p-3 text-sm leading-6 [overflow-wrap:anywhere] [&>div]:grid [&>div]:grid-cols-[auto_1fr] [&>div]:gap-3 [&_dd]:text-end">
             <div className="border-b border-dashed border-black/20 pb-2">
               <dt className="text-xs font-medium text-[#857467]">نام</dt>
               <dd className="font-bold">{values.name || 'نام فروشگاه'}</dd>
@@ -194,7 +239,7 @@ function StoreForm({
         </section>
         <p className="text-sm leading-8 text-[#857467]">
           {configured
-            ? 'اطلاعات ثبت‌شده، منبع فرستنده برای چاپ لیبل‌هاست. تغییرات این فرم پس از ذخیره اعمال می‌شود.'
+            ? 'مشخصات فروشندهٔ فاکتور و فرستندهٔ لیبل از همین اطلاعات خوانده می‌شوند.'
             : 'اطلاعات فروشگاه هنوز تکمیل نشده است؛ مشخصات و کد پستی را بررسی و ذخیره کنید.'}
         </p>
         <p className="border-t border-dashed border-[#dbc390] pt-4 text-xs leading-7 text-[#857467]">
@@ -209,10 +254,7 @@ export default function StoreInformation() {
   const query = useAdminQuery(AdminStoreInformationDocument, {});
   return (
     <>
-      <PageHeading
-        icon="home"
-        description="اطلاعات فرستندهٔ فروشگاه برای استفادهٔ خودکار در لیبل سفارش‌ها."
-      >
+      <PageHeading icon="home" description="مشخصات فروشندهٔ فاکتور و فرستندهٔ مرسوله، در یک جا.">
         اطلاعات فروشگاه
       </PageHeading>
       {query.data ? (
