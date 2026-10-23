@@ -78,7 +78,8 @@
     "verify:payment-links": "node --import tsx --env-file=apps/api/.env scripts/verify-payment-links.mjs",
     "verify:payment-links-ui": "node --env-file=apps/api/.env scripts/verify-payment-links-ui.mjs",
     "verify:store-shipping-ui": "node --env-file=apps/api/.env scripts/verify-store-shipping-ui.mjs",
-    "verify:admin-surfaces": "node --env-file=apps/api/.env scripts/verify-admin-surfaces.mjs"
+    "verify:admin-surfaces": "node --env-file=apps/api/.env scripts/verify-admin-surfaces.mjs",
+    "verify:invoice-workspace": "node --env-file=apps/api/.env scripts/verify-invoice-workspace.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

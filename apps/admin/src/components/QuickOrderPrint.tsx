@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Modal, Button } from 'antd';
 import { AdminOrderDocument } from '../generated/graphql';
 import { useAdminQuery } from '../hooks/useAdminQuery';
@@ -14,6 +14,17 @@ export default function QuickOrderPrint({
   view: 'invoice' | 'label';
   onClose: () => void;
 }) {
+  const [trigger] = useState(() =>
+    document.activeElement instanceof HTMLElement ? document.activeElement : null,
+  );
+  useEffect(
+    () => () => {
+      requestAnimationFrame(() => {
+        if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+      });
+    },
+    [trigger],
+  );
   const query = useAdminQuery(AdminOrderDocument, { id });
   const order = query.data?.adminOrder;
   const loading = (

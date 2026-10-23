@@ -210,7 +210,7 @@ try {
   const record = page.locator('[data-admin-record]').first();
   await record.getByRole('button', { name: /چاپ فاکتور سفارش/ }).click();
   await expect(page.getByRole('dialog').getByText(/فاکتور سفارش شماره/)).toBeVisible();
-  await page.getByRole('dialog').locator('.ant-modal-close').click();
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await record.getByRole('button', { name: /چاپ لیبل سفارش/ }).click();
   await expect(page.getByRole('dialog').locator('[data-label-sheet]')).toBeVisible();
   await page.getByRole('dialog').locator('.ant-modal-close').click();

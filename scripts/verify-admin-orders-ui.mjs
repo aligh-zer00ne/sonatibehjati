@@ -124,7 +124,7 @@ try {
   const invoice = page.getByRole('dialog', { name: `فاکتور سفارش ${number}`, exact: true });
   await expect(invoice.getByRole('cell').filter({ hasText: title })).toBeVisible();
   await expect(invoice.getByRole('button', { name: 'چاپ / ذخیره PDF', exact: true })).toBeVisible();
-  await invoice.locator('.ant-modal-close').click();
+  await invoice.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await card.getByRole('button', { name: 'لیبل پستی / چاپ', exact: true }).click();
   const label = page.getByRole('dialog', { name: `لیبل پستی سفارش ${number}`, exact: true });
   await expect(label.getByLabel('نام گیرنده', { exact: true })).toHaveValue('گیرنده هنگام خرید');
@@ -190,8 +190,8 @@ try {
   await expect(card.getByRole('alert')).toBeVisible();
   await card.getByRole('button', { name: 'تلاش دوباره', exact: true }).click();
   await expect(card.getByText(title, { exact: true })).toBeVisible();
-  await page.getByLabel('وضعیت', { exact: true }).click();
-  await page.locator('.ant-select-item-option').filter({ hasText: 'تحویل‌شده' }).click();
+  await page.getByRole('button', { name: 'وضعیت سفارش', exact: true }).hover();
+  await page.getByRole('button', { name: 'تحویل‌شده', exact: true }).click();
   await expect(card).toHaveCount(0);
   await expect(secondCard).toBeVisible();
   await expect(
@@ -213,6 +213,7 @@ try {
   });
   admins.push(restricted);
   await page.getByRole('button', { name: 'خروج از مدیریت', exact: true }).click();
+  await expect(page).toHaveURL(adminOrigin + '/login');
   await login(restricted.email, owner.password);
   await expect(page).toHaveURL(adminOrigin + '/admin/products');
   await page.goto(listURL);

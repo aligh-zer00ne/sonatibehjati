@@ -164,7 +164,7 @@ function ShippingForm({
       </Form>
       <aside
         data-shipping-preview
-        className="space-y-5 rounded-[24px] border border-[#dbc390] bg-[#fcf8ef] p-5 xl:sticky xl:top-28"
+        className="space-y-5 rounded-[24px] border border-[#dbc390] bg-[#fcf8ef] p-5 xl:sticky xl:top-36"
       >
         <h2 className="text-lg font-extrabold">محاسبهٔ آزمایشی سبد</h2>
         <p className="text-sm leading-8 text-[#857467]">

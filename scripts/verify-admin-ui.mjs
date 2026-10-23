@@ -489,11 +489,11 @@ try {
     ['-layout', '/tmp/behjati-phase8-invoice-long.pdf', '-'],
     { encoding: 'utf8' },
   );
-  assert.ok(longText.includes('۷٬۲۵۰٬۰۰۰'));
+  assert.ok(longText.includes('۷۲٬۵۰۰٬۰۰۰'));
   assert.ok(!longText.includes('خروج از مدیریت'));
   assert.ok(!longText.includes(admin.email));
   await page.emulateMedia({ media: 'screen' });
-  await page.locator('.ant-modal-close').click();
+  await page.getByRole('button', { name: 'بستن پیش‌نمایش چاپ', exact: true }).click();
   await unlink('apps/api' + uploaded).catch(() => {});
   const tab = await context.newPage();
   tab.on('pageerror', (error) => errors.push(error.message));

@@ -42,10 +42,6 @@
 body > textarea[name='hiddenTextarea'][aria-hidden='true'] {
   max-width: 100vw;
 }
-@page {
-  size: A5 portrait;
-  margin: 10mm;
-}
 @media print {
   html,
   body {

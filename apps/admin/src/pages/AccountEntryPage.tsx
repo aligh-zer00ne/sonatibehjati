@@ -273,7 +273,7 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
         </Form>
         <aside
           data-account-preview
-          className="rounded-[24px] border border-[#d9c7a8] bg-[linear-gradient(135deg,#f8efdd,white)] p-5 lg:sticky lg:top-28"
+          className="rounded-[24px] border border-[#d9c7a8] bg-[linear-gradient(135deg,#f8efdd,white)] p-5 lg:sticky lg:top-28 xl:top-36"
         >
           <h2 className="mb-4 text-sm font-bold text-[#796653]">پیش‌نمایش نتیجه</h2>
           <div className="rounded-[20px] border border-[#e8ded1] bg-white p-5 text-center">
