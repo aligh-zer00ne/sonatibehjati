@@ -44,7 +44,7 @@ export default function FinancialHub() {
     return <Navigate replace to={'/admin/settlements/account?' + params.toString()} />;
   return (
     <div className="mx-auto w-full max-w-[1180px] space-y-6">
-      <header className="relative isolate overflow-hidden rounded-[26px] bg-[linear-gradient(125deg,#641a38,#280b18)] p-6 text-[#fff5e1] sm:p-8">
+      <header className="relative isolate overflow-hidden rounded-[26px] bg-[linear-gradient(125deg,#5c1924,#290c12)] p-6 text-[#fff5e1] sm:p-8">
         <AmbientBackdrop />
         <div className="relative z-10">
           <p className="text-sm text-[#edc57d]">امور مالی فروش دستی</p>
@@ -56,7 +56,7 @@ export default function FinancialHub() {
       </header>
       {pending && (
         <Link
-          className="block rounded-2xl border border-[#d9c7a8] bg-[#faf6ee] p-4 font-bold !text-[#58132b]"
+          className="block rounded-2xl border border-[#d9c7a8] bg-[#faf6ee] p-4 font-bold !text-[#4e141c]"
           to={`/admin/settlements/${pending.direction === 'PAYMENT' ? 'payment' : 'receipt'}?customerId=${pending.customerId}`}
         >
           ادامهٔ بررسی درخواست قبلی دریافت و پرداخت ←
@@ -69,8 +69,8 @@ export default function FinancialHub() {
             to={'/admin/settlements/' + item.href}
             className="group relative flex min-h-[245px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] bg-white p-6 !text-[#34251e] shadow-[0_6px_22px_#62452f0a] transition duration-300 hover:-translate-y-1 hover:!border-[#c49536] hover:shadow-[0_14px_30px_#62452f18] motion-reduce:transform-none"
           >
-            <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#c49536,#58132b)]" />
-            <span className="mb-5 grid size-14 place-items-center rounded-[18px] bg-[linear-gradient(135deg,#823652,#58132b)] text-[#fff0ca] shadow-[0_6px_16px_#58132b26]">
+            <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#c49536,#4e141c)]" />
+            <span className="mb-5 grid size-14 place-items-center rounded-[18px] bg-[linear-gradient(135deg,#7b3039,#4e141c)] text-[#fff0ca] shadow-[0_6px_16px_#4e141c26]">
               <AdminIcon name={item.icon} width={27} height={27} />
             </span>
             <h2 className="text-lg font-extrabold">{item.title}</h2>

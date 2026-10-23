@@ -42,7 +42,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 key={item.key}
                 aria-pressed={view === item.key}
                 onClick={() => setView(item.key as 'money' | 'count')}
-                className="rounded-md px-2 py-1 text-xs text-[#76685d] aria-pressed:bg-white aria-pressed:text-[#58132b] aria-pressed:shadow-sm"
+                className="rounded-md px-2 py-1 text-xs text-[#76685d] aria-pressed:bg-white aria-pressed:text-[#4e141c] aria-pressed:shadow-sm"
               >
                 {item.label}
               </button>
@@ -64,8 +64,8 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
             >
               <defs>
                 <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#701734" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="#701734" stopOpacity={0.01} />
+                  <stop offset="0%" stopColor="#701e2a" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#701e2a" stopOpacity={0.01} />
                 </linearGradient>
               </defs>
               <CartesianGrid stroke="#eee5d9" vertical={false} />
@@ -112,7 +112,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                     dataKey="revenue"
                     name="خالص دریافتی"
                     type="monotone"
-                    stroke="#701734"
+                    stroke="#701e2a"
                     fill={`url(#${gradient})`}
                     strokeWidth={3}
                     isAnimationActive={false}
@@ -123,7 +123,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 <Bar
                   dataKey="ordersCount"
                   name="تعداد سفارش"
-                  fill="#701734"
+                  fill="#701e2a"
                   radius={[5, 5, 0, 0]}
                   maxBarSize={32}
                   isAnimationActive={false}
@@ -135,7 +135,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
         {view === 'money' && (
           <div className="mt-4 flex flex-wrap justify-center gap-5 text-xs text-[#76685d]">
             <span className="flex items-center gap-2">
-              <i className="size-2 rounded-full bg-[#701734]" />
+              <i className="size-2 rounded-full bg-[#701e2a]" />
               خالص دریافتی
             </span>
             <span className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
           <p className="text-xs text-[#857467]">بیشترین خالص دریافتی روزانه</p>
           {best ? (
             <>
-              <p className="mt-2 font-bold text-[#58132b]">
+              <p className="mt-2 font-bold text-[#4e141c]">
                 <Money amount={best.revenue} />
               </p>
               <p className="mt-2 text-xs text-[#76685d]">
@@ -172,7 +172,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-[#f4ede3]">
                   <div
-                    className={`h-full rounded-full ${index % 2 ? 'bg-[#c69b48]' : 'bg-[#701734]'}`}
+                    className={`h-full rounded-full ${index % 2 ? 'bg-[#c69b48]' : 'bg-[#701e2a]'}`}
                     style={{ width: `${(s.count / Math.max(1, report.ordersCount)) * 100}%` }}
                   />
                 </div>

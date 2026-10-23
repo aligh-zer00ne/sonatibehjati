@@ -104,7 +104,7 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
     >
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-dashed border-[#e5d7c2] pb-5">
         <div className="flex items-center gap-3">
-          <span className="grid size-14 shrink-0 place-items-center rounded-[18px] bg-[linear-gradient(135deg,#823652,#58132b)] text-[#fff0ca] shadow-lg">
+          <span className="grid size-14 shrink-0 place-items-center rounded-[18px] bg-[linear-gradient(135deg,#7b3039,#4e141c)] text-[#fff0ca] shadow-lg">
             <AdminIcon name={operation === 'RECEIPT' ? 'wallet' : 'logout'} width={27} />
           </span>
           <div>
@@ -294,7 +294,7 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
                     <AccountStatus balance={balance} amount={false} />
                   </div>
                   <AdminIcon name="arrow" />
-                  <div className="text-lg font-extrabold text-[#58132b]">
+                  <div className="text-lg font-extrabold text-[#4e141c]">
                     <Money compact amount={Math.abs(after)} />
                     <AccountStatus balance={after} amount={false} />
                   </div>

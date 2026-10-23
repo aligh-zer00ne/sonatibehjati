@@ -26,7 +26,7 @@ function LoginLayout({ children }: { children: ReactNode }) {
         <div className="grid overflow-hidden rounded-[26px] border border-white/80 bg-[#fffdf9] shadow-[0_24px_80px_-24px_#59341f40,0_2px_8px_#59341f08] motion-safe:animate-surface-enter md:min-h-[600px] md:grid-cols-[0.95fr_1.05fr] md:rounded-[32px]">
           <section
             aria-label="سنتی بهجتی اردکان"
-            className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_top_right,#8b3d5d,transparent_65%),linear-gradient(145deg,#641a38,#280b18)] px-5 py-6 text-[#fff5e1] sm:px-8 md:flex md:flex-col md:justify-between md:px-10 md:py-10"
+            className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_top_right,#843740,transparent_65%),linear-gradient(145deg,#5c1924,#290c12)] px-5 py-6 text-[#fff5e1] sm:px-8 md:flex md:flex-col md:justify-between md:px-10 md:py-10"
           >
             <AmbientBackdrop />
             <div
@@ -96,13 +96,13 @@ function LoginLayout({ children }: { children: ReactNode }) {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-2 text-xs text-[#796653] sm:px-4">
           <a
             href="https://sonatibehjati.ir"
-            className="inline-flex min-h-9 items-center gap-2 rounded-md !text-[#796653] font-semibold transition-colors hover:!text-[#701734]"
+            className="inline-flex min-h-9 items-center gap-2 rounded-md !text-[#796653] font-semibold transition-colors hover:!text-[#701e2a]"
           >
             <AdminIcon name="home" className="size-4" />
             مشاهده فروشگاه
             <AdminIcon name="arrow" className="size-3.5" />
           </a>
-          <DesignCredit className="[&_a]:!text-inherit [&_a:hover]:!text-[#701734]" />
+          <DesignCredit className="[&_a]:!text-inherit [&_a:hover]:!text-[#701e2a]" />
         </div>
       </div>
     </main>
@@ -223,7 +223,7 @@ export default function Login() {
                   event.stopPropagation();
                   setPasswordVisible((visible) => !visible);
                 }}
-                className="-my-1 -mr-2 grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg text-[#927d66] transition-colors hover:bg-[#f8efdf] hover:text-[#58132b] disabled:cursor-wait"
+                className="-my-1 -mr-2 grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg text-[#927d66] transition-colors hover:bg-[#f8efdf] hover:text-[#4e141c] disabled:cursor-wait"
               >
                 <AdminIcon name={passwordVisible ? 'eyeOff' : 'eye'} className="size-5" />
               </button>
@@ -237,7 +237,7 @@ export default function Login() {
           htmlType="submit"
           loading={pending}
           block
-          className="!h-[52px] !rounded-xl !text-base !font-bold !shadow-[0_6px_16px_#70173424]"
+          className="!h-[52px] !rounded-xl !text-base !font-bold !shadow-[0_6px_16px_#701e2a24]"
         >
           ورود به پنل
           {!pending && <AdminIcon name="arrow" className="size-5" />}

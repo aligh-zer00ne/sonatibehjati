@@ -69,7 +69,7 @@ export default function Reports() {
   };
   return (
     <div className="space-y-5" data-admin-reports>
-      <header className="relative isolate overflow-hidden rounded-3xl bg-[#58132b] p-5 text-white sm:p-7">
+      <header className="relative isolate overflow-hidden rounded-3xl bg-[#4e141c] p-5 text-white sm:p-7">
         <AmbientBackdrop />
         <div
           aria-hidden="true"
@@ -190,7 +190,7 @@ export default function Reports() {
         <Button
           type="text"
           size="small"
-          className="!ms-auto !text-[12px] !text-[#701734]"
+          className="!ms-auto !text-[12px] !text-[#701e2a]"
           onClick={() => {
             setRange(defaultReportRange());
             setStatus('');

@@ -24,7 +24,7 @@ import type {
 import { Money } from './Money';
 import { chartDate } from '../lib/format';
 import AdminIcon from './AdminIcon';
-const colors = ['#701734', '#c69b48', '#70614d', '#d09f86', '#366e58', '#b66565'];
+const colors = ['#701e2a', '#c69b48', '#70614d', '#d09f86', '#366e58', '#b66565'];
 export default function DashboardCharts({
   report,
   onInspect,
@@ -76,7 +76,7 @@ export default function DashboardCharts({
         className="min-w-0"
       >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <b className="text-lg text-[#58132b]">
+          <b className="text-lg text-[#4e141c]">
             {formatAdminPrice(series.reduce((sum, d) => sum + d[metric], 0))}
           </b>
           <div className="flex gap-3 text-xs">
@@ -89,7 +89,7 @@ export default function DashboardCharts({
                 type="button"
                 aria-pressed={metric === m.key}
                 onClick={() => setMetric(m.key as 'orderValue' | 'revenue')}
-                className="border-b-2 border-transparent py-1 text-[#857467] aria-pressed:border-[#701734] aria-pressed:text-[#58132b]"
+                className="border-b-2 border-transparent py-1 text-[#857467] aria-pressed:border-[#701e2a] aria-pressed:text-[#4e141c]"
               >
                 {m.label}
               </button>
@@ -154,7 +154,7 @@ export default function DashboardCharts({
           {onInspect && (
             <button
               type="button"
-              className="font-semibold text-[#701734]"
+              className="font-semibold text-[#701e2a]"
               onClick={() =>
                 onInspect(`سفارش‌های ${formatNumber(days)} روز اخیر`, {
                   from: series[0]?.date ?? report.from,
@@ -195,7 +195,7 @@ export default function DashboardCharts({
           onInspect ? (
             <button
               type="button"
-              className="text-xs text-[#701734]"
+              className="text-xs text-[#701e2a]"
               onClick={() =>
                 onInspect('سفارش‌های ۳۰ روز اخیر', { from: report.from, to: report.to })
               }

@@ -29,7 +29,7 @@ export default function AnalyticsMetric({
   return (
     <article
       {...motion}
-      className={`${surfaceCardMotion} relative min-w-0 overflow-hidden rounded-2xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] focus-within:ring-2 focus-within:ring-[#c69b48]/40' : ''} ${featured ? 'border-[#58132b] bg-[linear-gradient(135deg,#762742,#300b1b)] text-white shadow-[0_8px_24px_#58132b18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
+      className={`${surfaceCardMotion} relative min-w-0 overflow-hidden rounded-2xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] focus-within:ring-2 focus-within:ring-[#c69b48]/40' : ''} ${featured ? 'border-[#4e141c] bg-[linear-gradient(135deg,#752632,#300c14)] text-white shadow-[0_8px_24px_#4e141c18]' : 'border-[#e8ded1] bg-white text-[#34251e]'}`}
       data-analytics-metric={label}
     >
       {featured && <AmbientBackdrop />}
@@ -41,7 +41,7 @@ export default function AnalyticsMetric({
           {label}
         </h2>
         <span
-          className={`grid size-9 shrink-0 place-items-center rounded-xl ${featured ? 'bg-white/10 text-[#ecc878]' : 'bg-[#f8f0e1] text-[#701734]'}`}
+          className={`grid size-9 shrink-0 place-items-center rounded-xl ${featured ? 'bg-white/10 text-[#ecc878]' : 'bg-[#f8f0e1] text-[#701e2a]'}`}
         >
           <AdminIcon name={icon} width={19} />
         </span>

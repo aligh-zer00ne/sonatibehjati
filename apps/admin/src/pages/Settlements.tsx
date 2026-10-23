@@ -87,10 +87,10 @@ export default function Settlements() {
               aria-label="خلاصه حساب مشتری"
               className="overflow-hidden rounded-[26px] border border-[#e8ded1] bg-white shadow-[0_6px_22px_#62452f08]"
             >
-              <header className="relative isolate overflow-hidden flex flex-wrap items-center justify-between gap-5 bg-[linear-gradient(125deg,#641a38,#280b18)] p-5 text-[#fff5e1] sm:p-6">
+              <header className="relative isolate overflow-hidden flex flex-wrap items-center justify-between gap-5 bg-[linear-gradient(125deg,#5c1924,#290c12)] p-5 text-[#fff5e1] sm:p-6">
                 <AmbientBackdrop />
                 <div className="relative z-10 flex items-center gap-3">
-                  <span className="grid size-14 shrink-0 place-items-center rounded-full border-2 border-[#f6dfa0] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#58132b]">
+                  <span className="grid size-14 shrink-0 place-items-center rounded-full border-2 border-[#f6dfa0] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c]">
                     <AdminIcon name="person" width={28} height={28} />
                   </span>
                   <div>
@@ -208,7 +208,7 @@ export default function Settlements() {
                         document.getElementById(`account-tab-${next}`)?.focus(),
                       );
                     }}
-                    className="flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold text-[#796653] aria-selected:bg-white aria-selected:text-[#58132b] aria-selected:shadow-sm"
+                    className="flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold text-[#796653] aria-selected:bg-white aria-selected:text-[#4e141c] aria-selected:shadow-sm"
                   >
                     <AdminIcon name={tab.icon} width={19} />
                     {tab.key === 'invoices' ? 'فاکتورها' : tab.label}

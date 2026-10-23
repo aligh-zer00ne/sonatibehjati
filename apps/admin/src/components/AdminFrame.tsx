@@ -55,11 +55,11 @@ export default function AdminFrame() {
     <div dir="rtl" className="flex min-h-dvh min-w-0 flex-col bg-[#f6f1e9] text-[#34251e]">
       <header
         data-admin-topbar
-        className="sticky top-0 z-30 isolate border-b border-[#b78343]/30 bg-[radial-gradient(ellipse_at_top_right,#762b49,transparent_65%),linear-gradient(120deg,#58132b,#250916)] px-4 py-4 text-[#fff5e1] shadow-[0_8px_24px_#42000920] sm:px-6 print:!hidden"
+        className="sticky top-0 z-30 isolate border-b border-[#b78343]/30 bg-[radial-gradient(ellipse_at_top_right,#762832,transparent_65%),linear-gradient(120deg,#4e141c,#260b10)] px-3 py-4 text-[#fff5e1] shadow-[0_8px_24px_#42000920] sm:px-6 min-[1100px]:py-5 print:!hidden"
       >
         <AmbientBackdrop />
         <div className="relative z-10 mx-auto flex max-w-[1560px] items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3 min-[1100px]:w-[210px] min-[1100px]:shrink-0">
+          <div className="flex min-w-0 items-center gap-3 min-[1100px]:w-[258px] min-[1100px]:shrink-0">
             <Button
               type="text"
               className="!size-11 !shrink-0 !rounded-xl !border !border-white/20 !bg-white/5 !text-[#fff5e1] min-[1100px]:!hidden"
@@ -77,18 +77,18 @@ export default function AdminFrame() {
               aria-label="مدیریت سنتی بهجتی"
               className="flex min-w-0 items-center gap-3 !text-[#fff5e1]"
             >
-              <span className="hidden size-14 shrink-0 place-items-center rounded-2xl border border-[#edc57d]/50 bg-white shadow-[0_4px_16px_#28050230] min-[380px]:grid">
+              <span className="grid size-14 shrink-0 place-items-center rounded-2xl border border-[#edc57d]/50 bg-white shadow-[0_4px_16px_#28050230] sm:size-[76px] xl:size-[88px]">
                 <img
                   src="/images/logo-brand.png"
                   alt="سنتی بهجتی"
-                  className="h-12 w-auto object-contain"
+                  className="h-12 w-auto object-contain sm:h-[66px] xl:h-[76px]"
                 />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm leading-7 font-extrabold sm:text-base">
+                <span className="block text-[13px] leading-7 font-extrabold sm:text-[17px] xl:text-lg">
                   سنتی بهجتی اردکان
                 </span>
-                <span className="block text-[11px] leading-6 text-[#f2d6a2]">
+                <span className="block text-[10px] leading-6 text-[#f2d6a2] sm:text-xs">
                   پنل مدیریت فروشگاه
                 </span>
               </span>
@@ -105,7 +105,7 @@ export default function AdminFrame() {
             aria-label="خروج از مدیریت"
             title="خروج از مدیریت"
             loading={pending}
-            className="!size-11 !shrink-0 !rounded-xl !border-white/20 !bg-white/5 !text-[#fff5e1] hover:!bg-white/15"
+            className="!size-11 !shrink-0 !rounded-2xl !border-white/20 xl:!size-[52px] !bg-white/5 !text-[#fff5e1] hover:!bg-white/15"
             icon={<AdminIcon name="logout" />}
             onClick={async () => {
               setPending(true);
@@ -163,7 +163,7 @@ export default function AdminFrame() {
             <p className="flex items-center gap-2 text-xs font-semibold text-[#796653]">
               <AdminIcon name="home" width={16} />
               مدیریت فروشگاه<span className="text-[#b7a48e]">/</span>
-              <span className="text-[#58132b]">
+              <span className="text-[#4e141c]">
                 {[...navigationLinks, ...orderLinks].find((item) => item.href === selected)
                   ?.label ??
                   navigation.groups.find((item) => selected === `/admin/sections/${item.id}`)

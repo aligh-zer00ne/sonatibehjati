@@ -104,7 +104,7 @@ export default function OrdersMap() {
                           className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border p-3 text-right transition-colors ${active ? 'border-[#a12637] bg-[#fff0ee]' : 'border-[#ede4da] bg-[#fffcf8] hover:border-[#c88e87] hover:bg-[#fff5ef]'}`}
                         >
                           <span
-                            className={`mt-1 shrink-0 ${active ? 'text-[#701734]' : 'text-[#a38b77]'}`}
+                            className={`mt-1 shrink-0 ${active ? 'text-[#701e2a]' : 'text-[#a38b77]'}`}
                           >
                             <AdminIcon name="map" />
                           </span>
@@ -122,7 +122,7 @@ export default function OrdersMap() {
                               {orderStatusLabels[order.status]}
                             </span>
                             {active && (
-                              <span className="block text-xs font-bold text-[#701734]">
+                              <span className="block text-xs font-bold text-[#701e2a]">
                                 در حال نمایش روی نقشه
                               </span>
                             )}

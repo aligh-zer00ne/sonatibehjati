@@ -190,11 +190,11 @@ export function AdminNavigationTabs({
       ),
   );
   const tabClass =
-    'flex min-h-[50px] shrink-0 items-center justify-center gap-2 rounded-full px-[18px] text-[14px] font-bold transition-colors motion-reduce:transition-none';
+    'flex min-h-[56px] shrink-0 items-center justify-center gap-2 rounded-full px-3 text-[14px] xl:min-h-[60px] xl:px-5 xl:text-[15px] font-bold transition-colors motion-reduce:transition-none';
   const activeClass =
     '!bg-[linear-gradient(135deg,#f6dfa0,#d3a23f)] !text-[#39270c] shadow-[0_4px_18px_#edc57d38,inset_0_1px_0_#fff8d7]';
   const inactiveClass = mobile
-    ? '!bg-[#f4ebdd] !text-[#58132b]'
+    ? '!bg-[#f4ebdd] !text-[#4e141c]'
     : '!bg-white/[0.05] !text-[#fff5e1] hover:!bg-white/15';
   return (
     <nav
@@ -203,7 +203,7 @@ export function AdminNavigationTabs({
       className={
         mobile
           ? 'grid grid-cols-1 gap-2'
-          : 'flex min-w-0 items-center justify-center gap-1 rounded-full border border-white/20 bg-white/[0.07] p-1.5 shadow-[inset_0_2px_0_#ffffff10,0_8px_24px_#28050226]'
+          : 'flex min-w-0 items-center justify-center gap-1 rounded-full border border-white/20 bg-white/[0.07] p-2 shadow-[inset_0_2px_0_#ffffff10,0_8px_24px_#28050226]'
       }
     >
       {navigation.dashboard && (
@@ -248,9 +248,9 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
       <SurfaceGlow />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#701734] to-[#dfb65c]"
+        className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#701e2a] to-[#dfb65c]"
       />
-      <span className="mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#58132b] shadow-[0_6px_14px_#b7834340]">
+      <span className="mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_14px_#b7834340]">
         <AdminIcon name={item.icon} width={27} height={27} />
       </span>
       <h2 className="text-lg leading-8 font-extrabold">{item.label}</h2>

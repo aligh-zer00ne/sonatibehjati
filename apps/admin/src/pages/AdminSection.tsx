@@ -17,7 +17,7 @@ export default function AdminSection() {
       data-admin-section={group.id}
       className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 motion-safe:animate-surface-enter"
     >
-      <header className="relative isolate overflow-hidden flex min-h-[180px] flex-wrap items-center justify-between gap-5 rounded-[26px] border border-[#a45473]/40 bg-[radial-gradient(ellipse_at_top_right,#823652,transparent_65%),linear-gradient(125deg,#641a38,#280b18)] p-6 text-[#fff5e1] shadow-[0_12px_30px_-14px_#58132b60] sm:p-8">
+      <header className="relative isolate overflow-hidden flex min-h-[180px] flex-wrap items-center justify-between gap-5 rounded-[26px] border border-[#9c5358]/40 bg-[radial-gradient(ellipse_at_top_right,#7b3039,transparent_65%),linear-gradient(125deg,#5c1924,#290c12)] p-6 text-[#fff5e1] shadow-[0_12px_30px_-14px_#4e141c60] sm:p-8">
         <AmbientBackdrop />
         <div className="relative z-10">
           <p className="mb-2 text-sm text-[#edc57d]">فضای مدیریت سنتی بهجتی</p>

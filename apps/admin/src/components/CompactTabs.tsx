@@ -40,7 +40,7 @@ export default function CompactTabs({
               onChange(key);
               requestAnimationFrame(() => document.getElementById(`${id}-${key}-tab`)?.focus());
             }}
-            className="min-h-12 cursor-pointer rounded-xl border border-transparent px-2 text-sm font-bold text-[#796653] transition-colors aria-selected:border-[#e2cc9e] aria-selected:bg-white aria-selected:text-[#701734] aria-selected:shadow-sm hover:bg-white/70"
+            className="min-h-12 cursor-pointer rounded-xl border border-transparent px-2 text-sm font-bold text-[#796653] transition-colors aria-selected:border-[#e2cc9e] aria-selected:bg-white aria-selected:text-[#701e2a] aria-selected:shadow-sm hover:bg-white/70"
           >
             {item.label}
           </button>

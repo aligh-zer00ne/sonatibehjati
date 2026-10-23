@@ -12,11 +12,14 @@ export async function verifyTopNavigation(page) {
       .toBeLessThanOrEqual(1);
     for (const el of await nav.getByRole('link').all()) {
       const box = await el.boundingBox();
-      assert.ok(box && box.x >= 0 && box.x + box.width <= width && box.height >= 50);
+      assert.ok(box && box.x >= 0 && box.x + box.width <= width && box.height >= 56);
       assert.ok(await el.evaluate((node) => node.scrollWidth <= node.clientWidth + 1));
       assert.ok(await el.evaluate((node) => parseFloat(getComputedStyle(node).fontSize) >= 14));
     }
   }
+  const topbar = page.locator('[data-admin-topbar]');
+  assert.ok((await topbar.boundingBox()).height >= 125);
+  assert.ok((await topbar.getByAltText('سنتی بهجتی', { exact: true }).boundingBox()).height >= 76);
   for (const [name, id, expected] of [
     ['فروش و مشتریان', 'sales', 6],
     ['محصولات و تخفیف‌ها', 'catalog', 2],

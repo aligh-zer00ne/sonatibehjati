@@ -54,7 +54,7 @@ try {
     if (path.includes('/catalog')) {
       assert.match(
         await surface.evaluate((el) => getComputedStyle(el).backgroundImage),
-        /rgb\(100, 26, 56\)/,
+        /rgb\(92, 25, 36\)/,
       );
       await verifySurfaceMotion(page, surface, { ambient: true });
       await page.screenshot({

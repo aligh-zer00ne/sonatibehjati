@@ -64,7 +64,7 @@ function OrderDetailTabs({
               onChange(target.key);
               document.getElementById(`${id}-tab-${target.key}`)?.focus();
             }}
-            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[12px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#e5d1aa] bg-[#f4e8d3] font-bold text-[#701734]' : 'border-transparent text-[#76685d] hover:bg-[#fbf7ee]'}`}
+            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[12px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#e5d1aa] bg-[#f4e8d3] font-bold text-[#701e2a]' : 'border-transparent text-[#76685d] hover:bg-[#fbf7ee]'}`}
           >
             <span className="hidden shrink-0 sm:inline-flex">{item.icon}</span>
             {item.label}
@@ -130,7 +130,7 @@ export default function OrderDetailsCard({
     >
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-bold text-[#701734]">
+          <h3 className="text-sm font-bold text-[#701e2a]">
             جزئیات سفارش {order && formatNumber(order.number)}
           </h3>
           <p className="mt-1 text-[12px] text-[#76685d]">اطلاعات ثبت‌شده هنگام خرید</p>
@@ -188,7 +188,7 @@ export default function OrderDetailsCard({
                               <span className="text-[#76685d]">
                                 قیمت واحد: {formatPrice(item.unitPrice)}
                               </span>
-                              <span className="font-bold text-[#58132b]">
+                              <span className="font-bold text-[#4e141c]">
                                 {formatPrice(item.lineTotal)}
                               </span>
                             </div>
@@ -197,7 +197,7 @@ export default function OrderDetailsCard({
                       ))}
                     </ul>
                     <div className="rounded-2xl bg-[#fbf7ee] p-4">
-                      <h4 className="mb-3 flex items-center gap-2 text-xs font-bold text-[#58132b]">
+                      <h4 className="mb-3 flex items-center gap-2 text-xs font-bold text-[#4e141c]">
                         <AdminIcon name="receipt" width={17} height={17} />
                         خلاصه هزینه‌ها
                       </h4>
@@ -216,7 +216,7 @@ export default function OrderDetailsCard({
                         ))}
                         <div className="border-t border-dashed border-[#e5d7c2] pt-3">
                           <dt className="mb-1">مبلغ سفارش</dt>
-                          <dd className="text-base font-bold text-[#701734]">
+                          <dd className="text-base font-bold text-[#701e2a]">
                             <Money amount={order.total} />
                           </dd>
                         </div>
@@ -305,7 +305,7 @@ export default function OrderDetailsCard({
                       }}
                     />
                     <div
-                      className={`flex items-center gap-2 rounded-xl p-3 text-xs font-medium ${order.paidAt ? 'bg-[#f4e8d3] text-[#701734]' : 'bg-[#faf2df] text-[#816422]'}`}
+                      className={`flex items-center gap-2 rounded-xl p-3 text-xs font-medium ${order.paidAt ? 'bg-[#f4e8d3] text-[#701e2a]' : 'bg-[#faf2df] text-[#816422]'}`}
                     >
                       <AdminIcon name="shield" width={18} height={18} />
                       {order.paidAt ? 'پرداخت بانک تأیید شده است' : 'پرداخت بانک تأیید نشده است'}
@@ -317,7 +317,7 @@ export default function OrderDetailsCard({
                           className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8ded1] p-3 text-xs leading-6"
                         >
                           <div className="min-w-0 break-words">
-                            <p className="font-bold text-[#58132b]">
+                            <p className="font-bold text-[#4e141c]">
                               {paymentStatusLabels[payment.status]}
                               {payment.bankCode != null && payment.status === 'TOKEN_FAILED'
                                 ? ` · کد بانک: ${payment.bankCode}`
@@ -389,7 +389,7 @@ export default function OrderDetailsCard({
                           height={18}
                         />
                         <div className="min-w-0 text-xs leading-6">
-                          <p className="font-medium text-[#58132b]">
+                          <p className="font-medium text-[#4e141c]">
                             {orderStatusLabels[event.fromStatus]} ←{' '}
                             {orderStatusLabels[event.toStatus]}
                           </p>
@@ -408,7 +408,7 @@ export default function OrderDetailsCard({
           />
           {order.salesChannel === 'WEBSITE' && (
             <div className="mt-4 rounded-2xl border border-[#e8ded1] p-3">
-              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#58132b]">
+              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#4e141c]">
                 <AdminIcon name="edit" width={17} height={17} />
                 تغییر وضعیت سفارش
               </h4>
@@ -474,14 +474,14 @@ export default function OrderDetailsCard({
           )}
           <div className="mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#e8ded1] pt-3">
             <Button
-              className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#58132b]"
+              className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#4e141c]"
               icon={<AdminIcon name="truck" width={18} height={18} />}
               onClick={() => setPrintView('label')}
             >
               لیبل پستی / چاپ
             </Button>
             <Button
-              className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#58132b]"
+              className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#4e141c]"
               icon={<AdminIcon name="print" width={18} height={18} />}
               onClick={() => setPrintView('invoice')}
             >

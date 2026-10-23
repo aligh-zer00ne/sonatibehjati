@@ -157,7 +157,7 @@ export default function PaymentLinks() {
                         {labels[item.status]}
                       </Tag>
                     </header>
-                    <div className="text-xl font-extrabold text-[#58132b]">
+                    <div className="text-xl font-extrabold text-[#4e141c]">
                       <Money compact amount={item.amount} />
                     </div>
                     <p className="text-xs text-[#857467]">
@@ -261,7 +261,7 @@ export default function PaymentLinks() {
         {result ? (
           <div className="space-y-5">
             <h2 className="text-xl font-extrabold">لینک پرداخت آماده است</h2>
-            <div className="text-2xl font-extrabold text-[#58132b]">
+            <div className="text-2xl font-extrabold text-[#4e141c]">
               <Money compact amount={result.amount} />
             </div>
             <CopyPaymentLink url={result.url} />
@@ -407,7 +407,7 @@ export default function PaymentLinks() {
                 <p className="font-bold">
                   {scope === 'CUSTOMER_BALANCE' && user ? customerName(user) : 'دریافت مبلغ دلخواه'}
                 </p>
-                <div className="text-2xl font-extrabold text-[#58132b]">
+                <div className="text-2xl font-extrabold text-[#4e141c]">
                   <Money compact amount={Math.max(0, actualAmount)} />
                 </div>
               </div>

@@ -21,7 +21,7 @@ function Editor({ initial }: { initial: AdminAnnouncementQuery['adminHomepageCon
   const { message } = App.useApp();
   return (
     <Card title="متن نوار بالای سایت" className="max-w-3xl">
-      <div className="mb-5 flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#701734] px-4 py-3 text-center text-sm font-medium text-white">
+      <div className="mb-5 flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#701e2a] px-4 py-3 text-center text-sm font-medium text-white">
         <AdminIcon name="truck" className="shrink-0" />
         <span className="[overflow-wrap:anywhere]">{text}</span>
       </div>

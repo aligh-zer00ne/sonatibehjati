@@ -11,7 +11,7 @@ export default function PageHeading({
 }) {
   return (
     <div className="flex min-w-0 items-center gap-4">
-      <span className="grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#58132b] shadow-[0_6px_16px_#c4953626]">
+      <span className="grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]">
         <AdminIcon name={icon} width={27} />
       </span>
       <div className="min-w-0">

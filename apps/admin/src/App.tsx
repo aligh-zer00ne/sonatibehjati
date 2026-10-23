@@ -38,7 +38,7 @@ export default function App() {
           fontFamily: 'Vazirmatn Variable, sans-serif',
           fontSize: 15,
           fontWeightStrong: 700,
-          colorPrimary: '#701734',
+          colorPrimary: '#701e2a',
           colorText: '#34251e',
           colorTextSecondary: '#6c5a4c',
           colorBgLayout: '#f6f1e9',
@@ -52,7 +52,7 @@ export default function App() {
           Select: {
             optionSelectedBg: '#f3ead7',
             optionActiveBg: '#faf6ee',
-            optionSelectedColor: '#58132b',
+            optionSelectedColor: '#4e141c',
             optionFontSize: 15,
           },
           Typography: { titleMarginTop: 0, titleMarginBottom: 0 },

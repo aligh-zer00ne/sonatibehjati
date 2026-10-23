@@ -94,7 +94,7 @@ function ShippingForm({
             >
               <header className="mb-5 flex items-center justify-between">
                 <h2 className="flex items-center gap-3 text-lg font-extrabold">
-                  <span className="grid size-12 place-items-center rounded-2xl bg-[#f4e8d3] text-[#701734]">
+                  <span className="grid size-12 place-items-center rounded-2xl bg-[#f4e8d3] text-[#701e2a]">
                     <AdminIcon name="truck" />
                   </span>
                   {shippingMethodLabels[rule.method]}
@@ -210,7 +210,7 @@ function ShippingForm({
                   className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e8ded1] bg-white p-4"
                 >
                   <span className="text-sm font-bold">{shippingMethodLabels[r.method]}</span>
-                  <span className="font-extrabold text-[#701734]">
+                  <span className="font-extrabold text-[#701e2a]">
                     {result ? (
                       result.cost === 0 ? (
                         'رایگان'
