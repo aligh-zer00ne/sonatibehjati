@@ -74,7 +74,7 @@ export default function Dashboard() {
     <div className="flex items-center justify-between gap-2">
       <span>{label}</span>
       {admin && canOpenAdminPath(admin, href) && (
-        <Link to={href} className="flex items-center gap-1 text-[12px] !text-[#786044]">
+        <Link to={href} className="flex items-center gap-1 text-[13px] !text-[#786044]">
           مشاهده همه
           <AdminIcon name="arrow" width={14} height={14} />
         </Link>
@@ -144,7 +144,7 @@ export default function Dashboard() {
           {salesChannel ? salesChannelLabels[salesChannel] : 'همه مسیرهای خرید'}
         </span>
       </FilterBar>
-      <section className="grid grid-cols-2 gap-2 xl:grid-cols-4" aria-label="آمار اصلی فروشگاه">
+      <section className="grid gap-3 min-[540px]:grid-cols-2 xl:grid-cols-4" aria-label="آمار اصلی فروشگاه">
         <AnalyticsMetric
           compact
           label="خالص دریافتی"
@@ -210,7 +210,7 @@ export default function Dashboard() {
             </Link>
           ))}
       </nav>
-      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(280px,1fr)]">
+      <div className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(280px,1fr)]">
         <DashboardCharts report={data.report} onInspect={canInspect ? inspect : undefined} />
       </div>
       <section aria-label="مشتریان به تفکیک محل خرید">
@@ -302,11 +302,11 @@ export default function Dashboard() {
                   <DashboardProductImage src={product.image} title={product.title} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-bold">{product.title}</p>
-                    <p className="mt-1 text-[12px] text-[#8c8176]">
+                    <p className="mt-1 text-[13px] text-[#8c8176]">
                       {<Money amount={product.orderValue} />}
                     </p>
                   </div>
-                  <span className="rounded-full bg-[#fff0ef] px-2 py-1 text-[12px] whitespace-nowrap text-[#a51432]">
+                  <span className="rounded-full bg-[#fff0ef] px-2 py-1 text-[13px] whitespace-nowrap text-[#a51432]">
                     {formatNumber(product.quantity)} عدد
                   </span>
                 </li>
@@ -334,7 +334,7 @@ export default function Dashboard() {
                   </span>
                   <div className="min-w-0">
                     <p className="truncate text-xs font-bold">{customerName(user)}</p>
-                    <p className="mt-1 text-[12px] text-[#8c8176]">
+                    <p className="mt-1 text-[13px] text-[#8c8176]">
                       عضویت: {formatDate(user.createdAt)}
                       <span className="mt-1 block">
                         <AccountStatus balance={user.accountBalance} amount={false} />

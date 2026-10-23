@@ -75,7 +75,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 axisLine={false}
                 tickLine={false}
                 minTickGap={45}
-                tick={{ fontSize: 10, fill: '#857467' }}
+                tick={{ fontSize: 12, fill: '#857467' }}
                 tickMargin={10}
               />
               <YAxis
@@ -86,7 +86,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 axisLine={false}
                 tickLine={false}
                 width={58}
-                tick={{ fontSize: 11, fill: '#857467' }}
+                tick={{ fontSize: 12, fill: '#857467' }}
               />
               <Tooltip
                 labelFormatter={(v) => chartDate(String(v))}

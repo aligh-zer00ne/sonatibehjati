@@ -20,7 +20,7 @@ export default function DashboardProductImage({
           onError={() => setFailedSource(src)}
         />
       ) : (
-        <span className="px-1 text-center text-[9px] leading-4 text-[#8c8176]">
+        <span className="px-1 text-center text-[11px] leading-4 text-[#8c8176]">
           {src ? 'تصویر در دسترس نیست' : 'تصویر ثبت نشده'}
         </span>
       )}

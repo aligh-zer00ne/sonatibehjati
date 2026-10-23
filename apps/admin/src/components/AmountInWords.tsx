@@ -11,7 +11,7 @@ export function AmountInWords({
   const words = amount === null ? '' : amountToPersianWords(toRials(amount), currency);
   return (
     <span
-      className="mt-1 block min-h-5 text-[12px] font-normal leading-5 text-[#7d746a]"
+      className="mt-1 block min-h-5 text-[13px] font-normal leading-5 text-[#7d746a]"
       aria-live="polite"
     >
       {words || '\u00a0'}

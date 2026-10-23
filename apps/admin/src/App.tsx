@@ -39,6 +39,7 @@ export default function App() {
         token: {
           fontFamily: 'Vazirmatn Variable, sans-serif',
           fontSize: 15,
+          fontSizeSM: 14,
           fontWeightStrong: 700,
           colorPrimary: '#701e2a',
           colorText: '#34251e',
@@ -65,7 +66,7 @@ export default function App() {
             optionFontSize: 15,
           },
           Typography: { titleMarginTop: 0, titleMarginBottom: 0 },
-          Card: { headerFontSize: 16, headerHeight: 60, bodyPadding: 22 },
+          Card: { headerFontSize: 17, headerHeight: 54, bodyPadding: 18 },
           Table: { headerBg: '#f7f1e8', rowHoverBg: '#fff4e6', cellPaddingBlock: 14 },
           Button: { fontWeight: 600, primaryShadow: '0 4px 10px rgba(147,13,37,0.12)' },
         },

@@ -9,9 +9,12 @@ export default function MetricCards({
   metrics: Array<{ label: string; value: number; amount?: boolean }>;
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {metrics.map((metric) => (
-        <Card key={metric.label} className={`${cardInteraction} overflow-hidden`}>
+        <Card
+          key={metric.label}
+          className={`${cardInteraction} overflow-hidden [&_.ant-statistic-title]:!text-sm [&_.ant-statistic-title]:!font-semibold [&_.ant-statistic-content]:!text-[27px] [&_.ant-statistic-content]:!font-extrabold`}
+        >
           <Statistic
             title={metric.label}
             value={metric.amount ? toRials(metric.value) : metric.value}

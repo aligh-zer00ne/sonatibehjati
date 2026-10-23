@@ -112,13 +112,86 @@ try {
     }
   }
   // Edit only our own product and check the hidden tab fields and immutable order snapshot.
-  await page.goto(adminOrigin + '/admin/products/' + product.id + '/edit');
+  await page.goto(adminOrigin + '/admin/products');
+  const productCards = page.locator('[data-admin-record]');
+  await expect(productCards.nth(2)).toBeVisible();
+  const firstCards = await productCards.evaluateAll((cards) =>
+    cards.slice(0, 3).map((card) => ({
+      top: card.getBoundingClientRect().top,
+      height: card.getBoundingClientRect().height,
+    })),
+  );
+  assert.equal(
+    new Set(firstCards.map((card) => Math.round(card.top))).size,
+    1,
+    'three product cards per desktop row',
+  );
+  assert.ok(
+    firstCards.every((card) => card.height < 390),
+    'compact product cards',
+  );
+  const lastEdit = page.locator('[data-product-edit]').last();
+  await lastEdit.scrollIntoViewIfNeeded();
+  await lastEdit.click();
+  await expect(page.getByRole('dialog', { name: 'ویرایش محصول', exact: true })).toBeVisible();
+  const beforeCloseScroll = await page.evaluate(() => scrollY);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'ویرایش محصول', exact: true })).toBeHidden();
+  await expect(lastEdit).toBeFocused();
+  assert.ok(
+    Math.abs((await page.evaluate(() => scrollY)) - beforeCloseScroll) <= 2,
+    'catalogue scroll retained after closing',
+  );
+  await page.goto(adminOrigin + '/admin/products?search=' + product.slug);
+  const editButton = () => page.locator(`[data-product-edit="${product.id}"]`);
+  await editButton().click();
+  let editor = page.getByRole('dialog', { name: 'ویرایش محصول', exact: true });
+  await expect(editor).toBeVisible();
+  await expect(page).toHaveURL(adminOrigin + '/admin/products?search=' + product.slug);
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await editor.screenshot({
+      path: `/tmp/behjati-product-dialog-${width}.png`,
+      animations: 'disabled',
+    });
+    const bounds = await editor.boundingBox();
+    assert.ok(
+      bounds.x >= 0 && bounds.x + bounds.width <= width + 1 && bounds.y + bounds.height <= 844,
+      'editor fits viewport',
+    );
+    assert.ok(
+      await editor
+        .locator('.ant-modal-body')
+        .evaluate((el) => el.scrollWidth <= el.clientWidth + 1),
+      'editor body fits',
+    );
+  }
+  await page.getByLabel('عنوان محصول', { exact: true }).fill('پیش‌نویس ویرایش محصول');
+  await page.keyboard.press('Escape');
+  let confirmation = page.getByRole('dialog', { name: 'تغییرات محصول ذخیره نشده است' });
+  await expect(confirmation).toBeVisible();
+  await confirmation.getByRole('button', { name: 'ادامه ویرایش', exact: true }).click();
+  await expect(editor).toBeVisible();
+  await editor.locator('button.ant-modal-close').click();
+  confirmation = page.getByRole('dialog', { name: 'تغییرات محصول ذخیره نشده است' });
+  await confirmation
+    .getByRole('button', { name: 'نگه‌داشتن پیش‌نویس و برگشت', exact: true })
+    .click();
+  await expect(editor).toBeHidden();
+  await expect(editButton()).toBeFocused();
+  await editButton().click();
+  await expect(page.getByLabel('عنوان محصول', { exact: true })).toHaveValue(
+    'پیش‌نویس ویرایش محصول',
+  );
   await page.getByLabel('عنوان محصول', { exact: true }).fill('محصول ویرایش‌شده در فرم جدید');
   await page.getByLabel('قیمت (ریال)', { exact: true }).fill('1900000');
   await page.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
   await expect
     .poll(async () => (await db.product.findUniqueOrThrow({ where: { id: product.id } })).price)
     .toBe(190000);
+  await expect(editor).toBeHidden();
+  await expect(page).toHaveURL(adminOrigin + '/admin/products?search=' + product.slug);
+  await expect(editButton()).toBeFocused();
   let saved = await db.product.findUniqueOrThrow({
     where: { id: product.id },
     include: { images: true },
@@ -128,6 +201,23 @@ try {
   assert.equal(saved.images[0].alt, 'تصویر بازبینی');
   const oldItem = await db.orderItem.findFirstOrThrow({ where: { orderId: order.id } });
   assert.equal(oldItem.productTitle, product.title);
+  // An externally changed product must keep the modal/draft open without overwriting it.
+  await editButton().click();
+  await page.getByLabel('قیمت (ریال)', { exact: true }).fill('2100000');
+  await db.product.update({ where: { id: product.id }, data: { price: 195000 } });
+  await editor.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
+  await expect(editor.locator('.ant-alert-error')).toBeVisible();
+  assert.equal(
+    (await page.getByLabel('قیمت (ریال)', { exact: true }).inputValue()).replace(/[٬,]/g, ''),
+    '2100000',
+  );
+  assert.equal((await db.product.findUniqueOrThrow({ where: { id: product.id } })).price, 195000);
+  await editor.getByRole('button', { name: 'حذف پیش‌نویس', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'پیش‌نویس حذف شود؟', exact: true })
+    .getByRole('button', { name: 'حذف پیش‌نویس', exact: true })
+    .click();
+  await expect(editor).toBeHidden();
   // New product uses the actual upload, validation tabs and save API.
   await page.goto(adminOrigin + '/admin/products/new');
   newSlug = 'panel-new-' + randomBytes(6).toString('hex');
@@ -135,7 +225,10 @@ try {
   await page.getByLabel('نامک انگلیسی', { exact: true }).fill(newSlug);
   await page.getByLabel('قیمت (ریال)', { exact: true }).fill('2500000');
   await page.getByLabel('وزن یا حجم', { exact: true }).fill('یک کیلوگرم');
-  await page.getByLabel('دسته‌بندی', { exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'محصول جدید', exact: true })
+    .getByLabel('دسته‌بندی', { exact: true })
+    .click();
   await page.locator('.ant-select-item-option').filter({ hasText: category.title }).last().click();
   await page.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
   await expect(page.getByRole('tab', { name: 'آپلود تصویر', exact: true })).toHaveAttribute(
@@ -159,7 +252,8 @@ try {
   await page.getByRole('tab', { name: 'وزن ارسال', exact: true }).click();
   await page.getByLabel('وزن بسته برای ارسال (گرم)', { exact: true }).fill('1100');
   await page.getByRole('button', { name: 'ذخیره محصول', exact: true }).click();
-  await expect(page).toHaveURL(/\/admin\/products\/[^/]+\/edit$/);
+  await expect(page).toHaveURL(adminOrigin + '/admin/products');
+  await expect(page.getByRole('dialog', { name: 'محصول جدید', exact: true })).toBeHidden();
   saved = await db.product.findUniqueOrThrow({ where: { slug: newSlug } });
   products.add(saved.id);
   assert.equal(saved.price, 250000);
@@ -206,7 +300,7 @@ try {
   await touch.close();
   assert.deepEqual(errors, []);
   console.log(
-    'Panel review passed: 29 routes at 320/390/768/1440, visible designer link, actual product edit/create/upload/rial/weight/hidden-field preservation, immutable historical item, staff creation/permission editing, and real mobile card tap. Fixtures cleaned; no production/SMS/bank call.',
+    'Panel review passed: 29 routes at 320/390/768/1440, visible designer link, compact three-column cards, responsive product modal, Escape/close draft confirmation and recovery, filter/focus retention, actual product edit/create/upload/rial/weight/hidden-field preservation, immutable historical item, staff creation/permission editing, and real mobile card tap. Fixtures cleaned; no production/SMS/bank call.',
   );
 } catch (e) {
   await page?.screenshot({ path: '/tmp/behjati-panel-review-failure.png', fullPage: true });

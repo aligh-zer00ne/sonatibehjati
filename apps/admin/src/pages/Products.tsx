@@ -4,10 +4,11 @@ import AdminIcon from '../components/AdminIcon';
 import DashboardProductImage from '../components/DashboardProductImage';
 import RecordCards from '../components/RecordCards';
 import ProductPreview from '../components/ProductPreview';
+import ProductEditorDialog from '../components/ProductEditorDialog';
 import { Money } from '../components/Money';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Input, Button, Tag, Space, Popconfirm, App } from 'antd';
+import { Input, Button, Tag, Popconfirm, App } from 'antd';
 import { formatNumber } from '@behjati/shared';
 import {
   AdminProductsDocument,
@@ -20,7 +21,13 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
 import DataState from '../components/DataState';
 import PromotionEditor from '../components/PromotionEditor';
-export default function Products() {
+export default function Products({
+  initialEditorKey,
+  onEditorClose,
+}: {
+  initialEditorKey?: string;
+  onEditorClose?: () => void;
+}) {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
@@ -31,6 +38,9 @@ export default function Products() {
   const [selected, setSelected] = useState<AdminProductFieldsFragment[]>([]);
   const [promotionOpen, setPromotionOpen] = useState(false);
   const [pending, setPending] = useState(false);
+  const [editorKey, setEditorKey] = useState(initialEditorKey ?? null);
+  const [returnTo, setReturnTo] = useState<string | null>(null);
+  const returnScroll = useRef<number | null>(null);
   const { message } = App.useApp();
   const query = useAdminQuery(AdminProductsDocument, {
     input: {
@@ -42,6 +52,29 @@ export default function Products() {
       sort,
     },
   });
+  useEffect(() => {
+    if (editorKey || !query.data || !returnTo) return;
+    const frame = requestAnimationFrame(() => {
+      const target =
+        returnTo === 'new'
+          ? document.querySelector<HTMLButtonElement>('[data-product-new]')
+          : [...document.querySelectorAll<HTMLButtonElement>('[data-product-edit]')].find(
+              (button) => button.dataset.productEdit === returnTo,
+            );
+      (target ?? document.querySelector<HTMLButtonElement>('[data-product-new]'))?.focus({
+        preventScroll: true,
+      });
+      if (returnScroll.current !== null)
+        window.scrollTo({ top: returnScroll.current, behavior: 'instant' });
+      returnScroll.current = null;
+      setReturnTo(null);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [editorKey, query.data, returnTo]);
+  const closeEditor = () => {
+    setEditorKey(null);
+    onEditorClose?.();
+  };
   async function change(product: AdminProductFieldsFragment, remove: boolean) {
     setPending(true);
     try {
@@ -89,7 +122,12 @@ export default function Products() {
           </Button>
           <Button
             type="primary"
-            onClick={() => navigate('/admin/products/new')}
+            data-product-new
+            onClick={() => {
+              returnScroll.current = window.scrollY;
+              setReturnTo('new');
+              setEditorKey('new');
+            }}
             disabled={!query.data || pending}
           >
             محصول جدید
@@ -215,23 +253,30 @@ export default function Products() {
             {
               title: 'عملیات',
               render: (_, product) => (
-                <Space wrap>
-                  <ProductPreview slug={product.slug} isActive={product.isActive} />
+                <div className="grid w-full grid-cols-4 gap-2 [&_.ant-btn]:!w-full">
+                  <ProductPreview compact slug={product.slug} isActive={product.isActive} />
                   <Button
                     disabled={pending}
-                    onClick={() => navigate(`/admin/products/${product.id}/edit`)}
+                    data-product-edit={product.id}
+                    onClick={() => {
+                      returnScroll.current = window.scrollY;
+                      setReturnTo(product.id);
+                      setEditorKey(product.id);
+                    }}
+                    title="ویرایش محصول"
                     aria-label={`ویرایش ${product.title}`}
-                    icon={<AdminIcon name="edit" width={17} height={17} />}
+                    icon={<AdminIcon name="edit" width={21} height={21} />}
                   >
-                    ویرایش
+                    <span className="sr-only">ویرایش</span>
                   </Button>
                   <Button
                     disabled={pending}
                     onClick={() => void change(product, false)}
+                    title={product.isActive ? 'غیرفعال کردن' : 'فعال کردن'}
                     aria-label={`${product.isActive ? 'غیرفعال' : 'فعال'} کردن ${product.title}`}
-                    icon={<AdminIcon name="shield" width={17} height={17} />}
+                    icon={<AdminIcon name="shield" width={21} height={21} />}
                   >
-                    {product.isActive ? 'غیرفعال' : 'فعال'}
+                    <span className="sr-only">{product.isActive ? 'غیرفعال' : 'فعال'}</span>
                   </Button>
                   <Popconfirm
                     title="حذف محصول"
@@ -243,16 +288,29 @@ export default function Products() {
                     <Button
                       danger
                       disabled={pending}
+                      title="حذف محصول"
                       aria-label={`حذف ${product.title}`}
-                      icon={<AdminIcon name="trash" width={17} height={17} />}
+                      icon={<AdminIcon name="trash" width={21} height={21} />}
                     >
-                      حذف
+                      <span className="sr-only">حذف</span>
                     </Button>
                   </Popconfirm>
-                </Space>
+                </div>
               ),
             },
           ]}
+        />
+      )}
+      {editorKey && (
+        <ProductEditorDialog
+          key={editorKey}
+          editorKey={editorKey}
+          onClose={closeEditor}
+          onSaved={(saved) => {
+            setSelected((previous) => previous.filter((product) => product.id !== saved.id));
+            query.refresh();
+            closeEditor();
+          }}
         />
       )}
       {promotionOpen && selected.length > 0 && (

@@ -35,7 +35,12 @@ export async function verifyTopNavigation(page) {
     await expect(page.locator('[data-admin-dashboard]')).toHaveCount(0);
     await expect(section.locator('[data-admin-navigation-card]')).toHaveCount(expected);
     const card = section.locator('[data-admin-navigation-card]').first();
-    assert.ok((await card.boundingBox()).height >= 220);
+    const cardHeight = (await card.boundingBox()).height;
+    assert.ok(cardHeight >= 160 && cardHeight <= 300, 'compact module card');
+    assert.ok(
+      await card.locator('p').evaluate((el) => parseFloat(getComputedStyle(el).fontSize) >= 14),
+      'readable module description',
+    );
     assert.equal(
       await card.evaluate((el) => getComputedStyle(el).backgroundColor),
       'rgb(255, 255, 255)',

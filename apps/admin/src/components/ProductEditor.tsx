@@ -1,6 +1,6 @@
 import CompactTabs from './CompactTabs';
 import AdminIcon from './AdminIcon';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useImperativeHandle, useId, type Ref } from 'react';
 import { Form, Input, InputNumber, Switch, Select, Button, Alert, App } from 'antd';
 import { parseShippingWeight } from '@behjati/shared/sales';
 import { adminProductInputSchema } from '@behjati/shared/admin';
@@ -16,17 +16,23 @@ import ProductImagesFields from './ProductImagesFields';
 import { MoneyInput, Money } from './Money';
 
 type Draft = { values: Record<string, unknown>; version: string | null };
+export type ProductEditorHandle = { requestClose: () => void };
 export default function ProductEditor({
   product,
   categories,
   onSaved,
   onCancel,
+  inDialog = false,
+  closeRef,
 }: {
   product: AdminProductFieldsFragment | null;
   categories: AdminProductsQuery['categories'];
   onSaved: (product: AdminProductFieldsFragment) => void;
   onCancel: () => void;
+  inDialog?: boolean;
+  closeRef?: Ref<ProductEditorHandle>;
 }) {
+  const activeId = useId();
   const { admin } = useAdmin();
   const { modal } = App.useApp();
   const [form] = Form.useForm();
@@ -44,6 +50,18 @@ export default function ProductEditor({
     }
   });
   const [dirty, setDirty] = useState(Boolean(draft));
+  const requestClose = () => {
+    if (pending || uploading) return;
+    if (!dirty) return onCancel();
+    modal.confirm({
+      title: 'تغییرات محصول ذخیره نشده است',
+      content: 'با بستن ویرایش، پیش‌نویس در همین مرورگر باقی می‌ماند.',
+      okText: 'نگه‌داشتن پیش‌نویس و برگشت',
+      cancelText: 'ادامه ویرایش',
+      onOk: onCancel,
+    });
+  };
+  useImperativeHandle(closeRef, () => ({ requestClose }));
   useEffect(() => {
     if (!dirty) return;
     const handler = (event: BeforeUnloadEvent) => {
@@ -107,7 +125,7 @@ export default function ProductEditor({
       <h3 className="mb-4 flex items-center gap-2 font-extrabold text-[#701e2a]">
         <AdminIcon name="products" width={18} /> مشخصات و قیمت
       </h3>
-      <div className="grid gap-x-5 sm:grid-cols-2">
+      <div className={`grid gap-x-4 sm:grid-cols-2 ${inDialog ? 'lg:grid-cols-3' : ''}`}>
         <Form.Item
           name="title"
           label="عنوان محصول"
@@ -162,8 +180,8 @@ export default function ProductEditor({
           <Input maxLength={80} />
         </Form.Item>
       </div>
-      <details className="mb-5 rounded-2xl border border-[#e8ded1] bg-[#fcfaf5] p-4">
-        <summary className="mb-3 cursor-pointer text-sm font-bold text-[#701e2a]">
+      <details className="group/details mb-4 rounded-2xl border border-[#e8ded1] bg-[#fcfaf5] p-3">
+        <summary className="cursor-pointer text-sm font-bold text-[#701e2a] group-open/details:mb-3">
           معرفی و توضیحات محصول (اختیاری)
         </summary>
         <Form.Item name="shortDescription" label="معرفی کوتاه">
@@ -173,26 +191,33 @@ export default function ProductEditor({
           <Input.TextArea maxLength={10000} rows={5} />
         </Form.Item>
       </details>
-      <Form.Item name="isActive" label="فعال بودن محصول" valuePropName="checked">
-        <Switch />
-      </Form.Item>
+      <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-[#e8ded1] bg-[#fcfaf5] px-3 py-2.5">
+        <label htmlFor={activeId} className="text-sm font-semibold">
+          فعال بودن محصول
+        </label>
+        <Form.Item name="isActive" valuePropName="checked" noStyle>
+          <Switch id={activeId} />
+        </Form.Item>
+      </div>
     </>
   );
   return (
     <div data-product-editor>
-      <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#e5d5ba] bg-[#faf5e9] p-4">
-        <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#701e2a] text-[#f5d88f]">
-          <AdminIcon name="products" width={25} />
-        </span>
-        <div>
-          <h2 className="font-extrabold text-[#4e141c]">
-            {product ? 'ویرایش مشخصات کالا' : 'آماده‌سازی محصول برای فروش'}
-          </h2>
-          <p className="mt-1 text-xs leading-6 text-[#796653]">
-            مشخصات، تصویر و وزن بسته را کامل کنید؛ تخفیف در بخش جداگانه در دسترس است.
-          </p>
+      {!inDialog && (
+        <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#e5d5ba] bg-[#faf5e9] p-4">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#701e2a] text-[#f5d88f]">
+            <AdminIcon name="products" width={25} />
+          </span>
+          <div>
+            <h2 className="font-extrabold text-[#4e141c]">
+              {product ? 'ویرایش مشخصات کالا' : 'آماده‌سازی محصول برای فروش'}
+            </h2>
+            <p className="mt-1 text-xs leading-6 text-[#796653]">
+              مشخصات، تصویر و وزن بسته را کامل کنید؛ تخفیف در بخش جداگانه در دسترس است.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
       {dirty && (
         <Alert
           type="info"
@@ -207,7 +232,7 @@ export default function ProductEditor({
       <Form
         form={form}
         layout="vertical"
-        className="[&_.ant-form-item]:!mb-4"
+        className="[&_.ant-form-item]:!mb-4 [&_.ant-form-item-label>label]:!font-semibold [&_.ant-input]:!font-medium"
         initialValues={initial}
         disabled={pending}
         onValuesChange={remember}
@@ -284,8 +309,16 @@ export default function ProductEditor({
           }
         }}
       >
-        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_260px]">
-          <section className="min-w-0 rounded-[24px] border border-[#e8ded1] bg-white p-4 sm:p-6">
+        <div
+          className={`grid items-start gap-5 ${inDialog ? '' : 'xl:grid-cols-[minmax(0,1fr)_260px]'}`}
+        >
+          <section
+            className={
+              inDialog
+                ? 'min-w-0'
+                : 'min-w-0 rounded-[24px] border border-[#e8ded1] bg-white p-4 sm:p-6'
+            }
+          >
             <CompactTabs
               activeKey={tab}
               onChange={setTab}
@@ -349,37 +382,41 @@ export default function ProductEditor({
               ]}
             />
           </section>
-          <aside
-            aria-label="خلاصه محصول"
-            className="hidden rounded-[24px] border border-[#e5d5ba] bg-[#faf5e9] p-4 xl:sticky xl:top-40 xl:block"
-          >
-            <p className="mb-3 text-xs font-bold text-[#796653]">خلاصهٔ محصول</p>
-            <div className="grid aspect-square place-items-center overflow-hidden rounded-2xl border border-[#e8ded1] bg-white">
-              {images?.[0]?.url ? (
-                <img
-                  src={images[0].url}
-                  alt={images[0].alt || 'تصویر محصول'}
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                <AdminIcon name="products" width={48} className="text-[#b49b76]" />
-              )}
-            </div>
-            <h3 className="mt-4 break-words font-extrabold text-[#4e141c]">
-              {title || 'نام محصول'}
-            </h3>
-            <p className="mt-2 text-lg font-extrabold">
-              {typeof price === 'number' ? <Money amount={price} /> : 'قیمت را وارد کنید'}
-            </p>
-            <p className="mt-3 rounded-xl border border-[#e5d5ba] bg-white px-3 py-2 text-xs text-[#796653]">
-              {active
-                ? 'پس از ذخیره در فروشگاه نمایش داده می‌شود'
-                : 'این محصول در فروشگاه نمایش داده نمی‌شود'}
-            </p>
-          </aside>
+          {!inDialog && (
+            <aside
+              aria-label="خلاصه محصول"
+              className="hidden rounded-[24px] border border-[#e5d5ba] bg-[#faf5e9] p-4 xl:sticky xl:top-40 xl:block"
+            >
+              <p className="mb-3 text-xs font-bold text-[#796653]">خلاصهٔ محصول</p>
+              <div className="grid aspect-square place-items-center overflow-hidden rounded-2xl border border-[#e8ded1] bg-white">
+                {images?.[0]?.url ? (
+                  <img
+                    src={images[0].url}
+                    alt={images[0].alt || 'تصویر محصول'}
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <AdminIcon name="products" width={48} className="text-[#b49b76]" />
+                )}
+              </div>
+              <h3 className="mt-4 break-words font-extrabold text-[#4e141c]">
+                {title || 'نام محصول'}
+              </h3>
+              <p className="mt-2 text-lg font-extrabold">
+                {typeof price === 'number' ? <Money amount={price} /> : 'قیمت را وارد کنید'}
+              </p>
+              <p className="mt-3 rounded-xl border border-[#e5d5ba] bg-white px-3 py-2 text-xs text-[#796653]">
+                {active
+                  ? 'پس از ذخیره در فروشگاه نمایش داده می‌شود'
+                  : 'این محصول در فروشگاه نمایش داده نمی‌شود'}
+              </p>
+            </aside>
+          )}
         </div>
         {error && <Alert className="!mt-4" title={error} type="error" role="alert" showIcon />}
-        <div className="sticky bottom-3 z-20 mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-[#e5d5ba] bg-white/95 p-3 shadow-[0_8px_30px_#62452f18] backdrop-blur-sm">
+        <div
+          className={`sticky z-20 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e5d5ba] bg-white/95 p-3 shadow-[0_8px_30px_#62452f18] backdrop-blur-sm ${inDialog ? '-bottom-4 sm:-bottom-5' : 'bottom-3'}`}
+        >
           <Button
             type="primary"
             htmlType="submit"
@@ -389,20 +426,8 @@ export default function ProductEditor({
           >
             ذخیره محصول
           </Button>
-          <Button
-            disabled={pending || uploading}
-            onClick={() => {
-              if (!dirty) return onCancel();
-              modal.confirm({
-                title: 'تغییرات محصول ذخیره نشده است',
-                content: 'برای برگشت به فهرست، پیش‌نویس را نگه دارید یا آن را حذف کنید.',
-                okText: 'نگه‌داشتن پیش‌نویس و برگشت',
-                cancelText: 'ادامه ویرایش',
-                onOk: onCancel,
-              });
-            }}
-          >
-            بازگشت به محصولات
+          <Button disabled={pending || uploading} onClick={requestClose}>
+            {inDialog ? 'انصراف' : 'بازگشت به محصولات'}
           </Button>
           {dirty && (
             <Button

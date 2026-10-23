@@ -190,7 +190,7 @@ export default function Reports() {
         <Button
           type="text"
           size="small"
-          className="!ms-auto !text-[12px] !text-[#701e2a]"
+          className="!ms-auto !text-[13px] !text-[#701e2a]"
           onClick={() => {
             setRange(defaultReportRange());
             setStatus('');

@@ -88,7 +88,7 @@ export default function AdminFrame() {
                 <span className="block text-[13px] leading-7 font-extrabold sm:text-[17px] xl:text-lg">
                   سنتی بهجتی اردکان
                 </span>
-                <span className="block text-[10px] leading-6 text-[#f2d6a2] sm:text-xs">
+                <span className="block text-[13px] leading-6 text-[#f2d6a2] sm:text-xs">
                   پنل مدیریت فروشگاه
                 </span>
               </span>
@@ -217,7 +217,7 @@ export default function AdminFrame() {
             className="h-px flex-1 bg-gradient-to-r from-[#bd9148] to-transparent"
           />
         </div>
-        <span className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
+        <span className="flex flex-wrap items-center justify-center gap-2 text-[13px]">
           پنل مدیریت سنتی بهجتی اردکان
           <span aria-hidden="true" className="size-1 rounded-full bg-[#c49536]" />
           {owner ? 'دسترسی مدیر' : 'دسترسی همکار'}

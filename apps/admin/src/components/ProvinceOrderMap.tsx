@@ -76,7 +76,7 @@ export default function ProvinceOrderMap({
           ? `${formatNumber(current.count)} سفارش · ${formatNumber(current.locatedCount)} دارای موقعیت`
           : 'استان را لمس یا انتخاب کنید'}
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-[#e8ded1] bg-white/85 px-4 py-3 text-[11px] text-[#857467]">
+      <div className="flex items-center justify-between gap-3 border-t border-[#e8ded1] bg-white/85 px-4 py-3 text-[13px] text-[#857467]">
         <span>رنگ پررنگ‌تر = سفارش بیشتر</span>
         <div className="flex items-center gap-2">
           <span>۰</span>

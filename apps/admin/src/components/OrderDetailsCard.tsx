@@ -64,7 +64,7 @@ function OrderDetailTabs({
               onChange(target.key);
               document.getElementById(`${id}-tab-${target.key}`)?.focus();
             }}
-            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[12px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#e5d1aa] bg-[#f4e8d3] font-bold text-[#701e2a]' : 'border-transparent text-[#76685d] hover:bg-[#fbf7ee]'}`}
+            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[13px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#e5d1aa] bg-[#f4e8d3] font-bold text-[#701e2a]' : 'border-transparent text-[#76685d] hover:bg-[#fbf7ee]'}`}
           >
             <span className="hidden shrink-0 sm:inline-flex">{item.icon}</span>
             {item.label}
@@ -97,7 +97,7 @@ function Field({
 }) {
   return (
     <div className={`min-w-0 rounded-xl bg-[#f4e8d3] p-3 ${wide ? 'sm:col-span-2' : ''}`}>
-      <dt className="mb-1.5 flex items-center gap-1.5 text-[12px] text-[#76685d]">
+      <dt className="mb-1.5 flex items-center gap-1.5 text-[13px] text-[#76685d]">
         <AdminIcon name={icon} width={15} height={15} />
         {label}
       </dt>
@@ -133,7 +133,7 @@ export default function OrderDetailsCard({
           <h3 className="text-sm font-bold text-[#701e2a]">
             جزئیات سفارش {order && formatNumber(order.number)}
           </h3>
-          <p className="mt-1 text-[12px] text-[#76685d]">اطلاعات ثبت‌شده هنگام خرید</p>
+          <p className="mt-1 text-[13px] text-[#76685d]">اطلاعات ثبت‌شده هنگام خرید</p>
         </div>
         {order && !onClose && (
           <div className="ms-auto shrink-0">
@@ -181,10 +181,10 @@ export default function OrderDetailsCard({
                             <p className="break-words text-xs leading-6 font-bold text-[#62452f]">
                               {item.productTitle}
                             </p>
-                            <p className="text-[12px] leading-6 text-[#76685d]">
+                            <p className="text-[13px] leading-6 text-[#76685d]">
                               {item.productWeight} · {formatNumber(item.quantity)} عدد
                             </p>
-                            <div className="mt-1 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[12px] leading-6">
+                            <div className="mt-1 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[13px] leading-6">
                               <span className="text-[#76685d]">
                                 قیمت واحد: {formatPrice(item.unitPrice)}
                               </span>
@@ -393,7 +393,7 @@ export default function OrderDetailsCard({
                             {orderStatusLabels[event.fromStatus]} ←{' '}
                             {orderStatusLabels[event.toStatus]}
                           </p>
-                          <p className="break-words text-[12px] text-[#76685d]">
+                          <p className="break-words text-[13px] text-[#76685d]">
                             {formatDateTime(event.createdAt)} · <bdi>{event.admin.email}</bdi>
                           </p>
                         </div>
@@ -412,7 +412,7 @@ export default function OrderDetailsCard({
                 <AdminIcon name="edit" width={17} height={17} />
                 تغییر وضعیت سفارش
               </h4>
-              <p className="mb-3 text-[12px] leading-6 text-[#76685d]">
+              <p className="mb-3 text-[13px] leading-6 text-[#76685d]">
                 تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست.
               </p>
               {orderStatusTransitions[order.status].length ? (

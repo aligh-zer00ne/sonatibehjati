@@ -90,7 +90,7 @@ function StoreForm({
             </p>
           </div>
           <span
-            className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${dirty ? 'bg-[#fff1d5] text-[#886113]' : configured ? 'bg-[#e8f1e9] text-[#38634a]' : 'bg-[#f4eee6] text-[#857467]'}`}
+            className={`shrink-0 rounded-full px-2 py-1 text-[13px] font-bold ${dirty ? 'bg-[#fff1d5] text-[#886113]' : configured ? 'bg-[#e8f1e9] text-[#38634a]' : 'bg-[#f4eee6] text-[#857467]'}`}
           >
             {dirty ? 'ذخیره‌نشده' : configured ? 'ثبت‌شده' : 'تکمیل شود'}
           </span>

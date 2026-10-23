@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Modal } from 'antd';
 import AdminIcon from './AdminIcon';
-export default function ProductPreview({ slug, isActive }: { slug: string; isActive: boolean }) {
+export default function ProductPreview({ slug, isActive, compact = false }: { slug: string; isActive: boolean; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const [revision, setRevision] = useState(0);
   const origin =
@@ -13,15 +13,16 @@ export default function ProductPreview({ slug, isActive }: { slug: string; isAct
   return (
     <>
       <Button
-        icon={<AdminIcon name="eye" width={17} height={17} />}
+        icon={<AdminIcon name="eye" width={21} height={21} />}
+        aria-label="مشاهده در سایت"
         disabled={!isActive}
-        title={!isActive ? 'برای نمایش در سایت، محصول باید فعال باشد.' : undefined}
+        title={!isActive ? 'برای نمایش در سایت، محصول باید فعال باشد.' : 'مشاهده در سایت'}
         onClick={() => {
           setRevision((value) => value + 1);
           setOpen(true);
         }}
       >
-        مشاهده در سایت
+        <span className={compact ? 'sr-only' : undefined}>مشاهده در سایت</span>
       </Button>
       <Modal
         title="پیش‌نمایش محصول در سایت"

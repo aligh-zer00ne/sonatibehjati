@@ -46,7 +46,7 @@ function LoginLayout({ children }: { children: ReactNode }) {
                 />
               </div>
               <div>
-                <p className="mb-1 text-[11px] font-semibold text-[#f2d6a2] md:hidden">
+                <p className="mb-1 text-[13px] font-semibold text-[#f2d6a2] md:hidden">
                   مدیریت فروشگاه
                 </p>
                 <p className="text-[23px] leading-normal font-extrabold sm:text-[28px] md:text-[34px]">

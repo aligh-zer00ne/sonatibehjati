@@ -159,13 +159,13 @@ export default function PriceAnnouncement() {
                     </span>
                     <div className="min-w-0">
                       <h2 className="text-sm leading-6 font-bold">{row.title}</h2>
-                      <p className="mt-1 text-[11px] text-[#857467]">
+                      <p className="mt-1 text-[13px] text-[#857467]">
                         {row.weight} · {row.categoryTitle} {!row.isActive && <Tag>غیرفعال</Tag>}
                       </p>
                     </div>
                   </div>
                   <div className="text-xs font-semibold tabular-nums">
-                    <span className="mb-1 block text-[11px] font-normal text-[#857467] md:hidden">
+                    <span className="mb-1 block text-[13px] font-normal text-[#857467] md:hidden">
                       قیمت فعلی
                     </span>
                     {formatAdminPrice(row.price)}
@@ -173,7 +173,7 @@ export default function PriceAnnouncement() {
                   <div>
                     <label
                       htmlFor={`price-${row.id}`}
-                      className="mb-1 block text-[11px] text-[#857467] md:sr-only"
+                      className="mb-1 block text-[13px] text-[#857467] md:sr-only"
                     >
                       قیمت جدید {row.title} (ریال)
                     </label>
@@ -197,7 +197,7 @@ export default function PriceAnnouncement() {
                       }
                     />
                   </div>
-                  <div className="col-span-2 flex items-center justify-between gap-2 text-[11px] md:col-span-1 md:flex-col md:items-start">
+                  <div className="col-span-2 flex items-center justify-between gap-2 text-[13px] md:col-span-1 md:flex-col md:items-start">
                     <span
                       className={
                         diff != null && diff !== 0 ? 'font-bold text-[#701e2a]' : 'text-[#9d8a76]'
@@ -236,7 +236,7 @@ export default function PriceAnnouncement() {
               <b className="text-sm text-[#4e141c]">
                 {formatNumber(changes.length)} تغییر آمادهٔ ذخیره
               </b>
-              <p className="mt-1 text-[11px] text-[#857467]">
+              <p className="mt-1 text-[13px] text-[#857467]">
                 ذخیره شامل تغییرهای پنهان‌شده با جستجو هم می‌شود. تخفیف‌ها و فاکتورهای قبلی حفظ
                 می‌شوند.
               </p>

@@ -86,7 +86,7 @@ export default function RecordCards<T extends object>({
   const narrowFields = fields.filter((field) => !isWide(field));
   const displayFields = [...narrowFields, ...fields.filter(isWide)];
   return (
-    <div aria-label={label} className="min-w-0 space-y-4">
+    <div aria-label={label} className="@container/records min-w-0 space-y-3">
       {rowSelection && records.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8ded1] bg-[#fbf7ef] px-4 py-2.5 text-xs">
           <Checkbox
@@ -111,7 +111,7 @@ export default function RecordCards<T extends object>({
           <Empty description="موردی برای نمایش پیدا نشد." />
         </div>
       ) : (
-        <div className="grid min-w-0 items-start gap-4 xl:grid-cols-2">
+        <div className="grid min-w-0 items-start gap-3 @min-[640px]/records:grid-cols-2 @min-[1080px]/records:grid-cols-3">
           {records.map((record, index) => {
             const title = titleField ? valueOf(titleField, record, index) : label;
             const actionValues = actions
@@ -122,7 +122,7 @@ export default function RecordCards<T extends object>({
                 key={keyOf(record)}
                 data-admin-record
                 data-interactive-card
-                className={`${cardInteraction} min-w-0 overflow-hidden rounded-3xl border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08] sm:p-5`}
+                className={`${cardInteraction} min-w-0 overflow-hidden rounded-[22px] border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08]`}
               >
                 <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701e2a]" />
                 <header className="mb-3 flex items-start gap-3">
@@ -131,14 +131,16 @@ export default function RecordCards<T extends object>({
                   ) : (
                     <span
                       data-card-icon
-                      className={`${cardIconInteraction} flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#701e2a]`}
+                      className={`${cardIconInteraction} flex size-12 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#701e2a]`}
                     >
-                      <AdminIcon name={icon} width={22} height={22} />
+                      <AdminIcon name={icon} width={25} height={25} />
                     </span>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="mb-1 text-[12px] text-[#76685d]">{titleField?.title ?? label}</p>
-                    <h3 className="[overflow-wrap:anywhere] text-base leading-7 font-extrabold text-[#4e141c]">
+                    <p className="mb-0.5 text-[13px] text-[#76685d]">
+                      {titleField?.title ?? label}
+                    </p>
+                    <h3 className="[overflow-wrap:anywhere] text-[17px] leading-7 font-extrabold text-[#4e141c]">
                       {title}
                     </h3>
                   </div>
@@ -161,12 +163,12 @@ export default function RecordCards<T extends object>({
                   )}
                 </header>
                 {featured && (
-                  <div className="mb-3 rounded-2xl border border-[#e5d1aa] bg-gradient-to-l from-[#f4e8d3] to-[#fcf9f3] px-3 py-2.5">
-                    <p className="mb-1 flex items-center gap-1.5 text-[12px] text-[#76685d]">
-                      <AdminIcon name={fieldIcon(featured.title)} width={14} height={14} />
+                  <div className="mb-2.5 rounded-2xl border border-[#e5d1aa] bg-gradient-to-l from-[#f4e8d3] to-[#fcf9f3] px-3 py-2.5">
+                    <p className="mb-0.5 flex items-center gap-1.5 text-[13px] text-[#76685d]">
+                      <AdminIcon name={fieldIcon(featured.title)} width={16} height={16} />
                       {featured.title}
                     </p>
-                    <div className="[overflow-wrap:anywhere] text-base font-bold text-[#701e2a]">
+                    <div className="[overflow-wrap:anywhere] text-xl font-extrabold tabular-nums text-[#701e2a]">
                       {valueOf(featured, record, index)}
                     </div>
                   </div>
@@ -175,13 +177,13 @@ export default function RecordCards<T extends object>({
                   {displayFields.map((field) => (
                     <div
                       key={field.title}
-                      className={`min-w-0 rounded-xl bg-[#f8f3ea] p-3 ${isWide(field) || (narrowFields.length % 2 === 1 && field === narrowFields.at(-1)) ? 'col-span-2' : ''}`}
+                      className={`min-w-0 rounded-xl bg-[#f8f3ea] px-3 py-2 ${isWide(field) ? 'col-span-2' : narrowFields.length % 2 === 1 && field === narrowFields.at(-1) ? 'col-span-2 flex items-center justify-between gap-2 [&_dt]:mb-0' : ''}`}
                     >
-                      <dt className="mb-1.5 flex items-center gap-1.5 text-[12px] text-[#76685d]">
+                      <dt className="mb-0.5 flex items-center gap-1.5 text-[13px] text-[#76685d]">
                         <AdminIcon
                           name={field.icon ?? fieldIcon(field.title)}
-                          width={14}
-                          height={14}
+                          width={16}
+                          height={16}
                           className="shrink-0 text-[#b7825b]"
                         />
                         {field.title}
@@ -193,7 +195,7 @@ export default function RecordCards<T extends object>({
                   ))}
                 </dl>
                 {actionValues.length > 0 && (
-                  <footer className="mt-3 space-y-2 border-t border-dashed border-[#e5d7c2] pt-3">
+                  <footer className="mt-2.5 space-y-2 border-t border-dashed border-[#e5d7c2] pt-2.5">
                     {actionValues.map(({ field, value }) => (
                       <div
                         key={field.title}

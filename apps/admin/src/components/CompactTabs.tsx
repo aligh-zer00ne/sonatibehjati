@@ -15,7 +15,7 @@ export default function CompactTabs({
       <div
         role="tablist"
         aria-label="بخش‌های ویرایش محصول"
-        className="mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-[#f6f0e6] p-2 sm:grid-cols-4"
+        className="mb-4 grid grid-cols-2 gap-2 rounded-2xl bg-[#f6f0e6] p-2 sm:grid-cols-4"
       >
         {items.map((item, index) => (
           <button

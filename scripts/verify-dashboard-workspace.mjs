@@ -103,6 +103,42 @@ try {
   await page.goto(adminOrigin + '/admin');
   await expect(page.locator('[data-admin-dashboard]')).toBeVisible();
   await expect(page.locator('[data-dashboard-donut]')).toHaveAttribute('data-donut-ready', 'true');
+  const donut = page.locator('[data-dashboard-donut]');
+  await expect(donut.locator('.recharts-tooltip-wrapper')).toHaveCount(0);
+  const assertReadableCenter = async () => {
+    const geometry = await donut.evaluate((el) => {
+      const bounds = el.getBoundingClientRect();
+      const summary = el.querySelector('[data-donut-summary]');
+      const center = summary.getBoundingClientRect();
+      return {
+        dx: Math.abs(center.x + center.width / 2 - bounds.x - bounds.width / 2),
+        dy: Math.abs(center.y + center.height / 2 - bounds.y - bounds.height / 2),
+        rows: [...summary.children].map((row) => ({
+          top: row.getBoundingClientRect().top,
+          bottom: row.getBoundingClientRect().bottom,
+          font: parseFloat(getComputedStyle(row).fontSize),
+          fits: row.scrollWidth <= row.clientWidth + 1,
+        })),
+      };
+    });
+    assert.ok(geometry.dx < 2 && geometry.dy < 2, 'donut text remains centered');
+    assert.ok(
+      geometry.rows.every((row) => row.font >= 13 && row.fits),
+      'readable center text without clipping',
+    );
+    assert.ok(
+      geometry.rows.every((row, index) => !index || row.top >= geometry.rows[index - 1].bottom),
+      'center text does not overlap',
+    );
+  };
+  await assertReadableCenter();
+  for (const status of ['PROCESSING', 'PENDING_PAYMENT', 'DELIVERED']) {
+    await page
+      .getByRole('button', { name: `نمایش سفارش‌های ${labels[status]}`, exact: true })
+      .hover();
+    await assertReadableCenter();
+  }
+  await page.mouse.move(5, 5);
   await verifyTopNavigation(page);
   const hero = page.locator('[data-admin-dashboard] > header');
   await verifySurfaceMotion(page, hero, { ambient: true });

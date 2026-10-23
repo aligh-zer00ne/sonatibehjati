@@ -103,7 +103,7 @@ export default function OrdersMap() {
               >
                 <div className="mb-2 flex items-center gap-2 text-[#9e7544]">
                   <AdminIcon name={icon} width={18} className={cardIconInteraction} />
-                  <span className="text-[10px] leading-5 sm:text-xs">{label}</span>
+                  <span className="text-[13px] leading-5 sm:text-xs">{label}</span>
                 </div>
                 <strong
                   data-map-metric={icon}
@@ -143,7 +143,7 @@ export default function OrdersMap() {
                   حذف انتخاب استان {current.name}
                 </Button>
               )}
-              <p className="mt-3 text-[11px] leading-6 text-[#857467]">
+              <p className="mt-3 text-[13px] leading-6 text-[#857467]">
                 رنگ پررنگ‌تر یعنی سفارش بیشتر؛ آمار هر استان سفارش‌های بدون مختصات را هم شامل
                 می‌شود.
               </p>
@@ -254,7 +254,7 @@ export default function OrdersMap() {
                             <strong className="block text-xs">
                               {customerName(order.user)} · {formatNumber(order.number)}
                             </strong>
-                            <span className="mt-1 block text-[11px] leading-6 text-[#857467]">
+                            <span className="mt-1 block text-[13px] leading-6 text-[#857467]">
                               {order.address.city || order.address.province || 'مقصد ثبت نشده'} ·{' '}
                               {orderStatusLabels[order.status]}
                             </span>

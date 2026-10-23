@@ -49,15 +49,15 @@ export default function OrderSummaryCard({
         <header className="flex items-center gap-2.5">
           <span
             data-card-icon
-            className={`${cardIconInteraction} grid size-10 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#4e141c] shadow-[0_3px_8px_#b7825b26]`}
+            className={`${cardIconInteraction} grid size-12 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#4e141c] shadow-[0_3px_8px_#b7825b26]`}
           >
-            <AdminIcon name="person" width={21} />
+            <AdminIcon name="person" width={25} />
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="break-words text-sm font-bold leading-6 text-[#34251e]">
+            <h3 className="break-words text-base font-bold leading-6 text-[#34251e]">
               {customerName(order.user)}
             </h3>
-            <p className="line-clamp-1 text-[11px] text-[#857467]">
+            <p className="line-clamp-1 text-[13px] text-[#857467]">
               {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}
               {salesChannelLabels[order.salesChannel]} ·{' '}
               {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
@@ -65,7 +65,7 @@ export default function OrderSummaryCard({
             </p>
           </div>
           <span className="shrink-0 rounded-lg border border-[#e8ded1] bg-[#faf6ee] px-2 py-1 text-center">
-            <small className="block text-[9px] text-[#857467]">{compact ? 'ردیف' : 'سفارش'}</small>
+            <small className="block text-[13px] text-[#857467]">{compact ? 'ردیف' : 'سفارش'}</small>
             <b className="text-xs text-[#4e141c]" data-record-number>
               {formatNumber(compact ? index + 1 : order.number)}
             </b>
@@ -73,12 +73,12 @@ export default function OrderSummaryCard({
         </header>
         <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#e8d9bf] bg-gradient-to-l from-[#f4e8d3] to-[#fbf8f0] px-3 py-2">
           <div className="min-w-0">
-            <span className="block text-[10px] text-[#857467]">مبلغ سفارش</span>
-            <b className="block break-words text-base leading-7 tabular-nums text-[#4e141c]">
+            <span className="block text-[13px] text-[#857467]">مبلغ سفارش</span>
+            <b className="block break-words text-lg leading-7 tabular-nums text-[#4e141c]">
               {formatAdminPrice(order.total)}
             </b>
           </div>
-          <div className="[&_.ant-tag]:!m-0 [&_.ant-tag]:!rounded-md [&_.ant-tag]:!text-[11px]">
+          <div className="[&_.ant-tag]:!m-0 [&_.ant-tag]:!rounded-md [&_.ant-tag]:!text-[13px]">
             {order.salesChannel === 'WEBSITE' ? (
               <OrderStatus status={order.status} />
             ) : (
@@ -88,8 +88,8 @@ export default function OrderSummaryCard({
         </div>
         <dl className="mt-2 grid grid-cols-2 gap-2 text-xs">
           <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
-            <dt className="flex items-center gap-1 text-[10px] text-[#857467]">
-              <AdminIcon name="phone" width={12} />
+            <dt className="flex items-center gap-1 text-[13px] text-[#857467]">
+              <AdminIcon name="phone" width={16} />
               موبایل مشتری
             </dt>
             <dd className="mt-0.5 font-semibold text-[#62452f]">
@@ -97,8 +97,8 @@ export default function OrderSummaryCard({
             </dd>
           </div>
           <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
-            <dt className="flex items-center gap-1 text-[10px] text-[#857467]">
-              <AdminIcon name="calendar" width={12} />
+            <dt className="flex items-center gap-1 text-[13px] text-[#857467]">
+              <AdminIcon name="calendar" width={16} />
               تاریخ ثبت
             </dt>
             <dd className="mt-0.5 font-semibold text-[#62452f]">
@@ -117,7 +117,7 @@ export default function OrderSummaryCard({
               onClick={onToggle}
               className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#4e141c] transition hover:border-[#b7825b] hover:bg-[#f0e0c7] aria-expanded:border-[#c69b48] aria-expanded:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-expanded:shadow-[0_3px_10px_#c69b4830] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
             >
-              <AdminIcon name="receipt" width={16} />
+              <AdminIcon name="receipt" width={20} />
               <span>{expanded ? 'بستن' : 'جزئیات'}</span>
             </button>
             <button
@@ -127,7 +127,7 @@ export default function OrderSummaryCard({
               onClick={() => setPrint('invoice')}
               className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#4e141c]"
             >
-              <AdminIcon name="print" width={17} />
+              <AdminIcon name="print" width={21} />
             </button>
             <button
               type="button"
@@ -136,7 +136,7 @@ export default function OrderSummaryCard({
               onClick={() => setPrint('label')}
               className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#4e141c]"
             >
-              <AdminIcon name="truck" width={17} />
+              <AdminIcon name="truck" width={21} />
             </button>
           </div>
         )}

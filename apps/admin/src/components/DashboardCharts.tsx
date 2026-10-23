@@ -141,7 +141,7 @@ export default function DashboardCharts({
                 tickFormatter={chartDate}
                 axisLine={false}
                 tickLine={false}
-                fontSize={10}
+                fontSize={12}
                 tickMargin={12}
               />
               <YAxis
@@ -149,7 +149,7 @@ export default function DashboardCharts({
                 axisLine={false}
                 tickLine={false}
                 width={60}
-                fontSize={10}
+                fontSize={12}
               />
               <Tooltip
                 labelFormatter={(value) => chartDate(String(value))}
@@ -202,7 +202,7 @@ export default function DashboardCharts({
                   onClick={() =>
                     onInspect(`سفارش‌های ${chartDate(d.date)}`, { from: d.date, to: d.date })
                   }
-                  className="rounded-md border border-[#e8ded1] bg-[#fcf9f3] px-2 py-1 text-[11px] text-[#62452f] hover:bg-[#f4e8d3]"
+                  className="rounded-md border border-[#e8ded1] bg-[#fcf9f3] px-2 py-1 text-[13px] text-[#62452f] hover:bg-[#f4e8d3]"
                 >
                   {chartDate(d.date)} · {formatNumber(d.ordersCount)} سفارش
                 </button>
@@ -232,7 +232,7 @@ export default function DashboardCharts({
             <div
               data-dashboard-donut
               data-donut-ready={!animate || introFinished}
-              className="relative isolate mx-auto mb-4 h-[270px] w-full overflow-hidden rounded-[24px] border border-[#d7b476]/40 bg-[radial-gradient(ellipse_at_top_right,#71333d,transparent_70%),linear-gradient(135deg,#521b25,#290c12)] shadow-[inset_0_1px_0_#fff4cd20]"
+              className="relative isolate mx-auto mb-3 h-[248px] w-full overflow-hidden rounded-[24px] border border-[#d7b476]/40 bg-[radial-gradient(ellipse_at_top_right,#71333d,transparent_70%),linear-gradient(135deg,#521b25,#290c12)] shadow-[inset_0_1px_0_#fff4cd20]"
               dir="ltr"
             >
               <AmbientBackdrop />
@@ -244,8 +244,8 @@ export default function DashboardCharts({
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={75}
-                    outerRadius={101}
+                    innerRadius={82}
+                    outerRadius={106}
                     paddingAngle={4}
                     cornerRadius={6}
                     isAnimationActive={animate && !introFinished}
@@ -258,7 +258,7 @@ export default function DashboardCharts({
                         <Sector
                           {...props}
                           outerRadius={
-                            (props.outerRadius ?? 101) + (activeStatus === item?.status ? 5 : 0)
+                            (props.outerRadius ?? 106) + (activeStatus === item?.status ? 5 : 0)
                           }
                           opacity={activeStatus && activeStatus !== item?.status ? 0.4 : 1}
                           data-dashboard-status={item?.status}
@@ -288,34 +288,33 @@ export default function DashboardCharts({
                       );
                     }}
                   />
-                  <Tooltip formatter={(value) => formatNumber(Number(value))} />
                 </PieChart>
               </ResponsiveContainer>
               <div
-                className="pointer-events-none absolute inset-0 z-20 grid place-content-center text-center"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-20 flex w-[144px] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
                 dir="rtl"
                 aria-live="polite"
                 data-donut-summary
               >
-                <span className="mb-1 text-[11px] text-[#edc57d]">
+                <span className="mb-1 text-[13px] leading-5 font-semibold text-[#f7d98e]">
                   {highlighted
                     ? `${formatNumber(share(highlighted.count))}٪ از سفارش‌ها`
                     : 'نمای کلی سفارش‌ها'}
                 </span>
-                <b className="text-4xl font-black tabular-nums text-[#fff4d8]">
+                <b className="text-[38px] leading-[48px] font-black tabular-nums text-[#fff4d8]">
                   {formatNumber(highlighted?.count ?? report.ordersCount)}
                 </b>
-                <span className="mt-1 max-w-32 text-[11px] text-[#f2d6a2]">
+                <span className="mt-1 w-full text-sm leading-6 font-semibold text-[#fff0cf]">
                   {highlighted?.name ?? 'سفارش در ۳۰ روز اخیر'}
                 </span>
               </div>
             </div>
-            <p className="mb-2 text-center text-[11px] text-[#857467]">
+            <p className="mb-2 text-center text-[13px] leading-6 text-[#6d594b]">
               {onInspect
                 ? 'روی بخش نمودار یا وضعیت بزنید تا سفارش‌ها باز شوند.'
                 : 'آمار ۳۰ روز اخیر'}
             </p>
-            <ul className="mt-2 grid gap-2 text-[12px]">
+            <ul className="mt-2 grid gap-2 text-[13px]">
               {statuses.map((item) => (
                 <li key={item.status}>
                   <button
@@ -337,10 +336,10 @@ export default function DashboardCharts({
                       {item.name}
                     </span>
                     <span className="flex items-center gap-2">
-                      <span className="text-[11px] text-[#857467]">
+                      <span className="text-[13px] text-[#857467]">
                         {formatNumber(share(item.count))}٪
                       </span>
-                      <b className="min-w-6 text-center text-sm">{formatNumber(item.count)}</b>
+                      <b className="min-w-6 text-center text-lg">{formatNumber(item.count)}</b>
                       {onInspect && <AdminIcon name="arrow" width={13} />}
                     </span>
                   </button>

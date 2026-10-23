@@ -69,18 +69,18 @@ export default function FinancialHub() {
           <ActionCardLink
             key={item.href}
             to={'/admin/settlements/' + item.href}
-            className="flex min-h-[245px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] !bg-white p-6 !text-[#34251e] shadow-[0_6px_22px_#62452f0a]"
+            className="flex min-h-[202px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_6px_22px_#62452f0a]"
           >
             <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#c49536,#4e141c)]" />
             <span
               data-card-icon
-              className={`${cardIconInteraction} mb-5 grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]`}
+              className={`${cardIconInteraction} mb-2.5 grid size-12 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]`}
             >
               <AdminIcon name={item.icon} width={27} height={27} />
             </span>
             <h2 className="text-lg font-extrabold">{item.title}</h2>
-            <p className="mt-3 flex-1 text-sm leading-8 text-[#796653]">{item.description}</p>
-            <span className="mt-5 flex items-center justify-between border-t border-dashed border-[#e8ded1] pt-3 text-xs font-bold text-[#a17b3d]">
+            <p className="mt-1.5 flex-1 text-sm leading-7 text-[#796653]">{item.description}</p>
+            <span className="mt-3 flex items-center justify-between border-t border-dashed border-[#e8ded1] pt-3 text-xs font-bold text-[#a17b3d]">
               ورود به بخش
               <AdminIcon name="arrow" width={18} />
             </span>

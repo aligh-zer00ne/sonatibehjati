@@ -36,24 +36,28 @@ export default function AnalyticsMetric({
     >
       {featured && <AmbientBackdrop />}
       <SurfaceGlow />
-      <div
-        className={`${compact ? 'mb-2' : 'mb-4'} relative z-10 flex items-center justify-between gap-2`}
-      >
-        <h2 className={`text-xs font-semibold ${featured ? 'text-[#f7ddbb]' : 'text-[#76685d]'}`}>
-          {label}
-        </h2>
+      <div className="relative z-10 flex items-center gap-3">
         <span
           data-card-icon
-          className={`${onInspect ? cardIconInteraction : ''} grid size-9 shrink-0 place-items-center rounded-xl ${featured ? 'bg-white/10 text-[#ecc878]' : 'bg-[#f8f0e1] text-[#701e2a]'}`}
+          className={`${onInspect ? cardIconInteraction : ''} grid size-12 shrink-0 place-items-center rounded-2xl ${featured ? 'bg-white/10 text-[#ecc878]' : 'border border-[#e7ce96] bg-[linear-gradient(135deg,#f6e8c7,#e5c988)] text-[#701e2a]'}`}
         >
-          <AdminIcon name={icon} width={19} />
+          <AdminIcon name={icon} width={26} />
         </span>
+        <div className="min-w-0 flex-1">
+          <h2
+            className={`text-sm leading-6 font-bold ${featured ? 'text-[#f7ddbb]' : 'text-[#624d40]'}`}
+          >
+            {label}
+          </h2>
+          <p
+            className={`mt-0.5 break-words font-extrabold leading-9 tabular-nums ${amount ? 'text-xl sm:text-[23px]' : 'text-[28px]'}`}
+          >
+            <AnimatedNumber value={value} amount={amount} />
+          </p>
+        </div>
       </div>
-      <p className="relative z-10 break-words text-base font-extrabold tabular-nums sm:text-2xl">
-        <AnimatedNumber value={value} amount={amount} />
-      </p>
       <p
-        className={`relative z-10 ${compact ? 'mt-1' : 'mt-3'} text-xs leading-6 ${featured ? 'text-[#eed8c6]' : 'text-[#857467]'}`}
+        className={`relative z-10 ${compact ? 'mt-2' : 'mt-3'} text-[13px] leading-6 ${featured ? 'text-[#eed8c6]' : 'text-[#766253]'}`}
       >
         {detail}
       </p>

@@ -262,7 +262,7 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
       aria-label={item.label}
       onClick={onNavigate}
       data-admin-navigation-card
-      className="flex min-h-[220px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_5px_18px_#62452f0c] sm:min-h-[248px] sm:p-6"
+      className="flex min-h-[188px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_5px_18px_#62452f0c] sm:p-5"
     >
       <div
         aria-hidden="true"
@@ -270,12 +270,12 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
       />
       <span
         data-card-icon
-        className={`${cardIconInteraction} mb-4 grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_14px_#b7834340]`}
+        className={`${cardIconInteraction} mb-2.5 grid size-12 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_14px_#b7834340]`}
       >
         <AdminIcon name={item.icon} width={27} height={27} />
       </span>
       <h2 className="text-lg leading-8 font-extrabold">{item.label}</h2>
-      <p className="mt-2 mb-4 text-[14px] leading-7 text-[#796653]">{item.description}</p>
+      <p className="mt-1 mb-3 text-[15px] leading-7 text-[#796653]">{item.description}</p>
       <span className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-[#e8ded1] pt-3 text-[13px] font-semibold text-[#92764e]">
         <span>ورود به بخش</span>
         <AdminIcon
