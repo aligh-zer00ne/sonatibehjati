@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
 
 export async function verifySurfaceMotion(page, surface, { tilt = false, ambient = false } = {}) {
+  if (ambient) return verifyParticleNetwork(page, surface);
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await surface.scrollIntoViewIfNeeded();
   await surface.hover({ position: { x: 24, y: 28 } });
@@ -17,36 +18,6 @@ export async function verifySurfaceMotion(page, surface, { tilt = false, ambient
     );
     assert.notEqual(await surface.evaluate((el) => getComputedStyle(el).transform), 'none');
   }
-  if (ambient) {
-    await expect(surface.locator('[data-ambient-backdrop]')).toHaveAttribute('data-active', 'true');
-    assert.notEqual(
-      await surface
-        .locator('[data-ambient-layer]')
-        .first()
-        .evaluate((el) => getComputedStyle(el).animationName),
-      'none',
-    );
-    await page.evaluate(() => {
-      Object.defineProperty(document, 'hidden', { configurable: true, value: true });
-      document.dispatchEvent(new Event('visibilitychange'));
-    });
-    await expect(surface.locator('[data-ambient-backdrop]')).toHaveAttribute(
-      'data-active',
-      'false',
-    );
-    assert.equal(
-      await surface
-        .locator('[data-ambient-layer]')
-        .first()
-        .evaluate((el) => getComputedStyle(el).animationPlayState),
-      'paused',
-    );
-    await page.evaluate(() => {
-      delete document.hidden;
-      document.dispatchEvent(new Event('visibilitychange'));
-    });
-    await expect(surface.locator('[data-ambient-backdrop]')).toHaveAttribute('data-active', 'true');
-  }
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await surface.hover({ position: { x: 30, y: 32 } });
@@ -55,14 +26,6 @@ export async function verifySurfaceMotion(page, surface, { tilt = false, ambient
     .toBe('');
   await expect(glow).toBeHidden();
   if (tilt) assert.equal(await surface.evaluate((el) => getComputedStyle(el).transform), 'none');
-  if (ambient)
-    assert.equal(
-      await surface
-        .locator('[data-ambient-layer]')
-        .first()
-        .evaluate((el) => getComputedStyle(el).animationName),
-      'none',
-    );
 
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   // Touch lighting must not prevent a click or native scrolling, and must clear after release.
@@ -93,4 +56,69 @@ export async function verifySurfaceMotion(page, surface, { tilt = false, ambient
     .poll(() => surface.evaluate((el) => el.style.getPropertyValue('--surface-glow')))
     .toBe('');
   await expect.poll(() => surface.evaluate((el) => getComputedStyle(el).transform)).toBe('none');
+}
+
+async function verifyParticleNetwork(page, surface) {
+  const canvas = surface.locator('canvas[data-ambient-backdrop]');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await surface.scrollIntoViewIfNeeded();
+  await expect(canvas).toHaveAttribute('data-network-state', 'running');
+  const initial = await canvas.evaluate((el) => el.toDataURL());
+  await expect.poll(() => canvas.evaluate((el) => el.toDataURL())).not.toBe(initial);
+  const before = await canvas.boundingBox();
+  await surface.hover({ position: { x: 36, y: 40 } });
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-network-links')))
+    .toBeGreaterThan(0);
+  assert.equal(await surface.evaluate((el) => getComputedStyle(el).transform), 'none');
+  assert.equal(await canvas.evaluate((el) => getComputedStyle(el).transform), 'none');
+  assert.equal(await surface.evaluate((el) => el.style.getPropertyValue('--surface-dx')), '');
+  const after = await canvas.boundingBox();
+  assert.ok(
+    Math.abs(before.x - after.x) < 1 && Math.abs(before.y - after.y) < 1,
+    'The colored surface/canvas must not translate with the pointer',
+  );
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await expect(canvas).toHaveAttribute('data-network-state', 'paused');
+  await page.evaluate(() => {
+    delete document.hidden;
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await expect(canvas).toHaveAttribute('data-network-state', 'running');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(canvas).toHaveAttribute('data-network-state', 'static');
+  const still = await canvas.evaluate((el) => el.toDataURL());
+  await surface.hover({ position: { x: 50, y: 45 } });
+  await page.waitForTimeout(180);
+  assert.equal(await canvas.evaluate((el) => el.toDataURL()), still);
+  await expect(canvas).toHaveAttribute('data-network-links', '0');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  assert.ok(
+    await surface.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return el.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+          pointerType: 'touch',
+          clientX: r.left + 36,
+          clientY: r.top + 40,
+        }),
+      );
+    }),
+  );
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-network-links')))
+    .toBeGreaterThan(0);
+  await surface.dispatchEvent('pointerup', { pointerType: 'touch' });
+  await expect(canvas).toHaveAttribute('data-network-links', '0');
+  await surface.hover({ position: { x: 36, y: 40 } });
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-network-links')))
+    .toBeGreaterThan(0);
+  await surface.dispatchEvent('pointercancel', { pointerType: 'touch' });
+  await expect(canvas).toHaveAttribute('data-network-links', '0');
 }

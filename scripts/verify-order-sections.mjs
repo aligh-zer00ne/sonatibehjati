@@ -86,15 +86,13 @@ try {
   assert.equal(inputs.at(-1).status, undefined, 'Manual invoices ignore old fulfillment filters');
   await expect(page.getByRole('button', { name: 'وضعیت سفارش', exact: true })).toHaveCount(0);
   const nav = page.locator('#admin-desktop-navigation');
-  await expect(nav.getByRole('link', { name: 'دریافت و پرداخت', exact: true })).toBeVisible();
-  await expect(nav.getByRole('button', { name: 'سفارش‌ها', exact: true })).toHaveAttribute(
-    'aria-expanded',
-    'true',
-  );
-  await expect(nav.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toHaveAttribute(
-    'aria-current',
-    'page',
-  );
+  await nav.getByRole('link', { name: 'فروش و مشتریان', exact: true }).click();
+  const desktopCards = page.locator('[data-admin-section]');
+  await expect(
+    desktopCards.getByRole('link', { name: 'دریافت و پرداخت', exact: true }),
+  ).toBeVisible();
+  await expect(desktopCards.getByRole('group', { name: 'سفارش‌ها', exact: true })).toHaveCount(1);
+  await page.goBack();
   await expect(page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'محل خرید', exact: true }).hover();
   const channel = page.getByRole('region', { name: 'محل خرید', exact: true });
@@ -116,12 +114,15 @@ try {
   await expect(page.getByRole('button', { name: 'وضعیت سفارش', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'محل خرید', exact: true })).toHaveCount(0);
-  await nav.getByRole('link', { name: 'سایر سفارش‌ها', exact: true }).click();
+  await nav.getByRole('link', { name: 'فروش و مشتریان', exact: true }).click();
+  await desktopCards.getByRole('link', { name: 'سایر سفارش‌ها', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'جمع کردن منوی مدیریت', exact: true }).click();
-  await nav.getByRole('button', { name: 'فروش و مشتریان', exact: true }).click();
-  await page.getByRole('menu').getByText('سفارش‌ها', { exact: true }).hover();
-  await page.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true }).last().click();
+  const salesTrigger = nav.getByRole('link', { name: 'فروش و مشتریان', exact: true });
+  await salesTrigger.focus();
+  await salesTrigger.press('Enter');
+  await expect(desktopCards).toBeVisible();
+  await expect(page.locator('[data-admin-dashboard]')).toHaveCount(0);
+  await desktopCards.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
   for (const width of [320, 390, 768]) {
     await page.setViewportSize({ width, height: 844 });
@@ -131,14 +132,10 @@ try {
     ).toBeVisible();
     await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).tap();
     const mobile = page.locator('#admin-mobile-navigation');
-    await expect(mobile.getByRole('button', { name: 'سفارش‌ها', exact: true })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
-    await expect(
-      mobile.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true }),
-    ).toHaveAttribute('aria-current', 'page');
-    for (const link of await mobile
+    await mobile.getByRole('link', { name: 'فروش و مشتریان', exact: true }).tap();
+    const mobileCards = page.locator('[data-admin-section]');
+    await expect(mobileCards.getByRole('group', { name: 'سفارش‌ها', exact: true })).toHaveCount(1);
+    for (const link of await mobileCards
       .getByRole('link', { name: /سفارش‌های وبسایت|سایر سفارش‌ها/ })
       .all()) {
       await expect
@@ -150,7 +147,7 @@ try {
       assert.ok(await link.evaluate((el) => el.scrollWidth <= el.clientWidth));
     }
     if (width === 390) await page.screenshot({ path: '/tmp/behjati-order-sections-mobile.png' });
-    await mobile.getByRole('link', { name: 'سایر سفارش‌ها', exact: true }).tap();
+    await mobileCards.getByRole('link', { name: 'سایر سفارش‌ها', exact: true }).tap();
     await expect(page.getByRole('heading', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
     await expect(mobile).toBeHidden();
     await expect
@@ -163,10 +160,12 @@ try {
   await expect(page).toHaveURL(/\/admin\/products$/);
   await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).click();
   await expect(
-    page.locator('#admin-mobile-navigation').getByRole('button', { name: 'سفارش‌ها', exact: true }),
+    page
+      .locator('#admin-mobile-navigation')
+      .getByRole('link', { name: 'فروش و مشتریان', exact: true }),
   ).toHaveCount(0);
   console.log(
-    'Order sections passed: real API source separation, intersection filters, totals/pagination, old links, sales-only permissions, reset/reload, sidebar/collapsed/mobile nested menus and no clipped labels. Temporary fixtures only; no SMS or bank request.',
+    'Order sections passed: real API source separation, intersection filters, totals/pagination, old links, sales-only permissions, reset/reload, top navigation, card submenus, keyboard and mobile order groups and no clipped labels. Temporary fixtures only; no SMS or bank request.',
   );
 } finally {
   await browser?.close();

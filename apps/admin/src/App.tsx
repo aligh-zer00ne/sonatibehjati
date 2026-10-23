@@ -23,6 +23,7 @@ const Reports = lazy(() => import('./pages/Reports'));
 const ProductEdit = lazy(() => import('./pages/ProductEdit'));
 const PaymentTest = lazy(() => import('./pages/PaymentTest'));
 const Settings = lazy(() => import('./pages/Settings'));
+const AdminSection = lazy(() => import('./pages/AdminSection'));
 export default function App() {
   return (
     <ConfigProvider
@@ -93,6 +94,7 @@ export default function App() {
                     <Route path="orders/map" element={<OrdersMap />} />
                     <Route path="orders/:id" element={<OrderDetails />} />
                     <Route path="settings" element={<Settings />} />
+                    <Route path="sections/:section" element={<AdminSection />} />
                     <Route path="tickets" element={<Tickets />} />
                     <Route path="reviews" element={<Reviews />} />
                   </Route>

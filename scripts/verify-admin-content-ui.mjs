@@ -51,28 +51,18 @@ try {
   await expect(page.getByText('نوار اطلاع‌رسانی سایت ذخیره شد.', { exact: true })).toBeVisible();
   assert.equal(saved, 1);
   assert.equal(notice.announcement.text, 'جشنوارهٔ بلک فرایدی سنتی بهجتی');
-  const nav = page.locator('[data-admin-sidebar] nav');
-  await expect(nav.getByRole('button', { expanded: true })).toHaveCount(1);
-  await nav.getByRole('button', { name: 'فروش و مشتریان', exact: true }).click();
-  await nav.getByRole('button', { name: 'سفارش‌ها', exact: true }).click();
-  await expect(nav.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
-  await expect(nav.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'جمع کردن منوی مدیریت', exact: true }).click();
-  await nav.getByRole('button', { name: 'فروش و مشتریان', exact: true }).click();
-  await page.getByRole('menu').getByText('سفارش‌ها', { exact: true }).hover();
-  await expect(page.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
-  await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'باز کردن منوی کناری', exact: true }).click();
+  const nav = page.locator('#admin-desktop-navigation');
+  await nav.getByRole('link', { name: 'فروش و مشتریان', exact: true }).click();
+  const cards = page.locator('[data-admin-section]');
+  await expect(cards.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
+  await expect(cards.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    if (width < 992) {
+    if (width < 1100) {
       await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).click();
       const drawer = page.getByRole('dialog');
-      await expect(
-        drawer.getByRole('button', { name: 'فروش و مشتریان', exact: true }),
-      ).toBeVisible();
+      await expect(drawer.getByRole('link', { name: 'فروش و مشتریان', exact: true })).toBeVisible();
       await page.keyboard.press('Escape');
     }
   }
@@ -88,7 +78,7 @@ try {
   assert.ok((await qr.text()).includes('طراحی توسط'));
   assert.deepEqual(errors, []);
   console.log(
-    'Content/navigation passed: editable announcement preview/save, removed hero editor, grouped/collapsed/mobile menus, 320–1440px fit and public/admin/QR designer credits. API writes intercepted.',
+    'Content/navigation passed: editable announcement preview/save, removed hero editor, top navigation/card submenus/mobile menus, 320–1440px fit and public/admin/QR designer credits. API writes intercepted.',
   );
 } finally {
   await browser.close();

@@ -85,7 +85,11 @@ try {
   await expect(email).toBeVisible();
   await expect(email).toHaveAttribute('autocomplete', 'username');
   await expect(password).toHaveAttribute('autocomplete', 'current-password');
-  await verifySurfaceMotion(page, page.locator('[data-motion-surface]').first(), { ambient: true });
+  await verifySurfaceMotion(
+    page,
+    page.getByRole('region', { name: 'سنتی بهجتی اردکان', exact: true }),
+    { ambient: true },
+  );
   for (const [width, height] of [
     [320, 568],
     [390, 844],

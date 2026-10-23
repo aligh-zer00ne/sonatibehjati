@@ -25,7 +25,6 @@ import { customerName } from '../lib/format';
 import AmbientBackdrop from '../components/AmbientBackdrop';
 import AdminSkyline from '../components/AdminSkyline';
 import MotionButton from '../components/MotionButton';
-import { useSurfaceMotion } from '../hooks/useSurfaceMotion';
 const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
   { label: 'سفارش‌های وبسایت', href: '/admin/orders/website', icon: 'orders' },
   { label: 'فروش دستی', href: '/admin/orders/manual', icon: 'receipt' },
@@ -36,7 +35,6 @@ const shortcuts: Array<{ label: string; href: string; icon: AdminIconName }> = [
 ];
 export default function Dashboard() {
   const { admin } = useAdmin();
-  const heroMotion = useSurfaceMotion<HTMLElement>();
   const navigate = useNavigate();
   const inspectionTrigger = useRef<HTMLElement | SVGElement | null>(null);
   const [inspection, setInspection] = useState<OrderInspection | null>(null);
@@ -84,10 +82,7 @@ export default function Dashboard() {
   );
   return (
     <div className="flex flex-col gap-4 motion-safe:animate-surface-enter" data-admin-dashboard>
-      <header
-        {...heroMotion}
-        className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#a94d31]/40 bg-[radial-gradient(ellipse_at_top_right,#a13521,transparent_65%),linear-gradient(125deg,#83160e,#4b0c09)] px-5 py-6 text-[#fff5e1] shadow-[0_12px_28px_-12px_#76100b50] sm:px-7 sm:py-7"
-      >
+      <header className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#a94d31]/40 bg-[radial-gradient(ellipse_at_top_right,#a13521,transparent_65%),linear-gradient(125deg,#83160e,#4b0c09)] px-5 py-6 text-[#fff5e1] shadow-[0_12px_28px_-12px_#76100b50] sm:px-7 sm:py-7">
         <AmbientBackdrop />
         <div
           aria-hidden="true"

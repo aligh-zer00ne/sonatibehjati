@@ -10,10 +10,8 @@ import AdminIcon from '../components/AdminIcon';
 import AdminSkyline from '../components/AdminSkyline';
 import DesignCredit from '../components/DesignCredit';
 import AmbientBackdrop from '../components/AmbientBackdrop';
-import { useSurfaceMotion } from '../hooks/useSurfaceMotion';
 
 function LoginLayout({ children }: { children: ReactNode }) {
-  const brandMotion = useSurfaceMotion<HTMLElement>();
   return (
     <main className="relative isolate grid min-h-dvh place-items-center overflow-hidden bg-[radial-gradient(ellipse_at_top_right,#f3e1c2,transparent_55%),radial-gradient(ellipse_at_bottom_left,#e9dfd1,#f6f1e9_65%)] px-3 py-6 sm:px-6 sm:py-10">
       <div
@@ -27,7 +25,6 @@ function LoginLayout({ children }: { children: ReactNode }) {
       <div className="w-full max-w-[1000px]">
         <div className="grid overflow-hidden rounded-[26px] border border-white/80 bg-[#fffdf9] shadow-[0_24px_80px_-24px_#59341f40,0_2px_8px_#59341f08] motion-safe:animate-surface-enter md:min-h-[600px] md:grid-cols-[0.95fr_1.05fr] md:rounded-[32px]">
           <section
-            {...brandMotion}
             aria-label="سنتی بهجتی اردکان"
             className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_top_right,#ad3120,transparent_65%),linear-gradient(145deg,#83160e,#4b0c09)] px-5 py-6 text-[#fff5e1] sm:px-8 md:flex md:flex-col md:justify-between md:px-10 md:py-10"
           >

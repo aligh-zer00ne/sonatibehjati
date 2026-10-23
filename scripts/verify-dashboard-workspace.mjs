@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
 import { verifySurfaceMotion } from './surface-motion-checks.mjs';
+import { verifyTopNavigation } from './top-navigation-checks.mjs';
 import {
   createAdmin,
   loginAdmin,
@@ -101,18 +102,16 @@ try {
   }
   await page.goto(adminOrigin + '/admin');
   await expect(page.locator('[data-admin-dashboard]')).toBeVisible();
+  await verifyTopNavigation(page);
   const hero = page.locator('[data-admin-dashboard] > header');
   await verifySurfaceMotion(page, hero, { ambient: true });
   await verifySurfaceMotion(page, page.locator('[data-analytics-metric]').first(), { tilt: true });
   await verifySurfaceMotion(page, page.locator('[data-order-id]').first(), { tilt: true });
-  await expect(hero.locator('[data-ambient-backdrop]')).toHaveAttribute('data-active', 'false');
-  assert.equal(
-    await hero
-      .locator('[data-ambient-layer]')
-      .first()
-      .evaluate((el) => getComputedStyle(el).animationPlayState),
+  await expect(hero.locator('[data-ambient-backdrop]')).toHaveAttribute(
+    'data-network-state',
     'paused',
   );
+
   const sector = page.locator('[data-dashboard-status="PROCESSING"]');
   await sector.scrollIntoViewIfNeeded();
   await expect(sector).toHaveAttribute('role', 'button');
@@ -252,6 +251,20 @@ try {
   const countBefore = inputs.length;
   await page.locator('[data-dashboard-status]').first().click({ force: true });
   assert.equal(inputs.length, countBefore);
+  const limitedNav = page.locator('#admin-desktop-navigation');
+  await expect(limitedNav.getByRole('link', { name: 'فروش و مشتریان', exact: true })).toHaveCount(
+    0,
+  );
+  await limitedNav.getByRole('link', { name: 'تنظیمات مدیریت', exact: true }).click();
+  await expect(page.locator('[data-admin-section] [data-admin-navigation-card]')).toHaveCount(1);
+  await expect(
+    page.locator('[data-admin-section]').getByRole('link', { name: 'تنظیمات حساب', exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'خروج از مدیریت', exact: true }).click();
+  await expect(page).toHaveURL(adminOrigin + '/login');
+  await expect(page.getByLabel('ایمیل مدیر', { exact: true })).toBeVisible();
+  await page.goto(adminOrigin + '/admin');
+  await expect(page).toHaveURL(adminOrigin + '/login');
   assert.deepEqual(errors, []);
   console.log(
     'Accounting workspace passed: actual pie-sector mouse click and keyboard legend, exact status/date/channel order lists, pagination, old-order exclusion, mobile explorer, today/day drilldowns, report source link, three-column compact cards, quick invoice/label and website details, empty invoice and limited-role controls. Temporary fixtures cleaned; no real SMS/bank request.',
