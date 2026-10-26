@@ -19,6 +19,7 @@
     "db:seed": "npm run db:seed -w @behjati/api",
     "photos:import": "npm run photos:import -w @behjati/api",
     "dev:bun": "bun run dev",
+    "verify:dev": "node --test scripts/dev-ports.test.mjs",
     "check": "npm run codegen && npm run lint && npm run typecheck && npm test && npm run build",
     "verify:home": "node scripts/verify-home.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
