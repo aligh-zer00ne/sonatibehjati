@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 type Point = { x: number; y: number; vx: number; vy: number; radius: number };
 
-/** A bounded, decorative particle network. The surface and its text never follow the pointer. */
+/** A bounded, decorative particle network. It does not react to the pointer. */
 export default function AmbientBackdrop() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -18,8 +18,6 @@ export default function AmbientBackdrop() {
       lastPaint = 0;
     let inView = false,
       disposed = false;
-    let pointer: { x: number; y: number } | null = null;
-    let release: ReturnType<typeof setTimeout> | undefined;
     const running = () => inView && !document.hidden && !media.matches && !disposed;
     const setState = (name: string, value: string) => {
       if (canvas.dataset[name] !== value) canvas.dataset[name] = value;
@@ -57,32 +55,6 @@ export default function AmbientBackdrop() {
           context.stroke();
         }
       }
-      let links = 0;
-      if (pointer && !media.matches) {
-        const nearest = points
-          .map((point) => ({
-            point,
-            distance: Math.hypot(point.x - pointer!.x, point.y - pointer!.y),
-          }))
-          .filter((p) => p.distance < 165)
-          .sort((a, b) => a.distance - b.distance)
-          .slice(0, 6);
-        links = nearest.length;
-        for (const { point, distance } of nearest) {
-          context.strokeStyle = `rgba(164,217,225,${(1 - distance / 165) * 0.55})`;
-          context.beginPath();
-          context.moveTo(pointer.x, pointer.y);
-          context.lineTo(point.x, point.y);
-          context.stroke();
-        }
-        if (links) {
-          context.fillStyle = 'rgba(169,219,226,0.85)';
-          context.beginPath();
-          context.arc(pointer.x, pointer.y, 2, 0, Math.PI * 2);
-          context.fill();
-        }
-      }
-      setState('networkLinks', String(links));
       for (const point of points) {
         context.fillStyle = 'rgba(157,205,212,0.82)';
         context.beginPath();
@@ -103,10 +75,6 @@ export default function AmbientBackdrop() {
       cancelAnimationFrame(frame);
       frame = 0;
       setState('networkState', media.matches ? 'static' : running() ? 'running' : 'paused');
-      if (!running()) {
-        pointer = null;
-        clearTimeout(release);
-      }
       paint(performance.now(), false);
       if (running()) frame = requestAnimationFrame(animate);
     };
@@ -133,23 +101,6 @@ export default function AmbientBackdrop() {
       }));
       sync();
     };
-    const clearPointer = () => {
-      pointer = null;
-      clearTimeout(release);
-      if (!running()) paint(performance.now(), false);
-    };
-    const move = (event: PointerEvent) => {
-      if (!running()) return;
-      clearTimeout(release);
-      const bounds = surface.getBoundingClientRect();
-      pointer = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
-    };
-    const leave = (event: PointerEvent) => {
-      if (event.pointerType !== 'touch') clearPointer();
-    };
-    const up = (event: PointerEvent) => {
-      if (event.pointerType === 'touch') release = setTimeout(clearPointer, 350);
-    };
     const intersection = new IntersectionObserver(([entry]) => {
       inView = !!entry?.isIntersecting;
       sync();
@@ -157,25 +108,14 @@ export default function AmbientBackdrop() {
     const observer = new ResizeObserver(resize);
     observer.observe(surface);
     intersection.observe(canvas);
-    surface.addEventListener('pointermove', move, { passive: true });
-    surface.addEventListener('pointerdown', move, { passive: true });
-    surface.addEventListener('pointerleave', leave, { passive: true });
-    surface.addEventListener('pointerup', up, { passive: true });
-    surface.addEventListener('pointercancel', clearPointer, { passive: true });
     document.addEventListener('visibilitychange', sync);
     media.addEventListener('change', sync);
     resize();
     return () => {
       disposed = true;
       cancelAnimationFrame(frame);
-      clearTimeout(release);
       observer.disconnect();
       intersection.disconnect();
-      surface.removeEventListener('pointermove', move);
-      surface.removeEventListener('pointerdown', move);
-      surface.removeEventListener('pointerleave', leave);
-      surface.removeEventListener('pointerup', up);
-      surface.removeEventListener('pointercancel', clearPointer);
       document.removeEventListener('visibilitychange', sync);
       media.removeEventListener('change', sync);
     };
@@ -186,7 +126,6 @@ export default function AmbientBackdrop() {
       aria-hidden="true"
       data-ambient-backdrop
       data-network-state="paused"
-      data-network-links="0"
       className="pointer-events-none absolute inset-0 h-full w-full rounded-[inherit]"
     />
   );
