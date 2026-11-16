@@ -235,6 +235,10 @@ query AdminUsers($input: AdminUsersInput!) {
       salesChannels
       accountBalance
       totalOrdersValue
+      defaultAddress {
+        id
+        recipientName
+      }
     }
     total
     page

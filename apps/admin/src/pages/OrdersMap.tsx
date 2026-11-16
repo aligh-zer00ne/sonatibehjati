@@ -160,7 +160,8 @@ export default function OrdersMap() {
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <strong>
-                      سفارش {formatNumber(selected.number)} · {customerName(selected.user)}
+                      سفارش {formatNumber(selected.number)} ·{' '}
+                      {customerName(selected.user, { recipient: selected.address.recipientName })}
                     </strong>
                     <span className="text-xs text-[#857467]">
                       {orderStatusLabels[selected.status]}
@@ -256,7 +257,8 @@ export default function OrdersMap() {
                           />
                           <span className="min-w-0 flex-1">
                             <strong className="block text-xs">
-                              {customerName(order.user)} · {formatNumber(order.number)}
+                              {customerName(order.user, { recipient: order.address.recipientName })}{' '}
+                              · {formatNumber(order.number)}
                             </strong>
                             <span className="mt-1 block text-[13px] leading-6 text-[#857467]">
                               {order.address.city || order.address.province || 'مقصد ثبت نشده'} ·{' '}

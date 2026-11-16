@@ -59,7 +59,7 @@ export default function RichCustomerSelect({
       }
       options={users.map((u) => ({
         value: u.id,
-        label: `${customerName(u)} · ${u.phone}`,
+        label: `${customerName(u, { unnamed: true })} · ${persianDigits(u.phone)}`,
         user: u,
       }))}
       optionRender={(option) => {
@@ -70,7 +70,7 @@ export default function RichCustomerSelect({
               <AdminIcon name="person" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-extrabold">{customerName(u)}</p>
+              <p className="truncate font-extrabold">{customerName(u, { unnamed: true })}</p>
               <p className="mt-1 text-xs text-[#857467]">
                 <bdi>{persianDigits(u.phone)}</bdi>
               </p>

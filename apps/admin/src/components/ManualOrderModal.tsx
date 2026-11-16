@@ -26,7 +26,7 @@ import { adminRequest, AdminRequestError } from '../lib/client';
 import { useAdmin } from '../auth/AdminProvider';
 import RetailCustomerModal from './RetailCustomerModal';
 import { Money, MoneyInput } from './Money';
-import { customerName } from '../lib/format';
+import { customerName, persianDigits } from '../lib/format';
 import AdminIcon from './AdminIcon';
 import ManualOrderLines from './ManualOrderLines';
 import DashboardProductImage from './DashboardProductImage';
@@ -261,7 +261,7 @@ export default function ManualOrderModal({
               }}
               options={options.map((u) => ({
                 value: u.id,
-                label: `${customerName(u)} · ${u.phone}`,
+                label: `${customerName(u, { unnamed: true })} · ${persianDigits(u.phone)}`,
               }))}
             />
           </Form.Item>

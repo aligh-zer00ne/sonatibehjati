@@ -160,7 +160,7 @@ export default function Users() {
             onChange: setPage,
           }}
           columns={[
-            { title: 'نام', render: (_, user) => customerName(user) },
+            { title: 'نام', render: (_, user) => customerName(user, { unnamed: true }) },
             {
               title: 'محل خرید',
               render: (_, user) => user.salesChannels.map((v) => salesChannelLabels[v]).join('، '),

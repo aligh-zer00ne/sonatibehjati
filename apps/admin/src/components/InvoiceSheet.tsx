@@ -157,7 +157,7 @@ export default function InvoiceSheet({
           className={`grid gap-x-3 gap-y-1.5 p-2.5 ${thermal ? 'grid-cols-[1fr_auto] text-[9px]' : 'grid-cols-2'}`}
         >
           <p>
-            نام مشتری: <b>{customerName(order.user)}</b>
+            نام مشتری: <b>{customerName(order.user, { recipient: order.address.recipientName })}</b>
           </p>
           <p>
             شماره تماس: <bdi>{persianDigits(order.user.phone)}</bdi>

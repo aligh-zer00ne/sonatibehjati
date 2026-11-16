@@ -36,7 +36,7 @@ export default function UserFilter({
       onChange={(value) => onChange(value ?? null)}
       options={items.map((user) => ({
         value: user.id,
-        label: `${customerName(user)} — ${persianDigits(user.phone)}`,
+        label: `${customerName(user, { unnamed: true })} — ${persianDigits(user.phone)}`,
       }))}
       notFoundContent={users.error || 'کاربری یافت نشد'}
     />

@@ -59,7 +59,7 @@ export default function OrderSummaryCard({
           </span>
           <div className="min-w-0 flex-1">
             <h3 className="break-words text-base font-bold leading-6 text-[#34251e]">
-              {customerName(order.user)}
+              {customerName(order.user, { recipient: order.address.recipientName, unnamed: true })}
             </h3>
             <p className="line-clamp-1 text-[13px] text-[#857467]">
               {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}

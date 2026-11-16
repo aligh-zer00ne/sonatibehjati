@@ -1,12 +1,26 @@
 export const persianDigits = (value: string) =>
   value.replace(/\d/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'.charAt(Number(digit)));
-export const customerName = (customer: {
-  firstName?: string | null;
-  lastName?: string | null;
-  phone: string;
-}) =>
-  [customer.firstName, customer.lastName].filter(Boolean).join(' ') ||
-  persianDigits(customer.phone);
+/**
+ * Customer's display name. Many website customers never fill in their profile, so the
+ * recipient name from their order or default address is used before falling back.
+ * `unnamed` avoids repeating the phone where the card already shows it separately.
+ */
+export const customerName = (
+  customer: {
+    firstName?: string | null;
+    lastName?: string | null;
+    phone: string;
+    defaultAddress?: { recipientName?: string | null } | null;
+  },
+  options: { recipient?: string | null; unnamed?: boolean } = {},
+) =>
+  [customer.firstName, customer.lastName]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(' ') ||
+  options.recipient?.trim() ||
+  customer.defaultAddress?.recipientName?.trim() ||
+  (options.unnamed ? 'مشتری بدون نام' : persianDigits(customer.phone));
 export const chartDate = (value: string) =>
   new Intl.DateTimeFormat('fa-IR', {
     month: 'short',

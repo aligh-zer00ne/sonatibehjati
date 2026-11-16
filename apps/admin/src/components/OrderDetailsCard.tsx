@@ -186,7 +186,7 @@ export default function OrderDetailsCard({
           </h3>
           <p className="mt-1 text-[13px] leading-6 text-[#76685d]">
             {order
-              ? `${customerName(order.user)} · ${salesChannelLabels[order.salesChannel]} · ${formatDateTime(order.createdAt)}`
+              ? `${customerName(order.user, { recipient: order.address.recipientName })} · ${salesChannelLabels[order.salesChannel]} · ${formatDateTime(order.createdAt)}`
               : 'در حال دریافت اطلاعات سفارش'}
           </p>
         </div>
@@ -449,7 +449,10 @@ export default function OrderDetailsCard({
                         : 'تحویل حضوری'}
                     </Field>
                     <Field label="مشتری" icon="person">
-                      {customerName(order.user)}
+                      {customerName(order.user, {
+                        recipient: order.address.recipientName,
+                        unnamed: true,
+                      })}
                     </Field>
                     <Field label="موبایل مشتری" icon="phone">
                       <a href={`tel:${order.user.phone}`}>
