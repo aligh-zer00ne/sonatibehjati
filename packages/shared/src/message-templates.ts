@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { normalizeDigits } from '@behjati/shared';
-import { shippingMethods } from '@behjati/shared/sales';
+import { shippingMethodCodeSchema } from '@behjati/shared/sales';
 
 export const messageVariables = {
   نام_مشتری: 'نام مشتری',
@@ -79,7 +79,7 @@ export function renderMessage(
 export const shipmentInputSchema = z
   .object({
     orderId: z.string().min(1).max(100),
-    shippingMethod: z.enum(shippingMethods),
+    shippingMethod: shippingMethodCodeSchema,
     trackingNumber: z
       .string()
       .transform(normalizeDigits)

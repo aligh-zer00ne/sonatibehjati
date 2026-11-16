@@ -2,12 +2,16 @@ import type { Prisma, OrderItem } from '@prisma/client';
 import { manualQuoteInputSchema } from '@behjati/shared/admin';
 import { authError } from '../auth/errors.js';
 import { validate, omitNulls } from './validation.js';
+import { requireConfiguredShippingMethod } from '../checkout/shipping-settings.js';
 export async function priceManualOrder(
   tx: Prisma.TransactionClient,
   raw: Record<string, unknown>,
   existing: OrderItem[] = [],
 ) {
   const input = validate(manualQuoteInputSchema, omitNulls(raw));
+  const carrier = input.pickup
+    ? null
+    : await requireConfiguredShippingMethod(tx, input.shippingMethod);
   const ids = input.items.map((i) => i.productId).sort();
   for (const id of ids) await tx.$queryRaw`SELECT id FROM Product WHERE id=${id} FOR UPDATE`;
   const products = await tx.product.findMany({
@@ -63,7 +67,8 @@ export async function priceManualOrder(
     shipping,
     total,
     items,
-    shippingMethod: input.pickup ? null : input.shippingMethod,
+    shippingMethod: carrier?.method ?? null,
+    shippingMethodLabel: carrier?.label ?? null,
     shippingWeightGrams,
   };
 }

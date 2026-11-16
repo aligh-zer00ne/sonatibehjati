@@ -1,13 +1,9 @@
+import { useShippingMethods } from '../hooks/useShippingMethods';
 import { hasPermission } from '@behjati/shared/permissions';
 import { Input, InputNumber, Button } from 'antd';
 import CalendarPicker from './CalendarPicker';
 import { orderStatuses, orderStatusLabels } from '@behjati/shared';
-import {
-  salesChannels,
-  salesChannelLabels,
-  shippingMethods,
-  shippingMethodLabels,
-} from '@behjati/shared/sales';
+import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
 import type { AdminOrdersInput } from '../generated/graphql';
 import { useAdmin } from '../auth/AdminProvider';
 import UserFilter from './UserFilter';
@@ -24,6 +20,7 @@ export default function OrderFilters({
   onReset: () => void;
   scope?: OrderScope;
 }) {
+  const carriers = useShippingMethods();
   const { admin } = useAdmin();
   return (
     <FilterBar label="فیلترهای سفارش">
@@ -79,10 +76,7 @@ export default function OrderFilters({
         <FilterChips
           label="شیوه ارسال"
           value={input.shippingMethod ?? ''}
-          options={[
-            { value: '', label: 'همه روش‌ها' },
-            ...shippingMethods.map((value) => ({ value, label: shippingMethodLabels[value] })),
-          ]}
+          options={[{ value: '', label: 'همه روش‌ها' }, ...carriers.options()]}
           onChange={(shippingMethod) => onChange({ shippingMethod: shippingMethod || null })}
         />
       </FilterButton>

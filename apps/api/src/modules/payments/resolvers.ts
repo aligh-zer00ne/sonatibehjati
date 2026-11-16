@@ -6,10 +6,12 @@ import { requireUser } from '../auth/guard.js';
 import { requireAuthOrigin } from '../../graphql/context.js';
 import { requireAdminOrigin, requirePermission, requireOwner } from '../admin/auth.js';
 import { consumeAuthLimit } from '../auth/rate-limit.js';
+import { orderShippingMethodLabel } from '../checkout/shipping-settings.js';
 import { orderPayments, paymentAvailable, retryPayment, startOrderPayment } from './service.js';
 const fields = {
   paidAt: (order: { id: string; paidAt?: Date | null }) => order.paidAt?.toISOString() ?? null,
   payments: (order: { id: string }) => orderPayments(order.id),
+  shippingMethodLabel: orderShippingMethodLabel,
 };
 export const paymentResolvers: Resolvers = {
   OrderReceipt: fields,

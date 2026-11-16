@@ -55,7 +55,10 @@ export const adminResolvers: Resolvers = {
     },
     shippingOptions: async () => {
       const settings = await readShippingSettings();
-      return { availableMethods: settings.methods.filter((m) => m.enabled).map((m) => m.method) };
+      return {
+        availableMethods: settings.methods.filter((m) => m.enabled).map((m) => m.method),
+        methods: settings.methods.map(({ method, label, enabled }) => ({ method, label, enabled })),
+      };
     },
     adminShippingSettings: async (_, __, ctx) => {
       await requirePermission(ctx, 'SHIPPING');

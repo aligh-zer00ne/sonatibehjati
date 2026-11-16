@@ -186,13 +186,13 @@ input CheckoutLineInput {
   quantity: Int!
 }
 input CheckoutInput {
-  shippingMethod: ShippingMethod = POST
+  shippingMethod: String = "POST"
   addressId: ID!
   items: [CheckoutLineInput!]!
   discountCode: String!
 }
 input CreateOrderInput {
-  shippingMethod: ShippingMethod = POST
+  shippingMethod: String = "POST"
   addressId: ID!
   items: [CheckoutLineInput!]!
   discountCode: String!
@@ -213,7 +213,7 @@ type CheckoutLine {
   lineTotal: Int!
 }
 type CheckoutQuote {
-  shippingMethod: ShippingMethod
+  shippingMethod: String
   shippingWeightGrams: Int
   addressId: ID!
   items: [CheckoutLine!]!
@@ -227,7 +227,8 @@ type CheckoutQuote {
 }
 type OrderReceipt {
   salesChannel: SalesChannel!
-  shippingMethod: ShippingMethod
+  shippingMethod: String
+  shippingMethodLabel: String
   shippingWeightGrams: Int
   offlinePaidAmount: Int!
   paidAt: String
@@ -269,7 +270,8 @@ type MyOrdersPage {
 }
 type AccountOrderSummary {
   salesChannel: SalesChannel!
-  shippingMethod: ShippingMethod
+  shippingMethod: String
+  shippingMethodLabel: String
   shippingWeightGrams: Int
   offlinePaidAmount: Int!
   id: ID!
@@ -280,7 +282,8 @@ type AccountOrderSummary {
 }
 type AccountOrder {
   salesChannel: SalesChannel!
-  shippingMethod: ShippingMethod
+  shippingMethod: String
+  shippingMethodLabel: String
   shippingWeightGrams: Int
   offlinePaidAmount: Int!
   paidAt: String
@@ -449,7 +452,7 @@ enum AdminOrderSort {
 input AdminOrdersInput {
   salesChannel: SalesChannel
   manualOnly: Boolean
-  shippingMethod: ShippingMethod
+  shippingMethod: String
   page: Int
   pageSize: Int
   search: String
@@ -470,7 +473,8 @@ type AdminOrdersPage {
 }
 type AdminOrderSummary {
   salesChannel: SalesChannel!
-  shippingMethod: ShippingMethod
+  shippingMethod: String
+  shippingMethodLabel: String
   shippingWeightGrams: Int
   offlinePaidAmount: Int!
   id: ID!
@@ -485,7 +489,8 @@ type AdminOrder {
   storeInformation: StoreInformation!
   offlinePayments: [AdminOfflinePayment!]!
   salesChannel: SalesChannel!
-  shippingMethod: ShippingMethod
+  shippingMethod: String
+  shippingMethodLabel: String
   shippingWeightGrams: Int
   offlinePaidAmount: Int!
   paidAt: String
@@ -547,7 +552,7 @@ type AdminUsersPage {
 }
 input AdminReportInput {
   salesChannel: SalesChannel
-  shippingMethod: ShippingMethod
+  shippingMethod: String
   from: String!
   to: String!
   status: OrderStatus
@@ -900,11 +905,6 @@ enum SalesChannel {
   INSTAGRAM
   IN_PERSON
 }
-enum ShippingMethod {
-  POST
-  TIPAX
-  COURIER
-}
 enum OfflinePaymentMethod {
   ONLINE
   CASH
@@ -924,14 +924,14 @@ input AdminManualQuoteInput {
   items: [AdminManualLineInput!]!
   discountCode: String = ""
   manualShippingCost: Int = 0
-  shippingMethod: ShippingMethod!
+  shippingMethod: String!
   pickup: Boolean!
 }
 input AdminManualOrderInput {
   items: [AdminManualLineInput!]!
   discountCode: String = ""
   manualShippingCost: Int = 0
-  shippingMethod: ShippingMethod!
+  shippingMethod: String!
   pickup: Boolean!
   customerId: ID!
   salesChannel: SalesChannel!
@@ -1028,7 +1028,7 @@ type AdminManualQuote {
   discount: Int!
   shipping: Int!
   total: Int!
-  shippingMethod: ShippingMethod
+  shippingMethod: String
   shippingWeightGrams: Int
 }
 
@@ -1089,7 +1089,8 @@ extend type Mutation {
 }
 
 input ShippingRuleInput {
-  method: ShippingMethod!
+  method: String!
+  label: String!
   enabled: Boolean!
   baseCost: Int!
   additionalKgCost: Int!
@@ -1100,7 +1101,8 @@ input ShippingSettingsInput {
   methods: [ShippingRuleInput!]!
 }
 type ShippingRule {
-  method: ShippingMethod!
+  method: String!
+  label: String!
   enabled: Boolean!
   baseCost: Int!
   additionalKgCost: Int!
@@ -1111,8 +1113,14 @@ type ShippingSettings {
   methods: [ShippingRule!]!
   updatedAt: String!
 }
+type ShippingMethodOption {
+  method: String!
+  label: String!
+  enabled: Boolean!
+}
 type ShippingOptions {
-  availableMethods: [ShippingMethod!]!
+  availableMethods: [String!]!
+  methods: [ShippingMethodOption!]!
 }
 extend type Query {
   adminShippingSettings: ShippingSettings!
@@ -1211,7 +1219,7 @@ type MessageTemplateSettings {
 }
 input AdminShipmentInput {
   orderId: ID!
-  shippingMethod: ShippingMethod!
+  shippingMethod: String!
   trackingNumber: String!
   expectedUpdatedAt: String!
   expectedLabelUpdatedAt: String
@@ -1246,7 +1254,7 @@ input AdminManualOrderEditInput {
   salesChannel: SalesChannel!
   items: [AdminManualLineInput!]!
   manualShippingCost: Int!
-  shippingMethod: ShippingMethod!
+  shippingMethod: String!
   pickup: Boolean!
   address: AddressInput
   expectedTotal: Int!

@@ -224,7 +224,7 @@ model PaymentReference {
 model Order {
   shippingPolicySnapshot   Json?
   salesChannel             SalesChannel        @default(WEBSITE)
-  shippingMethod           ShippingMethod?     @default(POST)
+  shippingMethod           String?             @default("POST") @db.VarChar(40)
   shippingWeightGrams      Int?
   shippingBaseCost         Int?
   shippingAdditionalKgCost Int?
@@ -439,12 +439,6 @@ enum SalesChannel {
   WEBSITE
   INSTAGRAM
   IN_PERSON
-}
-
-enum ShippingMethod {
-  POST
-  TIPAX
-  COURIER
 }
 
 enum OfflinePaymentMethod {

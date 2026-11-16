@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { shippingMethods, salesChannels, offlinePaymentMethods } from '@behjati/shared/sales';
+import {
+  shippingMethodCodeSchema,
+  salesChannels,
+  offlinePaymentMethods,
+} from '@behjati/shared/sales';
 import {
   orderStatuses,
   normalizeDigits,
@@ -186,7 +190,7 @@ export const adminOrdersFilterSchema = z
     userId: text(1, 100).nullish(),
     salesChannel: z.enum(salesChannels).nullish(),
     manualOnly: z.boolean().nullish(),
-    shippingMethod: z.enum(shippingMethods).nullish(),
+    shippingMethod: shippingMethodCodeSchema.nullish(),
     number: z.number().int().positive().max(2147483647).nullish(),
     city: text(0, 80).default(''),
     from: z.iso.date().nullish(),
@@ -206,7 +210,7 @@ export const adminReportFilterSchema = z
     to: z.iso.date(),
     status: z.enum(orderStatuses).nullish(),
     salesChannel: z.enum(salesChannels).nullish(),
-    shippingMethod: z.enum(shippingMethods).nullish(),
+    shippingMethod: shippingMethodCodeSchema.nullish(),
   })
   .strict()
   .refine(
@@ -277,7 +281,7 @@ export const manualQuoteInputSchema = z
     items: z.array(manualLineSchema).min(1).max(50),
     discountCode: z.literal('').default(''),
     manualShippingCost: z.number().int().min(0).max(2147483647).default(0),
-    shippingMethod: z.enum(shippingMethods).default('POST'),
+    shippingMethod: shippingMethodCodeSchema.default('POST'),
     pickup: z.boolean().default(false),
   })
   .strict()

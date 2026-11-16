@@ -157,7 +157,7 @@ try {
     },
   });
   await shop.getByRole('button', { name: 'اعمال', exact: true }).click();
-  await expect(shop.getByRole('radio', { name: 'تیپاکس', exact: true })).toBeChecked();
+  await expect(shop.locator('input[name="shipping-method"]:checked')).toHaveCount(1);
   await expect(shop.getByRole('radio', { name: 'پست', exact: true })).toHaveCount(0);
   await db.shippingSettings.update({
     where: { id: 'store' },

@@ -1,5 +1,11 @@
 import { Prisma } from '@prisma/client';
-import { shippingSettingsSchema, initialShippingSettings } from '@behjati/shared/shipping';
+import {
+  shippingSettingsSchema,
+  initialShippingSettings,
+  upgradeShippingSettings,
+  type ShippingSettings,
+} from '@behjati/shared/shipping';
+import { shippingMethodLabel } from '@behjati/shared/sales';
 import { db } from '../../database/client.js';
 import { env } from '../../config/env.js';
 import { authError } from '../auth/errors.js';
@@ -26,7 +32,10 @@ export async function loadShippingSettings(tx: Prisma.TransactionClient) {
       update: {},
     });
   }
-  return { ...shippingSettingsSchema.parse(row.data), updatedAt: row.updatedAt.toISOString() };
+  return {
+    ...shippingSettingsSchema.parse(upgradeShippingSettings(row.data)),
+    updatedAt: row.updatedAt.toISOString(),
+  };
 }
 export const readShippingSettings = () => db.$transaction((tx) => loadShippingSettings(tx));
 export async function saveShippingSettings(raw: unknown, expectedUpdatedAt: string) {
@@ -36,6 +45,15 @@ export async function saveShippingSettings(raw: unknown, expectedUpdatedAt: stri
     const previous = await tx.shippingSettings.findUnique({ where: { id: 'store' } });
     if (!previous || previous.updatedAt.toISOString() !== expectedUpdatedAt)
       throw authError('تنظیمات ارسال تغییر کرده است؛ صفحه را تازه کنید.', 'REQUEST_CONFLICT');
+    const before = shippingSettingsSchema.parse(upgradeShippingSettings(previous.data));
+    const removed = before.methods
+      .map((rule) => rule.method)
+      .filter((code) => !input.methods.some((rule) => rule.method === code));
+    if (removed.length && (await tx.order.count({ where: { shippingMethod: { in: removed } } })))
+      throw authError(
+        'روش ارسالی که در سفارش‌ها استفاده شده قابل حذف نیست؛ آن را غیرفعال کنید.',
+        'BAD_USER_INPUT',
+      );
     const row = await tx.shippingSettings.update({
       where: { id: 'store' },
       data: {
@@ -43,6 +61,39 @@ export async function saveShippingSettings(raw: unknown, expectedUpdatedAt: stri
         updatedAt: new Date(Math.max(Date.now(), previous.updatedAt.getTime() + 1)),
       },
     });
+    cachedMethods = null;
     return { ...input, updatedAt: row.updatedAt.toISOString() };
   });
+}
+let cachedMethods: { at: number; value: Promise<ShippingSettings['methods']> } | null = null;
+/** Current method list for display labels; briefly cached so order lists do not re-read it. */
+export function shippingMethodList() {
+  if (!cachedMethods || Date.now() - cachedMethods.at > 10_000) {
+    const value = readShippingSettings().then((settings) => settings.methods);
+    value.catch(() => {
+      if (cachedMethods?.value === value) cachedMethods = null;
+    });
+    cachedMethods = { at: Date.now(), value };
+  }
+  return cachedMethods.value;
+}
+/** Resolver helper: label of an order's method, falling back to built-in names and raw codes. */
+export async function orderShippingMethodLabel(order: { shippingMethod?: string | null }) {
+  if (!order.shippingMethod) return null;
+  try {
+    return shippingMethodLabel(order.shippingMethod, await shippingMethodList());
+  } catch {
+    return shippingMethodLabel(order.shippingMethod);
+  }
+}
+/** Admin-entered methods must exist in the store list (disabled ones stay usable for staff). */
+export async function requireConfiguredShippingMethod(
+  tx: Prisma.TransactionClient,
+  code: string | null | undefined,
+) {
+  if (!code) return null;
+  const { methods } = await loadShippingSettings(tx);
+  const rule = methods.find((item) => item.method === code);
+  if (!rule) throw authError('روش ارسال انتخاب‌شده تعریف نشده است.', 'BAD_USER_INPUT');
+  return rule;
 }

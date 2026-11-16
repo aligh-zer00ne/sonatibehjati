@@ -4,7 +4,7 @@ import { useAdmin } from '../auth/AdminProvider';
 import { useState } from 'react';
 import AccountStatus from './AccountStatus';
 import { formatAdminPrice } from '../lib/money';
-import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
+import { salesChannelLabels, shippingMethodLabel } from '@behjati/shared/sales';
 import { formatNumber, formatDate } from '@behjati/shared';
 import type { AdminOrderSummaryFieldsFragment } from '../generated/graphql';
 import { customerName, persianDigits } from '../lib/format';
@@ -64,7 +64,9 @@ export default function OrderSummaryCard({
             <p className="line-clamp-1 text-[13px] text-[#857467]">
               {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}
               {salesChannelLabels[order.salesChannel]} ·{' '}
-              {order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری'}
+              {order.shippingMethod
+                ? (order.shippingMethodLabel ?? shippingMethodLabel(order.shippingMethod))
+                : 'تحویل حضوری'}
               {order.address.city ? ` · ${order.address.city}` : ''}
             </p>
           </div>

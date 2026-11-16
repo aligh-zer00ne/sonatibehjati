@@ -1,3 +1,4 @@
+import { useShippingMethods } from '../hooks/useShippingMethods';
 import { useEffect, useState } from 'react';
 import { Alert, App, Button, Form, Input, Modal, Select } from 'antd';
 import {
@@ -5,12 +6,7 @@ import {
   manualOrderEditSchema,
   manualQuoteInputSchema,
 } from '@behjati/shared/admin';
-import {
-  shippingMethods,
-  shippingMethodLabels,
-  offlinePaymentMethods,
-  offlinePaymentMethodLabels,
-} from '@behjati/shared/sales';
+import { offlinePaymentMethods, offlinePaymentMethodLabels } from '@behjati/shared/sales';
 import { hasPermission } from '@behjati/shared/permissions';
 import {
   AdminManualQuoteDocument,
@@ -22,7 +18,6 @@ import {
   type AdminManualOrderEditInput,
   type AdminOrderFieldsFragment,
   type AdminManualOrderInput,
-  type ShippingMethod,
   type OfflinePaymentMethod,
   type SalesChannel,
 } from '../generated/graphql';
@@ -76,7 +71,8 @@ export default function ManualOrderModal({
   );
   const [channel, setChannel] = useState<SalesChannel>(editingOrder?.salesChannel ?? 'IN_PERSON');
   const [pickup, setPickup] = useState(editingOrder ? !editingOrder.shippingMethod : true);
-  const [method, setMethod] = useState<ShippingMethod>(editingOrder?.shippingMethod ?? 'POST');
+  const carriers = useShippingMethods();
+  const [method, setMethod] = useState<string>(editingOrder?.shippingMethod ?? 'POST');
   const [received, setReceived] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<OfflinePaymentMethod>('POS');
   const [shippingCost, setShippingCost] = useState(editingOrder?.shipping ?? 0);
@@ -449,10 +445,7 @@ export default function ManualOrderModal({
                   setMethod(v);
                   setDirty(true);
                 }}
-                options={shippingMethods.map((value) => ({
-                  value,
-                  label: shippingMethodLabels[value],
-                }))}
+                options={carriers.options(editingOrder?.shippingMethod)}
               />
             </Form.Item>
             <div className="grid gap-x-3 sm:grid-cols-2">

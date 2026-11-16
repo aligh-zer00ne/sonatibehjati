@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { shippingMethods } from '@behjati/shared/sales';
+import { shippingMethodCodeSchema } from '@behjati/shared/sales';
 export const DESIGNER_DOMAIN = 'nexoraict.ir';
 export const DESIGNER_URL = 'https://nexoraict.ir';
 export const BRAND_NAME = 'حلواارده سنتی بهجتی اردکان';
@@ -158,7 +158,7 @@ export const addressInputSchema = z
   });
 export const checkoutInputSchema = z
   .object({
-    shippingMethod: z.enum(shippingMethods).default('POST'),
+    shippingMethod: shippingMethodCodeSchema.default('POST'),
     addressId: boundedText(1, 100),
     items: z
       .array(cartLineSchema.extend({ productId: boundedText(1, 100) }).strict())

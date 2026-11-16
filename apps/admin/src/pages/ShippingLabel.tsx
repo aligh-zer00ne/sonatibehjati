@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BRAND_NAME, formatNumber } from '@behjati/shared';
-import { shippingMethodLabels } from '@behjati/shared/sales';
+import { shippingMethodLabel } from '@behjati/shared/sales';
 import type { ShippingLabelValues } from '@behjati/shared/admin';
 import type { AdminOrderFieldsFragment } from '../generated/graphql';
 import { customerName } from '../lib/format';
@@ -34,7 +34,9 @@ export default function ShippingLabel({
       .filter(Boolean)
       .join('، '),
     recipientPostalCode: order.address.postalCode || '',
-    carrier: order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : 'تحویل حضوری',
+    carrier: order.shippingMethod
+      ? (order.shippingMethodLabel ?? shippingMethodLabel(order.shippingMethod))
+      : 'تحویل حضوری',
     packageWeight:
       order.shippingWeightGrams != null
         ? `${formatNumber(order.shippingWeightGrams)} گرم`

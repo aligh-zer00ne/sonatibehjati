@@ -122,7 +122,7 @@ try {
   assert.ok(invalid.errors?.length);
   assert.equal(await db.order.count({ where: { userId: customer.user.id } }), 1);
   const fields =
-    'freeShippingThreshold updatedAt methods{method enabled baseCost additionalKgCost freeShippingEligible}';
+    'freeShippingThreshold updatedAt methods{method label enabled baseCost additionalKgCost freeShippingEligible}';
   const read = async (cookie = adminCookie) =>
     adminGql(`query{adminShippingSettings{${fields}}}`, {}, cookie);
   const settings = (await read()).data.adminShippingSettings;
@@ -192,7 +192,7 @@ try {
   };
   assert.equal((await save(disabled, current.updatedAt)).errors, undefined);
   const methods = await gql('{shippingOptions{availableMethods}}');
-  assert.deepEqual(methods.data.shippingOptions.availableMethods, ['TIPAX', 'COURIER']);
+  assert.deepEqual(methods.data.shippingOptions.availableMethods, ['CHAPAR', 'TIPAX', 'COURIER']);
   const unavailable = await gql(
     quoteQuery,
     { input: { ...input, shippingMethod: 'POST' } },

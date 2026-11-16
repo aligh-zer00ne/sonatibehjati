@@ -5,7 +5,7 @@ import { hasPermission } from '@behjati/shared/permissions';
 import AccountStatus from './AccountStatus';
 import { formatAdminPrice as formatPrice } from '../lib/money';
 import OfflineReceipts from './OfflineReceipts';
-import { salesChannelLabels, shippingMethodLabels } from '@behjati/shared/sales';
+import { salesChannelLabels, shippingMethodLabel } from '@behjati/shared/sales';
 import {
   lazy,
   Suspense,
@@ -382,7 +382,7 @@ export default function OrderDetailsCard({
                     </Field>
                     <Field label="روش تحویل" icon="truck">
                       {order.shippingMethod
-                        ? shippingMethodLabels[order.shippingMethod]
+                        ? (order.shippingMethodLabel ?? shippingMethodLabel(order.shippingMethod))
                         : 'تحویل حضوری'}
                     </Field>
                     <Field label="مشتری" icon="person">

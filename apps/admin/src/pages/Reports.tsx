@@ -1,12 +1,8 @@
 import AmbientBackdrop from '../components/AmbientBackdrop';
+import { useShippingMethods } from '../hooks/useShippingMethods';
 import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
-import {
-  salesChannels,
-  salesChannelLabels,
-  shippingMethods,
-  shippingMethodLabels,
-} from '@behjati/shared/sales';
-import type { SalesChannel, ShippingMethod } from '../generated/graphql';
+import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
+import type { SalesChannel } from '../generated/graphql';
 import AnalyticsMetric from '../components/AnalyticsMetric';
 import AnalyticsRefresh from '../components/AnalyticsRefresh';
 import AdminIcon from '../components/AdminIcon';
@@ -25,6 +21,7 @@ import DataState from '../components/DataState';
 
 import ReportCharts from '../components/ReportCharts';
 export default function Reports() {
+  const carriers = useShippingMethods();
   const [params] = useSearchParams();
   const initial = adminReportFilterSchema.safeParse({
     ...defaultReportRange(),
@@ -40,7 +37,7 @@ export default function Reports() {
   const [salesChannel, setSalesChannel] = useState<SalesChannel | ''>(
     () => initialFilter.salesChannel || '',
   );
-  const [shippingMethod, setShippingMethod] = useState<ShippingMethod | ''>(
+  const [shippingMethod, setShippingMethod] = useState<string>(
     () => initialFilter.shippingMethod || '',
   );
   const filter = {
@@ -177,13 +174,10 @@ export default function Reports() {
           />
         </FilterButton>
         <FilterButton label="شیوه ارسال" active={!!shippingMethod}>
-          <FilterChips<ShippingMethod | ''>
+          <FilterChips<string>
             label="شیوه ارسال گزارش"
             value={shippingMethod}
-            options={[
-              { value: '', label: 'همه روش‌ها' },
-              ...shippingMethods.map((value) => ({ value, label: shippingMethodLabels[value] })),
-            ]}
+            options={[{ value: '', label: 'همه روش‌ها' }, ...carriers.options()]}
             onChange={setShippingMethod}
           />
         </FilterButton>

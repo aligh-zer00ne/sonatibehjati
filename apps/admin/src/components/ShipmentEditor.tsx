@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, App, Button, Input, Select } from 'antd';
 import { formatNumber } from '@behjati/shared';
 import { shipmentInputSchema } from '@behjati/shared/message-templates';
-import { shippingMethodLabels, shippingMethods, type ShippingMethod } from '@behjati/shared/sales';
+import { shippingMethodLabel, type ShippingMethod } from '@behjati/shared/sales';
+import { useShippingMethods } from '../hooks/useShippingMethods';
 import { SaveAdminShipmentDocument, type AdminOrderFieldsFragment } from '../generated/graphql';
 import { adminRequest } from '../lib/client';
 import { customerName } from '../lib/format';
@@ -20,6 +21,7 @@ export default function ShipmentEditor({
   onBusyChange: (busy: boolean) => void;
   onDirtyChange: (dirty: boolean) => void;
 }) {
+  const carriers = useShippingMethods();
   const [method, setMethod] = useState<ShippingMethod | undefined>(
     order.shippingMethod ?? undefined,
   );
@@ -58,7 +60,7 @@ export default function ShipmentEditor({
             value={method}
             disabled={pending || terminal}
             placeholder="روش ارسال"
-            options={shippingMethods.map((v) => ({ value: v, label: shippingMethodLabels[v] }))}
+            options={carriers.options(order.shippingMethod)}
             onChange={setMethod}
           />
         </label>
@@ -143,7 +145,9 @@ export default function ShipmentEditor({
           values={{
             نام_مشتری: order.address.recipientName || customerName(order.user),
             شماره_سفارش: formatNumber(order.number),
-            روش_ارسال: order.shippingMethod ? shippingMethodLabels[order.shippingMethod] : '',
+            روش_ارسال: order.shippingMethod
+              ? (order.shippingMethodLabel ?? shippingMethodLabel(order.shippingMethod))
+              : '',
             کد_رهگیری: order.shippingLabel?.trackingNumber ?? '',
           }}
           onClose={() => setCompose(false)}

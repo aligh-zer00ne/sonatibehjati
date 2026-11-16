@@ -12,10 +12,11 @@ import {
   Mailbox,
   Truck,
   Bike,
+  Package,
   Check,
 } from 'lucide-react';
 import { formatPrice, formatNumber, createOrderInputSchema } from '@behjati/shared';
-import { shippingMethods, shippingMethodLabels, type ShippingMethod } from '@behjati/shared/sales';
+import { shippingMethods, shippingMethodLabel, type ShippingMethod } from '@behjati/shared/sales';
 import {
   MyAddressesDocument,
   DeleteCheckoutAddressDocument,
@@ -36,7 +37,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import AddressForm from './AddressForm';
 type Quote = CheckoutQuoteQuery['checkoutQuote'];
-const shippingIcons = { POST: Mailbox, TIPAX: Truck, COURIER: Bike };
+const shippingIcons: Partial<Record<string, typeof Truck>> = {
+  POST: Mailbox,
+  CHAPAR: Package,
+  TIPAX: Truck,
+  COURIER: Bike,
+};
 function removeOrderedItems(items: { productId: string; quantity: number }[]) {
   const purchased = Object.fromEntries(items.map((item) => [item.productId, item.quantity]));
   useCart.setState((state) => ({
@@ -61,6 +67,7 @@ export default function Checkout() {
   const [addressId, setAddressId] = useState('');
   const [availableMethods, setAvailableMethods] = useState<ShippingMethod[]>([...shippingMethods]);
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>('POST');
+  const [methodNames, setMethodNames] = useState<{ method: string; label: string }[]>([]);
   const [editing, setEditing] = useState<CheckoutAddressFragment | null | undefined>(undefined);
   const [addressLoading, setAddressLoading] = useState(true);
   const [error, setError] = useState('');
@@ -125,6 +132,7 @@ export default function Checkout() {
       const result = await authRequest(MyAddressesDocument, {});
       const methods = result.shippingOptions?.availableMethods ?? [...shippingMethods];
       setAvailableMethods(methods);
+      setMethodNames(result.shippingOptions?.methods ?? []);
       setShippingMethod((current) =>
         methods.includes(current) ? current : (methods[0] ?? 'POST'),
       );
@@ -169,6 +177,7 @@ export default function Checkout() {
                 const methods = result.shippingOptions?.availableMethods;
                 if (methods?.length) {
                   setAvailableMethods(methods);
+                  setMethodNames(result.shippingOptions?.methods ?? []);
                   setShippingMethod((current) =>
                     methods.includes(current) ? current : methods[0]!,
                   );
@@ -353,9 +362,9 @@ export default function Checkout() {
         )}
         <fieldset className="space-y-2.5 border-t border-border pt-4" disabled={pending}>
           <legend className="px-1 text-sm font-bold">روش ارسال سفارش</legend>
-          <div className="grid grid-cols-3 gap-1 rounded-2xl bg-surface/70 p-1">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-1 rounded-2xl bg-surface/70 p-1">
             {availableMethods.map((method) => {
-              const Icon = shippingIcons[method];
+              const Icon = shippingIcons[method] ?? Truck;
               return (
                 <label key={method} className="relative min-w-0 cursor-pointer">
                   <input
@@ -370,7 +379,7 @@ export default function Checkout() {
                   <span className="relative flex min-h-16 flex-col items-center justify-center gap-1 rounded-xl border border-transparent px-2 py-2 text-muted-foreground transition-colors peer-checked:border-primary/20 peer-checked:bg-card peer-checked:text-primary peer-checked:shadow-sm peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-enabled:peer-hover:bg-card/70 peer-disabled:opacity-50 motion-reduce:transition-none">
                     <Icon className="size-5 shrink-0" strokeWidth={1.7} aria-hidden="true" />
                     <span className="text-xs font-semibold sm:text-sm">
-                      {shippingMethodLabels[method]}
+                      {shippingMethodLabel(method, methodNames)}
                     </span>
                     {shippingMethod === method && (
                       <Check
@@ -481,7 +490,7 @@ export default function Checkout() {
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between gap-3">
                 <dt>روش ارسال</dt>
-                <dd>{shippingMethodLabels[shippingMethod]}</dd>
+                <dd>{shippingMethodLabel(shippingMethod, methodNames)}</dd>
               </div>
               {[
                 ['جمع محصولات', currentQuote.subtotal],

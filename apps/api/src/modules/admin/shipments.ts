@@ -1,6 +1,6 @@
 import { shippingLabelSchema } from '@behjati/shared/admin';
 import { shipmentInputSchema } from '@behjati/shared/message-templates';
-import { shippingMethodLabels } from '@behjati/shared/sales';
+import { requireConfiguredShippingMethod } from '../checkout/shipping-settings.js';
 import { db } from '../../database/client.js';
 import { env } from '../../config/env.js';
 import { authError } from '../auth/errors.js';
@@ -36,6 +36,7 @@ export async function saveShipment(adminId: string, raw: unknown) {
         return;
       throw authError('سفارش تغییر کرده است؛ اطلاعات جدید را دریافت کنید.', 'REQUEST_CONFLICT');
     }
+    const carrier = await requireConfiguredShippingMethod(tx, input.shippingMethod);
     if (['CANCELED', 'DELIVERED'].includes(order.status))
       throw authError('اطلاعات ارسال سفارش نهایی قابل تغییر نیست.', 'BAD_USER_INPUT');
     if (previous?.trackingNumber && !input.trackingNumber)
@@ -64,7 +65,7 @@ export async function saveShipment(adminId: string, raw: unknown) {
       note: '',
       paperSize: 'THERMAL' as const,
       ...previous,
-      carrier: shippingMethodLabels[input.shippingMethod],
+      carrier: carrier!.label,
       trackingNumber: input.trackingNumber,
     });
     const status = input.trackingNumber ? ('SHIPPED' as const) : order.status;

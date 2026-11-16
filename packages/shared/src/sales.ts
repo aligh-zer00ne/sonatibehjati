@@ -1,3 +1,4 @@
+import { z } from 'zod';
 export const salesChannels = ['WEBSITE', 'INSTAGRAM', 'IN_PERSON'] as const;
 export type SalesChannel = (typeof salesChannels)[number];
 export const salesChannelLabels: Record<SalesChannel, string> = {
@@ -5,13 +6,32 @@ export const salesChannelLabels: Record<SalesChannel, string> = {
   INSTAGRAM: 'اینستاگرام',
   IN_PERSON: 'حضوری',
 };
-export const shippingMethods = ['POST', 'TIPAX', 'COURIER'] as const;
-export type ShippingMethod = (typeof shippingMethods)[number];
-export const shippingMethodLabels: Record<ShippingMethod, string> = {
+/** Built-in carriers. Stores can add their own methods; those use generated `CUSTOM_*` codes. */
+export const shippingMethods = ['POST', 'CHAPAR', 'TIPAX', 'COURIER'] as const;
+export type BuiltInShippingMethod = (typeof shippingMethods)[number];
+export type ShippingMethod = string;
+export const shippingMethodPattern = /^[A-Z][A-Z0-9_]{1,39}$/;
+export const shippingMethodCodeSchema = z
+  .string()
+  .regex(shippingMethodPattern, 'روش ارسال معتبر نیست.');
+export const shippingMethodLabels: Record<BuiltInShippingMethod, string> = {
   POST: 'پست',
+  CHAPAR: 'چاپار',
   TIPAX: 'تیپاکس',
   COURIER: 'پیک',
 };
+export const isBuiltInShippingMethod = (code: string): code is BuiltInShippingMethod =>
+  (shippingMethods as readonly string[]).includes(code);
+/** Readable carrier name; configured labels win, unknown codes stay visible instead of blank. */
+export function shippingMethodLabel(
+  code: string | null | undefined,
+  methods?: ReadonlyArray<{ method: string; label?: string | null }> | null,
+) {
+  if (!code) return '';
+  const configured = methods?.find((item) => item.method === code)?.label?.trim();
+  if (configured) return configured;
+  return isBuiltInShippingMethod(code) ? shippingMethodLabels[code] : code;
+}
 export const offlinePaymentMethods = ['CASH', 'POS', 'CARD_TRANSFER', 'CHECK'] as const;
 export type OfflinePaymentMethod = (typeof offlinePaymentMethods)[number];
 export const offlinePaymentMethodLabels: Record<OfflinePaymentMethod | 'ONLINE', string> = {

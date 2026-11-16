@@ -9,12 +9,15 @@ import { productRepository } from '../modules/products/repository.js';
 import { catalogRepository } from '../modules/products/catalog.js';
 import { serializeProduct as serialize } from '../modules/products/presentation.js';
 import { env } from '../config/env.js';
+import { orderShippingMethodLabel } from '../modules/checkout/shipping-settings.js';
 import { gatewayAvailable } from '../modules/payments/service.js';
 export const resolvers: Resolvers = {
   AdminIdentity: {
     gatewayTestEnabled: (admin) =>
       admin.role === 'OWNER' && env.ADMIN_PAYMENT_TEST_ENABLED === 'true' && gatewayAvailable(),
   },
+  AdminOrderSummary: { shippingMethodLabel: orderShippingMethodLabel },
+  AccountOrderSummary: { shippingMethodLabel: orderShippingMethodLabel },
   OrderReceipt: paymentResolvers.OrderReceipt,
   AccountOrder: paymentResolvers.AccountOrder,
   AdminOrder: { ...paymentResolvers.AdminOrder, ...adminResolvers.AdminOrder },

@@ -125,6 +125,7 @@ fragment AdminCustomerFields on AuthUser {
 fragment AdminOrderSummaryFields on AdminOrderSummary {
   salesChannel
   shippingMethod
+  shippingMethodLabel
   shippingWeightGrams
   offlinePaidAmount
   id
@@ -152,6 +153,7 @@ fragment AdminOrderFields on AdminOrder {
   }
   salesChannel
   shippingMethod
+  shippingMethodLabel
   shippingWeightGrams
   offlinePaidAmount
   paidAt
@@ -765,10 +767,20 @@ fragment ShippingSettingsFields on ShippingSettings {
   updatedAt
   methods {
     method
+    label
     enabled
     baseCost
     additionalKgCost
     freeShippingEligible
+  }
+}
+query AdminShippingMethods {
+  shippingOptions {
+    methods {
+      method
+      label
+      enabled
+    }
   }
 }
 query AdminShippingSettings {

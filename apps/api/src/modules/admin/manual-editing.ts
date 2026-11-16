@@ -1,7 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { Prisma } from '@prisma/client';
 import { manualOrderEditSchema } from '@behjati/shared/admin';
-import { shippingMethodLabels } from '@behjati/shared/sales';
 import { db } from '../../database/client.js';
 import { authError } from '../auth/errors.js';
 import { validate } from './validation.js';
@@ -176,7 +175,7 @@ export async function editManualOrder(admin: { id: string; email: string }, raw:
         await tx.orderShippingLabel.update({
           where: { orderId: order.id },
           data: {
-            data: { ...data, carrier: shippingMethodLabels[quote.shippingMethod] },
+            data: { ...data, carrier: quote.shippingMethodLabel ?? quote.shippingMethod },
             updatedAt: new Date(Math.max(Date.now(), Date.parse(updatedAt) + 1)),
           },
         });

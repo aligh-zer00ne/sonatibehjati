@@ -14,6 +14,11 @@ fragment CheckoutAddress on Address {
 query MyAddresses {
   shippingOptions {
     availableMethods
+    methods {
+      method
+      label
+      enabled
+    }
   }
   myAddresses {
     ...CheckoutAddress
