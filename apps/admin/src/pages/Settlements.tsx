@@ -1,4 +1,3 @@
-import AmbientBackdrop from '../components/AmbientBackdrop';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from 'antd';
@@ -98,7 +97,6 @@ export default function Settlements({
               className="overflow-hidden rounded-[26px] border border-[#d7dce2] bg-white shadow-[0_6px_22px_#35465c08]"
             >
               <header className="relative isolate overflow-hidden flex flex-wrap items-center justify-between gap-5 bg-[linear-gradient(125deg,#203755,#0f1926)] p-5 text-[#eceff4] sm:p-6">
-                <AmbientBackdrop />
                 <div className="relative z-10 flex items-center gap-3">
                   <span className="grid size-14 shrink-0 place-items-center rounded-full border-2 border-[#a7d4db] bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f]">
                     <AdminIcon name="person" width={28} height={28} />

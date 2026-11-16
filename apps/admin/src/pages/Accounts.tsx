@@ -99,7 +99,12 @@ export default function Accounts() {
                 name="password"
                 label="رمز اولیه (حداقل ۱۲ کاراکتر)"
                 rules={[
-                  { required: true, min: 12, max: 128, message: 'رمز باید ۱۲ تا ۱۲۸ کاراکتر باشد.' },
+                  {
+                    required: true,
+                    min: 12,
+                    max: 128,
+                    message: 'رمز باید ۱۲ تا ۱۲۸ کاراکتر باشد.',
+                  },
                 ]}
               >
                 <Input.Password dir="ltr" autoComplete="new-password" maxLength={128} />

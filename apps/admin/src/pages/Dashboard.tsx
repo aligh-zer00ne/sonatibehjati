@@ -22,7 +22,6 @@ import DashboardProductImage from '../components/DashboardProductImage';
 import OrdersTable from '../components/OrdersTable';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
 import { customerName } from '../lib/format';
-import AmbientBackdrop from '../components/AmbientBackdrop';
 import AdminSkyline from '../components/AdminSkyline';
 import MotionButton from '../components/MotionButton';
 import { cardIconInteraction } from '../lib/card-interaction';
@@ -84,7 +83,6 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-4 motion-safe:animate-surface-enter" data-admin-dashboard>
       <header className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#5c7493]/40 bg-[radial-gradient(ellipse_at_top_right,#395272,transparent_65%),linear-gradient(125deg,#203755,#0f1926)] px-5 py-6 text-[#eceff4] shadow-[0_12px_28px_-12px_#1e3a5f50] sm:px-7 sm:py-7">
-        <AmbientBackdrop />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 left-0 -z-10 w-64 opacity-40 [mask-image:linear-gradient(to_right,black,transparent)]"
@@ -144,7 +142,10 @@ export default function Dashboard() {
           {salesChannel ? salesChannelLabels[salesChannel] : 'همه مسیرهای خرید'}
         </span>
       </FilterBar>
-      <section className="grid gap-3 min-[540px]:grid-cols-2 xl:grid-cols-4" aria-label="آمار اصلی فروشگاه">
+      <section
+        className="grid gap-3 min-[540px]:grid-cols-2 xl:grid-cols-4"
+        aria-label="آمار اصلی فروشگاه"
+      >
         <AnalyticsMetric
           compact
           label="خالص دریافتی"

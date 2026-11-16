@@ -1,4 +1,3 @@
-import AmbientBackdrop from '../components/AmbientBackdrop';
 import { Navigate, useParams } from 'react-router-dom';
 import { adminLanding } from '@behjati/shared/permissions';
 import { formatNumber } from '@behjati/shared';
@@ -18,7 +17,6 @@ export default function AdminSection() {
       className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 motion-safe:animate-surface-enter"
     >
       <header className="relative isolate overflow-hidden flex min-h-[180px] flex-wrap items-center justify-between gap-5 rounded-[26px] border border-[#5c7493]/40 bg-[radial-gradient(ellipse_at_top_right,#395272,transparent_65%),linear-gradient(125deg,#203755,#0f1926)] p-6 text-[#eceff4] shadow-[0_12px_30px_-14px_#1e3a5f60] sm:p-8">
-        <AmbientBackdrop />
         <div className="relative z-10">
           <p className="mb-2 text-sm text-[#8bc2cb]">فضای مدیریت سنتی بهجتی</p>
           <h1 className="text-[26px] leading-normal font-extrabold sm:text-[30px]">

@@ -9,7 +9,6 @@ import { AdminLoginDocument } from '../generated/graphql';
 import AdminIcon from '../components/AdminIcon';
 import AdminSkyline from '../components/AdminSkyline';
 import DesignCredit from '../components/DesignCredit';
-import AmbientBackdrop from '../components/AmbientBackdrop';
 
 function LoginLayout({ children }: { children: ReactNode }) {
   return (
@@ -28,7 +27,6 @@ function LoginLayout({ children }: { children: ReactNode }) {
             aria-label="سنتی بهجتی اردکان"
             className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_top_right,#415a7a,transparent_65%),linear-gradient(145deg,#203755,#0f1926)] px-5 py-6 text-[#eceff4] sm:px-8 md:flex md:flex-col md:justify-between md:px-10 md:py-10"
           >
-            <AmbientBackdrop />
             <div
               className="absolute -top-24 -left-24 -z-10 size-72 rounded-full border border-[#8bc2cb]/15"
               aria-hidden="true"

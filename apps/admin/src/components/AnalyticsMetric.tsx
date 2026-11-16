@@ -1,4 +1,3 @@
-import AmbientBackdrop from './AmbientBackdrop';
 import AnimatedNumber from './AnimatedNumber';
 import AdminIcon, { type AdminIconName } from './AdminIcon';
 import { surfaceCardMotion, useSurfaceMotion } from '../hooks/useSurfaceMotion';
@@ -34,7 +33,6 @@ export default function AnalyticsMetric({
       className={`${surfaceCardMotion} ${onInspect && !featured ? cardInteraction : 'group relative'} min-w-0 overflow-hidden rounded-2xl border ${compact ? 'p-3 sm:p-4' : 'p-4 sm:p-5'} ${onInspect ? 'focus-within:ring-2 focus-within:ring-[#5c959e]/40' : ''} ${featured ? 'border-[#1e3a5f] bg-[linear-gradient(135deg,#304a6b,#101c2c)] text-white shadow-[0_8px_24px_#1e3a5f18]' : 'border-[#d7dce2] bg-white text-[#202832]'}`}
       data-analytics-metric={label}
     >
-      {featured && <AmbientBackdrop />}
       <SurfaceGlow />
       <div className="relative z-10 flex items-center gap-3">
         <span

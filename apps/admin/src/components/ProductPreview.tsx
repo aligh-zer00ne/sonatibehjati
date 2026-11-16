@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import { Button, Modal } from 'antd';
 import AdminIcon from './AdminIcon';
-export default function ProductPreview({ slug, isActive, compact = false }: { slug: string; isActive: boolean; compact?: boolean }) {
+export default function ProductPreview({
+  slug,
+  isActive,
+  compact = false,
+}: {
+  slug: string;
+  isActive: boolean;
+  compact?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [revision, setRevision] = useState(0);
   const origin =

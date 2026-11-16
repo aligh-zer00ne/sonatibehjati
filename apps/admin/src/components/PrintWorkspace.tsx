@@ -163,8 +163,7 @@ export default function PrintWorkspace({
       setPending(false);
     }
   };
-  const toolClass =
-    '!h-10 !rounded-xl !border-white/25 !bg-white/10 !px-3 !text-[#eceff4] ';
+  const toolClass = '!h-10 !rounded-xl !border-white/25 !bg-white/10 !px-3 !text-[#eceff4] ';
   return (
     <Modal
       open

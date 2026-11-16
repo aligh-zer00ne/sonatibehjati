@@ -12,7 +12,6 @@ import { useAdminQuery } from '../hooks/useAdminQuery';
 import { adminRequest } from '../lib/client';
 import { formatAdminPrice } from '../lib/money';
 import { MoneyInput } from '../components/Money';
-import AmbientBackdrop from '../components/AmbientBackdrop';
 import AdminIcon from '../components/AdminIcon';
 import DashboardProductImage from '../components/DashboardProductImage';
 import DataState from '../components/DataState';
@@ -98,7 +97,6 @@ export default function PriceAnnouncement() {
   return (
     <section data-price-announcement className="space-y-3">
       <header className="relative isolate overflow-hidden rounded-[26px] border border-[#667d9b]/40 bg-[linear-gradient(125deg,#2c5282,#101c2c)] p-4 text-[#eceff4] sm:p-4">
-        <AmbientBackdrop />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="grid size-13 shrink-0 place-items-center rounded-2xl border border-[#9aced6]/40 bg-[#9aced6]/15 text-[#9aced6]">

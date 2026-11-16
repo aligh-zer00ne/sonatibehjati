@@ -35,7 +35,7 @@ try {
   const staffEmail = `config-ui-${randomBytes(6).toString('hex')}@example.test`;
   const staffPassword = randomBytes(20).toString('hex');
   await page.getByLabel('ایمیل همکار', { exact: true }).fill(staffEmail);
-  await page.getByLabel('رمز اولیه (حداقل ۱۲ نویسه)', { exact: true }).fill(staffPassword);
+  await page.getByLabel('رمز اولیه (حداقل ۱۲ کاراکتر)', { exact: true }).fill(staffPassword);
   await page.getByRole('checkbox', { name: 'پشتیبانی و تیکت‌ها', exact: true }).check();
   await page.getByRole('button', { name: 'ساخت حساب همکار', exact: true }).click();
   await expect(page.getByText(staffEmail, { exact: true })).toBeVisible();

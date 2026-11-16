@@ -2,7 +2,6 @@ import { useAdmin } from '../auth/AdminProvider';
 import { accountEntryInputSchema } from '@behjati/shared/admin';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import AdminIcon, { type AdminIconName } from '../components/AdminIcon';
-import AmbientBackdrop from '../components/AmbientBackdrop';
 import ActionCardLink from '../components/ActionCardLink';
 import { cardIconInteraction } from '../lib/card-interaction';
 const operations: { href: string; title: string; description: string; icon: AdminIconName }[] = [
@@ -47,7 +46,6 @@ export default function FinancialHub() {
   return (
     <div className="mx-auto w-full max-w-[1180px] space-y-6">
       <header className="relative isolate overflow-hidden rounded-[26px] bg-[linear-gradient(125deg,#203755,#0f1926)] p-6 text-[#eceff4] sm:p-8">
-        <AmbientBackdrop />
         <div className="relative z-10">
           <p className="text-sm text-[#8bc2cb]">امور مالی فروش دستی</p>
           <h1 className="mt-3 text-[30px] font-extrabold">دریافت و پرداخت</h1>

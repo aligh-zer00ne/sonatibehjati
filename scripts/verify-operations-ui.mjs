@@ -75,7 +75,7 @@ try {
   const staffEmail = `ui-staff-${randomBytes(5).toString('hex')}@example.test`;
   const staffPassword = randomBytes(20).toString('base64url');
   await page.getByLabel('ایمیل همکار', { exact: true }).fill(staffEmail);
-  await page.getByLabel('رمز اولیه (حداقل ۱۲ نویسه)', { exact: true }).fill(staffPassword);
+  await page.getByLabel('رمز اولیه (حداقل ۱۲ کاراکتر)', { exact: true }).fill(staffPassword);
   for (const label of [
     'سفارش‌ها و چاپ',
     'نقشه سفارش‌ها',

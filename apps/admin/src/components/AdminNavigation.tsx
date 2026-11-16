@@ -349,11 +349,7 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
       <p className="mt-1 mb-3 text-[15px] leading-7 text-[#586474]">{item.description}</p>
       <span className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-[#d7dce2] pt-3 text-[13px] font-semibold text-[#566d8a]">
         <span>ورود به بخش</span>
-        <AdminIcon
-          name="arrow"
-          width={18}
-          className="motion-safe:transition-transform "
-        />
+        <AdminIcon name="arrow" width={18} className="motion-safe:transition-transform " />
       </span>
     </ActionCardLink>
   );

@@ -24,7 +24,6 @@ import type {
 import { Money } from './Money';
 import { chartDate } from '../lib/format';
 import AdminIcon from './AdminIcon';
-import AmbientBackdrop from './AmbientBackdrop';
 const colors = ['#869dbc', '#7eb8c1', '#8e97a3', '#96babf', '#78a78e', '#91a7c4'];
 export default function DashboardCharts({
   report,
@@ -235,7 +234,6 @@ export default function DashboardCharts({
               className="relative isolate mx-auto mb-3 h-[248px] w-full overflow-hidden rounded-[24px] border border-[#81b0b7]/40 bg-[radial-gradient(ellipse_at_top_right,#3b4f69,transparent_70%),linear-gradient(135deg,#20344d,#0f1926)] shadow-[inset_0_1px_0_#dfe5ed20]"
               dir="ltr"
             >
-              <AmbientBackdrop />
               <ResponsiveContainer width="100%" height="100%" className="relative z-10">
                 <PieChart>
                   <Pie

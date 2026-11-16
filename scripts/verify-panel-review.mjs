@@ -272,7 +272,7 @@ try {
   staffEmail = 'panel-' + randomBytes(6).toString('hex') + '@example.test';
   const password = randomBytes(20).toString('hex');
   await page.getByLabel('ایمیل همکار', { exact: true }).fill(staffEmail);
-  await page.getByLabel('رمز اولیه (حداقل ۱۲ نویسه)', { exact: true }).fill(password);
+  await page.getByLabel('رمز اولیه (حداقل ۱۲ کاراکتر)', { exact: true }).fill(password);
   await page.getByRole('checkbox', { name: 'محصولات و تخفیف محصول', exact: true }).check();
   await page.getByRole('button', { name: 'ساخت حساب همکار', exact: true }).click();
   await expect(page.getByText(staffEmail, { exact: true })).toBeVisible();

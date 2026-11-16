@@ -17,7 +17,7 @@ export const shippingRuleSchema = z
       .string()
       .trim()
       .min(2, 'نام روش ارسال را وارد کنید.')
-      .max(40, 'نام روش ارسال حداکثر ۴۰ نویسه است.'),
+      .max(40, 'نام روش ارسال حداکثر ۴۰ کاراکتر است.'),
     enabled: z.boolean(),
     baseCost: money,
     additionalKgCost: money,

@@ -1,4 +1,3 @@
-import AmbientBackdrop from '../components/AmbientBackdrop';
 import { useShippingMethods } from '../hooks/useShippingMethods';
 import { FilterButton, FilterChips, FilterBar } from '../components/FilterButtons';
 import { salesChannels, salesChannelLabels } from '@behjati/shared/sales';
@@ -67,7 +66,6 @@ export default function Reports() {
   return (
     <div className="space-y-5" data-admin-reports>
       <header className="relative isolate overflow-hidden rounded-3xl bg-[#1e3a5f] p-5 text-white sm:p-7">
-        <AmbientBackdrop />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -end-12 -top-20 size-72 rounded-full border-[36px] border-[#80bbc3]/10"

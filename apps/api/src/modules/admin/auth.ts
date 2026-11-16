@@ -230,7 +230,7 @@ export async function changeAdminPassword(context: AuthContext, raw: unknown) {
   const identity = await requireAdmin(context);
   const parsed = adminPasswordChangeSchema.safeParse(raw);
   if (!parsed.success)
-    throw authError('رمز جدید باید ۱۲ تا ۱۲۸ نویسه و متفاوت از رمز فعلی باشد.', 'BAD_USER_INPUT');
+    throw authError('رمز جدید باید ۱۲ تا ۱۲۸ کاراکتر و متفاوت از رمز فعلی باشد.', 'BAD_USER_INPUT');
   await consumeAuthLimit(`admin-password:${identity.id}`, 5, 900);
   const admin = await db.admin.findUniqueOrThrow({ where: { id: identity.id } });
   if (!(await verifyAdminPassword(parsed.data.currentPassword, admin.passwordHash)))

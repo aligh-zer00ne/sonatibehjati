@@ -114,7 +114,7 @@
    DATABASE_URL="mysql://sonatibehjati:YOUR_DATABASE_PASSWORD@127.0.0.1:3306/sonatibehjati"
    ```
 
-   اگر رمز نویسهٔ ویژه مثل `@` یا `#` دارد، قسمت رمز در URL باید percent-encode شود. سایر کلیدها و `DEV_OTP_CODE` فعلی را حفظ کنید. هیچ‌کدام از دستورهای `db:seed`، `photos:import`، `setup:auth`، `setup:admin` یا `admin:create` را اجرا نکنید؛ snapshot کامل از قبل schema، migration و حساب مدیر را دارد.
+   اگر رمز کاراکترٔ ویژه مثل `@` یا `#` دارد، قسمت رمز در URL باید percent-encode شود. سایر کلیدها و `DEV_OTP_CODE` فعلی را حفظ کنید. هیچ‌کدام از دستورهای `db:seed`، `photos:import`، `setup:auth`، `setup:admin` یا `admin:create` را اجرا نکنید؛ snapshot کامل از قبل schema، migration و حساب مدیر را دارد.
 
 6. **Node، وابستگی‌ها و تنظیم محیط — همچنان با کاربر پروژه**
 
