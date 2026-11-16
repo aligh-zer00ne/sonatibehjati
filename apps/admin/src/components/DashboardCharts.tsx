@@ -25,7 +25,7 @@ import { Money } from './Money';
 import { chartDate } from '../lib/format';
 import AdminIcon from './AdminIcon';
 import AmbientBackdrop from './AmbientBackdrop';
-const colors = ['#c57d8a', '#e6c06e', '#a79b8a', '#d9af91', '#78a78e', '#cd8d88'];
+const colors = ['#869dbc', '#7eb8c1', '#8e97a3', '#96babf', '#78a78e', '#91a7c4'];
 export default function DashboardCharts({
   report,
   onInspect,
@@ -75,19 +75,19 @@ export default function DashboardCharts({
       <Card
         title={
           <span className="flex items-center gap-2">
-            <AdminIcon name="reports" className="text-[#930d25]" />
+            <AdminIcon name="reports" className="text-[#284b78]" />
             روند فروشگاه
           </span>
         }
         extra={
-          <div className="flex gap-1 rounded-lg bg-[#f4e8d3] p-1" aria-label="بازه نمودار داشبورد">
+          <div className="flex gap-1 rounded-lg bg-[#dce3eb] p-1" aria-label="بازه نمودار داشبورد">
             {[7, 30].map((n) => (
               <button
                 type="button"
                 key={n}
                 aria-pressed={days === n}
                 onClick={() => setDays(n)}
-                className="min-h-9 rounded-lg px-3 py-1 text-xs font-semibold text-[#76685d] transition aria-pressed:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-pressed:text-[#4b270c] aria-pressed:shadow-[0_3px_8px_#c69b4830] motion-safe:active:scale-95 motion-reduce:transition-none"
+                className="min-h-9 rounded-lg px-3 py-1 text-xs font-semibold text-[#606873] transition aria-pressed:bg-[linear-gradient(135deg,#a7d4db,#6faeb7)] aria-pressed:text-[#162941] aria-pressed:shadow-[0_3px_8px_#5c959e30] motion-safe:active:scale-95 motion-reduce:transition-none"
               >
                 {formatNumber(n)} روز
               </button>
@@ -97,7 +97,7 @@ export default function DashboardCharts({
         className="min-w-0"
       >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <b className="text-lg text-[#4e141c]">
+          <b className="text-lg text-[#1e3a5f]">
             {formatAdminPrice(series.reduce((sum, d) => sum + d[metric], 0))}
           </b>
           <div className="flex gap-3 text-xs">
@@ -110,7 +110,7 @@ export default function DashboardCharts({
                 type="button"
                 aria-pressed={metric === m.key}
                 onClick={() => setMetric(m.key as 'orderValue' | 'revenue')}
-                className="border-b-2 border-transparent py-1 text-[#857467] aria-pressed:border-[#701e2a] aria-pressed:text-[#4e141c]"
+                className="border-b-2 border-transparent py-1 text-[#6b7481] aria-pressed:border-[#2c5282] aria-pressed:text-[#1e3a5f]"
               >
                 {m.label}
               </button>
@@ -131,11 +131,11 @@ export default function DashboardCharts({
             >
               <defs>
                 <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ad1634" stopOpacity={0.22} />
-                  <stop offset="100%" stopColor="#ad1634" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="#315b92" stopOpacity={0.22} />
+                  <stop offset="100%" stopColor="#315b92" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#eee7de" vertical={false} />
+              <CartesianGrid stroke="#e2e6ea" vertical={false} />
               <XAxis
                 dataKey="date"
                 tickFormatter={chartDate}
@@ -161,21 +161,21 @@ export default function DashboardCharts({
               <Area
                 type="monotone"
                 dataKey={metric}
-                stroke="#a50f30"
+                stroke="#2d5487"
                 fill={`url(#${gradient})`}
                 strokeWidth={2}
-                dot={series.length === 1 ? { r: 3, fill: '#a50f30' } : false}
+                dot={series.length === 1 ? { r: 3, fill: '#2d5487' } : false}
                 isAnimationActive={false}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#857467]">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#6b7481]">
           <span>مبالغ به ریال · مطابق محل خرید</span>
           {onInspect && (
             <button
               type="button"
-              className="font-semibold text-[#701e2a]"
+              className="font-semibold text-[#2c5282]"
               onClick={() =>
                 onInspect(`سفارش‌های ${formatNumber(days)} روز اخیر`, {
                   from: series[0]?.date ?? report.from,
@@ -189,7 +189,7 @@ export default function DashboardCharts({
         </div>
         {onInspect && (
           <div
-            className="mt-3 flex flex-wrap gap-1.5 border-t border-[#eee5d9] pt-3"
+            className="mt-3 flex flex-wrap gap-1.5 border-t border-[#dfe3e8] pt-3"
             aria-label="سفارش‌های روزهای فعال"
           >
             {series
@@ -202,7 +202,7 @@ export default function DashboardCharts({
                   onClick={() =>
                     onInspect(`سفارش‌های ${chartDate(d.date)}`, { from: d.date, to: d.date })
                   }
-                  className="rounded-md border border-[#e8ded1] bg-[#fcf9f3] px-2 py-1 text-[13px] text-[#62452f] hover:bg-[#f4e8d3]"
+                  className="rounded-md border border-[#d7dce2] bg-[#f5f7fa] px-2 py-1 text-[13px] text-[#35465c] hover:bg-[#dce3eb]"
                 >
                   {chartDate(d.date)} · {formatNumber(d.ordersCount)} سفارش
                 </button>
@@ -216,7 +216,7 @@ export default function DashboardCharts({
           onInspect ? (
             <button
               type="button"
-              className="text-xs text-[#701e2a]"
+              className="text-xs text-[#2c5282]"
               onClick={() =>
                 onInspect('سفارش‌های ۳۰ روز اخیر', { from: report.from, to: report.to })
               }
@@ -232,7 +232,7 @@ export default function DashboardCharts({
             <div
               data-dashboard-donut
               data-donut-ready={!animate || introFinished}
-              className="relative isolate mx-auto mb-3 h-[248px] w-full overflow-hidden rounded-[24px] border border-[#d7b476]/40 bg-[radial-gradient(ellipse_at_top_right,#71333d,transparent_70%),linear-gradient(135deg,#521b25,#290c12)] shadow-[inset_0_1px_0_#fff4cd20]"
+              className="relative isolate mx-auto mb-3 h-[248px] w-full overflow-hidden rounded-[24px] border border-[#81b0b7]/40 bg-[radial-gradient(ellipse_at_top_right,#3b4f69,transparent_70%),linear-gradient(135deg,#20344d,#0f1926)] shadow-[inset_0_1px_0_#dfe5ed20]"
               dir="ltr"
             >
               <AmbientBackdrop />
@@ -267,7 +267,7 @@ export default function DashboardCharts({
                           aria-label={item ? `نمایش سفارش‌های ${item.name} در نمودار` : undefined}
                           className={
                             onInspect
-                              ? 'cursor-pointer motion-safe:transition-opacity motion-safe:duration-200 focus:outline-none focus:stroke-[#34251e] focus:stroke-2'
+                              ? 'cursor-pointer motion-safe:transition-opacity motion-safe:duration-200 focus:outline-none focus:stroke-[#202832] focus:stroke-2'
                               : ''
                           }
                           onMouseEnter={() => item && setActiveStatus(item.status)}
@@ -296,20 +296,20 @@ export default function DashboardCharts({
                 aria-live="polite"
                 data-donut-summary
               >
-                <span className="mb-1 text-[13px] leading-5 font-semibold text-[#f7d98e]">
+                <span className="mb-1 text-[13px] leading-5 font-semibold text-[#9acfd7]">
                   {highlighted
                     ? `${formatNumber(share(highlighted.count))}٪ از سفارش‌ها`
                     : 'نمای کلی سفارش‌ها'}
                 </span>
-                <b className="text-[38px] leading-[48px] font-black tabular-nums text-[#fff4d8]">
+                <b className="text-[38px] leading-[48px] font-black tabular-nums text-[#e6ebf1]">
                   {formatNumber(highlighted?.count ?? report.ordersCount)}
                 </b>
-                <span className="mt-1 w-full text-sm leading-6 font-semibold text-[#fff0cf]">
+                <span className="mt-1 w-full text-sm leading-6 font-semibold text-[#e0e6ee]">
                   {highlighted?.name ?? 'سفارش در ۳۰ روز اخیر'}
                 </span>
               </div>
             </div>
-            <p className="mb-2 text-center text-[13px] leading-6 text-[#6d594b]">
+            <p className="mb-2 text-center text-[13px] leading-6 text-[#4f5a69]">
               {onInspect
                 ? 'روی بخش نمودار یا وضعیت بزنید تا سفارش‌ها باز شوند.'
                 : 'آمار ۳۰ روز اخیر'}
@@ -326,7 +326,7 @@ export default function DashboardCharts({
                     onMouseLeave={() => setActiveStatus(null)}
                     onFocus={() => setActiveStatus(item.status)}
                     onBlur={() => setActiveStatus(null)}
-                    className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-[#eee5d9] bg-[#fcfaf6] px-3 text-start text-xs hover:border-[#c69b48] hover:bg-[#faf3e5] focus-visible:border-[#c69b48] disabled:cursor-default"
+                    className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-[#dfe3e8] bg-[#f8f9fa] px-3 text-start text-xs hover:border-[#5c959e] hover:bg-[#ebeff4] focus-visible:border-[#5c959e] disabled:cursor-default"
                   >
                     <span className="flex items-center gap-2">
                       <span
@@ -336,7 +336,7 @@ export default function DashboardCharts({
                       {item.name}
                     </span>
                     <span className="flex items-center gap-2">
-                      <span className="text-[13px] text-[#857467]">
+                      <span className="text-[13px] text-[#6b7481]">
                         {formatNumber(share(item.count))}٪
                       </span>
                       <b className="min-w-6 text-center text-lg">{formatNumber(item.count)}</b>

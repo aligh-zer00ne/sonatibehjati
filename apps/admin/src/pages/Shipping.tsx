@@ -71,11 +71,11 @@ function ShippingForm({
           }
         }}
       >
-        <section className="mb-5 rounded-[24px] border border-[#e8ded1] bg-white p-5 sm:p-6">
+        <section className="mb-5 rounded-[24px] border border-[#d7dce2] bg-white p-5 sm:p-6">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-extrabold">ارسال رایگان</h2>
-              <p className="mt-2 text-sm leading-7 text-[#857467]">
+              <p className="mt-2 text-sm leading-7 text-[#6b7481]">
                 با رسیدن مبلغ محصولات پس از تخفیف به این حد، هزینهٔ روش‌های مشمول صفر می‌شود.
               </p>
             </div>
@@ -90,14 +90,14 @@ function ShippingForm({
               <MoneyInput />
             </Form.Item>
           )}
-          <p className="text-xs leading-7 text-[#857467]">
+          <p className="text-xs leading-7 text-[#6b7481]">
             هزینهٔ ارسال در حداقل خرید حساب نمی‌شود. فاکتورهای قبلی و سفارش‌های دستی تغییر نمی‌کنند.
           </p>
         </section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-extrabold">روش‌های ارسال</h2>
-            <p className="mt-1 text-sm leading-7 text-[#857467]">
+            <p className="mt-1 text-sm leading-7 text-[#6b7481]">
               پست، چاپار، تیپاکس و پیک پیش‌فرض‌اند؛ روش دلخواه فروشگاه را هم اضافه کنید.
             </p>
           </div>
@@ -131,16 +131,16 @@ function ShippingForm({
               <section
                 key={rule.method}
                 data-shipping-rule={rule.method}
-                className="rounded-[24px] border border-[#e8ded1] bg-white p-5 shadow-sm sm:p-6"
+                className="rounded-[24px] border border-[#d7dce2] bg-white p-5 shadow-sm sm:p-6"
               >
                 <header className="mb-5 flex items-center justify-between">
                   <h2 className="flex items-center gap-3 text-lg font-extrabold">
-                    <span className="grid size-12 place-items-center rounded-2xl bg-[#f4e8d3] text-[#701e2a]">
+                    <span className="grid size-12 place-items-center rounded-2xl bg-[#dce3eb] text-[#2c5282]">
                       <AdminIcon name="truck" />
                     </span>
                     <span className="min-w-0">
                       <span className="block">{name}</span>
-                      <span className="block text-xs font-semibold text-[#857467]">
+                      <span className="block text-xs font-semibold text-[#6b7481]">
                         {builtIn ? 'روش پیش‌فرض' : 'روش اختصاصی فروشگاه'}
                       </span>
                     </span>
@@ -248,10 +248,10 @@ function ShippingForm({
       </Form>
       <aside
         data-shipping-preview
-        className="space-y-5 rounded-[24px] border border-[#dbc390] bg-[#fcf8ef] p-5 xl:sticky xl:top-36"
+        className="space-y-5 rounded-[24px] border border-[#96bbc1] bg-[#f3f5f8] p-5 xl:sticky xl:top-36"
       >
         <h2 className="text-lg font-extrabold">محاسبهٔ آزمایشی سبد</h2>
-        <p className="text-sm leading-8 text-[#857467]">
+        <p className="text-sm leading-8 text-[#6b7481]">
           برای کل سفارش فقط یک هزینه محاسبه می‌شود؛ تعداد محصولات، هزینهٔ پایه را تکرار نمی‌کند.
         </p>
         <label className="block text-sm font-semibold">
@@ -291,10 +291,10 @@ function ShippingForm({
               return (
                 <div
                   key={r.method}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e8ded1] bg-white p-4"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#d7dce2] bg-white p-4"
                 >
                   <span className="text-sm font-bold">{r.label || 'روش جدید'}</span>
-                  <span className="font-extrabold text-[#701e2a]">
+                  <span className="font-extrabold text-[#2c5282]">
                     {result ? (
                       result.cost === 0 ? (
                         'رایگان'
@@ -309,7 +309,7 @@ function ShippingForm({
               );
             })}
         </div>
-        <p className="border-t border-dashed border-[#dbc390] pt-4 text-xs leading-8 text-[#857467]">
+        <p className="border-t border-dashed border-[#96bbc1] pt-4 text-xs leading-8 text-[#6b7481]">
           فرمول: هزینهٔ پایه + تعداد کیلوهای اضافه × نرخ هر کیلو. این مبالغ تعرفهٔ فروشگاه‌اند و
           استعلام زنده از شرکت حمل نیستند.
         </p>

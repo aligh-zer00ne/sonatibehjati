@@ -100,16 +100,16 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
   return (
     <section
       data-account-operation={operation}
-      className="mx-auto w-full max-w-[1180px] rounded-[26px] border border-[#e8ded1] bg-white p-5 shadow-[0_10px_30px_#62452f10] sm:p-7"
+      className="mx-auto w-full max-w-[1180px] rounded-[26px] border border-[#d7dce2] bg-white p-5 shadow-[0_10px_30px_#35465c10] sm:p-7"
     >
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-dashed border-[#e5d7c2] pb-5">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-dashed border-[#bed1d4] pb-5">
         <div className="flex items-center gap-3">
-          <span className="grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-lg">
+          <span className="grid size-14 shrink-0 place-items-center rounded-[18px] border border-[#9dc5cc] bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f] shadow-lg">
             <AdminIcon name={operation === 'RECEIPT' ? 'receiptIn' : 'paymentOut'} width={27} />
           </span>
           <div>
             <h1 className="text-xl font-extrabold">{title}</h1>
-            <p className="mt-2 text-sm leading-7 text-[#796653]">
+            <p className="mt-2 text-sm leading-7 text-[#586474]">
               {operation === 'RECEIPT'
                 ? 'ثبت دریافت و تسویهٔ قدیمی‌ترین فاکتورهای باز مشتری.'
                 : 'ثبت بازپرداخت از محل بستانکاری فعلی مشتری.'}
@@ -162,10 +162,10 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
             />
           )}
           {data && (
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e5d7c2] bg-[#faf6ee] p-4">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#bed1d4] bg-[#f1f4f7] p-4">
               <div>
                 <p className="font-extrabold">{customerName(data.user)}</p>
-                <p className="mt-1 text-xs text-[#857467]">
+                <p className="mt-1 text-xs text-[#6b7481]">
                   <bdi>{data.user.phone}</bdi>
                 </p>
               </div>
@@ -213,7 +213,7 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
             )}
           </div>
           {method === 'CHECK' && (
-            <div className="mb-5 rounded-2xl border border-[#e5d7c2] bg-[#faf6ee] p-4">
+            <div className="mb-5 rounded-2xl border border-[#bed1d4] bg-[#f1f4f7] p-4">
               <div className="grid gap-x-3 sm:grid-cols-2">
                 <Form.Item label="شماره چک" name="chequeNumber" rules={[{ required: true }]}>
                   <Input maxLength={60} />
@@ -225,7 +225,7 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
                   <CalendarPicker />
                 </Form.Item>
               </div>
-              <p className="text-xs leading-7 text-[#796653]">
+              <p className="text-xs leading-7 text-[#586474]">
                 مبلغ چک از زمان ثبت در مانده حساب لحاظ می‌شود.
               </p>
             </div>
@@ -273,14 +273,14 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
         </Form>
         <aside
           data-account-preview
-          className="rounded-[24px] border border-[#d9c7a8] bg-[linear-gradient(135deg,#f8efdd,white)] p-5 lg:sticky lg:top-28 xl:top-36"
+          className="rounded-[24px] border border-[#a8c1c5] bg-[linear-gradient(135deg,#e5eaf0,white)] p-5 lg:sticky lg:top-28 xl:top-36"
         >
-          <h2 className="mb-4 text-sm font-bold text-[#796653]">پیش‌نمایش نتیجه</h2>
-          <div className="rounded-[20px] border border-[#e8ded1] bg-white p-5 text-center">
-            <span className="mx-auto mb-3 grid size-14 place-items-center rounded-2xl bg-[#f4e8d3] text-[#a17b3d]">
+          <h2 className="mb-4 text-sm font-bold text-[#586474]">پیش‌نمایش نتیجه</h2>
+          <div className="rounded-[20px] border border-[#d7dce2] bg-white p-5 text-center">
+            <span className="mx-auto mb-3 grid size-14 place-items-center rounded-2xl bg-[#dce3eb] text-[#4e757c]">
               <AdminIcon name="person" width={28} />
             </span>
-            <p className="text-xs text-[#857467]">
+            <p className="text-xs text-[#6b7481]">
               {operation === 'RECEIPT' ? 'پرداخت‌کننده' : 'دریافت‌کننده'}
             </p>
             <h3 className="my-3 text-base font-extrabold">
@@ -289,22 +289,22 @@ export default function AccountEntryPage({ direction }: { direction: 'RECEIPT' |
             {data && (
               <>
                 <div className="my-5 flex flex-wrap items-center justify-center gap-3">
-                  <div className="text-sm text-[#857467]">
+                  <div className="text-sm text-[#6b7481]">
                     <Money compact amount={Math.abs(balance)} />
                     <AccountStatus balance={balance} amount={false} />
                   </div>
                   <AdminIcon name="arrow" />
-                  <div className="text-lg font-extrabold text-[#4e141c]">
+                  <div className="text-lg font-extrabold text-[#1e3a5f]">
                     <Money compact amount={Math.abs(after)} />
                     <AccountStatus balance={after} amount={false} />
                   </div>
                 </div>
-                <p className="text-xs leading-7 text-[#857467]">مانده حساب پس از ثبت</p>
+                <p className="text-xs leading-7 text-[#6b7481]">مانده حساب پس از ثبت</p>
               </>
             )}
           </div>
-          <div className="mt-5 flex flex-wrap justify-between gap-3 border-t border-dashed border-[#d9c7a8] pt-4 text-sm font-bold">
-            <span className="text-[#857467]">مبلغ این عملیات</span>
+          <div className="mt-5 flex flex-wrap justify-between gap-3 border-t border-dashed border-[#a8c1c5] pt-4 text-sm font-bold">
+            <span className="text-[#6b7481]">مبلغ این عملیات</span>
             <Money compact amount={amount} />
           </div>
           {operation === 'PAYMENT' && data && (balance >= 0 || amount > -balance) && (

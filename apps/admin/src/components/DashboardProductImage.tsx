@@ -10,7 +10,7 @@ export default function DashboardProductImage({
 }) {
   const [failedSource, setFailedSource] = useState<string | null>(null);
   return (
-    <div className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-lg border border-[#eee3d5] bg-[#fffcf7]">
+    <div className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-lg border border-[#dce1e7] bg-[#fafbfc]">
       {src && src !== failedSource ? (
         <img
           key={src}
@@ -20,7 +20,7 @@ export default function DashboardProductImage({
           onError={() => setFailedSource(src)}
         />
       ) : (
-        <span className="px-1 text-center text-[11px] leading-4 text-[#8c8176]">
+        <span className="px-1 text-center text-[11px] leading-4 text-[#798089]">
           {src ? 'تصویر در دسترس نیست' : 'تصویر ثبت نشده'}
         </span>
       )}

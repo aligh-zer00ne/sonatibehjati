@@ -97,15 +97,15 @@ export default function PriceAnnouncement() {
   };
   return (
     <section data-price-announcement className="space-y-3">
-      <header className="relative isolate overflow-hidden rounded-[26px] border border-[#a45d61]/40 bg-[linear-gradient(125deg,#701e2a,#300c14)] p-4 text-[#fff5e1] sm:p-4">
+      <header className="relative isolate overflow-hidden rounded-[26px] border border-[#667d9b]/40 bg-[linear-gradient(125deg,#2c5282,#101c2c)] p-4 text-[#eceff4] sm:p-4">
         <AmbientBackdrop />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="grid size-13 shrink-0 place-items-center rounded-2xl border border-[#f5d88f]/40 bg-[#f5d88f]/15 text-[#f5d88f]">
+            <span className="grid size-13 shrink-0 place-items-center rounded-2xl border border-[#9aced6]/40 bg-[#9aced6]/15 text-[#9aced6]">
               <AdminIcon name="discount" width={28} />
             </span>
             <div>
-              <p className="mb-1 text-[13px] font-semibold text-[#f2d6a2]">
+              <p className="mb-1 text-[13px] font-semibold text-[#a8d1d8]">
                 قیمت‌گذاری سریع فروشگاه
               </p>
               <h1 className="text-2xl font-extrabold">اعلامیه قیمت</h1>
@@ -113,10 +113,10 @@ export default function PriceAnnouncement() {
           </div>
           <div className="flex flex-wrap gap-2 text-[13px] font-semibold">
             <span className="rounded-xl border border-white/15 bg-white/10 px-3 py-2">
-              <b className="text-lg text-[#f5d88f]">{formatNumber(rows.length)}</b> کالا
+              <b className="text-lg text-[#9aced6]">{formatNumber(rows.length)}</b> کالا
             </span>
-            <span className="rounded-xl border border-[#f5d88f]/40 bg-[#f5d88f]/15 px-3 py-2">
-              <b className="text-lg text-[#f5d88f]">{formatNumber(changes.length)}</b> تغییر
+            <span className="rounded-xl border border-[#9aced6]/40 bg-[#9aced6]/15 px-3 py-2">
+              <b className="text-lg text-[#9aced6]">{formatNumber(changes.length)}</b> تغییر
             </span>
             <span className="rounded-xl border border-white/15 px-3 py-2">مبالغ به ریال</span>
           </div>
@@ -125,7 +125,7 @@ export default function PriceAnnouncement() {
             disabled={pending}
             onClick={refresh}
             aria-label="دریافت آخرین قیمت‌ها"
-            className="!border-white/25 !bg-white/10 !text-[#fff5e1]"
+            className="!border-white/25 !bg-white/10 !text-[#eceff4]"
           >
             <span className="hidden sm:inline">دریافت آخرین قیمت‌ها</span>
           </Button>
@@ -135,7 +135,7 @@ export default function PriceAnnouncement() {
         <DataState error={query.error} retry={query.refresh} />
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e6dbc9] bg-white p-3 shadow-[0_5px_18px_#62452f08] sm:p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#c4d4d6] bg-white p-3 shadow-[0_5px_18px_#35465c08] sm:p-4">
             <Input
               aria-label="جستجوی اعلامیه قیمت"
               prefix={<AdminIcon name="search" width={19} />}
@@ -146,7 +146,7 @@ export default function PriceAnnouncement() {
               allowClear
               className="!w-full sm:!w-80"
             />
-            <div className="flex flex-wrap items-center gap-2 text-xs text-[#796653]">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[#586474]">
               <span>
                 {formatNumber(visible.length)} از {formatNumber(rows.length)} محصول
               </span>
@@ -154,7 +154,7 @@ export default function PriceAnnouncement() {
                 type="button"
                 aria-pressed={onlyChanged}
                 onClick={() => setOnlyChanged((v) => !v)}
-                className="min-h-10 cursor-pointer rounded-xl border border-[#e6dbc9] px-3 font-semibold aria-pressed:border-[#b78343] aria-pressed:bg-[#f8efd9] aria-pressed:text-[#4e141c]"
+                className="min-h-10 cursor-pointer rounded-xl border border-[#c4d4d6] px-3 font-semibold aria-pressed:border-[#58868d] aria-pressed:bg-[#e2e8ef] aria-pressed:text-[#1e3a5f]"
               >
                 فقط تغییرکرده‌ها ({formatNumber(changes.length)})
               </button>
@@ -170,7 +170,7 @@ export default function PriceAnnouncement() {
                 key={name}
                 aria-pressed={category === name}
                 onClick={() => setCategory(name)}
-                className="flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[#e6dbc9] bg-white px-4 text-sm font-semibold text-[#796653] transition-colors hover:border-[#b78343] aria-pressed:border-[#701e2a] aria-pressed:bg-[#701e2a] aria-pressed:text-[#fff5e1]"
+                className="flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[#c4d4d6] bg-white px-4 text-sm font-semibold text-[#586474] transition-colors hover:border-[#58868d] aria-pressed:border-[#2c5282] aria-pressed:bg-[#2c5282] aria-pressed:text-[#eceff4]"
               >
                 {name || 'همهٔ دسته‌ها'}
                 <span className="rounded-full bg-current/10 px-1.5 text-[13px]">
@@ -192,7 +192,7 @@ export default function PriceAnnouncement() {
           )}
           <div data-price-grid className="grid items-start gap-2.5 xl:grid-cols-2 2xl:grid-cols-3">
             {!visible.length && (
-              <p className="p-8 text-center text-sm text-[#857467]">
+              <p className="p-8 text-center text-sm text-[#6b7481]">
                 محصولی با این شرایط پیدا نشد.
               </p>
             )}
@@ -206,21 +206,21 @@ export default function PriceAnnouncement() {
                   data-price-row={row.id}
                   role="group"
                   aria-label={row.title}
-                  className={`grid grid-cols-[minmax(0,1fr)_minmax(130px,1fr)] items-center gap-x-3 gap-y-2 rounded-2xl border border-[#e6dbc9] p-3 shadow-sm ${draft ? 'border-s-[3px] border-s-[#c69b48] bg-[#fff9ec]' : 'border-s-[3px] border-s-transparent bg-white'}`}
+                  className={`grid grid-cols-[minmax(0,1fr)_minmax(130px,1fr)] items-center gap-x-3 gap-y-2 rounded-2xl border border-[#c4d4d6] p-3 shadow-sm ${draft ? 'border-s-[3px] border-s-[#5c959e] bg-[#f3f5f8]' : 'border-s-[3px] border-s-transparent bg-white'}`}
                 >
                   <div className="col-span-2 flex min-w-0 items-center gap-3">
                     <DashboardProductImage src={row.imageUrl} title={row.title} />
                     <div className="min-w-0">
-                      <h2 className="text-base leading-7 font-extrabold text-[#4e141c]">
+                      <h2 className="text-base leading-7 font-extrabold text-[#1e3a5f]">
                         {row.title}
                       </h2>
-                      <p className="text-[13px] text-[#857467]">
+                      <p className="text-[13px] text-[#6b7481]">
                         {row.weight} · {row.categoryTitle} {!row.isActive && <Tag>غیرفعال</Tag>}
                       </p>
                     </div>
                   </div>
-                  <div className="text-sm font-semibold tabular-nums text-[#796653]">
-                    <span className="mb-1 block text-[13px] font-normal text-[#857467]">
+                  <div className="text-sm font-semibold tabular-nums text-[#586474]">
+                    <span className="mb-1 block text-[13px] font-normal text-[#6b7481]">
                       قیمت فعلی
                     </span>
                     {formatAdminPrice(row.price)}
@@ -228,7 +228,7 @@ export default function PriceAnnouncement() {
                   <div>
                     <label
                       htmlFor={`price-${row.id}`}
-                      className="mb-1 block text-[13px] text-[#857467]"
+                      className="mb-1 block text-[13px] text-[#6b7481]"
                     >
                       قیمت جدید (ریال)<span className="sr-only">؛ {row.title}</span>
                     </label>
@@ -253,11 +253,11 @@ export default function PriceAnnouncement() {
                     />
                   </div>
                   <div
-                    className={`col-span-2 flex items-center justify-between gap-2 border-t border-dashed border-[#e6dbc9] pt-1 text-[13px] ${draft ? '' : 'hidden'}`}
+                    className={`col-span-2 flex items-center justify-between gap-2 border-t border-dashed border-[#c4d4d6] pt-1 text-[13px] ${draft ? '' : 'hidden'}`}
                   >
                     <span
                       className={
-                        diff != null && diff !== 0 ? 'font-bold text-[#701e2a]' : 'text-[#9d8a76]'
+                        diff != null && diff !== 0 ? 'font-bold text-[#2c5282]' : 'text-[#7b8898]'
                       }
                     >
                       {diff == null
@@ -271,7 +271,7 @@ export default function PriceAnnouncement() {
                         type="button"
                         aria-label={`برگرداندن قیمت ${row.title}`}
                         disabled={pending}
-                        className="grid size-11 cursor-pointer place-items-center rounded-lg text-[#796653] hover:bg-[#f1e6d4]"
+                        className="grid size-11 cursor-pointer place-items-center rounded-lg text-[#586474] hover:bg-[#dce2e9]"
                         onClick={() =>
                           setDrafts((previous) => {
                             const next = { ...previous };
@@ -288,16 +288,16 @@ export default function PriceAnnouncement() {
               );
             })}
           </div>
-          <div className="sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dcc69f] bg-[#fffdf9]/95 p-4 shadow-[0_6px_30px_#4e141c20] backdrop-blur-sm">
+          <div className="sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#a2c0c5] bg-[#fbfcfd]/95 p-4 shadow-[0_6px_30px_#1e3a5f20] backdrop-blur-sm">
             <div className="min-w-0 flex-1">
-              <b className="text-sm text-[#4e141c] sm:text-base">
+              <b className="text-sm text-[#1e3a5f] sm:text-base">
                 {formatNumber(changes.length)} تغییر آمادهٔ ذخیره
               </b>
-              <p className="mt-1 hidden text-[13px] text-[#857467] sm:block">
+              <p className="mt-1 hidden text-[13px] text-[#6b7481] sm:block">
                 ذخیره شامل تغییرهای پنهان‌شده با جستجو هم می‌شود. تخفیف‌ها و فاکتورهای قبلی حفظ
                 می‌شوند.
               </p>
-              <p className="mt-1 text-[13px] leading-5 text-[#857467] sm:hidden">
+              <p className="mt-1 text-[13px] leading-5 text-[#6b7481] sm:hidden">
                 همهٔ تغییرها ذخیره می‌شوند.
               </p>
               {changes.length > 0 && !valid.success && (
@@ -309,7 +309,7 @@ export default function PriceAnnouncement() {
             </div>
             <div className="flex shrink-0 flex-wrap items-center gap-3">
               {changes.length > 0 && (
-                <span className="hidden text-[13px] text-[#796653] sm:inline">
+                <span className="hidden text-[13px] text-[#586474] sm:inline">
                   {formatNumber(increases)} افزایش · {formatNumber(decreases)} کاهش
                 </span>
               )}

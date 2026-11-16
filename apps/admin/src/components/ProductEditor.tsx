@@ -125,7 +125,7 @@ export default function ProductEditor({
   };
   const general = (
     <>
-      <h3 className="mb-4 flex items-center gap-2 font-extrabold text-[#701e2a]">
+      <h3 className="mb-4 flex items-center gap-2 font-extrabold text-[#2c5282]">
         <AdminIcon name="products" width={18} /> مشخصات و قیمت
       </h3>
       <div className={`grid gap-x-4 sm:grid-cols-2 ${inDialog ? 'lg:grid-cols-3' : ''}`}>
@@ -194,8 +194,8 @@ export default function ProductEditor({
           <Input maxLength={80} />
         </Form.Item>
       </div>
-      <details className="group/details mb-4 rounded-2xl border border-[#e8ded1] bg-[#fcfaf5] p-3">
-        <summary className="cursor-pointer text-sm font-bold text-[#701e2a] group-open/details:mb-3">
+      <details className="group/details mb-4 rounded-2xl border border-[#d7dce2] bg-[#f7f8fa] p-3">
+        <summary className="cursor-pointer text-sm font-bold text-[#2c5282] group-open/details:mb-3">
           معرفی و توضیحات محصول (اختیاری)
         </summary>
         <Form.Item name="shortDescription" label="معرفی کوتاه">
@@ -205,7 +205,7 @@ export default function ProductEditor({
           <Input.TextArea maxLength={10000} rows={5} />
         </Form.Item>
       </details>
-      <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-[#e8ded1] bg-[#fcfaf5] px-3 py-2.5">
+      <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-[#d7dce2] bg-[#f7f8fa] px-3 py-2.5">
         <label htmlFor={activeId} className="text-sm font-semibold">
           فعال بودن محصول
         </label>
@@ -218,15 +218,15 @@ export default function ProductEditor({
   return (
     <div data-product-editor>
       {!inDialog && (
-        <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#e5d5ba] bg-[#faf5e9] p-4">
-          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#701e2a] text-[#f5d88f]">
+        <div className="mb-5 flex items-center gap-3 rounded-2xl border border-[#b8cfd2] bg-[#eef1f5] p-4">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#2c5282] text-[#9aced6]">
             <AdminIcon name="products" width={25} />
           </span>
           <div>
-            <h2 className="font-extrabold text-[#4e141c]">
+            <h2 className="font-extrabold text-[#1e3a5f]">
               {product ? 'ویرایش مشخصات کالا' : 'آماده‌سازی محصول برای فروش'}
             </h2>
-            <p className="mt-1 text-xs leading-6 text-[#796653]">
+            <p className="mt-1 text-xs leading-6 text-[#586474]">
               مشخصات، تصویر و وزن بسته را کامل کنید؛ تخفیف در بخش جداگانه در دسترس است.
             </p>
           </div>
@@ -332,7 +332,7 @@ export default function ProductEditor({
             className={
               inDialog
                 ? 'min-w-0'
-                : 'min-w-0 rounded-[24px] border border-[#e8ded1] bg-white p-4 sm:p-6'
+                : 'min-w-0 rounded-[24px] border border-[#d7dce2] bg-white p-4 sm:p-6'
             }
           >
             <CompactTabs
@@ -360,7 +360,7 @@ export default function ProductEditor({
                     <>
                       <PromotionFields />
                       {typeof price === 'number' && percent > 0 && (
-                        <div className="mt-3 rounded-lg bg-[#faf0dc] p-4">
+                        <div className="mt-3 rounded-lg bg-[#e5eaf1] p-4">
                           <p className="mb-1 text-sm font-bold">قیمت پس از تخفیف</p>
                           <Money
                             amount={Math.max(1, Math.floor((price * (100 - percent)) / 100))}
@@ -401,10 +401,10 @@ export default function ProductEditor({
           {!inDialog && (
             <aside
               aria-label="خلاصه محصول"
-              className="hidden rounded-[24px] border border-[#e5d5ba] bg-[#faf5e9] p-4 xl:sticky xl:top-40 xl:block"
+              className="hidden rounded-[24px] border border-[#b8cfd2] bg-[#eef1f5] p-4 xl:sticky xl:top-40 xl:block"
             >
-              <p className="mb-3 text-xs font-bold text-[#796653]">خلاصهٔ محصول</p>
-              <div className="grid aspect-square place-items-center overflow-hidden rounded-2xl border border-[#e8ded1] bg-white">
+              <p className="mb-3 text-xs font-bold text-[#586474]">خلاصهٔ محصول</p>
+              <div className="grid aspect-square place-items-center overflow-hidden rounded-2xl border border-[#d7dce2] bg-white">
                 {images?.[0]?.url ? (
                   <img
                     src={images[0].url}
@@ -412,16 +412,16 @@ export default function ProductEditor({
                     className="h-full w-full object-contain"
                   />
                 ) : (
-                  <AdminIcon name="products" width={48} className="text-[#b49b76]" />
+                  <AdminIcon name="products" width={48} className="text-[#7e92ac]" />
                 )}
               </div>
-              <h3 className="mt-4 break-words font-extrabold text-[#4e141c]">
+              <h3 className="mt-4 break-words font-extrabold text-[#1e3a5f]">
                 {title || 'نام محصول'}
               </h3>
               <p className="mt-2 text-lg font-extrabold">
                 {typeof price === 'number' ? <Money amount={price} /> : 'قیمت را وارد کنید'}
               </p>
-              <p className="mt-3 rounded-xl border border-[#e5d5ba] bg-white px-3 py-2 text-xs text-[#796653]">
+              <p className="mt-3 rounded-xl border border-[#b8cfd2] bg-white px-3 py-2 text-xs text-[#586474]">
                 {active
                   ? 'پس از ذخیره در فروشگاه نمایش داده می‌شود'
                   : 'این محصول در فروشگاه نمایش داده نمی‌شود'}
@@ -431,7 +431,7 @@ export default function ProductEditor({
         </div>
         {error && <Alert className="!mt-4" title={error} type="error" role="alert" showIcon />}
         <div
-          className={`sticky z-20 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e5d5ba] bg-white/95 p-3 shadow-[0_8px_30px_#62452f18] backdrop-blur-sm ${inDialog ? '-bottom-4 sm:-bottom-5' : 'bottom-3'}`}
+          className={`sticky z-20 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#b8cfd2] bg-white/95 p-3 shadow-[0_8px_30px_#35465c18] backdrop-blur-sm ${inDialog ? '-bottom-4 sm:-bottom-5' : 'bottom-3'}`}
         >
           <Button
             type="primary"

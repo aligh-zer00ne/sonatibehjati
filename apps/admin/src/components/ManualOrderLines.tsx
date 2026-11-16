@@ -24,11 +24,11 @@ export default function ManualOrderLines({
   const grid =
     'grid grid-cols-[48px_minmax(0,1fr)_minmax(0,1fr)] items-start gap-2 lg:grid-cols-[24px_minmax(120px,1.3fr)_56px_minmax(100px,1fr)_minmax(100px,1fr)_minmax(176px,1.3fr)_minmax(108px,1fr)_28px] lg:items-center';
   return (
-    <div className="overflow-visible rounded-xl border border-[#ddd3c5] bg-white" data-invoice-grid>
+    <div className="overflow-visible rounded-xl border border-[#c8d0da] bg-white" data-invoice-grid>
       {lines.length > 0 && (
         <div
           aria-hidden="true"
-          className={`${grid} !hidden rounded-t-xl border-b border-[#ddd3c5] bg-[#eee6d9] px-3 py-3 text-xs font-bold text-[#59432c] lg:!grid`}
+          className={`${grid} !hidden rounded-t-xl border-b border-[#c8d0da] bg-[#dfe3e8] px-3 py-3 text-xs font-bold text-[#324053] lg:!grid`}
           data-invoice-header
         >
           <span>#</span>
@@ -41,14 +41,14 @@ export default function ManualOrderLines({
           <span />
         </div>
       )}
-      <ul className="divide-y divide-[#e8ded1]" aria-label="ردیف‌های فاکتور دستی">
+      <ul className="divide-y divide-[#d7dce2]" aria-label="ردیف‌های فاکتور دستی">
         {lines.map((l, index) => (
           <li
             key={l.productId}
             data-manual-line={l.productId}
-            className={`${grid} relative px-3 py-2.5 transition-colors even:bg-[#faf8f4] focus-within:bg-[#fff7e7]`}
+            className={`${grid} relative px-3 py-2.5 transition-colors even:bg-[#f6f7f8] focus-within:bg-[#f0f3f6]`}
           >
-            <span className="hidden text-center text-xs text-[#8b7761] lg:block">
+            <span className="hidden text-center text-xs text-[#667486] lg:block">
               {formatNumber(index + 1)}
             </span>
             <b className="col-span-2 min-w-0 self-center break-words text-sm lg:col-span-1">
@@ -140,8 +140,8 @@ export default function ManualOrderLines({
               </div>
             </div>
             <div className="col-start-3 row-start-3 min-w-0 self-center text-end lg:col-auto lg:row-auto">
-              <span className="mb-1 block text-xs text-[#857467] lg:hidden">خالص ردیف</span>
-              <b className="block break-words text-xs tabular-nums text-[#4e141c] lg:text-sm">
+              <span className="mb-1 block text-xs text-[#6b7481] lg:hidden">خالص ردیف</span>
+              <b className="block break-words text-xs tabular-nums text-[#1e3a5f] lg:text-sm">
                 {(() => {
                   const gross = l.unitPrice * l.quantity;
                   const discount =
@@ -164,9 +164,9 @@ export default function ManualOrderLines({
         ))}
       </ul>
       {!lines.length && (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-xl px-3 py-9 text-sm text-[#76685d]">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl px-3 py-9 text-sm text-[#606873]">
           <AdminIcon name="products" />
-          <b className="text-[#59432c]">فاکتور هنوز خالی است</b>
+          <b className="text-[#324053]">فاکتور هنوز خالی است</b>
           <span className="text-xs">
             کالا را جستجو و انتخاب کنید؛ هر کالا یک ردیف در فاکتور دارد.
           </span>

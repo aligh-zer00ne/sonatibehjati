@@ -164,7 +164,7 @@ export default function PrintWorkspace({
     }
   };
   const toolClass =
-    '!h-10 !rounded-xl !border-white/25 !bg-white/10 !px-3 !text-[#fff5e1] hover:!bg-white/20';
+    '!h-10 !rounded-xl !border-white/25 !bg-white/10 !px-3 !text-[#eceff4] hover:!bg-white/20';
   return (
     <Modal
       open
@@ -179,7 +179,7 @@ export default function PrintWorkspace({
         root: 'print:!hidden',
         wrapper: '!p-0',
         header: '!m-0 !p-0',
-        container: '!h-dvh !rounded-none !p-0 !bg-[#eee9e0]',
+        container: '!h-dvh !rounded-none !p-0 !bg-[#e4e7ea]',
         body: '!h-full',
       }}
       destroyOnHidden
@@ -194,16 +194,16 @@ export default function PrintWorkspace({
         <header
           role="toolbar"
           aria-label="ابزار پیش‌نمایش چاپ"
-          className="shrink-0 border-b border-[#b78343]/50 bg-[linear-gradient(110deg,#671e2a,#2c0d13)] px-3 py-3 text-[#fff5e1] shadow-lg sm:px-5"
+          className="shrink-0 border-b border-[#58868d]/50 bg-[linear-gradient(110deg,#273f5e,#101b29)] px-3 py-3 text-[#eceff4] shadow-lg sm:px-5"
         >
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c]">
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f]">
                 <AdminIcon name="print" width={24} />
               </span>
               <div>
                 <h1 className="text-sm leading-6 font-extrabold">پیش‌نمایش چاپ</h1>
-                <p className="text-[11px] text-[#eed8c6]">{subtitle}</p>
+                <p className="text-[11px] text-[#c3d9dd]">{subtitle}</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 max-[640px]:order-3 max-[640px]:w-full max-[640px]:justify-between">
@@ -220,7 +220,7 @@ export default function PrintWorkspace({
                     aria-pressed={format === key}
                     disabled={pending}
                     onClick={() => changeFormat(key)}
-                    className="min-h-9 cursor-pointer rounded-full px-2.5 text-[12px] font-bold text-[#f2d6a2] aria-pressed:bg-[#f5daa0] aria-pressed:text-[#3f2618]"
+                    className="min-h-9 cursor-pointer rounded-full px-2.5 text-[12px] font-bold text-[#a8d1d8] aria-pressed:bg-[#a7d3da] aria-pressed:text-[#1c293b]"
                   >
                     {formats[key]!.shortLabel}
                   </button>
@@ -271,7 +271,7 @@ export default function PrintWorkspace({
                 loading={pending}
                 disabled={overflow && !allowPages}
                 onClick={() => void print()}
-                className="!h-10 !rounded-xl !border-0 !bg-[linear-gradient(135deg,#f6dfa0,#c49536)] !px-4 !font-bold !text-[#39270c]"
+                className="!h-10 !rounded-xl !border-0 !bg-[linear-gradient(135deg,#a7d4db,#528b93)] !px-4 !font-bold !text-[#112034]"
               >
                 چاپ
               </Button>
@@ -341,7 +341,7 @@ export default function PrintWorkspace({
           dir="ltr"
           tabIndex={0}
           aria-label="کاغذ پیش‌نمایش؛ قابل پیمایش"
-          className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain bg-[radial-gradient(#a48b7350_0.8px,transparent_0.8px)] bg-[size:18px_18px]"
+          className="min-h-0 min-w-0 flex-1 overflow-auto overscroll-contain bg-[radial-gradient(#79899e50_0.8px,transparent_0.8px)] bg-[size:18px_18px]"
         >
           <div className="grid min-h-full min-w-full w-max justify-items-center px-5 py-6 sm:py-8">
             <div
@@ -352,7 +352,7 @@ export default function PrintWorkspace({
                 ref={paper}
                 data-invoice
                 style={{ transform: `scale(${scale})`, width: paperWidth }}
-                className="absolute top-0 left-0 origin-top-left bg-white shadow-[0_2px_4px_#42231218,0_20px_50px_-15px_#42231250]"
+                className="absolute top-0 left-0 origin-top-left bg-white shadow-[0_2px_4px_#17273d18,0_20px_50px_-15px_#17273d50]"
               >
                 {kind === 'label' ? <div className="p-[4mm]">{children}</div> : children}
               </div>
@@ -360,11 +360,11 @@ export default function PrintWorkspace({
           </div>
         </div>
         <footer
-          className="flex shrink-0 items-center gap-2 border-t border-[#ded3c2] bg-[#fffdf9] px-4 py-2 text-[11px] leading-5 text-[#857467]"
+          className="flex shrink-0 items-center gap-2 border-t border-[#c5cfdb] bg-[#fbfcfd] px-4 py-2 text-[11px] leading-5 text-[#6b7481]"
           role="status"
         >
           <span
-            className={`size-2 shrink-0 rounded-full ${pending ? 'bg-[#c49536]' : 'bg-[#40815d]'}`}
+            className={`size-2 shrink-0 rounded-full ${pending ? 'bg-[#528b93]' : 'bg-[#40815d]'}`}
           />
           <span>{notice}</span>
           <span className="ms-auto hidden whitespace-nowrap sm:inline">

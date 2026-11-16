@@ -75,22 +75,22 @@ function StoreForm({
             setPending(false);
           }
         }}
-        className="min-w-0 rounded-[24px] border border-[#e8ded1] bg-white !p-5 shadow-sm sm:!p-6 [&_.ant-form-item]:!mb-4"
+        className="min-w-0 rounded-[24px] border border-[#d7dce2] bg-white !p-5 shadow-sm sm:!p-6 [&_.ant-form-item]:!mb-4"
       >
-        <header className="mb-5 flex items-center gap-3 border-b border-[#eee5d9] pb-4">
+        <header className="mb-5 flex items-center gap-3 border-b border-[#dfe3e8] pb-4">
           <img
             src="/images/logo-brand.png"
             alt="سنتی بهجتی"
-            className="size-14 shrink-0 rounded-2xl border border-[#e8ded1] bg-[#fffcf8] p-1.5 object-contain"
+            className="size-14 shrink-0 rounded-2xl border border-[#d7dce2] bg-[#fbfbfc] p-1.5 object-contain"
           />
           <div className="min-w-0 flex-1">
             <h2 className="text-base font-extrabold">هویت و نشانی فروشگاه</h2>
-            <p className="mt-1 text-xs leading-6 text-[#857467]">
+            <p className="mt-1 text-xs leading-6 text-[#6b7481]">
               اطلاعات فروشنده در فاکتور و فرستنده در لیبل
             </p>
           </div>
           <span
-            className={`shrink-0 rounded-full px-2 py-1 text-[13px] font-bold ${dirty ? 'bg-[#fff1d5] text-[#886113]' : configured ? 'bg-[#e8f1e9] text-[#38634a]' : 'bg-[#f4eee6] text-[#857467]'}`}
+            className={`shrink-0 rounded-full px-2 py-1 text-[13px] font-bold ${dirty ? 'bg-[#e4e9f0] text-[#274874]' : configured ? 'bg-[#e8f1e9] text-[#38634a]' : 'bg-[#eaedf0] text-[#6b7481]'}`}
           >
             {dirty ? 'ذخیره‌نشده' : configured ? 'ثبت‌شده' : 'تکمیل شود'}
           </span>
@@ -180,11 +180,11 @@ function StoreForm({
           aria-controls="store-print-preview"
           onClick={() => setShowPreview((value) => !value)}
           icon={<AdminIcon name="eye" width={18} />}
-          className="!mb-3 !w-full !text-[#701e2a] xl:!hidden"
+          className="!mb-3 !w-full !text-[#2c5282] xl:!hidden"
         >
           {showPreview ? 'بستن پیش‌نمایش چاپ' : 'پیش‌نمایش اطلاعات روی چاپ'}
         </Button>
-        <div className="sticky bottom-0 z-10 -mx-1 mt-2 border-t border-[#eee5d9] bg-white/95 px-1 pt-3 pb-1 backdrop-blur-sm">
+        <div className="sticky bottom-0 z-10 -mx-1 mt-2 border-t border-[#dfe3e8] bg-white/95 px-1 pt-3 pb-1 backdrop-blur-sm">
           <Button
             type="primary"
             htmlType="submit"
@@ -199,10 +199,10 @@ function StoreForm({
       <aside
         data-store-preview
         id="store-print-preview"
-        className={`${showPreview ? 'block' : 'hidden'} space-y-4 rounded-[24px] border border-[#e8ded1] bg-[#fcf8ef] p-5 xl:sticky xl:top-36 xl:block`}
+        className={`${showPreview ? 'block' : 'hidden'} space-y-4 rounded-[24px] border border-[#d7dce2] bg-[#f3f5f8] p-5 xl:sticky xl:top-36 xl:block`}
       >
         <div className="flex items-center gap-3">
-          <span className="grid size-12 place-items-center rounded-2xl bg-[#f4e8d3] text-[#701e2a]">
+          <span className="grid size-12 place-items-center rounded-2xl bg-[#dce3eb] text-[#2c5282]">
             <AdminIcon name="print" />
           </span>
           <h2 className="text-base font-extrabold">پیش‌نمایش اطلاعات چاپ</h2>
@@ -214,35 +214,35 @@ function StoreForm({
           </h3>
           <dl className="space-y-2 p-3 text-sm leading-6 [overflow-wrap:anywhere] [&>div]:grid [&>div]:grid-cols-[auto_1fr] [&>div]:gap-3 [&_dd]:text-end">
             <div className="border-b border-dashed border-black/20 pb-2">
-              <dt className="text-xs font-medium text-[#857467]">نام</dt>
+              <dt className="text-xs font-medium text-[#6b7481]">نام</dt>
               <dd className="font-bold">{values.name || 'نام فروشگاه'}</dd>
             </div>
             <div className="border-b border-dashed border-black/20 pb-2">
-              <dt className="text-xs font-medium text-[#857467]">تلفن</dt>
+              <dt className="text-xs font-medium text-[#6b7481]">تلفن</dt>
               <dd className="font-bold">
                 <bdi dir="ltr">{persianDigits(values.phone || '—')}</bdi>
               </dd>
             </div>
             <div className="border-b border-dashed border-black/20 pb-2">
-              <dt className="text-xs font-medium text-[#857467]">نشانی</dt>
+              <dt className="text-xs font-medium text-[#6b7481]">نشانی</dt>
               <dd className="whitespace-pre-wrap font-bold">
                 {values.address || 'نشانی کامل فروشگاه'}
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-[#857467]">کد پستی</dt>
+              <dt className="text-xs font-medium text-[#6b7481]">کد پستی</dt>
               <dd className="font-bold">
                 <bdi dir="ltr">{persianDigits(values.postalCode || '—')}</bdi>
               </dd>
             </div>
           </dl>
         </section>
-        <p className="text-sm leading-8 text-[#857467]">
+        <p className="text-sm leading-8 text-[#6b7481]">
           {configured
             ? 'مشخصات فروشندهٔ فاکتور و فرستندهٔ لیبل از همین اطلاعات خوانده می‌شوند.'
             : 'اطلاعات فروشگاه هنوز تکمیل نشده است؛ مشخصات و کد پستی را بررسی و ذخیره کنید.'}
         </p>
-        <p className="border-t border-dashed border-[#dbc390] pt-4 text-xs leading-7 text-[#857467]">
+        <p className="border-t border-dashed border-[#96bbc1] pt-4 text-xs leading-7 text-[#6b7481]">
           مشخصات گیرنده و اقلام همچنان از خود سفارش خوانده می‌شوند. این تنظیم، مبلغ و نشانی سفارش‌ها
           را تغییر نمی‌دهد.
         </p>

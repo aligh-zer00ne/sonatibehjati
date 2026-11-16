@@ -30,14 +30,14 @@ export default function OfflineReceipts({
   const remaining = order.total - order.offlinePaidAmount;
   return (
     <section
-      className="mb-4 rounded-xl border border-[#e5d7c2] bg-[#fcf9f3] p-3"
+      className="mb-4 rounded-xl border border-[#bed1d4] bg-[#f5f7fa] p-3"
       aria-label="دریافت‌های خارج از سایت"
     >
-      <h4 className="mb-2 font-bold text-[#4e141c]">دریافت خارج از سایت</h4>
+      <h4 className="mb-2 font-bold text-[#1e3a5f]">دریافت خارج از سایت</h4>
       <p className="mb-2 text-sm">
         دریافتی: <Money amount={order.offlinePaidAmount} /> · مانده: <Money amount={remaining} />
       </p>
-      <p className="mb-3 text-xs text-[#76685d]">
+      <p className="mb-3 text-xs text-[#606873]">
         ثبت مدیر فروشگاه؛ این مبالغ تأیید بانکی درگاه سامان نیستند.
       </p>
       <ul className="space-y-2">

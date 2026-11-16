@@ -272,10 +272,8 @@ try {
   await expect(page).toHaveURL(adminOrigin + '/admin');
   await page.goto(adminOrigin + '/admin/message-templates');
   await expect(
-    page
-      .locator('#admin-desktop-navigation')
-      .getByRole('link', { name: 'تنظیمات مدیریت', exact: true }),
-  ).toHaveAttribute('aria-current', 'location');
+    page.locator('[data-admin-sidebar]').getByRole('link', { name: 'قالب پیام‌ها', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
   await page.getByLabel('عنوان قالب', { exact: true }).fill('قالب پرداخت ویرایش‌شده');
   await page.getByRole('button', { name: 'ذخیره قالب‌ها', exact: true }).click();
   await expect(page.getByText('قالب پیام‌ها ذخیره شد.', { exact: true })).toBeVisible();

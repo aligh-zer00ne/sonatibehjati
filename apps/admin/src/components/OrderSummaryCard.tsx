@@ -45,23 +45,23 @@ export default function OrderSummaryCard({
       data-record-index={index + 1}
       aria-label={`سفارش ${formatNumber(order.number)}`}
       data-interactive-card
-      className={`${surfaceCardMotion} ${cardInteraction} min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#62452f06] ${expanded ? 'border-[#b7825b] ring-1 ring-[#b7825b]/15' : 'border-[#e5ded3]'}`}
+      className={`${surfaceCardMotion} ${cardInteraction} min-w-0 overflow-hidden rounded-[20px] border bg-white shadow-[0_3px_14px_#35465c06] ${expanded ? 'border-[#669198] ring-1 ring-[#669198]/15' : 'border-[#d8dbe0]'}`}
     >
       <SurfaceGlow />
-      <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701e2a]" />
+      <div className="absolute inset-x-4 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#68a5ae] via-[#669198] to-[#2c5282]" />
       <div className="p-3.5" data-order-summary>
         <header className="flex items-center gap-2.5">
           <span
             data-card-icon
-            className={`${cardIconInteraction} grid size-12 shrink-0 place-items-center rounded-full border-2 border-[#f7e6b6] bg-gradient-to-br from-[#efd186] to-[#c99a37] text-[#4e141c] shadow-[0_3px_8px_#b7825b26]`}
+            className={`${cardIconInteraction} grid size-12 shrink-0 place-items-center rounded-full border-2 border-[#b8dbe1] bg-gradient-to-br from-[#92c6ce] to-[#548f98] text-[#1e3a5f] shadow-[0_3px_8px_#66919826]`}
           >
             <AdminIcon name="person" width={25} />
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="break-words text-base font-bold leading-6 text-[#34251e]">
+            <h3 className="break-words text-base font-bold leading-6 text-[#202832]">
               {customerName(order.user, { recipient: order.address.recipientName, unnamed: true })}
             </h3>
-            <p className="line-clamp-1 text-[13px] text-[#857467]">
+            <p className="line-clamp-1 text-[13px] text-[#6b7481]">
               {compact ? `سفارش ${formatNumber(order.number)} · ` : ''}
               {salesChannelLabels[order.salesChannel]} ·{' '}
               {order.shippingMethod
@@ -70,17 +70,17 @@ export default function OrderSummaryCard({
               {order.address.city ? ` · ${order.address.city}` : ''}
             </p>
           </div>
-          <span className="shrink-0 rounded-lg border border-[#e8ded1] bg-[#faf6ee] px-2 py-1 text-center">
-            <small className="block text-[13px] text-[#857467]">{compact ? 'ردیف' : 'سفارش'}</small>
-            <b className="text-xs text-[#4e141c]" data-record-number>
+          <span className="shrink-0 rounded-lg border border-[#d7dce2] bg-[#f1f4f7] px-2 py-1 text-center">
+            <small className="block text-[13px] text-[#6b7481]">{compact ? 'ردیف' : 'سفارش'}</small>
+            <b className="text-xs text-[#1e3a5f]" data-record-number>
               {formatNumber(compact ? index + 1 : order.number)}
             </b>
           </span>
         </header>
-        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#e8d9bf] bg-gradient-to-l from-[#f4e8d3] to-[#fbf8f0] px-3 py-2">
+        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#bdd3d6] bg-gradient-to-l from-[#dce3eb] to-[#f3f5f8] px-3 py-2">
           <div className="min-w-0">
-            <span className="block text-[13px] text-[#857467]">مبلغ سفارش</span>
-            <b className="block break-words text-lg leading-7 tabular-nums text-[#4e141c]">
+            <span className="block text-[13px] text-[#6b7481]">مبلغ سفارش</span>
+            <b className="block break-words text-lg leading-7 tabular-nums text-[#1e3a5f]">
               {formatAdminPrice(order.total)}
             </b>
           </div>
@@ -98,28 +98,28 @@ export default function OrderSummaryCard({
           </div>
         )}
         <dl className="mt-2 grid grid-cols-2 gap-2 text-xs">
-          <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
-            <dt className="flex items-center gap-1 text-[13px] text-[#857467]">
+          <div className="min-w-0 rounded-lg bg-[#f3f5f8] px-2.5 py-2">
+            <dt className="flex items-center gap-1 text-[13px] text-[#6b7481]">
               <AdminIcon name="phone" width={16} />
               موبایل مشتری
             </dt>
-            <dd className="mt-0.5 font-semibold text-[#62452f]">
+            <dd className="mt-0.5 font-semibold text-[#35465c]">
               <bdi>{persianDigits(order.user.phone)}</bdi>
             </dd>
           </div>
-          <div className="min-w-0 rounded-lg bg-[#faf7f1] px-2.5 py-2">
-            <dt className="flex items-center gap-1 text-[13px] text-[#857467]">
+          <div className="min-w-0 rounded-lg bg-[#f3f5f8] px-2.5 py-2">
+            <dt className="flex items-center gap-1 text-[13px] text-[#6b7481]">
               <AdminIcon name="calendar" width={16} />
               تاریخ ثبت
             </dt>
-            <dd className="mt-0.5 font-semibold text-[#62452f]">
+            <dd className="mt-0.5 font-semibold text-[#35465c]">
               <time dateTime={order.createdAt}>{formatDate(order.createdAt)}</time>
             </dd>
           </div>
         </dl>
         {canExpand && (
           <div
-            className={`mt-2.5 grid ${order.salesChannel === 'IN_PERSON' ? 'grid-cols-4' : order.salesChannel === 'INSTAGRAM' ? 'grid-cols-5' : 'grid-cols-[1.4fr_1fr_1fr_1fr]'} gap-1.5 border-t border-dashed border-[#e8ded1] pt-2.5`}
+            className={`mt-2.5 grid ${order.salesChannel === 'IN_PERSON' ? 'grid-cols-4' : order.salesChannel === 'INSTAGRAM' ? 'grid-cols-5' : 'grid-cols-[1.4fr_1fr_1fr_1fr]'} gap-1.5 border-t border-dashed border-[#d7dce2] pt-2.5`}
           >
             <button
               id={`order-toggle-${order.id}`}
@@ -129,7 +129,7 @@ export default function OrderSummaryCard({
               aria-haspopup="dialog"
               aria-controls={detailsId}
               onClick={onToggle}
-              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#e2d5c0] bg-[#f7efdf] text-xs font-semibold text-[#4e141c] transition hover:border-[#b7825b] hover:bg-[#f0e0c7] aria-expanded:border-[#c69b48] aria-expanded:bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] aria-expanded:shadow-[0_3px_10px_#c69b4830] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#bcced1] bg-[#e6eaf0] text-xs font-semibold text-[#1e3a5f] transition hover:border-[#669198] hover:bg-[#d2dae5] aria-expanded:border-[#5c959e] aria-expanded:bg-[linear-gradient(135deg,#a7d4db,#6faeb7)] aria-expanded:shadow-[0_3px_10px_#5c959e30] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
             >
               <AdminIcon name="receipt" width={20} />
               <span className={order.salesChannel !== 'WEBSITE' ? 'sr-only' : ''}>
@@ -142,7 +142,7 @@ export default function OrderSummaryCard({
                 aria-label={`ویرایش سفارش ${formatNumber(order.number)}`}
                 title="ویرایش فاکتور"
                 onClick={() => setEditing(true)}
-                className="grid min-h-11 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b]"
+                className="grid min-h-11 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198]"
               >
                 <AdminIcon name="edit" width={21} />
               </button>
@@ -153,7 +153,7 @@ export default function OrderSummaryCard({
                 aria-label={`ارسال و رهگیری سفارش ${formatNumber(order.number)}`}
                 title="ارسال و رهگیری؛ پیام به مشتری"
                 onClick={onToggle}
-                className="grid min-h-11 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b]"
+                className="grid min-h-11 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198]"
               >
                 <AdminIcon name="message" width={21} />
               </button>
@@ -163,7 +163,7 @@ export default function OrderSummaryCard({
               aria-label={`چاپ فاکتور سفارش ${formatNumber(order.number)}`}
               title="چاپ فاکتور"
               onClick={() => setPrint('invoice')}
-              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#4e141c]"
+              className="grid min-h-10 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198] hover:text-[#1e3a5f]"
             >
               <AdminIcon name="print" width={21} />
             </button>
@@ -172,7 +172,7 @@ export default function OrderSummaryCard({
               aria-label={`چاپ لیبل سفارش ${formatNumber(order.number)}`}
               title="لیبل پستی"
               onClick={() => setPrint('label')}
-              className="grid min-h-10 place-items-center rounded-lg border border-[#e5ded3] bg-[#faf7f1] text-[#62452f] hover:border-[#b7825b] hover:text-[#4e141c]"
+              className="grid min-h-10 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198] hover:text-[#1e3a5f]"
             >
               <AdminIcon name="truck" width={21} />
             </button>

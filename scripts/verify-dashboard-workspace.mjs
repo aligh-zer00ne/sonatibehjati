@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
 import { startAPI, db, adminOrigin } from './auth-harness.mjs';
 import { verifySurfaceMotion } from './surface-motion-checks.mjs';
-import { verifyTopNavigation } from './top-navigation-checks.mjs';
+import { verifyAdminNavigation } from './top-navigation-checks.mjs';
 import {
   createAdmin,
   loginAdmin,
@@ -139,7 +139,7 @@ try {
     await assertReadableCenter();
   }
   await page.mouse.move(5, 5);
-  await verifyTopNavigation(page);
+  await verifyAdminNavigation(page);
   const hero = page.locator('[data-admin-dashboard] > header');
   await verifySurfaceMotion(page, hero, { ambient: true });
   await verifySurfaceMotion(page, page.locator('[data-analytics-metric]').first(), { tilt: false });
@@ -289,7 +289,7 @@ try {
   const countBefore = inputs.length;
   await page.locator('[data-dashboard-status]').first().click({ force: true });
   assert.equal(inputs.length, countBefore);
-  const limitedNav = page.locator('#admin-desktop-navigation');
+  const limitedNav = page.locator('#admin-sidebar-navigation');
   await expect(limitedNav.getByRole('link', { name: 'فروش و مشتریان', exact: true })).toHaveCount(
     0,
   );

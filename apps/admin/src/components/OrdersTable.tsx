@@ -73,7 +73,7 @@ export default function OrdersTable({
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border-[#e8ded1] bg-[#fcf9f3] py-10">
+        <div className="rounded-3xl border border-[#d7dce2] bg-[#f5f7fa] py-10">
           <Empty description="سفارشی با این فیلترها پیدا نشد." />
         </div>
       )}

@@ -35,13 +35,13 @@ export default function RecordDialog({
       open
       title={
         <div className="flex items-center gap-3 pe-10">
-          <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-[#edc57d]/40 bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c]">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-[#8bc2cb]/40 bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f]">
             <AdminIcon name={icon} width={26} />
           </span>
           <div className="min-w-0">
-            <h2 className="text-lg font-extrabold text-[#fff5e1]">{title}</h2>
+            <h2 className="text-lg font-extrabold text-[#eceff4]">{title}</h2>
             {subtitle && (
-              <p aria-hidden="true" className="mt-1 text-sm font-medium text-[#f2d6a2]">
+              <p aria-hidden="true" className="mt-1 text-sm font-medium text-[#a8d1d8]">
                 {subtitle}
               </p>
             )}
@@ -57,10 +57,10 @@ export default function RecordDialog({
       style={{ top: 'max(12px, 5dvh)', paddingBottom: 12 }}
       classNames={{
         container: '!overflow-hidden !rounded-[24px] !p-0',
-        header: '!m-0 !bg-[linear-gradient(125deg,#701e2a,#300c14)] !p-4 sm:!p-5',
+        header: '!m-0 !bg-[linear-gradient(125deg,#2c5282,#101c2c)] !p-4 sm:!p-5',
         body: '!max-h-[calc(90dvh_-_100px)] !overflow-y-auto !p-3 [scrollbar-gutter:stable] sm:!p-5',
       }}
-      className="[&_.ant-modal-close]:!top-6 [&_.ant-modal-close]:!text-[#fff5e1] [&_.ant-form-item-label>label]:!font-semibold"
+      className="[&_.ant-modal-close]:!top-6 [&_.ant-modal-close]:!text-[#eceff4] [&_.ant-form-item-label>label]:!font-semibold"
       destroyOnHidden
     >
       {children}

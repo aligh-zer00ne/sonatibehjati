@@ -66,12 +66,12 @@ export default function RichCustomerSelect({
         const u = option.data.user;
         return (
           <div className="flex min-h-16 items-center gap-3 py-2">
-            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c]">
+            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f]">
               <AdminIcon name="person" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate font-extrabold">{customerName(u, { unnamed: true })}</p>
-              <p className="mt-1 text-xs text-[#857467]">
+              <p className="mt-1 text-xs text-[#6b7481]">
                 <bdi>{persianDigits(u.phone)}</bdi>
               </p>
             </div>

@@ -85,7 +85,7 @@ try {
   await expect(page.locator('article[data-admin-record]')).toHaveCount(2);
   assert.equal(inputs.at(-1).status, undefined, 'Manual invoices ignore old fulfillment filters');
   await expect(page.getByRole('button', { name: 'وضعیت سفارش', exact: true })).toHaveCount(0);
-  const nav = page.locator('#admin-desktop-navigation');
+  const nav = page.locator('#admin-sidebar-navigation');
   await nav.getByRole('link', { name: 'فروش و مشتریان', exact: true }).click();
   const desktopCards = page.locator('[data-admin-section]');
   await expect(
@@ -105,11 +105,18 @@ try {
   await page.reload();
   await expect(page.getByRole('heading', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
   await expect.poll(() => inputs.at(-1).manualOnly).toBe(true);
+  // Current-orders default hides the pending-payment fixture until all statuses are requested.
   await page.goto(
     `${adminOrigin}/admin/orders/website?userId=${customer.user.id}&salesChannel=INSTAGRAM`,
   );
   await expect(page.getByRole('heading', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
+  await expect.poll(() => inputs.at(-1).excludeStatuses).toEqual(['CANCELED', 'PENDING_PAYMENT']);
+  await expect(page.locator('article[data-admin-record]')).toHaveCount(0);
+  await page.goto(
+    `${adminOrigin}/admin/orders/website?userId=${customer.user.id}&salesChannel=INSTAGRAM&status=ALL`,
+  );
   await expect(page.locator('article[data-admin-record]')).toHaveCount(1);
+  assert.equal(inputs.at(-1).excludeStatuses, undefined);
   assert.equal(inputs.at(-1).salesChannel, 'WEBSITE');
   await expect(page.getByRole('button', { name: 'وضعیت سفارش', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'ثبت سفارش دستی', exact: true })).toHaveCount(0);
@@ -130,9 +137,8 @@ try {
     await expect(
       page.getByRole('heading', { name: 'سفارش‌های وبسایت', exact: true }),
     ).toBeVisible();
-    await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).tap();
-    const mobile = page.locator('#admin-mobile-navigation');
-    await mobile.getByRole('link', { name: 'فروش و مشتریان', exact: true }).tap();
+    const mobile = page.locator('#admin-bottom-navigation');
+    await mobile.getByRole('link', { name: 'فروش', exact: true }).tap();
     const mobileCards = page.locator('[data-admin-section]');
     await expect(mobileCards.getByRole('group', { name: 'سفارش‌ها', exact: true })).toHaveCount(1);
     for (const link of await mobileCards
@@ -149,7 +155,10 @@ try {
     if (width === 390) await page.screenshot({ path: '/tmp/behjati-order-sections-mobile.png' });
     await mobileCards.getByRole('link', { name: 'سایر سفارش‌ها', exact: true }).tap();
     await expect(page.getByRole('heading', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
-    await expect(mobile).toBeHidden();
+    await expect(mobile.getByRole('link', { name: 'فروش', exact: true })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
       .toBeLessThanOrEqual(1);
@@ -158,11 +167,8 @@ try {
   await db.admin.update({ where: { id: admin.id }, data: { permissions: ['PRODUCTS'] } });
   await page.goto(adminOrigin + '/admin/orders/manual');
   await expect(page).toHaveURL(/\/admin\/products$/);
-  await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).click();
   await expect(
-    page
-      .locator('#admin-mobile-navigation')
-      .getByRole('link', { name: 'فروش و مشتریان', exact: true }),
+    page.locator('#admin-bottom-navigation').getByRole('link', { name: 'فروش', exact: true }),
   ).toHaveCount(0);
   console.log(
     'Order sections passed: real API source separation, intersection filters, totals/pagination, old links, sales-only permissions, reset/reload, top navigation, card submenus, keyboard and mobile order groups and no clipped labels. Temporary fixtures only; no SMS or bank request.',

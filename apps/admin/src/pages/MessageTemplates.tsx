@@ -128,14 +128,14 @@ function Editor({
               type="button"
               aria-pressed={active === v.id}
               onClick={() => setActive(v.id)}
-              className="flex cursor-pointer items-start gap-3 rounded-2xl border border-[#e6dbc9] bg-white p-3 text-start aria-pressed:border-[#b78343] aria-pressed:bg-[#faf0de]"
+              className="flex cursor-pointer items-start gap-3 rounded-2xl border border-[#c4d4d6] bg-white p-3 text-start aria-pressed:border-[#58868d] aria-pressed:bg-[#e7ebf1]"
             >
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#701e2a] text-[#f6dfa0]">
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#2c5282] text-[#a7d4db]">
                 <AdminIcon name={kind === 'PAYMENT' ? 'link' : 'truck'} />
               </span>
               <span className="min-w-0">
-                <b className="block text-base text-[#4e141c]">{v.title || 'بدون عنوان'}</b>
-                <span className="mt-1 line-clamp-2 text-[13px] leading-6 text-[#796653]">
+                <b className="block text-base text-[#1e3a5f]">{v.title || 'بدون عنوان'}</b>
+                <span className="mt-1 line-clamp-2 text-[13px] leading-6 text-[#586474]">
                   {v.body}
                 </span>
               </span>
@@ -146,7 +146,7 @@ function Editor({
         <Alert type="info" title="یک قالب جدید بسازید." />
       ) : (
         <div className="grid items-start gap-4 lg:grid-cols-[1.5fr_1fr]">
-          <section className="min-w-0 space-y-4 rounded-[24px] border border-[#e6dbc9] bg-white p-4 sm:p-5">
+          <section className="min-w-0 space-y-4 rounded-[24px] border border-[#c4d4d6] bg-white p-4 sm:p-5">
             <label className="block space-y-2 font-bold">
               عنوان قالب
               <Input
@@ -209,25 +209,25 @@ function Editor({
               </Button>
             </Popconfirm>
           </section>
-          <aside className="min-w-0 rounded-[24px] border border-[#e6dbc9] bg-[#faf6ee] p-4 lg:sticky lg:top-36">
+          <aside className="min-w-0 rounded-[24px] border border-[#c4d4d6] bg-[#f1f4f7] p-4 lg:sticky lg:top-36">
             <h2 className="mb-3 flex items-center gap-2 font-extrabold">
               <AdminIcon name="phone" /> پیش‌نمایش پیام
             </h2>
             <div
               data-message-preview
-              className="rounded-2xl rounded-tr-sm bg-[#701e2a] p-4 text-[15px] leading-8 whitespace-pre-wrap text-[#fff5e1] [overflow-wrap:anywhere]"
+              className="rounded-2xl rounded-tr-sm bg-[#2c5282] p-4 text-[15px] leading-8 whitespace-pre-wrap text-[#eceff4] [overflow-wrap:anywhere]"
             >
               {preview}
             </div>
-            <p className="mt-3 text-[13px] leading-6 text-[#796653]">
+            <p className="mt-3 text-[13px] leading-6 text-[#586474]">
               اطلاعات بالا نمونه‌اند. هنگام ارسال، مشخصات واقعی مشتری و سفارش جای‌گذاری می‌شوند.
             </p>
           </aside>
         </div>
       )}
       {error && <Alert type="error" role="alert" title={error} />}
-      <footer className="sticky bottom-3 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#dcc69f] bg-white/95 p-3 shadow-lg backdrop-blur-sm">
-        <p className="text-sm text-[#796653]">
+      <footer className="sticky bottom-3 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#a2c0c5] bg-white/95 p-3 shadow-lg backdrop-blur-sm">
+        <p className="text-sm text-[#586474]">
           {dirty ? 'تغییرها هنوز ذخیره نشده‌اند' : `${items.length} قالب ذخیره‌شده`}
         </p>
         <div className="flex min-w-0 flex-wrap gap-2">

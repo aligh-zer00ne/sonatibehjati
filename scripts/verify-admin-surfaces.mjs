@@ -18,7 +18,8 @@ try {
     session = await loginAdmin(owner),
     customer = await createCustomer();
   const product = await db.product.findFirstOrThrow({ where: { isActive: true } });
-  await createOrderFixture(customer, product);
+  // A current (processing) order: the list hides pending-payment orders by default.
+  await createOrderFixture(customer, product, { status: 'PROCESSING' });
   browser = await chromium.launch({
     executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
     headless: true,
@@ -57,7 +58,7 @@ try {
     if (path.includes('/catalog')) {
       assert.match(
         await surface.evaluate((el) => getComputedStyle(el).backgroundImage),
-        /rgb\(92, 25, 36\)/,
+        /rgb\(32, 55, 85\)/,
       );
       await verifySurfaceMotion(page, surface, { ambient: true });
       await page.screenshot({
@@ -74,7 +75,9 @@ try {
     }
   }
   await page.goto(adminOrigin + '/admin');
-  await verifySurfaceMotion(page, page.locator('[data-admin-topbar]'), { ambient: true });
+  await verifySurfaceMotion(page, page.locator('[data-admin-dashboard] > header'), {
+    ambient: true,
+  });
   await page.screenshot({
     path: '/tmp/behjati-burgundy-dashboard-desktop.png',
     fullPage: true,
@@ -130,7 +133,7 @@ try {
   await page.screenshot({ path: '/tmp/behjati-reactive-finance-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);
   console.log(
-    'Admin surfaces passed: burgundy catalog/sales/communication/settings/report/account/finance panels, stationary particle networks, consistent navigation/finance/customer/order/dashboard card border/shadow/wash/icon feedback, keyboard navigation, touch feedback, reduced-motion and 320–1440px bounds. No SMS/bank call.',
+    'Admin surfaces passed: navy catalog/sales/communication/settings/report/account/finance panels, stationary particle networks, consistent navigation/finance/customer/order/dashboard card border/shadow/wash/icon feedback, keyboard navigation, touch feedback, reduced-motion and 320–1440px bounds. No SMS/bank call.',
   );
 } finally {
   await browser?.close();

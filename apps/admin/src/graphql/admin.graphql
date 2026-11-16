@@ -932,3 +932,53 @@ mutation EditAdminManualOrder($input: AdminManualOrderEditInput!) {
 mutation DeleteAdminOrder($id: ID!, $expectedUpdatedAt: String!) {
   deleteAdminOrder(id: $id, expectedUpdatedAt: $expectedUpdatedAt)
 }
+query AdminSearchProducts($input: AdminProductsInput!) {
+  adminProducts(input: $input) {
+    items {
+      id
+      title
+      weight
+      price
+      isActive
+    }
+    total
+  }
+}
+query AdminSearchOrders($input: AdminOrdersInput!) {
+  adminOrders(input: $input) {
+    items {
+      id
+      number
+      status
+      total
+      salesChannel
+      user {
+        id
+        phone
+        firstName
+        lastName
+      }
+      address {
+        recipientName
+        city
+      }
+    }
+    total
+  }
+}
+query AdminSearchCustomers($input: AdminUsersInput!) {
+  adminUsers(input: $input) {
+    items {
+      id
+      phone
+      firstName
+      lastName
+      ordersCount
+      defaultAddress {
+        id
+        recipientName
+      }
+    }
+    total
+  }
+}

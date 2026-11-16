@@ -19,11 +19,22 @@
   html {
     font-family: var(--font-sans);
     font-weight: 500;
-    background: #f6f1e9;
-    color: #34251e;
+    background: #edeff2;
+    color: #202832;
   }
   body {
     margin: 0;
+  }
+  /* Keep scrolled-to and focused content clear of the sticky header and mobile bottom bar. */
+  html {
+    scroll-padding-top: 8rem;
+    scroll-padding-bottom: 5.5rem;
+  }
+  @media (min-width: 1100px) {
+    html {
+      scroll-padding-top: 5rem;
+      scroll-padding-bottom: 1rem;
+    }
   }
   a,
   button,
@@ -33,7 +44,7 @@
     touch-action: manipulation;
   }
   :focus-visible {
-    outline: 2px solid #701e2a;
+    outline: 2px solid #2c5282;
     outline-offset: 3px;
   }
 }

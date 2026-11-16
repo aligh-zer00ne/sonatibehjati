@@ -189,18 +189,9 @@ export function availableNavigation(admin: AdminIdentityFieldsFragment | null) {
 }
 type Navigation = ReturnType<typeof availableNavigation>;
 type Group = Navigation['groups'][number];
-export function AdminNavigationTabs({
-  navigation,
-  selected,
-  onNavigate,
-  mobile = false,
-}: {
-  navigation: Navigation;
-  selected: string;
-  onNavigate: () => void;
-  mobile?: boolean;
-}) {
-  const current = navigation.groups.find(
+/** Group containing the current page (section page, item page or an order sub-page). */
+export function currentGroupId(navigation: Navigation, selected: string) {
+  return navigation.groups.find(
     (group) =>
       selected === `/admin/sections/${group.id}` ||
       group.items.some(
@@ -208,57 +199,130 @@ export function AdminNavigationTabs({
           item.href === selected ||
           (item.href === '/admin/orders' && orderLinks.some((child) => child.href === selected)),
       ),
-  );
-  const tabClass =
-    'group flex min-h-[56px] shrink-0 items-center justify-center gap-2 rounded-full border border-transparent px-3 text-[14px] xl:min-h-[60px] xl:px-5 xl:text-[15px] font-bold transition-colors hover:border-[#edc57d]/40 motion-safe:transition-[translate,background-color,box-shadow] motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-reduce:transition-none';
-  const activeClass =
-    '!bg-[linear-gradient(135deg,#f6dfa0,#d3a23f)] !text-[#39270c] shadow-[0_4px_18px_#edc57d38,inset_0_1px_0_#fff8d7]';
-  const inactiveClass = mobile
-    ? '!bg-[#f4ebdd] !text-[#4e141c]'
-    : '!bg-white/[0.05] !text-[#fff5e1] hover:!bg-white/15';
+  )?.id;
+}
+const bottomLabels: Record<string, string> = {
+  sales: 'فروش',
+  catalog: 'محصولات',
+  communication: 'ارتباط',
+  settings: 'مدیریت',
+};
+/** Desktop sidebar: dashboard, then each permitted group with its pages. */
+export function AdminSidebarNav({
+  navigation,
+  selected,
+}: {
+  navigation: Navigation;
+  selected: string;
+}) {
+  const active = currentGroupId(navigation, selected);
+  const linkClass = (current: boolean) =>
+    `group relative flex min-h-10 items-center gap-3 rounded-lg px-3 text-[14px] leading-6 transition-colors motion-reduce:transition-none ${
+      current
+        ? 'bg-[#1d3557] font-bold !text-white before:absolute before:inset-y-2 before:start-0 before:w-[3px] before:rounded-full before:bg-[#7cc4cf]'
+        : 'font-medium !text-[#b8c4d4] hover:bg-white/[0.06] hover:!text-white'
+    }`;
   return (
-    <nav
-      id={mobile ? 'admin-mobile-navigation' : 'admin-desktop-navigation'}
-      aria-label="منوی مدیریت"
-      className={
-        mobile
-          ? 'grid grid-cols-1 gap-2'
-          : 'flex min-w-0 items-center justify-center gap-1 rounded-full border border-white/20 bg-white/[0.07] p-2 shadow-[inset_0_2px_0_#ffffff10,0_8px_24px_#28050226]'
-      }
-    >
+    <nav id="admin-sidebar-navigation" aria-label="منوی مدیریت" className="flex flex-col gap-5">
       {navigation.dashboard && (
         <Link
           to="/admin"
-          aria-label="داشبورد"
           aria-current={selected === '/admin' ? 'page' : undefined}
-          onClick={onNavigate}
-          className={`${tabClass} ${selected === '/admin' ? activeClass : inactiveClass}`}
+          className={linkClass(selected === '/admin')}
         >
-          <AdminIcon
-            name="home"
-            width={20}
-            className="motion-safe:transition-transform motion-safe:group-hover:-rotate-6 motion-safe:group-hover:scale-110"
-          />
+          <AdminIcon name="home" width={19} className="shrink-0 opacity-90" />
           داشبورد
         </Link>
       )}
       {navigation.groups.map((group) => (
-        <Link
-          key={group.id}
-          to={`/admin/sections/${group.id}`}
-          aria-label={group.label}
-          aria-current={current?.id === group.id ? 'location' : undefined}
-          onClick={onNavigate}
-          className={`${tabClass} ${current?.id === group.id ? activeClass : inactiveClass}`}
-        >
-          <AdminIcon
-            name={group.icon}
-            width={20}
-            className="shrink-0 motion-safe:transition-transform motion-safe:group-hover:-rotate-6 motion-safe:group-hover:scale-110"
-          />
-          <span className="whitespace-nowrap">{group.shortLabel}</span>
-        </Link>
+        <div key={group.id} role="group" aria-labelledby={`nav-group-${group.id}`}>
+          <Link
+            id={`nav-group-${group.id}`}
+            to={`/admin/sections/${group.id}`}
+            aria-current={selected === `/admin/sections/${group.id}` ? 'page' : undefined}
+            title={`نمای کلی ${group.label}`}
+            className={`mb-1.5 flex items-center justify-between gap-2 rounded-md px-3 py-1 text-[12.5px] font-bold tracking-tight transition-colors ${
+              active === group.id ? '!text-[#7cc4cf]' : '!text-[#7d8ca3] hover:!text-[#b8c4d4]'
+            }`}
+          >
+            {group.label}
+            <AdminIcon name={group.icon} width={15} className="shrink-0 opacity-70" />
+          </Link>
+          <ul className="flex flex-col gap-0.5">
+            {group.items.flatMap((item) =>
+              (item.href === '/admin/orders' ? orderLinks : [item]).map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    aria-current={selected === link.href ? 'page' : undefined}
+                    className={linkClass(selected === link.href)}
+                  >
+                    <AdminIcon name={link.icon} width={18} className="shrink-0 opacity-90" />
+                    <span className="truncate">{link.label}</span>
+                  </Link>
+                </li>
+              )),
+            )}
+          </ul>
+        </div>
       ))}
+    </nav>
+  );
+}
+/** Mobile/tablet bottom bar: the same top-level destinations as the desktop groups. */
+export function AdminBottomNav({
+  navigation,
+  selected,
+}: {
+  navigation: Navigation;
+  selected: string;
+}) {
+  const active = currentGroupId(navigation, selected);
+  const items = [
+    ...(navigation.dashboard
+      ? [{ id: 'dashboard', href: '/admin', label: 'داشبورد', icon: 'home' as AdminIconName }]
+      : []),
+    ...navigation.groups.map((group) => ({
+      id: group.id,
+      href: `/admin/sections/${group.id}`,
+      label: bottomLabels[group.id] ?? group.shortLabel,
+      icon: group.icon,
+    })),
+  ];
+  return (
+    <nav
+      id="admin-bottom-navigation"
+      aria-label="منوی اصلی مدیریت"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#dfe5ec] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_#1e3a5f0f] backdrop-blur min-[1100px]:hidden print:!hidden"
+    >
+      <ul
+        className="mx-auto grid h-16 max-w-2xl"
+        style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+      >
+        {items.map((item) => {
+          const current = item.id === 'dashboard' ? selected === '/admin' : active === item.id;
+          return (
+            <li key={item.id} className="min-w-0">
+              <Link
+                to={item.href}
+                aria-current={current ? 'page' : undefined}
+                className={`flex h-full flex-col items-center justify-center gap-1 text-[12px] leading-4 font-semibold transition-colors ${
+                  current ? '!text-[#2c5282]' : '!text-[#6b7685] hover:!text-[#1e3a5f]'
+                }`}
+              >
+                <span
+                  className={`grid h-7 w-12 place-items-center rounded-full transition-colors ${
+                    current ? 'bg-[#e3ecf6]' : ''
+                  }`}
+                >
+                  <AdminIcon name={item.icon} width={20} />
+                </span>
+                <span className="max-w-full truncate px-1">{item.label}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }
@@ -269,21 +333,21 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
       aria-label={item.label}
       onClick={onNavigate}
       data-admin-navigation-card
-      className="flex min-h-[188px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_5px_18px_#62452f0c] sm:p-5"
+      className="flex min-h-[188px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#d7dce2] !bg-white p-5 !text-[#202832] shadow-[0_5px_18px_#35465c0c] sm:p-5"
     >
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#701e2a] to-[#dfb65c]"
+        className="absolute inset-x-0 top-0 h-[4px] bg-gradient-to-l from-[#2c5282] to-[#6faeb7]"
       />
       <span
         data-card-icon
-        className={`${cardIconInteraction} mb-2.5 grid size-12 shrink-0 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_14px_#b7834340]`}
+        className={`${cardIconInteraction} mb-2.5 grid size-12 shrink-0 place-items-center rounded-[18px] border border-[#9dc5cc] bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f] shadow-[0_6px_14px_#58868d40]`}
       >
         <AdminIcon name={item.icon} width={27} height={27} />
       </span>
       <h2 className="text-lg leading-8 font-extrabold">{item.label}</h2>
-      <p className="mt-1 mb-3 text-[15px] leading-7 text-[#796653]">{item.description}</p>
-      <span className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-[#e8ded1] pt-3 text-[13px] font-semibold text-[#92764e]">
+      <p className="mt-1 mb-3 text-[15px] leading-7 text-[#586474]">{item.description}</p>
+      <span className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-[#d7dce2] pt-3 text-[13px] font-semibold text-[#566d8a]">
         <span>ورود به بخش</span>
         <AdminIcon
           name="arrow"

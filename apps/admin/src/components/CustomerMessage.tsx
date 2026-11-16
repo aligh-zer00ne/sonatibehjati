@@ -81,11 +81,11 @@ export default function CustomerMessage({ kind, values, phone = '', onClose }: P
             />
           </label>
           {phone && (
-            <p className="rounded-xl bg-[#faf6ee] px-3 py-2 text-sm">
+            <p className="rounded-xl bg-[#f1f4f7] px-3 py-2 text-sm">
               گیرنده: <bdi>{phone}</bdi>
             </p>
           )}
-          <div className="rounded-2xl border border-[#e4d3b3] bg-[#faf6ee] p-3">
+          <div className="rounded-2xl border border-[#b3ccd0] bg-[#f1f4f7] p-3">
             <Input.TextArea
               aria-label="متن آماده پیام"
               value={text}
@@ -165,7 +165,7 @@ export default function CustomerMessage({ kind, values, phone = '', onClose }: P
               </Button>
             </Dropdown>
           </div>
-          <p className="text-[13px] leading-6 text-[#796653]">
+          <p className="text-[13px] leading-6 text-[#586474]">
             ارسال نهایی در برنامهٔ گوشی انجام می‌شود؛ باز کردن برنامه، تأیید ارسال پیام نیست.
           </p>
         </div>

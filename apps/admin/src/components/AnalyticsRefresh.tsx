@@ -13,9 +13,9 @@ export default function AnalyticsRefresh({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3 text-xs" aria-live="polite">
-      <span className={`flex items-center gap-2 ${error ? 'text-red-700' : 'text-[#76685d]'}`}>
+      <span className={`flex items-center gap-2 ${error ? 'text-red-700' : 'text-[#606873]'}`}>
         <span
-          className={`size-2 rounded-full ${error ? 'bg-red-600' : refreshing ? 'bg-[#d6a447]' : 'bg-emerald-600'}`}
+          className={`size-2 rounded-full ${error ? 'bg-red-600' : refreshing ? 'bg-[#5da1ab]' : 'bg-emerald-600'}`}
         />
         {error
           ? 'به‌روزرسانی انجام نشد؛ آخرین اطلاعات نمایش داده می‌شود.'
@@ -33,7 +33,7 @@ export default function AnalyticsRefresh({
       >
         به‌روزرسانی
       </Button>
-      <span className="text-[#857467]">خودکار، هر ۳۰ ثانیه</span>
+      <span className="text-[#6b7481]">خودکار، هر ۳۰ ثانیه</span>
     </div>
   );
 }

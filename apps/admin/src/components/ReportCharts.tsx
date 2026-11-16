@@ -32,7 +32,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
         className="min-w-0"
         title="روند فروش و دریافت"
         extra={
-          <div className="flex gap-1 rounded-lg bg-[#f4e8d3] p-1">
+          <div className="flex gap-1 rounded-lg bg-[#dce3eb] p-1">
             {[
               { key: 'money', label: 'مبالغ' },
               { key: 'count', label: 'تعداد' },
@@ -42,7 +42,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 key={item.key}
                 aria-pressed={view === item.key}
                 onClick={() => setView(item.key as 'money' | 'count')}
-                className="rounded-md px-2 py-1 text-xs text-[#76685d] aria-pressed:bg-white aria-pressed:text-[#4e141c] aria-pressed:shadow-sm"
+                className="rounded-md px-2 py-1 text-xs text-[#606873] aria-pressed:bg-white aria-pressed:text-[#1e3a5f] aria-pressed:shadow-sm"
               >
                 {item.label}
               </button>
@@ -50,7 +50,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
           </div>
         }
       >
-        <p className="mb-3 text-xs text-[#857467]">
+        <p className="mb-3 text-xs text-[#6b7481]">
           {view === 'money'
             ? 'مبالغ به ریال · هر نقطه یک روز'
             : 'تعداد سفارش‌های ثبت‌شده در هر روز'}
@@ -64,18 +64,18 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
             >
               <defs>
                 <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#701e2a" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="#701e2a" stopOpacity={0.01} />
+                  <stop offset="0%" stopColor="#2c5282" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#2c5282" stopOpacity={0.01} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#eee5d9" vertical={false} />
+              <CartesianGrid stroke="#dfe3e8" vertical={false} />
               <XAxis
                 dataKey="date"
                 tickFormatter={chartDate}
                 axisLine={false}
                 tickLine={false}
                 minTickGap={45}
-                tick={{ fontSize: 12, fill: '#857467' }}
+                tick={{ fontSize: 12, fill: '#6b7481' }}
                 tickMargin={10}
               />
               <YAxis
@@ -86,11 +86,11 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 axisLine={false}
                 tickLine={false}
                 width={58}
-                tick={{ fontSize: 12, fill: '#857467' }}
+                tick={{ fontSize: 12, fill: '#6b7481' }}
               />
               <Tooltip
                 labelFormatter={(v) => chartDate(String(v))}
-                contentStyle={{ borderRadius: 12, borderColor: '#e8ded1', fontFamily: 'inherit' }}
+                contentStyle={{ borderRadius: 12, borderColor: '#d7dce2', fontFamily: 'inherit' }}
                 formatter={(v, name) => [
                   view === 'money' ? <Money amount={Number(v)} /> : formatNumber(Number(v)),
                   name,
@@ -102,8 +102,8 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                     dataKey="orderValue"
                     name="ارزش فاکتورها"
                     type="monotone"
-                    stroke="#c69b48"
-                    fill="#f4e8d3"
+                    stroke="#5c959e"
+                    fill="#dce3eb"
                     strokeWidth={2}
                     isAnimationActive={false}
                     dot={report.daily.length === 1}
@@ -112,7 +112,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                     dataKey="revenue"
                     name="خالص دریافتی"
                     type="monotone"
-                    stroke="#701e2a"
+                    stroke="#2c5282"
                     fill={`url(#${gradient})`}
                     strokeWidth={3}
                     isAnimationActive={false}
@@ -123,7 +123,7 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                 <Bar
                   dataKey="ordersCount"
                   name="تعداد سفارش"
-                  fill="#701e2a"
+                  fill="#2c5282"
                   radius={[5, 5, 0, 0]}
                   maxBarSize={32}
                   isAnimationActive={false}
@@ -133,27 +133,27 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
           </ResponsiveContainer>
         </div>
         {view === 'money' && (
-          <div className="mt-4 flex flex-wrap justify-center gap-5 text-xs text-[#76685d]">
+          <div className="mt-4 flex flex-wrap justify-center gap-5 text-xs text-[#606873]">
             <span className="flex items-center gap-2">
-              <i className="size-2 rounded-full bg-[#701e2a]" />
+              <i className="size-2 rounded-full bg-[#2c5282]" />
               خالص دریافتی
             </span>
             <span className="flex items-center gap-2">
-              <i className="size-2 rounded-full bg-[#c69b48]" />
+              <i className="size-2 rounded-full bg-[#5c959e]" />
               ارزش فاکتورها
             </span>
           </div>
         )}
       </Card>
       <Card className="min-w-0" title="نگاه به این بازه">
-        <div className="mb-5 rounded-xl bg-[#f8f1e5] p-4">
-          <p className="text-xs text-[#857467]">بیشترین خالص دریافتی روزانه</p>
+        <div className="mb-5 rounded-xl bg-[#eaeef3] p-4">
+          <p className="text-xs text-[#6b7481]">بیشترین خالص دریافتی روزانه</p>
           {best ? (
             <>
-              <p className="mt-2 font-bold text-[#4e141c]">
+              <p className="mt-2 font-bold text-[#1e3a5f]">
                 <Money amount={best.revenue} />
               </p>
-              <p className="mt-2 text-xs text-[#76685d]">
+              <p className="mt-2 text-xs text-[#606873]">
                 {chartDate(best.date)} · {formatNumber(active.length)} روز دارای فعالیت
               </p>
             </>
@@ -170,9 +170,9 @@ export default function ReportCharts({ report }: { report: AdminReportFieldsFrag
                   <span>{orderStatusLabels[s.status]}</span>
                   <b>{formatNumber(s.count)}</b>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[#f4ede3]">
+                <div className="h-1.5 overflow-hidden rounded-full bg-[#e8ebef]">
                   <div
-                    className={`h-full rounded-full ${index % 2 ? 'bg-[#c69b48]' : 'bg-[#701e2a]'}`}
+                    className={`h-full rounded-full ${index % 2 ? 'bg-[#5c959e]' : 'bg-[#2c5282]'}`}
                     style={{ width: `${(s.count / Math.max(1, report.ordersCount)) * 100}%` }}
                   />
                 </div>

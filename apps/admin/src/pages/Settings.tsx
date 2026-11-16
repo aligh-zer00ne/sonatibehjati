@@ -25,7 +25,7 @@ export default function Settings() {
         }
         className="max-w-2xl"
       >
-        <p className="mb-4 text-xs text-[#7d746a]">
+        <p className="mb-4 text-xs text-[#6c737b]">
           حساب: <bdi>{admin?.email}</bdi>
         </p>
         <Alert

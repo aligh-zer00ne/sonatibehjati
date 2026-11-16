@@ -105,15 +105,15 @@ export default function OrdersMap() {
             ).map(([icon, label, value]) => (
               <div
                 key={label}
-                className={`${cardInteraction} min-w-0 overflow-hidden rounded-2xl border border-[#e8ded1] bg-white p-3 sm:p-4`}
+                className={`${cardInteraction} min-w-0 overflow-hidden rounded-2xl border border-[#d7dce2] bg-white p-3 sm:p-4`}
               >
-                <div className="mb-2 flex items-center gap-2 text-[#9e7544]">
+                <div className="mb-2 flex items-center gap-2 text-[#52767b]">
                   <AdminIcon name={icon} width={18} className={cardIconInteraction} />
                   <span className="text-[13px] leading-5 sm:text-xs">{label}</span>
                 </div>
                 <strong
                   data-map-metric={icon}
-                  className="text-xl font-extrabold text-[#701e2a] sm:text-2xl"
+                  className="text-xl font-extrabold text-[#2c5282] sm:text-2xl"
                 >
                   {formatNumber(value)}
                 </strong>
@@ -123,14 +123,14 @@ export default function OrdersMap() {
           <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.8fr)_minmax(270px,1fr)]">
             <section
               ref={mapPanel}
-              className="min-w-0 scroll-mt-36 rounded-[24px] border border-[#e8ded1] bg-white p-3 sm:p-5"
+              className="min-w-0 scroll-mt-36 rounded-[24px] border border-[#d7dce2] bg-white p-3 sm:p-5"
             >
               <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="font-extrabold">
                     {current ? `سفارش‌های ${current.name}` : 'پراکندگی سفارش‌ها در ایران'}
                   </h2>
-                  <p className="mt-1 text-xs leading-6 text-[#857467]">
+                  <p className="mt-1 text-xs leading-6 text-[#6b7481]">
                     آمار از تمام نتایج فیلتر محاسبه می‌شود.
                   </p>
                 </div>
@@ -149,21 +149,21 @@ export default function OrdersMap() {
                   حذف انتخاب استان {current.name}
                 </Button>
               )}
-              <p className="mt-3 text-[13px] leading-6 text-[#857467]">
+              <p className="mt-3 text-[13px] leading-6 text-[#6b7481]">
                 رنگ پررنگ‌تر یعنی سفارش بیشتر؛ آمار هر استان سفارش‌های بدون مختصات را هم شامل
                 می‌شود.
               </p>
               {selected && (
                 <section
                   data-selected-order
-                  className="mt-4 rounded-2xl border border-[#dbc390] bg-[#fcf8ef] p-4"
+                  className="mt-4 rounded-2xl border border-[#96bbc1] bg-[#f3f5f8] p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <strong>
                       سفارش {formatNumber(selected.number)} ·{' '}
                       {customerName(selected.user, { recipient: selected.address.recipientName })}
                     </strong>
-                    <span className="text-xs text-[#857467]">
+                    <span className="text-xs text-[#6b7481]">
                       {orderStatusLabels[selected.status]}
                     </span>
                   </div>
@@ -185,7 +185,7 @@ export default function OrdersMap() {
                     )}
                   </div>
                   {selected.address.latitude == null || selected.address.longitude == null ? (
-                    <p className="mt-2 text-xs text-[#857467]">
+                    <p className="mt-2 text-xs text-[#6b7481]">
                       این سفارش موقعیت دقیق ثبت‌شده ندارد.
                     </p>
                   ) : null}
@@ -193,7 +193,7 @@ export default function OrdersMap() {
               )}
             </section>
             <aside className="min-w-0 space-y-4">
-              <section className="rounded-[24px] border border-[#e8ded1] bg-white p-4">
+              <section className="rounded-[24px] border border-[#d7dce2] bg-white p-4">
                 <h2 className="mb-3 font-extrabold">سهم استان‌ها</h2>
                 {ranked.length ? (
                   <ul className="max-h-[330px] space-y-1 overflow-y-auto">
@@ -204,15 +204,15 @@ export default function OrdersMap() {
                           aria-label={`فیلتر استان ${p.name}`}
                           aria-pressed={province === p.code}
                           onClick={() => selectProvince(p.code)}
-                          className="w-full cursor-pointer rounded-xl px-2 py-2 text-right hover:bg-[#fcf8ef] aria-pressed:bg-[#f4e8d3]"
+                          className="w-full cursor-pointer rounded-xl px-2 py-2 text-right hover:bg-[#f3f5f8] aria-pressed:bg-[#dce3eb]"
                         >
                           <span className="flex justify-between gap-3 text-xs font-bold">
                             <span>{p.name}</span>
                             <span>{formatNumber(p.count)} سفارش</span>
                           </span>
-                          <span className="mt-2 block h-1 rounded-full bg-[#f0e7db]">
+                          <span className="mt-2 block h-1 rounded-full bg-[#e1e5ea]">
                             <span
-                              className="block h-full rounded-full bg-[#701e2a]"
+                              className="block h-full rounded-full bg-[#2c5282]"
                               style={{
                                 width: `${Math.max(2, (p.count / Math.max(1, data.total)) * 100)}%`,
                               }}
@@ -229,10 +229,10 @@ export default function OrdersMap() {
                   />
                 )}
               </section>
-              <section className="rounded-[24px] border border-[#e8ded1] bg-white p-4">
+              <section className="rounded-[24px] border border-[#d7dce2] bg-white p-4">
                 <header className="mb-3 flex items-center justify-between gap-3">
                   <h2 className="font-extrabold">{current?.name || 'فهرست سفارش‌ها'}</h2>
-                  <span className="text-xs text-[#857467]">
+                  <span className="text-xs text-[#6b7481]">
                     {formatNumber(data.pageTotal)} سفارش
                   </span>
                 </header>
@@ -248,19 +248,19 @@ export default function OrdersMap() {
                           aria-label={`نمایش موقعیت سفارش ${formatNumber(order.number)}`}
                           aria-pressed={selected?.id === order.id}
                           onClick={() => selectOrder(order.id, true)}
-                          className="flex w-full cursor-pointer items-start gap-2 rounded-2xl border border-[#eee5d9] p-3 text-right hover:bg-[#fcf8ef] aria-pressed:border-[#bc8b42] aria-pressed:bg-[#fcf4e6]"
+                          className="flex w-full cursor-pointer items-start gap-2 rounded-2xl border border-[#dfe3e8] p-3 text-right hover:bg-[#f3f5f8] aria-pressed:border-[#598991] aria-pressed:bg-[#edf0f5]"
                         >
                           <AdminIcon
                             name="pin"
                             width={17}
-                            className="mt-1 shrink-0 text-[#a47a42]"
+                            className="mt-1 shrink-0 text-[#52797f]"
                           />
                           <span className="min-w-0 flex-1">
                             <strong className="block text-xs">
                               {customerName(order.user, { recipient: order.address.recipientName })}{' '}
                               · {formatNumber(order.number)}
                             </strong>
-                            <span className="mt-1 block text-[13px] leading-6 text-[#857467]">
+                            <span className="mt-1 block text-[13px] leading-6 text-[#6b7481]">
                               {order.address.city || order.address.province || 'مقصد ثبت نشده'} ·{' '}
                               {orderStatusLabels[order.status]}
                             </span>

@@ -38,11 +38,11 @@ export default function App() {
       locale={faIR}
       modal={{
         mask: { blur: true },
-        classNames: { mask: '!bg-[#201015]/45 !backdrop-blur-[8px]' },
+        classNames: { mask: '!bg-[#12171e]/45 !backdrop-blur-[8px]' },
       }}
       drawer={{
         mask: { blur: true },
-        classNames: { mask: '!bg-[#201015]/45 !backdrop-blur-[8px]' },
+        classNames: { mask: '!bg-[#12171e]/45 !backdrop-blur-[8px]' },
       }}
       theme={{
         token: {
@@ -50,34 +50,37 @@ export default function App() {
           fontSize: 15,
           fontSizeSM: 14,
           fontWeightStrong: 700,
-          colorPrimary: '#701e2a',
-          colorText: '#34251e',
-          colorTextSecondary: '#6c5a4c',
-          colorBgLayout: '#f6f1e9',
-          colorBgContainer: '#fffdf9',
-          colorBorder: '#e8ded1',
-          colorBorderSecondary: '#eee5d9',
+          colorPrimary: '#2c5282',
+          colorLink: '#2c5282',
+          colorLinkHover: '#1e3a5f',
+          colorInfo: '#2c5282',
+          colorText: '#202832',
+          colorTextSecondary: '#505a68',
+          colorBgLayout: '#edeff2',
+          colorBgContainer: '#fbfcfd',
+          colorBorder: '#d7dce2',
+          colorBorderSecondary: '#dfe3e8',
           borderRadius: 14,
           controlHeight: 48,
         },
         components: {
           Input: {
-            colorBgContainer: '#f9f6f0',
-            activeBg: '#fffdf9',
-            hoverBg: '#fcfaf6',
-            activeShadow: '0 0 0 3px #701e2a12',
+            colorBgContainer: '#f2f4f7',
+            activeBg: '#fbfcfd',
+            hoverBg: '#f8f9fa',
+            activeShadow: '0 0 0 3px #2c528212',
           },
-          InputNumber: { colorBgContainer: '#f9f6f0', activeShadow: '0 0 0 3px #701e2a12' },
+          InputNumber: { colorBgContainer: '#f2f4f7', activeShadow: '0 0 0 3px #2c528212' },
           Select: {
-            optionSelectedBg: '#f3ead7',
-            optionActiveBg: '#faf6ee',
-            optionSelectedColor: '#4e141c',
+            optionSelectedBg: '#dfe4eb',
+            optionActiveBg: '#f1f4f7',
+            optionSelectedColor: '#1e3a5f',
             optionFontSize: 15,
           },
           Typography: { titleMarginTop: 0, titleMarginBottom: 0 },
           Card: { headerFontSize: 17, headerHeight: 54, bodyPadding: 18 },
-          Table: { headerBg: '#f7f1e8', rowHoverBg: '#fff4e6', cellPaddingBlock: 14 },
-          Button: { fontWeight: 600, primaryShadow: '0 4px 10px rgba(147,13,37,0.12)' },
+          Table: { headerBg: '#eceff3', rowHoverBg: '#eff2f6', cellPaddingBlock: 14 },
+          Button: { fontWeight: 600, primaryShadow: '0 4px 10px rgba(40,75,120,0.12)' },
         },
       }}
     >

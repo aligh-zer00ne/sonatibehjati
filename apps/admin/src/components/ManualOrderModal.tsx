@@ -307,22 +307,22 @@ export default function ManualOrderModal({
           </Form.Item>
         )}
         <section
-          className="mb-5 rounded-xl border border-[#ddd3c5] bg-[#faf8f4]"
+          className="mb-5 rounded-xl border border-[#c8d0da] bg-[#f6f7f8]"
           aria-label="انتخاب کالا و اقلام فاکتور"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e8ded1] px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#d7dce2] px-4 py-3">
             <h3 className="flex items-center gap-2 font-bold">
-              <AdminIcon name="products" className="text-[#701e2a]" />
+              <AdminIcon name="products" className="text-[#2c5282]" />
               اقلام فاکتور
             </h3>
-            <span className="rounded-full bg-[#f4e8d3] px-3 py-1 text-xs text-[#62452f]">
+            <span className="rounded-full bg-[#dce3eb] px-3 py-1 text-xs text-[#35465c]">
               {formatNumber(lines.length)} نوع کالا ·{' '}
               {formatNumber(lines.reduce((sum, l) => sum + l.quantity, 0))} عدد
             </span>
           </div>
           <div className="px-3 pt-3 pb-4 sm:px-4">
             <label
-              className="mb-2 block text-xs font-semibold text-[#76685d]"
+              className="mb-2 block text-xs font-semibold text-[#606873]"
               htmlFor="invoice-product-search"
             >
               جستجو و افزودن کالا
@@ -337,7 +337,7 @@ export default function ManualOrderModal({
               allowClear
               filterOption={false}
               placeholder="نام کالا را بنویسید و به فاکتور اضافه کنید…"
-              prefix={<AdminIcon name="search" width={20} className="text-[#701e2a]" />}
+              prefix={<AdminIcon name="search" width={20} className="text-[#2c5282]" />}
               value={null}
               searchValue={productTerm}
               onSearch={setProductTerm}
@@ -369,11 +369,11 @@ export default function ManualOrderModal({
                     <DashboardProductImage src={p.images[0]?.url} title={p.title} />
                     <div className="min-w-0 flex-1">
                       <b className="block whitespace-normal text-sm">{p.title}</b>
-                      <span className="text-xs text-[#76685d]">
+                      <span className="text-xs text-[#606873]">
                         {p.weight} · {formatAdminPrice(p.price)}
                       </span>
                     </div>
-                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#f4e8d3] text-[#701e2a]">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#dce3eb] text-[#2c5282]">
                       {line ? formatNumber(line.quantity) : <AdminIcon name="plus" width={17} />}
                     </span>
                   </div>
@@ -406,7 +406,7 @@ export default function ManualOrderModal({
             />
           </div>
           <div className="px-3 pb-3 sm:px-4">
-            <p className="mb-2 text-xs text-[#857467]">همهٔ مبالغ به ریال است</p>
+            <p className="mb-2 text-xs text-[#6b7481]">همهٔ مبالغ به ریال است</p>
             <ManualOrderLines
               lines={lines}
               updateLine={updateLine}
@@ -466,7 +466,7 @@ export default function ManualOrderModal({
         )}
         {quote.error && <Alert type="error" title={quote.error} role="alert" />}
         {price && (
-          <dl className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-[#e3d4bd] bg-[#f8f0e1] p-3 text-sm lg:grid-cols-4">
+          <dl className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-[#baced1] bg-[#e7ecf2] p-3 text-sm lg:grid-cols-4">
             {[
               ['جمع کالاها', price.subtotal],
               ['تخفیف', price.discount],
@@ -509,12 +509,12 @@ export default function ManualOrderModal({
           </div>
         )}
         {editingOrder ? (
-          <p className="my-3 rounded-xl bg-[#faf6ee] p-3 text-sm leading-7">
+          <p className="my-3 rounded-xl bg-[#f1f4f7] p-3 text-sm leading-7">
             دریافت ثبت‌شده: <Money amount={editingOrder.offlinePaidAmount} />؛ اگر مبلغ فاکتور کمتر
             از دریافتی شود، اضافهٔ دریافت در حساب مشتری باقی می‌ماند.
           </p>
         ) : (
-          <p className="mb-3 text-xs leading-6 text-[#76685d]">
+          <p className="mb-3 text-xs leading-6 text-[#606873]">
             این دریافت توسط مدیر ثبت می‌شود. دریافت‌های بعدی و چک را در بخش «دریافت و پرداخت» ثبت
             کنید.
           </p>

@@ -10,7 +10,7 @@ export default function ActionCardLink({ children, className = '', ...props }: L
       {...props}
       {...motion}
       data-interactive-card
-      className={`${surfaceCardMotion} ${cardInteraction} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c69b48]/50 focus-visible:ring-offset-2 ${className}`}
+      className={`${surfaceCardMotion} ${cardInteraction} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5c959e]/50 focus-visible:ring-offset-2 ${className}`}
     >
       <SurfaceGlow />
       {children}

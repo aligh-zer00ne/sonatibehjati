@@ -66,19 +66,19 @@ export default function Reports() {
   };
   return (
     <div className="space-y-5" data-admin-reports>
-      <header className="relative isolate overflow-hidden rounded-3xl bg-[#4e141c] p-5 text-white sm:p-7">
+      <header className="relative isolate overflow-hidden rounded-3xl bg-[#1e3a5f] p-5 text-white sm:p-7">
         <AmbientBackdrop />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -end-12 -top-20 size-72 rounded-full border-[36px] border-[#e8bd70]/10"
+          className="pointer-events-none absolute -end-12 -top-20 size-72 rounded-full border-[36px] border-[#80bbc3]/10"
         />
         <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <span className="text-xs tracking-wide text-[#edc994]">
+            <span className="text-xs tracking-wide text-[#9cc9d0]">
               تصویر روشن از عملکرد فروشگاه
             </span>
             <h1 className="mt-2 text-2xl font-extrabold sm:text-3xl">گزارش سفارش‌ها</h1>
-            <p className="mt-3 text-sm text-[#f0d9c3]">
+            <p className="mt-3 text-sm text-[#c1dade]">
               {chartDate(range.from)} تا {chartDate(range.to)}
             </p>
           </div>
@@ -109,7 +109,7 @@ export default function Reports() {
                     .toISOString()
                     .slice(0, 10)
               }
-              className="rounded-full border border-white/20 px-4 py-2 text-xs transition hover:bg-white/15 aria-pressed:border-[#e9c27a] aria-pressed:bg-[#e9c27a] aria-pressed:text-[#4d210e]"
+              className="rounded-full border border-white/20 px-4 py-2 text-xs transition hover:bg-white/15 aria-pressed:border-[#88bec7] aria-pressed:bg-[#88bec7] aria-pressed:text-[#172a44]"
             >
               {preset.label}
             </button>
@@ -184,7 +184,7 @@ export default function Reports() {
         <Button
           type="text"
           size="small"
-          className="!ms-auto !text-[13px] !text-[#701e2a]"
+          className="!ms-auto !text-[13px] !text-[#2c5282]"
           onClick={() => {
             setRange(defaultReportRange());
             setStatus('');
@@ -256,8 +256,8 @@ export default function Reports() {
               detail="پرداخت تأییدشدهٔ لینک‌های مبلغ دلخواه، بدون سفارش"
             />
           </section>
-          <details className="rounded-xl border border-[#e8ded1] bg-[#fcf9f3] px-4 py-3 text-xs leading-7 text-[#76685d]">
-            <summary className="cursor-pointer font-semibold text-[#62452f]">
+          <details className="rounded-xl border border-[#d7dce2] bg-[#f5f7fa] px-4 py-3 text-xs leading-7 text-[#606873]">
+            <summary className="cursor-pointer font-semibold text-[#35465c]">
               این اعداد چطور محاسبه می‌شوند؟
             </summary>
             دریافتی بر اساس تاریخ دریافت یا پرداخت است و ارزش فاکتور بر اساس تاریخ ثبت سفارش. گزارش
@@ -287,7 +287,7 @@ export default function Reports() {
             <div role="table" aria-label="گزارش‌های روزانه" className="min-w-0">
               <div
                 role="row"
-                className="mb-2 hidden grid-cols-[1.1fr_.6fr_1.2fr_1.2fr] gap-3 rounded-lg bg-[#f8f1e5] p-3 text-xs text-[#76685d] sm:grid"
+                className="mb-2 hidden grid-cols-[1.1fr_.6fr_1.2fr_1.2fr] gap-3 rounded-lg bg-[#eaeef3] p-3 text-xs text-[#606873] sm:grid"
               >
                 <span role="columnheader">روز</span>
                 <span role="columnheader">سفارش</span>
@@ -298,7 +298,7 @@ export default function Reports() {
                 <div
                   key={day.date}
                   role="row"
-                  className="grid grid-cols-2 items-start gap-3 border-b border-[#eee5d9] py-3 last:border-0 sm:grid-cols-[1.1fr_.6fr_1.2fr_1.2fr] sm:px-3"
+                  className="grid grid-cols-2 items-start gap-3 border-b border-[#dfe3e8] py-3 last:border-0 sm:grid-cols-[1.1fr_.6fr_1.2fr_1.2fr] sm:px-3"
                   data-report-day={day.date}
                 >
                   <span role="cell" className="text-sm font-semibold">
@@ -308,11 +308,11 @@ export default function Reports() {
                     {formatNumber(day.ordersCount)} سفارش
                   </span>
                   <div role="cell" className="min-w-0 text-xs">
-                    <span className="mb-1 block text-[#857467] sm:hidden">ارزش فاکتورها</span>
+                    <span className="mb-1 block text-[#6b7481] sm:hidden">ارزش فاکتورها</span>
                     <Money amount={day.orderValue} />
                   </div>
                   <div role="cell" className="min-w-0 text-xs">
-                    <span className="mb-1 block text-[#857467] sm:hidden">خالص دریافتی</span>
+                    <span className="mb-1 block text-[#6b7481] sm:hidden">خالص دریافتی</span>
                     <Money amount={day.revenue} />
                   </div>
                 </div>

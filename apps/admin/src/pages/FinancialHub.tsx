@@ -46,19 +46,19 @@ export default function FinancialHub() {
     return <Navigate replace to={'/admin/settlements/account?' + params.toString()} />;
   return (
     <div className="mx-auto w-full max-w-[1180px] space-y-6">
-      <header className="relative isolate overflow-hidden rounded-[26px] bg-[linear-gradient(125deg,#5c1924,#290c12)] p-6 text-[#fff5e1] sm:p-8">
+      <header className="relative isolate overflow-hidden rounded-[26px] bg-[linear-gradient(125deg,#203755,#0f1926)] p-6 text-[#eceff4] sm:p-8">
         <AmbientBackdrop />
         <div className="relative z-10">
-          <p className="text-sm text-[#edc57d]">امور مالی فروش دستی</p>
+          <p className="text-sm text-[#8bc2cb]">امور مالی فروش دستی</p>
           <h1 className="mt-3 text-[30px] font-extrabold">دریافت و پرداخت</h1>
-          <p className="mt-3 max-w-xl text-sm leading-8 text-[#f2d6a2]">
+          <p className="mt-3 max-w-xl text-sm leading-8 text-[#a8d1d8]">
             عملیات موردنظر را انتخاب کنید؛ هر دریافت و پرداخت با سند مستقل در حساب مشتری ثبت می‌شود.
           </p>
         </div>
       </header>
       {pending && (
         <Link
-          className="block rounded-2xl border border-[#d9c7a8] bg-[#faf6ee] p-4 font-bold !text-[#4e141c]"
+          className="block rounded-2xl border border-[#a8c1c5] bg-[#f1f4f7] p-4 font-bold !text-[#1e3a5f]"
           to={`/admin/settlements/${pending.direction === 'PAYMENT' ? 'payment' : 'receipt'}?customerId=${pending.customerId}`}
         >
           ادامهٔ بررسی درخواست قبلی دریافت و پرداخت ←
@@ -69,18 +69,18 @@ export default function FinancialHub() {
           <ActionCardLink
             key={item.href}
             to={'/admin/settlements/' + item.href}
-            className="flex min-h-[202px] flex-col overflow-hidden rounded-[26px] border border-[#e8ded1] !bg-white p-5 !text-[#34251e] shadow-[0_6px_22px_#62452f0a]"
+            className="flex min-h-[202px] flex-col overflow-hidden rounded-[26px] border border-[#d7dce2] !bg-white p-5 !text-[#202832] shadow-[0_6px_22px_#35465c0a]"
           >
-            <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#c49536,#4e141c)]" />
+            <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#528b93,#1e3a5f)]" />
             <span
               data-card-icon
-              className={`${cardIconInteraction} mb-2.5 grid size-12 place-items-center rounded-[18px] border border-[#e7ce96] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c] shadow-[0_6px_16px_#c4953626]`}
+              className={`${cardIconInteraction} mb-2.5 grid size-12 place-items-center rounded-[18px] border border-[#9dc5cc] bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f] shadow-[0_6px_16px_#528b9326]`}
             >
               <AdminIcon name={item.icon} width={27} height={27} />
             </span>
             <h2 className="text-lg font-extrabold">{item.title}</h2>
-            <p className="mt-1.5 flex-1 text-sm leading-7 text-[#796653]">{item.description}</p>
-            <span className="mt-3 flex items-center justify-between border-t border-dashed border-[#e8ded1] pt-3 text-xs font-bold text-[#a17b3d]">
+            <p className="mt-1.5 flex-1 text-sm leading-7 text-[#586474]">{item.description}</p>
+            <span className="mt-3 flex items-center justify-between border-t border-dashed border-[#d7dce2] pt-3 text-xs font-bold text-[#4e757c]">
               ورود به بخش
               <AdminIcon name="arrow" width={18} />
             </span>

@@ -40,21 +40,21 @@ export default function Settlements({
           <>
             <header className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="mb-1 text-sm font-semibold text-[#a17b3d]">حساب مشتریان فروش دستی</p>
-                <h1 className="text-[26px] font-extrabold text-[#34251e] sm:text-[30px]">
+                <p className="mb-1 text-sm font-semibold text-[#4e757c]">حساب مشتریان فروش دستی</p>
+                <h1 className="text-[26px] font-extrabold text-[#202832] sm:text-[30px]">
                   دریافت و پرداخت
                 </h1>
-                <p className="mt-2 text-sm leading-7 text-[#796653]">
+                <p className="mt-2 text-sm leading-7 text-[#586474]">
                   مانده حساب، فاکتورهای مستقل و دریافت‌های نقدی، کارت‌خوان و چک.
                 </p>
               </div>
-              <span className="grid size-14 place-items-center rounded-[18px] border border-[#e7ce96] bg-[#f6e4bc] text-[#926720]">
+              <span className="grid size-14 place-items-center rounded-[18px] border border-[#9dc5cc] bg-[#bcdce1] text-[#2e5384]">
                 <AdminIcon name="wallet" width={28} height={28} />
               </span>
             </header>
             <section
               aria-label="انتخاب حساب مشتری"
-              className="rounded-[24px] border border-[#e8ded1] bg-white p-5 shadow-[0_4px_18px_#62452f08]"
+              className="rounded-[24px] border border-[#d7dce2] bg-white p-5 shadow-[0_4px_18px_#35465c08]"
             >
               <label
                 htmlFor="account-customer"
@@ -79,12 +79,12 @@ export default function Settlements({
           </>
         )}
         {!customerId ? (
-          <section className="flex flex-col items-center rounded-[26px] border border-dashed border-[#d9c7a8] bg-[#faf6ee] px-5 py-12 text-center">
-            <span className="mb-5 grid size-20 place-items-center rounded-3xl border border-[#ead9b7] bg-[#f4e8d3] text-[#a17b3d]">
+          <section className="flex flex-col items-center rounded-[26px] border border-dashed border-[#a8c1c5] bg-[#f1f4f7] px-5 py-12 text-center">
+            <span className="mb-5 grid size-20 place-items-center rounded-3xl border border-[#b7d2d6] bg-[#dce3eb] text-[#4e757c]">
               <AdminIcon name="users" width={36} height={36} />
             </span>
             <h2 className="text-xl font-extrabold">حساب کدام مشتری را بررسی کنیم؟</h2>
-            <p className="mt-3 max-w-md text-sm leading-8 text-[#796653]">
+            <p className="mt-3 max-w-md text-sm leading-8 text-[#586474]">
               مشتری را از جستجوی بالا انتخاب کنید تا مانده حساب، فاکتورها و گردش دریافت و پرداخت او
               نمایش داده شود.
             </p>
@@ -95,24 +95,24 @@ export default function Settlements({
           <>
             <section
               aria-label="خلاصه حساب مشتری"
-              className="overflow-hidden rounded-[26px] border border-[#e8ded1] bg-white shadow-[0_6px_22px_#62452f08]"
+              className="overflow-hidden rounded-[26px] border border-[#d7dce2] bg-white shadow-[0_6px_22px_#35465c08]"
             >
-              <header className="relative isolate overflow-hidden flex flex-wrap items-center justify-between gap-5 bg-[linear-gradient(125deg,#5c1924,#290c12)] p-5 text-[#fff5e1] sm:p-6">
+              <header className="relative isolate overflow-hidden flex flex-wrap items-center justify-between gap-5 bg-[linear-gradient(125deg,#203755,#0f1926)] p-5 text-[#eceff4] sm:p-6">
                 <AmbientBackdrop />
                 <div className="relative z-10 flex items-center gap-3">
-                  <span className="grid size-14 shrink-0 place-items-center rounded-full border-2 border-[#f6dfa0] bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c]">
+                  <span className="grid size-14 shrink-0 place-items-center rounded-full border-2 border-[#a7d4db] bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f]">
                     <AdminIcon name="person" width={28} height={28} />
                   </span>
                   <div>
                     <h2 className="text-xl leading-8 font-extrabold">{customerName(data.user)}</h2>
-                    <p className="mt-1 text-sm text-[#f2d6a2]">
+                    <p className="mt-1 text-sm text-[#a8d1d8]">
                       <bdi>{data.user.phone}</bdi>
                     </p>
                   </div>
                 </div>
                 <div className="relative z-10">
-                  <p className="mb-2 text-sm text-[#f2d6a2]">مانده کل حساب</p>
-                  <div className="text-2xl font-extrabold text-[#f6dfa0]">
+                  <p className="mb-2 text-sm text-[#a8d1d8]">مانده کل حساب</p>
+                  <div className="text-2xl font-extrabold text-[#a7d4db]">
                     <Money compact amount={Math.abs(data.balance)} />
                   </div>
                   <div className="mt-2">
@@ -128,9 +128,9 @@ export default function Settlements({
                 ].map((item) => (
                   <div
                     key={item.title}
-                    className="flex items-center justify-between gap-3 rounded-2xl border border-[#eee5d9] bg-[#faf6ee] p-3 sm:block sm:p-4"
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-[#dfe3e8] bg-[#f1f4f7] p-3 sm:block sm:p-4"
                   >
-                    <dt className="flex items-center gap-2 text-sm font-semibold text-[#796653] sm:mb-3">
+                    <dt className="flex items-center gap-2 text-sm font-semibold text-[#586474] sm:mb-3">
                       <AdminIcon name={item.icon} width={18} />
                       {item.title}
                     </dt>
@@ -140,7 +140,7 @@ export default function Settlements({
                   </div>
                 ))}
               </dl>
-              <div className="flex flex-wrap gap-3 border-t border-[#eee5d9] p-4 sm:px-5">
+              <div className="flex flex-wrap gap-3 border-t border-[#dfe3e8] p-4 sm:px-5">
                 <Link to={`/admin/settlements/receipt?customerId=${customerId}`}>
                   <Button type="primary" icon={<AdminIcon name="plus" />}>
                     ثبت دریافت از مشتری
@@ -156,7 +156,7 @@ export default function Settlements({
                     <Button icon={<AdminIcon name="link" />}>لینک پرداخت مانده</Button>
                   </Link>
                 )}
-                <p className="flex items-center text-xs leading-7 text-[#857467]">
+                <p className="flex items-center text-xs leading-7 text-[#6b7481]">
                   دریافت‌ها ابتدا قدیمی‌ترین فاکتور باز را تسویه می‌کنند؛ اضافه وجه بستانکاری مشتری
                   است.
                 </p>
@@ -168,11 +168,11 @@ export default function Settlements({
               error={account.error}
               refresh={account.refresh}
             />
-            <section className="min-w-0 rounded-[24px] border border-[#e8ded1] bg-[#fffdf9] p-3 sm:p-5">
+            <section className="min-w-0 rounded-[24px] border border-[#d7dce2] bg-[#fbfcfd] p-3 sm:p-5">
               <div
                 role="tablist"
                 aria-label="اسناد حساب مشتری"
-                className="mb-5 flex flex-wrap gap-2 rounded-2xl bg-[#f4ebdd] p-1.5"
+                className="mb-5 flex flex-wrap gap-2 rounded-2xl bg-[#e3e8ee] p-1.5"
               >
                 {[
                   {
@@ -218,11 +218,11 @@ export default function Settlements({
                         document.getElementById(`account-tab-${next}`)?.focus(),
                       );
                     }}
-                    className="flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold text-[#796653] aria-selected:bg-white aria-selected:text-[#4e141c] aria-selected:shadow-sm"
+                    className="flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-3 text-sm font-bold text-[#586474] aria-selected:bg-white aria-selected:text-[#1e3a5f] aria-selected:shadow-sm"
                   >
                     <AdminIcon name={tab.icon} width={19} />
                     {tab.key === 'invoices' ? 'فاکتورها' : tab.label}
-                    <span className="rounded-lg bg-[#f4ebdd] px-2 py-0.5 text-xs">
+                    <span className="rounded-lg bg-[#e3e8ee] px-2 py-0.5 text-xs">
                       {tab.count.toLocaleString('fa-IR')}
                     </span>
                   </button>

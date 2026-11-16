@@ -46,9 +46,9 @@ export default function ShipmentEditor({
   return (
     <section
       aria-label="ارسال و رهگیری سفارش"
-      className="mb-4 space-y-3 rounded-2xl border border-[#e2d1af] bg-[#faf6ee] p-3"
+      className="mb-4 space-y-3 rounded-2xl border border-[#afc9cd] bg-[#f1f4f7] p-3"
     >
-      <h4 className="flex items-center gap-2 text-base font-extrabold text-[#4e141c]">
+      <h4 className="flex items-center gap-2 text-base font-extrabold text-[#1e3a5f]">
         <AdminIcon name="truck" width={21} /> ارسال و رهگیری
       </h4>
       <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr]">
@@ -133,7 +133,7 @@ export default function ShipmentEditor({
           ارسال پیام سفارش
         </Button>
       </div>
-      <p className="text-[13px] leading-6 text-[#796653]">
+      <p className="text-[13px] leading-6 text-[#586474]">
         {terminal
           ? 'روش حمل و رهگیری این سفارش نهایی قابل ویرایش نیست.'
           : 'با ثبت کد رهگیری، وضعیت به «ارسال‌شده» تغییر می‌کند. روش حمل روی لیبل و متن پیام می‌آید.'}

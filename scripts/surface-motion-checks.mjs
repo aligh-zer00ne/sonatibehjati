@@ -44,7 +44,7 @@ export async function verifyCardFeedback(page, card) {
   else if (await control.count()) await control.focus();
   await expect
     .poll(() => card.evaluate((el) => getComputedStyle(el).borderTopColor))
-    .toBe('rgb(166, 64, 78)');
+    .toBe('rgb(77, 110, 153)');
 }
 
 export async function verifySurfaceMotion(page, surface, { tilt = false, ambient = false } = {}) {

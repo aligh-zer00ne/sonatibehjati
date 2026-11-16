@@ -15,7 +15,7 @@ export default function CompactTabs({
       <div
         role="tablist"
         aria-label="بخش‌های ویرایش محصول"
-        className="mb-4 grid grid-cols-2 gap-2 rounded-2xl bg-[#f6f0e6] p-2 sm:grid-cols-4"
+        className="mb-4 grid grid-cols-2 gap-2 rounded-2xl bg-[#eaeef2] p-2 sm:grid-cols-4"
       >
         {items.map((item, index) => (
           <button
@@ -40,7 +40,7 @@ export default function CompactTabs({
               onChange(key);
               requestAnimationFrame(() => document.getElementById(`${id}-${key}-tab`)?.focus());
             }}
-            className="min-h-12 cursor-pointer rounded-xl border border-transparent px-2 text-sm font-bold text-[#796653] transition-colors aria-selected:border-[#e2cc9e] aria-selected:bg-white aria-selected:text-[#701e2a] aria-selected:shadow-sm hover:bg-white/70"
+            className="min-h-12 cursor-pointer rounded-xl border border-transparent px-2 text-sm font-bold text-[#586474] transition-colors aria-selected:border-[#a2c4ca] aria-selected:bg-white aria-selected:text-[#2c5282] aria-selected:shadow-sm hover:bg-white/70"
           >
             {item.label}
           </button>

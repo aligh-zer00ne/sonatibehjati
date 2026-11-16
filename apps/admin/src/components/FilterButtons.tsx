@@ -31,9 +31,9 @@ export function FilterBar({
       <section
         aria-label={label}
         data-admin-filter-bar
-        className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-1 rounded-xl border border-[#e8ded1] bg-white px-2 py-2 sm:px-3"
+        className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-1 rounded-xl border border-[#d7dce2] bg-white px-2 py-2 sm:px-3"
       >
-        <span className="me-1 flex items-center gap-1.5 border-e border-[#e8ded1] pe-3 text-[13px] font-semibold text-[#76685d]">
+        <span className="me-1 flex items-center gap-1.5 border-e border-[#d7dce2] pe-3 text-[13px] font-semibold text-[#606873]">
           <AdminIcon name="filter" width={16} />
           فیلترها
         </span>
@@ -96,7 +96,7 @@ export function FilterButton({
       arrow={false}
       classNames={{
         container:
-          '!rounded-xl !border !border-[#e8ded1] !p-0 !shadow-[0_8px_28px_rgba(52,37,30,0.12)]',
+          '!rounded-xl !border !border-[#d7dce2] !p-0 !shadow-[0_8px_28px_rgba(32,40,50,0.12)]',
       }}
       afterOpenChange={(visible) => {
         if (visible && keyboard.current) {
@@ -125,8 +125,8 @@ export function FilterButton({
                 changeOpen(false);
             }}
           >
-            <div className="mb-1 flex items-center justify-between gap-2 border-b border-[#eee5d9] pb-1 ps-2">
-              <span className="font-semibold text-[#62452f]">{label}</span>
+            <div className="mb-1 flex items-center justify-between gap-2 border-b border-[#dfe3e8] pb-1 ps-2">
+              <span className="font-semibold text-[#35465c]">{label}</span>
               <button
                 type="button"
                 aria-label="بستن فیلتر"
@@ -134,7 +134,7 @@ export function FilterButton({
                   changeOpen(false);
                   trigger.current?.focus();
                 }}
-                className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#76685d] hover:bg-[#fcf9f3] [@media(pointer:coarse)]:size-10"
+                className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#606873] hover:bg-[#f5f7fa] [@media(pointer:coarse)]:size-10"
               >
                 <AdminIcon name="close" width={15} height={15} />
               </button>
@@ -159,16 +159,16 @@ export function FilterButton({
             changeOpen(true);
           }
         }}
-        className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${active ? 'bg-[#fcf4e9] text-[#701e2a]' : open ? 'bg-[#f7f4ef] text-[#34251e]' : 'text-[#624f42] hover:bg-[#f7f4ef]'}`}
+        className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${active ? 'bg-[#eff2f6] text-[#2c5282]' : open ? 'bg-[#f1f3f5] text-[#202832]' : 'text-[#46505e] hover:bg-[#f1f3f5]'}`}
       >
-        {active && <span aria-hidden="true" className="size-1.5 rounded-full bg-[#701e2a]" />}
+        {active && <span aria-hidden="true" className="size-1.5 rounded-full bg-[#2c5282]" />}
         <span className="sm:hidden">{compactLabel}</span>
         <span className="hidden sm:inline">{label}</span>
         <AdminIcon
           name="chevron"
           width={13}
           height={13}
-          className={`shrink-0 text-[#958477] transition-transform motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+          className={`shrink-0 text-[#7b8491] transition-transform motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
         />
       </button>
     </Popover>
@@ -206,11 +206,11 @@ export function FilterChips<T extends string>({
             onChange(option.value);
             close?.();
           }}
-          className={`flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-start text-[13px] font-medium transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${value === option.value ? 'bg-[#fcf4e9] text-[#701e2a]' : 'text-[#624f42] hover:bg-[#f7f4ef]'} ${close ? 'w-full' : 'border border-[#e8ded1]'}`}
+          className={`flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-start text-[13px] font-medium transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${value === option.value ? 'bg-[#eff2f6] text-[#2c5282]' : 'text-[#46505e] hover:bg-[#f1f3f5]'} ${close ? 'w-full' : 'border border-[#d7dce2]'}`}
         >
           <span
             aria-hidden="true"
-            className={`grid size-4 shrink-0 place-items-center rounded border ${value === option.value ? 'border-[#701e2a] bg-[#701e2a] text-white' : 'border-[#d7cfc5] bg-white'}`}
+            className={`grid size-4 shrink-0 place-items-center rounded border ${value === option.value ? 'border-[#2c5282] bg-[#2c5282] text-white' : 'border-[#c7cdd5] bg-white'}`}
           >
             {value === option.value && <AdminIcon name="check" width={11} />}
           </span>

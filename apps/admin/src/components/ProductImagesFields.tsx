@@ -28,15 +28,15 @@ export default function ProductImagesFields({
       {(fields, { add, remove }) => (
         <div className="space-y-4">
           <p className="text-sm font-bold">تصاویر محصول (۱ تا ۸ تصویر)</p>
-          <p className="text-xs text-[#7d746a]">
+          <p className="text-xs text-[#6c737b]">
             JPG، PNG یا WebP، حداکثر ۸ مگابایت برای هر تصویر. تصویر اول، تصویر اصلی محصول است.
           </p>
           {fields.map(({ key, name, ...rest }) => (
             <div
               key={key}
-              className="grid gap-4 rounded-lg border border-[#e8ded1] p-4 sm:grid-cols-[112px_minmax(0,1fr)]"
+              className="grid gap-4 rounded-lg border border-[#d7dce2] p-4 sm:grid-cols-[112px_minmax(0,1fr)]"
             >
-              <div className="grid size-28 place-items-center overflow-hidden rounded-lg bg-[#f4eadb]">
+              <div className="grid size-28 place-items-center overflow-hidden rounded-lg bg-[#e2e7ed]">
                 {images?.[name]?.url ? (
                   <img
                     src={images[name].url}
@@ -44,7 +44,7 @@ export default function ProductImagesFields({
                     className="h-full w-full object-contain"
                   />
                 ) : (
-                  <AdminIcon name="products" width={32} height={32} className="text-[#af8a57]" />
+                  <AdminIcon name="products" width={32} height={32} className="text-[#63898e]" />
                 )}
               </div>
               <div className="min-w-0">
@@ -66,7 +66,7 @@ export default function ProductImagesFields({
                 </Form.Item>
                 <div className="flex flex-wrap items-center gap-3">
                   <label
-                    className={`relative inline-flex min-h-11 items-center rounded-lg border border-[#b08662] px-4 text-sm text-[#810c20] ${disabled || uploading !== null ? 'opacity-50' : 'cursor-pointer hover:bg-[#fbefdc]'}`}
+                    className={`relative inline-flex min-h-11 items-center rounded-lg border border-[#6c85a6] px-4 text-sm text-[#23426a] ${disabled || uploading !== null ? 'opacity-50' : 'cursor-pointer hover:bg-[#e6ebf1]'}`}
                   >
                     {uploading === name
                       ? 'در حال آپلود…'

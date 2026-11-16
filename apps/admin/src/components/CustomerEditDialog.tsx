@@ -163,7 +163,7 @@ function Editor({
           </Checkbox>
         )}
         {hasAddress && (
-          <section className="mt-2 rounded-2xl border border-[#e8ded1] bg-[#faf6ee] p-3">
+          <section className="mt-2 rounded-2xl border border-[#d7dce2] bg-[#f1f4f7] p-3">
             <h3 className="mb-3 flex items-center gap-2 font-bold">
               <AdminIcon name="pin" />
               نشانی مشتری
@@ -189,7 +189,7 @@ function Editor({
             </div>
           </section>
         )}
-        <p className="my-3 text-[13px] leading-6 text-[#796653]">
+        <p className="my-3 text-[13px] leading-6 text-[#586474]">
           نشانی سفارش‌های قبلی جداگانه ثبت شده است؛ برای اصلاح آن‌ها، خود سفارش را ویرایش کنید.
         </p>
         {error && (
@@ -215,7 +215,7 @@ function Editor({
             }
           />
         )}
-        <div className="sticky -bottom-3 flex flex-wrap gap-2 border-t border-[#e8ded1] bg-white/95 pt-3 pb-2 backdrop-blur-sm">
+        <div className="sticky -bottom-3 flex flex-wrap gap-2 border-t border-[#d7dce2] bg-white/95 pt-3 pb-2 backdrop-blur-sm">
           <Button
             type="primary"
             htmlType="submit"

@@ -1,30 +1,29 @@
 import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
 
-export async function verifyTopNavigation(page) {
-  await expect(page.locator('[data-admin-sidebar]')).toHaveCount(0);
-  const nav = page.locator('#admin-desktop-navigation');
+/** Desktop grouped sidebar, tabbed scoped search and the mobile/tablet bottom bar. */
+export async function verifyAdminNavigation(page) {
+  const sidebar = page.locator('[data-admin-sidebar]');
+  const nav = page.locator('#admin-sidebar-navigation');
   for (const width of [1100, 1280, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
-    await expect(nav).toBeVisible();
+    await expect(sidebar).toBeVisible();
+    await expect(page.locator('#admin-bottom-navigation')).toBeHidden();
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
       .toBeLessThanOrEqual(1);
     for (const el of await nav.getByRole('link').all()) {
-      const box = await el.boundingBox();
-      assert.ok(box && box.x >= 0 && box.x + box.width <= width && box.height >= 56);
-      assert.ok(await el.evaluate((node) => node.scrollWidth <= node.clientWidth + 1));
-      assert.ok(await el.evaluate((node) => parseFloat(getComputedStyle(node).fontSize) >= 14));
+      if (!(await el.isVisible())) continue;
+      assert.ok(await el.evaluate((node) => parseFloat(getComputedStyle(node).fontSize) >= 12));
     }
   }
-  const topbar = page.locator('[data-admin-topbar]');
-  assert.ok((await topbar.boundingBox()).height >= 125);
-  assert.ok((await topbar.getByAltText('سنتی بهجتی', { exact: true }).boundingBox()).height >= 76);
+  await expect(nav.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'سایر سفارش‌ها', exact: true })).toBeVisible();
   for (const [name, id, expected] of [
     ['فروش و مشتریان', 'sales', 6],
     ['محصولات و تخفیف‌ها', 'catalog', 3],
     ['ارتباط با مشتری', 'communication', 2],
-    ['تنظیمات مدیریت', 'settings', 5],
+    ['تنظیمات مدیریت', 'settings', 6],
   ]) {
     const link = nav.getByRole('link', { name, exact: true });
     await link.focus();
@@ -59,18 +58,34 @@ export async function verifyTopNavigation(page) {
     .getByRole('link', { name: 'محصولات', exact: true })
     .click();
   await expect(page).toHaveURL(/\/admin\/products$/);
-  const search = page.getByRole('combobox', { name: 'محدوده جستجوی مدیریت', exact: true });
-  await expect(search).toBeVisible();
-  await page.getByLabel('جستجوی پنل مدیریت', { exact: true }).fill('کنجد');
-  await page.getByLabel('جستجوی پنل مدیریت', { exact: true }).press('Enter');
+  await expect(nav.getByRole('link', { name: 'محصولات', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  // The search scope defaults to the current page and can be switched from its tabs.
+  const search = page.getByRole('combobox', { name: 'جستجو در محصولات', exact: true });
+  await search.fill('کنجد');
+  await expect(page.getByRole('tab', { name: 'محصولات', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await page.getByRole('tab', { name: 'سفارش‌ها', exact: true }).click();
+  await expect(
+    page.getByRole('combobox', { name: 'جستجو در سفارش‌ها', exact: true }),
+  ).toBeVisible();
+  await page.getByRole('tab', { name: 'محصولات', exact: true }).click();
+  await search.press('Enter');
   await expect(page).toHaveURL(/\/admin\/products\?search=/);
   for (const width of [320, 390, 768, 1024]) {
     await page.setViewportSize({ width, height: 844 });
-    await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).click();
-    const drawer = page.getByRole('dialog', { name: 'منوی مدیریت', exact: true });
-    await drawer.getByRole('link', { name: 'فروش و مشتریان', exact: true }).click();
-    await expect(drawer).toBeHidden();
+    await expect(sidebar).toBeHidden();
+    const bottom = page.locator('#admin-bottom-navigation');
+    await bottom.getByRole('link', { name: 'فروش', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/sections\/sales$/);
+    for (const link of await bottom.getByRole('link').all()) {
+      const box = await link.boundingBox();
+      assert.ok(box && box.x >= 0 && box.x + box.width <= width + 1 && box.height >= 44);
+    }
     const cards = page.locator('[data-admin-section="sales"] [data-admin-navigation-card]');
     await expect(cards).toHaveCount(6);
     for (const card of await cards.all()) {

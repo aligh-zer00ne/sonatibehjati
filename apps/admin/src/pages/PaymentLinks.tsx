@@ -100,7 +100,7 @@ export default function PaymentLinks() {
         <h1 className="text-[28px] font-extrabold">
           {creating ? 'ساخت لینک پرداخت' : 'لینک‌های پرداخت'}
         </h1>
-        <p className="mt-2 text-sm leading-7 text-[#796653]">
+        <p className="mt-2 text-sm leading-7 text-[#586474]">
           دریافت مانده مشتری یا مبلغ دلخواه؛ ثبت رسید پس از تأیید بانک.
         </p>
       </div>
@@ -152,12 +152,12 @@ export default function PaymentLinks() {
                   <article
                     key={item.id}
                     data-payment-request={item.id}
-                    className="space-y-4 rounded-[24px] border border-[#e8ded1] bg-white p-5 shadow-sm"
+                    className="space-y-4 rounded-[24px] border border-[#d7dce2] bg-white p-5 shadow-sm"
                   >
                     <header className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <h2 className="text-lg font-extrabold">{item.title}</h2>
-                        <p className="mt-1 text-sm text-[#796653]">
+                        <p className="mt-1 text-sm text-[#586474]">
                           {item.customerName ?? item.payerName ?? 'دریافت عمومی'}
                         </p>
                       </div>
@@ -173,10 +173,10 @@ export default function PaymentLinks() {
                         {labels[item.status]}
                       </Tag>
                     </header>
-                    <div className="text-xl font-extrabold text-[#4e141c]">
+                    <div className="text-xl font-extrabold text-[#1e3a5f]">
                       <Money compact amount={item.amount} />
                     </div>
-                    <p className="text-xs text-[#857467]">
+                    <p className="text-xs text-[#6b7481]">
                       اعتبار تا {formatDateTime(item.expiresAt)}
                     </p>
                     {item.payments[0] && (
@@ -203,7 +203,7 @@ export default function PaymentLinks() {
                             }}
                             width={800}
                           >
-                            <div className="mb-4 rounded-2xl border border-[#e8ded1] bg-[#faf6ee] p-4 text-xl font-extrabold text-[#4e141c]">
+                            <div className="mb-4 rounded-2xl border border-[#d7dce2] bg-[#f1f4f7] p-4 text-xl font-extrabold text-[#1e3a5f]">
                               <Money compact amount={item.amount} />
                             </div>
                             <CopyPaymentLink
@@ -217,7 +217,7 @@ export default function PaymentLinks() {
                               {item.payments.map((payment) => (
                                 <div
                                   key={payment.id}
-                                  className="space-y-2 border-t border-[#e8ded1] pt-3"
+                                  className="space-y-2 border-t border-[#d7dce2] pt-3"
                                 >
                                   <p>
                                     {paymentStatusLabels[payment.status]} ·{' '}
@@ -308,11 +308,11 @@ export default function PaymentLinks() {
   return (
     <div className="space-y-5">
       {header}
-      <section className="rounded-[26px] border border-[#e8ded1] bg-white p-5 shadow-sm sm:p-7">
+      <section className="rounded-[26px] border border-[#d7dce2] bg-white p-5 shadow-sm sm:p-7">
         {result ? (
           <div className="space-y-5">
             <h2 className="text-xl font-extrabold">لینک پرداخت آماده است</h2>
-            <div className="text-2xl font-extrabold text-[#4e141c]">
+            <div className="text-2xl font-extrabold text-[#1e3a5f]">
               <Money compact amount={result.amount} />
             </div>
             <CopyPaymentLink
@@ -462,18 +462,18 @@ export default function PaymentLinks() {
                 {request.current ? 'بررسی و ساخت مجدد همین لینک' : 'ساخت لینک پرداخت'}
               </Button>
             </Form>
-            <aside className="space-y-4 rounded-[24px] border border-[#d9c7a8] bg-[linear-gradient(145deg,#faf7ef,white)] p-5">
-              <h2 className="font-extrabold text-[#796653]">پیش‌نمایش لینک</h2>
-              <div className="space-y-4 rounded-2xl border border-[#e8ded1] bg-white p-5 text-center">
-                <AdminIcon name="link" className="mx-auto size-10 text-[#c49536]" />
+            <aside className="space-y-4 rounded-[24px] border border-[#a8c1c5] bg-[linear-gradient(145deg,#f2f4f7,white)] p-5">
+              <h2 className="font-extrabold text-[#586474]">پیش‌نمایش لینک</h2>
+              <div className="space-y-4 rounded-2xl border border-[#d7dce2] bg-white p-5 text-center">
+                <AdminIcon name="link" className="mx-auto size-10 text-[#528b93]" />
                 <p className="font-bold">
                   {scope === 'CUSTOMER_BALANCE' && user ? customerName(user) : 'دریافت مبلغ دلخواه'}
                 </p>
-                <div className="text-2xl font-extrabold text-[#4e141c]">
+                <div className="text-2xl font-extrabold text-[#1e3a5f]">
                   <Money compact amount={Math.max(0, actualAmount)} />
                 </div>
               </div>
-              <p className="text-sm leading-8 text-[#796653]">
+              <p className="text-sm leading-8 text-[#586474]">
                 مبلغ پس از ساخت ثابت است. پرداخت تأییدشدهٔ مشتری ابتدا فاکتورهای باز را تسویه
                 می‌کند؛ اضافه وجه بستانکاری می‌شود. این لینک پیامک ارسال نمی‌کند.
               </p>

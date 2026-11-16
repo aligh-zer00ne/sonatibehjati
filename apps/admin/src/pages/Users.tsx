@@ -95,7 +95,7 @@ export default function Users() {
           }}
         />
       )}
-      <p className="text-sm text-[#7d746a]">
+      <p className="text-sm text-[#6c737b]">
         خروجی شامل نام و موبایل تمام مشتریان مطابق جستجوی فعلی است؛ فقط صفحهٔ نمایش‌داده‌شده را
         محدود نمی‌کند.
       </p>

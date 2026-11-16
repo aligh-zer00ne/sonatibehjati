@@ -65,7 +65,7 @@ export default function OrderFilters({
             }
           />
           {!statusView && (
-            <p className="text-xs leading-6 text-[#857467]">
+            <p className="text-xs leading-6 text-[#6b7481]">
               سفارش‌های لغوشده و در انتظار پرداخت به‌صورت پیش‌فرض نمایش داده نمی‌شوند.
             </p>
           )}
@@ -134,7 +134,7 @@ export default function OrderFilters({
       <Button
         type="text"
         size="small"
-        className="!ms-auto !text-[13px] !text-[#701e2a]"
+        className="!ms-auto !text-[13px] !text-[#2c5282]"
         onClick={onReset}
       >
         پاک کردن فیلترها

@@ -42,7 +42,7 @@ export default function Orders({
                 ? 'سایر سفارش‌ها'
                 : 'سفارش‌ها'}
           </PageHeading>
-          <p className="mb-3 text-xs leading-6 text-[#76685d]">
+          <p className="mb-3 text-xs leading-6 text-[#606873]">
             {scope === 'manual'
               ? 'مدیریت سفارش‌های دستی، حضوری و اینستاگرامی'
               : 'مدیریت سفارش، از جزئیات خرید تا آماده‌سازی و ارسال'}

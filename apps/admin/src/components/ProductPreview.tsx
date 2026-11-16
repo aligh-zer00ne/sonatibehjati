@@ -40,14 +40,14 @@ export default function ProductPreview({ slug, isActive, compact = false }: { sl
           </div>
         }
       >
-        <p className="mb-3 text-sm text-[#7d746a]">
+        <p className="mb-3 text-sm text-[#6c737b]">
           نسخهٔ ذخیره‌شدهٔ محصول در فروشگاه نمایش داده می‌شود.
         </p>
         <iframe
           key={revision}
           title="صفحه محصول در فروشگاه"
           src={`${url}?preview=${revision}`}
-          className="h-[70dvh] w-full rounded-lg border border-[#e8ded1]"
+          className="h-[70dvh] w-full rounded-lg border border-[#d7dce2]"
         />
       </Modal>
     </>

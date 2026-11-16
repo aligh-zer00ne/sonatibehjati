@@ -148,13 +148,13 @@ export default function Tickets() {
                 onChange={(value) => void changeStatus(value)}
               />
             </div>
-            <div className="flex max-h-[45dvh] flex-col gap-3 overflow-y-auto rounded-lg border border-[#e8ded1] p-3">
+            <div className="flex max-h-[45dvh] flex-col gap-3 overflow-y-auto rounded-lg border border-[#d7dce2] p-3">
               {ticket.messages.map((item) => (
                 <div
                   key={item.id}
-                  className={`rounded-lg p-3 ${item.fromSupport ? 'mr-6 bg-[#f9e8e5]' : 'ml-6 bg-[#f6f1e9]'}`}
+                  className={`rounded-lg p-3 ${item.fromSupport ? 'mr-6 bg-[#ebeef3]' : 'ml-6 bg-[#edeff2]'}`}
                 >
-                  <p className="mb-2 text-xs text-[#7d746a]">
+                  <p className="mb-2 text-xs text-[#6c737b]">
                     {item.fromSupport ? 'پشتیبانی' : 'مشتری'} · {formatDate(item.createdAt)}
                   </p>
                   <p className="break-words whitespace-pre-wrap">{item.body}</p>

@@ -1,4 +1,3 @@
-import { verifySurfaceMotion } from './surface-motion-checks.mjs';
 import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
 import { bank, bankRecords } from './payment-harness.mjs';
@@ -247,7 +246,6 @@ try {
   await genericCard.getByRole('button', { name: 'غیرفعال‌کردن لینک', exact: true }).click();
   await expect(genericCard.getByText('غیرفعال', { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await verifySurfaceMotion(page, page.locator('[data-admin-topbar]'), { ambient: true });
   await expect(page.getByRole('dialog')).toHaveCount(0);
   assert.deepEqual(errors, []);
   console.log(

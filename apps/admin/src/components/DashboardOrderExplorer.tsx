@@ -53,7 +53,7 @@ export default function DashboardOrderExplorer({
         </div>
       }
     >
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#e8ded1] bg-[#f8f3eb] px-3 py-2 text-xs text-[#76685d]">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#d7dce2] bg-[#eff1f4] px-3 py-2 text-xs text-[#606873]">
         <span>{data ? `${formatNumber(data.total)} سفارش منطبق` : 'در حال دریافت سفارش‌ها…'}</span>
         {inspection.input.from && inspection.input.to && (
           <span>

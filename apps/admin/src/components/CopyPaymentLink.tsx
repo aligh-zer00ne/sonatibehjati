@@ -22,7 +22,7 @@ export default function CopyPaymentLink({
         value={url}
         readOnly
         dir="ltr"
-        className="min-h-11 w-full min-w-0 rounded-xl border border-[#e8ded1] bg-[#faf6ee] px-3 text-sm"
+        className="min-h-11 w-full min-w-0 rounded-xl border border-[#d7dce2] bg-[#f1f4f7] px-3 text-sm"
       />
       <div className="flex flex-wrap gap-2">
         <Button

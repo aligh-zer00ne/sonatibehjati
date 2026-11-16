@@ -22,12 +22,12 @@ export default function RetailCustomerModal({
       open
       title={
         <span className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-2xl bg-[#701e2a] text-[#f5d88f]">
+          <span className="grid size-11 place-items-center rounded-2xl bg-[#2c5282] text-[#9aced6]">
             <AdminIcon name="person" width={22} />
           </span>
           <span>
             افزودن مشتری
-            <small aria-hidden="true" className="mt-1 block text-xs font-normal text-[#857467]">
+            <small aria-hidden="true" className="mt-1 block text-xs font-normal text-[#6b7481]">
               اطلاعات تماس و نشانی برای فاکتور و ارسال
             </small>
           </span>
@@ -80,7 +80,7 @@ export default function RetailCustomerModal({
           }
         }}
       >
-        <h3 className="mb-4 mt-5 flex items-center gap-2 text-sm font-extrabold text-[#701e2a]">
+        <h3 className="mb-4 mt-5 flex items-center gap-2 text-sm font-extrabold text-[#2c5282]">
           <AdminIcon name="person" width={18} /> مشخصات مشتری
         </h3>
         <div className="grid gap-x-4 sm:grid-cols-2">

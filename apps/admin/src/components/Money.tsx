@@ -52,7 +52,7 @@ export function MoneyInput({
       <div
         className={
           compact
-            ? 'pointer-events-none absolute end-0 top-full z-10 hidden min-w-36 max-w-64 rounded-lg border border-[#e8ded1] bg-white px-2 py-1 shadow-lg group-focus-within:block'
+            ? 'pointer-events-none absolute end-0 top-full z-10 hidden min-w-36 max-w-64 rounded-lg border border-[#d7dce2] bg-white px-2 py-1 shadow-lg group-focus-within:block'
             : undefined
         }
       >

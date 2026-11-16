@@ -97,7 +97,7 @@ export default function PaymentTest() {
             const p = row.payment;
             const verified = p.reason === 'ADMIN_GATEWAY_TEST' && !!p.verifiedAt;
             return (
-              <div key={p.id} className="space-y-3 rounded-xl border border-[#e8ded1] p-4">
+              <div key={p.id} className="space-y-3 rounded-xl border border-[#d7dce2] p-4">
                 <p className="font-bold">{paymentStatusLabels[p.status]}</p>
                 {verified && (
                   <p className="text-sm font-bold text-[#31724d]">بانک پرداخت تست را تأیید کرد.</p>

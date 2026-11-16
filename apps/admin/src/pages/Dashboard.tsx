@@ -74,7 +74,7 @@ export default function Dashboard() {
     <div className="flex items-center justify-between gap-2">
       <span>{label}</span>
       {admin && canOpenAdminPath(admin, href) && (
-        <Link to={href} className="flex items-center gap-1 text-[13px] !text-[#786044]">
+        <Link to={href} className="flex items-center gap-1 text-[13px] !text-[#4a5b72]">
           مشاهده همه
           <AdminIcon name="arrow" width={14} height={14} />
         </Link>
@@ -83,7 +83,7 @@ export default function Dashboard() {
   );
   return (
     <div className="flex flex-col gap-4 motion-safe:animate-surface-enter" data-admin-dashboard>
-      <header className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#9c5358]/40 bg-[radial-gradient(ellipse_at_top_right,#7b3039,transparent_65%),linear-gradient(125deg,#5c1924,#290c12)] px-5 py-6 text-[#fff5e1] shadow-[0_12px_28px_-12px_#4e141c50] sm:px-7 sm:py-7">
+      <header className="relative isolate flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] border border-[#5c7493]/40 bg-[radial-gradient(ellipse_at_top_right,#395272,transparent_65%),linear-gradient(125deg,#203755,#0f1926)] px-5 py-6 text-[#eceff4] shadow-[0_12px_28px_-12px_#1e3a5f50] sm:px-7 sm:py-7">
         <AmbientBackdrop />
         <div
           aria-hidden="true"
@@ -92,11 +92,11 @@ export default function Dashboard() {
           <AdminSkyline />
         </div>
         <div className="relative z-10">
-          <p className="mb-2 text-xs font-semibold text-[#f2d6a2]">
+          <p className="mb-2 text-xs font-semibold text-[#a8d1d8]">
             سنتی بهجتی اردکان · طعم اصالت، از دل کویر
           </p>
-          <h1 className="text-2xl font-extrabold text-[#fff5e1] sm:text-[28px]">داشبورد مدیریت</h1>
-          <p className="mt-2 text-xs text-[#f2d6a2]">
+          <h1 className="text-2xl font-extrabold text-[#eceff4] sm:text-[28px]">داشبورد مدیریت</h1>
+          <p className="mt-2 text-xs text-[#a8d1d8]">
             <time dateTime={now.toISOString()}>
               {new Intl.DateTimeFormat('fa-IR', {
                 dateStyle: 'full',
@@ -105,7 +105,7 @@ export default function Dashboard() {
             </time>
           </p>
         </div>
-        <div className="relative z-10 flex flex-wrap gap-2 [&_.ant-btn]:!rounded-xl [&_.ant-btn]:!font-bold [&_.ant-btn-primary]:!border-[#edc57d] [&_.ant-btn-primary]:!bg-[linear-gradient(135deg,#f6dfa0,#dfb65c)] [&_.ant-btn-primary]:!text-[#4b270c] [&_.ant-btn-primary]:!shadow-[0_4px_18px_#edc57d30] [&_.ant-btn-default]:!border-white/25 [&_.ant-btn-default]:!bg-white/10 [&_.ant-btn-default]:!text-[#fff5e1]">
+        <div className="relative z-10 flex flex-wrap gap-2 [&_.ant-btn]:!rounded-xl [&_.ant-btn]:!font-bold [&_.ant-btn-primary]:!border-[#8bc2cb] [&_.ant-btn-primary]:!bg-[linear-gradient(135deg,#a7d4db,#6faeb7)] [&_.ant-btn-primary]:!text-[#162941] [&_.ant-btn-primary]:!shadow-[0_4px_18px_#8bc2cb30] [&_.ant-btn-default]:!border-white/25 [&_.ant-btn-default]:!bg-white/10 [&_.ant-btn-default]:!text-[#eceff4]">
           {canInspect && (
             <Button
               type="primary"
@@ -140,7 +140,7 @@ export default function Dashboard() {
             onChange={setSalesChannel}
           />
         </FilterButton>
-        <span className="ms-auto text-xs text-[#857467]">
+        <span className="ms-auto text-xs text-[#6b7481]">
           {salesChannel ? salesChannelLabels[salesChannel] : 'همه مسیرهای خرید'}
         </span>
       </FilterBar>
@@ -203,7 +203,7 @@ export default function Dashboard() {
             <Link
               key={item.href}
               to={item.href}
-              className="flex min-h-10 items-center gap-2 rounded-xl border border-[#e5ded3] bg-white px-3 text-xs !text-[#62452f] shadow-[0_2px_6px_#62452f04] transition hover:border-[#c69b48] hover:bg-[#faf5eb] hover:shadow-md motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-reduce:transition-none"
+              className="flex min-h-10 items-center gap-2 rounded-xl border border-[#d8dbe0] bg-white px-3 text-xs !text-[#35465c] shadow-[0_2px_6px_#35465c04] transition hover:border-[#5c959e] hover:bg-[#eff2f6] hover:shadow-md motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-reduce:transition-none"
             >
               <AdminIcon name={item.icon} width={15} />
               {item.label}
@@ -216,7 +216,7 @@ export default function Dashboard() {
       <section aria-label="مشتریان به تفکیک محل خرید">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-bold">عملکرد مسیرهای خرید</h2>
-          <span className="text-xs text-[#857467]">برای فیلتر آمار، یک مسیر را انتخاب کنید</span>
+          <span className="text-xs text-[#6b7481]">برای فیلتر آمار، یک مسیر را انتخاب کنید</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
           {data.channelMetrics.map((c) => (
@@ -226,12 +226,12 @@ export default function Dashboard() {
               onClick={() => setSalesChannel(salesChannel === c.salesChannel ? '' : c.salesChannel)}
               aria-pressed={salesChannel === c.salesChannel}
               aria-label={`نمایش آمار خرید از ${salesChannelLabels[c.salesChannel]}`}
-              className="min-w-0 rounded-2xl border border-[#e8ded1] bg-white p-4 text-start shadow-[0_3px_14px_#62452f06] hover:border-[#c69b48] hover:shadow-[0_10px_24px_#62452f12] aria-pressed:border-[#c69b48] aria-pressed:bg-[linear-gradient(135deg,#fffaf0,#f6e5bd)] aria-pressed:shadow-[0_4px_16px_#c69b4824]"
+              className="min-w-0 rounded-2xl border border-[#d7dce2] bg-white p-4 text-start shadow-[0_3px_14px_#35465c06] hover:border-[#5c959e] hover:shadow-[0_10px_24px_#35465c12] aria-pressed:border-[#5c959e] aria-pressed:bg-[linear-gradient(135deg,#f5f7fa,#bddde1)] aria-pressed:shadow-[0_4px_16px_#5c959e24]"
             >
               <div className="mb-2 flex items-center gap-2">
                 <span
                   data-card-icon
-                  className={`${cardIconInteraction} grid size-9 place-items-center rounded-xl bg-[#f4e8d3] text-[#701e2a]`}
+                  className={`${cardIconInteraction} grid size-9 place-items-center rounded-xl bg-[#dce3eb] text-[#2c5282]`}
                 >
                   <AdminIcon
                     name={
@@ -245,23 +245,23 @@ export default function Dashboard() {
                   />
                 </span>
                 <h3 className="font-bold">خرید از {salesChannelLabels[c.salesChannel]}</h3>
-                <AdminIcon name="arrow" className="ms-auto text-[#b59b7c]" width={17} />
+                <AdminIcon name="arrow" className="ms-auto text-[#8396ae]" width={17} />
               </div>
-              <p className="text-xs text-[#76685d]">
+              <p className="text-xs text-[#606873]">
                 {formatNumber(c.customersCount)} مشتری · {formatNumber(c.ordersCount)} سفارش
               </p>
               <div className="mt-3 text-sm font-bold">
-                <span className="mb-1 block text-xs font-medium text-[#857467]">
+                <span className="mb-1 block text-xs font-medium text-[#6b7481]">
                   دریافت تخصیص‌یافته
                 </span>
                 <Money compact amount={c.revenue} />
               </div>
               <div
-                className="mt-3 h-1 overflow-hidden rounded-full bg-[#f2e8da]"
+                className="mt-3 h-1 overflow-hidden rounded-full bg-[#e1e5eb]"
                 aria-hidden="true"
               >
                 <div
-                  className="h-full rounded-full bg-[#c69b48]"
+                  className="h-full rounded-full bg-[#5c959e]"
                   style={{
                     width: `${
                       (c.ordersCount /
@@ -277,7 +277,7 @@ export default function Dashboard() {
             </MotionButton>
           ))}
         </div>
-        <details className="mt-3 text-xs leading-6 text-[#857467]">
+        <details className="mt-3 text-xs leading-6 text-[#6b7481]">
           <summary className="cursor-pointer">دربارهٔ آمار مسیرهای خرید</summary>مشتریِ دارای خرید
           از چند مسیر، در هر مسیر جدا حساب می‌شود. برای مشتری بدون سفارش، منبع ثبت مبناست. دریافتی
           هر مسیر فقط وجه تخصیص‌یافته به فاکتورهاست؛ پیش‌دریافت و بازپرداخت کلی حساب، در خالص کل
@@ -296,17 +296,17 @@ export default function Dashboard() {
           className="min-w-0 xl:col-span-2"
         >
           {data.topProducts.length ? (
-            <ul aria-label="محصولات پرسفارش" className="divide-y divide-[#eee5d9]">
+            <ul aria-label="محصولات پرسفارش" className="divide-y divide-[#dfe3e8]">
               {data.topProducts.map((product) => (
                 <li key={product.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                   <DashboardProductImage src={product.image} title={product.title} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-bold">{product.title}</p>
-                    <p className="mt-1 text-[13px] text-[#8c8176]">
+                    <p className="mt-1 text-[13px] text-[#798089]">
                       {<Money amount={product.orderValue} />}
                     </p>
                   </div>
-                  <span className="rounded-full bg-[#fff0ef] px-2 py-1 text-[13px] whitespace-nowrap text-[#a51432]">
+                  <span className="rounded-full bg-[#f5f7f9] px-2 py-1 text-[13px] whitespace-nowrap text-[#2e568b]">
                     {formatNumber(product.quantity)} عدد
                   </span>
                 </li>
@@ -324,17 +324,17 @@ export default function Dashboard() {
           className="min-w-0 xl:col-span-2"
         >
           {data.recentUsers.length ? (
-            <ul className="divide-y divide-[#eee5d9]">
+            <ul className="divide-y divide-[#dfe3e8]">
               {data.recentUsers.map((user, index) => (
                 <li key={user.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                   <span
-                    className={`grid size-10 shrink-0 place-items-center rounded-full ${['bg-[#f1e8d8] text-[#7a5737]', 'bg-[#eeebfa] text-[#665398]', 'bg-[#e3f3e7] text-[#24815c]'][index % 3]}`}
+                    className={`grid size-10 shrink-0 place-items-center rounded-full ${['bg-[#dfe4ea] text-[#3f5572]', 'bg-[#eeebfa] text-[#665398]', 'bg-[#e3f3e7] text-[#24815c]'][index % 3]}`}
                   >
                     <AdminIcon name="users" width={18} />
                   </span>
                   <div className="min-w-0">
                     <p className="truncate text-xs font-bold">{customerName(user)}</p>
-                    <p className="mt-1 text-[13px] text-[#8c8176]">
+                    <p className="mt-1 text-[13px] text-[#798089]">
                       عضویت: {formatDate(user.createdAt)}
                       <span className="mt-1 block">
                         <AccountStatus balance={user.accountBalance} amount={false} />

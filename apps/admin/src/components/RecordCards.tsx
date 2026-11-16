@@ -88,7 +88,7 @@ export default function RecordCards<T extends object>({
   return (
     <div aria-label={label} className="@container/records min-w-0 space-y-3">
       {rowSelection && records.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8ded1] bg-[#fbf7ef] px-4 py-2.5 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d7dce2] bg-[#f2f5f8] px-4 py-2.5 text-xs">
           <Checkbox
             checked={allSelected}
             indeterminate={someSelected && !allSelected}
@@ -103,11 +103,11 @@ export default function RecordCards<T extends object>({
           >
             انتخاب همهٔ این صفحه
           </Checkbox>
-          <span className="text-[#76685d]">{formatNumber(selectedKeys.size)} مورد انتخاب شده</span>
+          <span className="text-[#606873]">{formatNumber(selectedKeys.size)} مورد انتخاب شده</span>
         </div>
       )}
       {!records.length ? (
-        <div className="rounded-3xl border border-[#e8ded1] bg-[#fcf9f3] py-10">
+        <div className="rounded-3xl border border-[#d7dce2] bg-[#f5f7fa] py-10">
           <Empty description="موردی برای نمایش پیدا نشد." />
         </div>
       ) : (
@@ -122,25 +122,25 @@ export default function RecordCards<T extends object>({
                 key={keyOf(record)}
                 data-admin-record
                 data-interactive-card
-                className={`${cardInteraction} min-w-0 overflow-hidden rounded-[22px] border border-[#e8ded1] bg-white p-4 shadow-[0_6px_22px_#62452f08]`}
+                className={`${cardInteraction} min-w-0 overflow-hidden rounded-[22px] border border-[#d7dce2] bg-white p-4 shadow-[0_6px_22px_#35465c08]`}
               >
-                <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#d5ac55] via-[#b7825b] to-[#701e2a]" />
+                <div className="absolute inset-x-5 top-0 h-[3px] rounded-full bg-gradient-to-l from-[#68a5ae] via-[#669198] to-[#2c5282]" />
                 <header className="mb-3 flex items-start gap-3">
                   {avatar ? (
                     avatar(record)
                   ) : (
                     <span
                       data-card-icon
-                      className={`${cardIconInteraction} flex size-12 shrink-0 items-center justify-center rounded-2xl border border-[#e8d6b1] bg-gradient-to-br from-[#f7e8c3] to-[#e1c88d] text-[#701e2a]`}
+                      className={`${cardIconInteraction} flex size-12 shrink-0 items-center justify-center rounded-2xl border border-[#b2ced3] bg-gradient-to-br from-[#d3dce7] to-[#95bec5] text-[#2c5282]`}
                     >
                       <AdminIcon name={icon} width={25} height={25} />
                     </span>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="mb-0.5 text-[13px] text-[#76685d]">
+                    <p className="mb-0.5 text-[13px] text-[#606873]">
                       {titleField?.title ?? label}
                     </p>
-                    <h3 className="[overflow-wrap:anywhere] text-[17px] leading-7 font-extrabold text-[#4e141c]">
+                    <h3 className="[overflow-wrap:anywhere] text-[17px] leading-7 font-extrabold text-[#1e3a5f]">
                       {title}
                     </h3>
                   </div>
@@ -163,12 +163,12 @@ export default function RecordCards<T extends object>({
                   )}
                 </header>
                 {featured && (
-                  <div className="mb-2.5 rounded-2xl border border-[#e5d1aa] bg-gradient-to-l from-[#f4e8d3] to-[#fcf9f3] px-3 py-2.5">
-                    <p className="mb-0.5 flex items-center gap-1.5 text-[13px] text-[#76685d]">
+                  <div className="mb-2.5 rounded-2xl border border-[#accacf] bg-gradient-to-l from-[#dce3eb] to-[#f5f7fa] px-3 py-2.5">
+                    <p className="mb-0.5 flex items-center gap-1.5 text-[13px] text-[#606873]">
                       <AdminIcon name={fieldIcon(featured.title)} width={16} height={16} />
                       {featured.title}
                     </p>
-                    <div className="[overflow-wrap:anywhere] text-xl font-extrabold tabular-nums text-[#701e2a]">
+                    <div className="[overflow-wrap:anywhere] text-xl font-extrabold tabular-nums text-[#2c5282]">
                       {valueOf(featured, record, index)}
                     </div>
                   </div>
@@ -177,25 +177,25 @@ export default function RecordCards<T extends object>({
                   {displayFields.map((field) => (
                     <div
                       key={field.title}
-                      className={`min-w-0 rounded-xl bg-[#f8f3ea] px-3 py-2 ${isWide(field) ? 'col-span-2' : narrowFields.length % 2 === 1 && field === narrowFields.at(-1) ? 'col-span-2 flex items-center justify-between gap-2 [&_dt]:mb-0' : ''}`}
+                      className={`min-w-0 rounded-xl bg-[#eef1f4] px-3 py-2 ${isWide(field) ? 'col-span-2' : narrowFields.length % 2 === 1 && field === narrowFields.at(-1) ? 'col-span-2 flex items-center justify-between gap-2 [&_dt]:mb-0' : ''}`}
                     >
-                      <dt className="mb-0.5 flex items-center gap-1.5 text-[13px] text-[#76685d]">
+                      <dt className="mb-0.5 flex items-center gap-1.5 text-[13px] text-[#606873]">
                         <AdminIcon
                           name={field.icon ?? fieldIcon(field.title)}
                           width={16}
                           height={16}
-                          className="shrink-0 text-[#b7825b]"
+                          className="shrink-0 text-[#669198]"
                         />
                         {field.title}
                       </dt>
-                      <dd className="[overflow-wrap:anywhere] text-sm leading-6 font-semibold text-[#62452f] [&_.ant-tag]:!whitespace-normal [&_.ant-tag]:!max-w-full">
+                      <dd className="[overflow-wrap:anywhere] text-sm leading-6 font-semibold text-[#35465c] [&_.ant-tag]:!whitespace-normal [&_.ant-tag]:!max-w-full">
                         {valueOf(field, record, index)}
                       </dd>
                     </div>
                   ))}
                 </dl>
                 {actionValues.length > 0 && (
-                  <footer className="mt-2.5 space-y-2 border-t border-dashed border-[#e5d7c2] pt-2.5">
+                  <footer className="mt-2.5 space-y-2 border-t border-dashed border-[#bed1d4] pt-2.5">
                     {actionValues.map(({ field, value }) => (
                       <div
                         key={field.title}

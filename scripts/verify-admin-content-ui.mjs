@@ -51,7 +51,7 @@ try {
   await expect(page.getByText('نوار اطلاع‌رسانی سایت ذخیره شد.', { exact: true })).toBeVisible();
   assert.equal(saved, 1);
   assert.equal(notice.announcement.text, 'جشنوارهٔ بلک فرایدی سنتی بهجتی');
-  const nav = page.locator('#admin-desktop-navigation');
+  const nav = page.locator('#admin-sidebar-navigation');
   await nav.getByRole('link', { name: 'فروش و مشتریان', exact: true }).click();
   const cards = page.locator('[data-admin-section]');
   await expect(cards.getByRole('link', { name: 'سفارش‌های وبسایت', exact: true })).toBeVisible();
@@ -59,12 +59,10 @@ try {
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    if (width < 1100) {
-      await page.getByRole('button', { name: 'باز کردن منوی مدیریت', exact: true }).click();
-      const drawer = page.getByRole('dialog');
-      await expect(drawer.getByRole('link', { name: 'فروش و مشتریان', exact: true })).toBeVisible();
-      await page.keyboard.press('Escape');
-    }
+    if (width < 1100)
+      await expect(
+        page.locator('#admin-bottom-navigation').getByRole('link', { name: 'فروش', exact: true }),
+      ).toBeVisible();
   }
   await expect(
     page.locator('footer').getByRole('link', { name: 'nexoraict.ir', exact: true }),

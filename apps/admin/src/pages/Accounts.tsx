@@ -59,7 +59,7 @@ export default function Accounts() {
           }
           className="min-w-0 [&_.ant-card-body]:!p-4 sm:[&_.ant-card-body]:!p-5"
         >
-          <p className="mb-4 text-xs leading-7 text-[#796653]">
+          <p className="mb-4 text-xs leading-7 text-[#586474]">
             برای هر همکار یک حساب مستقل بسازید و فقط بخش‌های موردنیاز او را انتخاب کنید.
           </p>
           <Form
@@ -108,7 +108,7 @@ export default function Accounts() {
             <Form.Item name="permissions" label="بخش‌های مجاز همکار">
               <Checkbox.Group
                 options={options}
-                className="!grid !w-full !gap-2 sm:!grid-cols-2 [&_.ant-checkbox-wrapper]:!m-0 [&_.ant-checkbox-wrapper]:!rounded-xl [&_.ant-checkbox-wrapper]:!border [&_.ant-checkbox-wrapper]:!border-[#e8ded1] [&_.ant-checkbox-wrapper]:!bg-[#faf7f1] [&_.ant-checkbox-wrapper]:!p-2 [&_.ant-checkbox-wrapper-checked]:!border-[#b47655] [&_.ant-checkbox-wrapper-checked]:!bg-[#f5ead9]"
+                className="!grid !w-full !gap-2 sm:!grid-cols-2 [&_.ant-checkbox-wrapper]:!m-0 [&_.ant-checkbox-wrapper]:!rounded-xl [&_.ant-checkbox-wrapper]:!border [&_.ant-checkbox-wrapper]:!border-[#d7dce2] [&_.ant-checkbox-wrapper]:!bg-[#f3f5f8] [&_.ant-checkbox-wrapper]:!p-2 [&_.ant-checkbox-wrapper-checked]:!border-[#6180a8] [&_.ant-checkbox-wrapper-checked]:!bg-[#e1e6ed]"
               />
             </Form.Item>
             <Button
@@ -123,11 +123,11 @@ export default function Accounts() {
           </Form>
         </Card>
         <section aria-label="حساب‌های مدیریتی" className="min-w-0 space-y-4">
-          <div className="flex items-center justify-between rounded-2xl border border-[#e8ded1] bg-white px-4 py-3">
+          <div className="flex items-center justify-between rounded-2xl border border-[#d7dce2] bg-white px-4 py-3">
             <h2 className="flex items-center gap-2 font-extrabold">
               <AdminIcon name="shield" width={20} /> کاربران و دسترسی‌ها
             </h2>
-            <span className="text-xs text-[#796653]">
+            <span className="text-xs text-[#586474]">
               {query.data ? query.data.adminAccounts.length : '—'} حساب
             </span>
           </div>
@@ -259,7 +259,7 @@ export default function Accounts() {
           value={permissions}
           onChange={(value) => setPermissions(value as AdminPermission[])}
           options={options}
-          className="!grid !w-full !gap-2 sm:!grid-cols-2 [&_.ant-checkbox-wrapper]:!m-0 [&_.ant-checkbox-wrapper]:!rounded-xl [&_.ant-checkbox-wrapper]:!border [&_.ant-checkbox-wrapper]:!border-[#e8ded1] [&_.ant-checkbox-wrapper]:!bg-[#faf7f1] [&_.ant-checkbox-wrapper]:!p-3 [&_.ant-checkbox-wrapper-checked]:!border-[#b47655] [&_.ant-checkbox-wrapper-checked]:!bg-[#f5ead9]"
+          className="!grid !w-full !gap-2 sm:!grid-cols-2 [&_.ant-checkbox-wrapper]:!m-0 [&_.ant-checkbox-wrapper]:!rounded-xl [&_.ant-checkbox-wrapper]:!border [&_.ant-checkbox-wrapper]:!border-[#d7dce2] [&_.ant-checkbox-wrapper]:!bg-[#f3f5f8] [&_.ant-checkbox-wrapper]:!p-3 [&_.ant-checkbox-wrapper-checked]:!border-[#6180a8] [&_.ant-checkbox-wrapper-checked]:!bg-[#e1e6ed]"
         />
         {error && <Alert type="error" title={error} className="!mt-4" />}
       </Modal>

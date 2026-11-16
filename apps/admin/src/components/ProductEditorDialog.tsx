@@ -37,14 +37,14 @@ export default function ProductEditorDialog({
       open
       title={
         <div className="flex min-w-0 items-center gap-3 pe-10">
-          <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-[#edc57d]/50 bg-[linear-gradient(135deg,#f6dfa0,#c49536)] text-[#4e141c]">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl border border-[#8bc2cb]/50 bg-[linear-gradient(135deg,#a7d4db,#528b93)] text-[#1e3a5f]">
             <AdminIcon name={creating ? 'plus' : 'edit'} width={26} />
           </span>
           <div className="min-w-0">
-            <h2 className="text-lg font-extrabold text-[#fff5e1]">
+            <h2 className="text-lg font-extrabold text-[#eceff4]">
               {creating ? 'محصول جدید' : 'ویرایش محصول'}
             </h2>
-            <p aria-hidden="true" className="mt-1 truncate text-sm font-medium text-[#f2d6a2]">
+            <p aria-hidden="true" className="mt-1 truncate text-sm font-medium text-[#a8d1d8]">
               {product?.title ?? 'مشخصات، قیمت و تصویر کالا'}
             </p>
           </div>
@@ -59,7 +59,7 @@ export default function ProductEditorDialog({
         header: {
           margin: 0,
           padding: '18px 20px',
-          background: 'linear-gradient(125deg,#701e2a,#300c14)',
+          background: 'linear-gradient(125deg,#2c5282,#101c2c)',
         },
         body: {
           maxHeight: 'calc(90dvh - 100px)',
@@ -68,7 +68,7 @@ export default function ProductEditorDialog({
           scrollbarGutter: 'stable',
         },
       }}
-      className="[&_.ant-modal-close]:!top-6 [&_.ant-modal-close]:!text-[#fff5e1] max-sm:[&_.ant-modal-body]:!p-3"
+      className="[&_.ant-modal-close]:!top-6 [&_.ant-modal-close]:!text-[#eceff4] max-sm:[&_.ant-modal-body]:!p-3"
       destroyOnHidden
     >
       {categories && (creating || product) ? (

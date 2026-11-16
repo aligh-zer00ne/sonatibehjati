@@ -53,7 +53,7 @@ function OrderDetailTabs({
       <div
         role="tablist"
         aria-label="بخش‌های جزئیات سفارش"
-        className={`mb-3 grid ${items.length === 1 ? 'grid-cols-1' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-4'} gap-1 border-b border-[#e8ded1] pb-3 sm:gap-2`}
+        className={`mb-3 grid ${items.length === 1 ? 'grid-cols-1' : items.length === 2 ? 'grid-cols-2' : 'grid-cols-4'} gap-1 border-b border-[#d7dce2] pb-3 sm:gap-2`}
       >
         {items.map((item, index) => (
           <button
@@ -78,7 +78,7 @@ function OrderDetailTabs({
               onChange(target.key);
               document.getElementById(`${id}-tab-${target.key}`)?.focus();
             }}
-            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[13px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#e5d1aa] bg-[#f4e8d3] font-bold text-[#701e2a]' : 'border-transparent text-[#76685d] hover:bg-[#fbf7ee]'}`}
+            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[13px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#accacf] bg-[#dce3eb] font-bold text-[#2c5282]' : 'border-transparent text-[#606873] hover:bg-[#f2f4f7]'}`}
           >
             <span className="hidden shrink-0 sm:inline-flex">{item.icon}</span>
             {item.label}
@@ -110,12 +110,12 @@ function Field({
   wide?: boolean;
 }) {
   return (
-    <div className={`min-w-0 rounded-xl bg-[#f4e8d3] p-3 ${wide ? 'sm:col-span-2' : ''}`}>
-      <dt className="mb-1.5 flex items-center gap-1.5 text-[13px] text-[#76685d]">
+    <div className={`min-w-0 rounded-xl bg-[#dce3eb] p-3 ${wide ? 'sm:col-span-2' : ''}`}>
+      <dt className="mb-1.5 flex items-center gap-1.5 text-[13px] text-[#606873]">
         <AdminIcon name={icon} width={15} height={15} />
         {label}
       </dt>
-      <dd className="break-words text-xs leading-6 font-medium text-[#62452f]">{children}</dd>
+      <dd className="break-words text-xs leading-6 font-medium text-[#35465c]">{children}</dd>
     </div>
   );
 }
@@ -177,14 +177,14 @@ export default function OrderDetailsCard({
   return (
     <section
       aria-label="جزئیات سفارش"
-      className={inDialog ? 'min-w-0' : 'min-w-0 border-t border-[#e8ded1] bg-[#fcf9f3] p-3 sm:p-5'}
+      className={inDialog ? 'min-w-0' : 'min-w-0 border-t border-[#d7dce2] bg-[#f5f7fa] p-3 sm:p-5'}
     >
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-base font-extrabold text-[#701e2a]">
+          <h3 className="text-base font-extrabold text-[#2c5282]">
             جزئیات سفارش {order && formatNumber(order.number)}
           </h3>
-          <p className="mt-1 text-[13px] leading-6 text-[#76685d]">
+          <p className="mt-1 text-[13px] leading-6 text-[#606873]">
             {order
               ? `${customerName(order.user, { recipient: order.address.recipientName })} · ${salesChannelLabels[order.salesChannel]} · ${formatDateTime(order.createdAt)}`
               : 'در حال دریافت اطلاعات سفارش'}
@@ -205,7 +205,7 @@ export default function OrderDetailsCard({
             aria-label="بستن جزئیات سفارش"
             onClick={requestClose}
             icon={<AdminIcon name="close" width={18} height={18} />}
-            className="!min-h-11 !min-w-11 !text-[#76685d]"
+            className="!min-h-11 !min-w-11 !text-[#606873]"
           />
         )}
       </header>
@@ -214,12 +214,12 @@ export default function OrderDetailsCard({
       ) : (
         <>
           {order.salesChannel === 'WEBSITE' && (
-            <div className="mb-4 rounded-2xl border border-[#e8ded1] bg-[#faf6ee] p-3">
-              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#4e141c]">
+            <div className="mb-4 rounded-2xl border border-[#d7dce2] bg-[#f1f4f7] p-3">
+              <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-[#1e3a5f]">
                 <AdminIcon name="edit" width={17} height={17} />
                 تغییر وضعیت سفارش
               </h4>
-              <p className="mb-3 text-[13px] leading-6 text-[#76685d]">
+              <p className="mb-3 text-[13px] leading-6 text-[#606873]">
                 تغییر وضعیت فقط عملیات سفارش را ثبت می‌کند و تأیید یا ثبت پرداخت نیست.
               </p>
               {orderStatusTransitions[order.status].length ? (
@@ -275,7 +275,7 @@ export default function OrderDetailsCard({
                   </Popconfirm>
                 </div>
               ) : (
-                <p className="text-xs text-[#76685d]">این سفارش به وضعیت نهایی رسیده است.</p>
+                <p className="text-xs text-[#606873]">این سفارش به وضعیت نهایی رسیده است.</p>
               )}
             </div>
           )}
@@ -316,7 +316,7 @@ export default function OrderDetailsCard({
                             بازگردانی نیست.
                           </p>
                           {order.paidAt && (
-                            <p className="font-bold text-[#b42318]">
+                            <p className="font-bold text-[#335f99]">
                               پرداخت بانکی این سفارش تأیید شده است؛ سابقهٔ تراکنش بانک حفظ می‌شود
                               اما در گزارش فروش دیده نخواهد شد.
                             </p>
@@ -379,25 +379,25 @@ export default function OrderDetailsCard({
                   <div className="grid items-start gap-3 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
                     <ul
                       aria-label="محصولات هنگام ثبت سفارش"
-                      className="min-w-0 divide-y divide-[#eee5d9] rounded-2xl border border-[#e8ded1] px-3"
+                      className="min-w-0 divide-y divide-[#dfe3e8] rounded-2xl border border-[#d7dce2] px-3"
                     >
                       {order.items.map((item) => (
                         <li key={item.id} className="flex items-start gap-3 py-3">
-                          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f4e8d3] text-[#b7825b]">
+                          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#dce3eb] text-[#669198]">
                             <AdminIcon name="products" width={20} height={20} />
                           </span>
                           <div className="min-w-0 flex-1">
-                            <p className="break-words text-xs leading-6 font-bold text-[#62452f]">
+                            <p className="break-words text-xs leading-6 font-bold text-[#35465c]">
                               {item.productTitle}
                             </p>
-                            <p className="text-[13px] leading-6 text-[#76685d]">
+                            <p className="text-[13px] leading-6 text-[#606873]">
                               {item.productWeight} · {formatNumber(item.quantity)} عدد
                             </p>
                             <div className="mt-1 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[13px] leading-6">
-                              <span className="text-[#76685d]">
+                              <span className="text-[#606873]">
                                 قیمت واحد: {formatPrice(item.unitPrice)}
                               </span>
-                              <span className="font-bold text-[#4e141c]">
+                              <span className="font-bold text-[#1e3a5f]">
                                 {formatPrice(item.lineTotal)}
                               </span>
                             </div>
@@ -405,12 +405,12 @@ export default function OrderDetailsCard({
                         </li>
                       ))}
                     </ul>
-                    <div className="rounded-2xl bg-[#fbf7ee] p-4">
-                      <h4 className="mb-3 flex items-center gap-2 text-xs font-bold text-[#4e141c]">
+                    <div className="rounded-2xl bg-[#f2f4f7] p-4">
+                      <h4 className="mb-3 flex items-center gap-2 text-xs font-bold text-[#1e3a5f]">
                         <AdminIcon name="receipt" width={17} height={17} />
                         خلاصه هزینه‌ها
                       </h4>
-                      <dl className="space-y-2 text-xs leading-6 text-[#76685d]">
+                      <dl className="space-y-2 text-xs leading-6 text-[#606873]">
                         {(
                           [
                             ['جمع محصولات', order.subtotal],
@@ -420,12 +420,12 @@ export default function OrderDetailsCard({
                         ).map(([label, amount]) => (
                           <div key={label} className="flex flex-wrap justify-between gap-x-3">
                             <dt>{label}</dt>
-                            <dd className="font-medium text-[#62452f]">{formatPrice(amount)}</dd>
+                            <dd className="font-medium text-[#35465c]">{formatPrice(amount)}</dd>
                           </div>
                         ))}
-                        <div className="border-t border-dashed border-[#e5d7c2] pt-3">
+                        <div className="border-t border-dashed border-[#bed1d4] pt-3">
                           <dt className="mb-1">مبلغ سفارش</dt>
-                          <dd className="text-base font-bold text-[#701e2a]">
+                          <dd className="text-base font-bold text-[#2c5282]">
                             <Money amount={order.total} />
                           </dd>
                         </div>
@@ -517,7 +517,7 @@ export default function OrderDetailsCard({
                       }}
                     />
                     <div
-                      className={`flex items-center gap-2 rounded-xl p-3 text-xs font-medium ${order.paidAt ? 'bg-[#f4e8d3] text-[#701e2a]' : 'bg-[#faf2df] text-[#816422]'}`}
+                      className={`flex items-center gap-2 rounded-xl p-3 text-xs font-medium ${order.paidAt ? 'bg-[#dce3eb] text-[#2c5282]' : 'bg-[#e7ecf2] text-[#2e4d75]'}`}
                     >
                       <AdminIcon name="shield" width={18} height={18} />
                       {order.paidAt ? 'پرداخت بانک تأیید شده است' : 'پرداخت بانک تأیید نشده است'}
@@ -526,19 +526,19 @@ export default function OrderDetailsCard({
                       order.payments.map((payment) => (
                         <div
                           key={payment.id}
-                          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e8ded1] p-3 text-xs leading-6"
+                          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d7dce2] p-3 text-xs leading-6"
                         >
                           <div className="min-w-0 break-words">
-                            <p className="font-bold text-[#4e141c]">
+                            <p className="font-bold text-[#1e3a5f]">
                               {paymentStatusLabels[payment.status]}
                               {payment.bankCode != null && payment.status === 'TOKEN_FAILED'
                                 ? ` · کد بانک: ${payment.bankCode}`
                                 : ''}
                             </p>
-                            <p className="text-[#76685d]">
+                            <p className="text-[#606873]">
                               رسید بانک: <bdi>{payment.reference ?? '—'}</bdi>
                             </p>
-                            <p className="text-[#76685d]">
+                            <p className="text-[#606873]">
                               پیگیری: <bdi>{payment.rrn ?? payment.traceNumber ?? '—'}</bdi>
                             </p>
                           </div>
@@ -576,7 +576,7 @@ export default function OrderDetailsCard({
                         </div>
                       ))
                     ) : (
-                      <p className="py-3 text-xs text-[#76685d]">
+                      <p className="py-3 text-xs text-[#606873]">
                         تراکنشی برای این سفارش ثبت نشده است.
                       </p>
                     )}
@@ -592,20 +592,20 @@ export default function OrderDetailsCard({
                     {order.statusEvents.map((event) => (
                       <li
                         key={event.id}
-                        className="flex items-start gap-3 rounded-xl bg-[#fbf7ee] p-3"
+                        className="flex items-start gap-3 rounded-xl bg-[#f2f4f7] p-3"
                       >
                         <AdminIcon
                           name="history"
-                          className="mt-1 shrink-0 text-[#b7825b]"
+                          className="mt-1 shrink-0 text-[#669198]"
                           width={18}
                           height={18}
                         />
                         <div className="min-w-0 text-xs leading-6">
-                          <p className="font-medium text-[#4e141c]">
+                          <p className="font-medium text-[#1e3a5f]">
                             {orderStatusLabels[event.fromStatus]} ←{' '}
                             {orderStatusLabels[event.toStatus]}
                           </p>
-                          <p className="break-words text-[13px] text-[#76685d]">
+                          <p className="break-words text-[13px] text-[#606873]">
                             {formatDateTime(event.createdAt)} · <bdi>{event.admin.email}</bdi>
                           </p>
                         </div>
@@ -613,7 +613,7 @@ export default function OrderDetailsCard({
                     ))}
                   </ol>
                 ) : (
-                  <p className="py-3 text-xs text-[#76685d]">هنوز تغییری توسط مدیر ثبت نشده است.</p>
+                  <p className="py-3 text-xs text-[#606873]">هنوز تغییری توسط مدیر ثبت نشده است.</p>
                 ),
               },
             ].filter(
@@ -624,17 +624,17 @@ export default function OrderDetailsCard({
             )}
           />
           <div
-            className={`mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#e8ded1] pt-3 ${inDialog ? 'sticky -bottom-3 z-10 rounded-xl bg-white/95 pb-3 backdrop-blur-sm sm:-bottom-5 sm:pb-5' : ''}`}
+            className={`mt-4 grid grid-cols-2 gap-2 border-t border-dashed border-[#d7dce2] pt-3 ${inDialog ? 'sticky -bottom-3 z-10 rounded-xl bg-white/95 pb-3 backdrop-blur-sm sm:-bottom-5 sm:pb-5' : ''}`}
           >
             <Button
-              className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#4e141c]"
+              className="!h-auto !min-h-11 !whitespace-normal !border-[#bed1d4] !bg-[#dce3eb] !px-2 !py-2 !text-xs !text-[#1e3a5f]"
               icon={<AdminIcon name="truck" width={18} height={18} />}
               onClick={() => setPrintView('label')}
             >
               لیبل پستی / چاپ
             </Button>
             <Button
-              className="!h-auto !min-h-11 !whitespace-normal !border-[#e5d7c2] !bg-[#f4e8d3] !px-2 !py-2 !text-xs !text-[#4e141c]"
+              className="!h-auto !min-h-11 !whitespace-normal !border-[#bed1d4] !bg-[#dce3eb] !px-2 !py-2 !text-xs !text-[#1e3a5f]"
               icon={<AdminIcon name="print" width={18} height={18} />}
               onClick={() => setPrintView('invoice')}
             >
