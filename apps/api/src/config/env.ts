@@ -62,6 +62,26 @@ const schema = z.object({
     z.string().url().optional(),
   ),
   SHIPPING_COST: z.coerce.number().int().nonnegative().default(60000),
+  // Eitaayar bot used to announce paid orders to the store's Eitaa chat. Empty disables it.
+  EITAA_BOT_TOKEN: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string()
+      .regex(/^bot\d+:[\w-]+$/)
+      .optional(),
+  ),
+  EITAA_CHAT_ID: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .string()
+      .regex(/^-?\d+$|^@\w+$/)
+      .optional(),
+  ),
+  // Local tests only; production always uses https://eitaayar.ir/api.
+  EITAA_API_BASE: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().url().optional(),
+  ),
   UPLOAD_DIRECTORY: z.preprocess(
     (value) => (value === '' ? undefined : value),
     z.string().min(1).optional(),

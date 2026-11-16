@@ -1,9 +1,48 @@
 import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
 import { bank, bankRecords, bankControl } from './payment-harness.mjs';
+// Local Eitaa stand-in: paid orders must be announced exactly once, never to the real chat.
+const eitaaMessages = [];
+const eitaa = createServer((req, res) => {
+  let body = '';
+  req.on('data', (chunk) => (body += chunk));
+  req.on('end', () => {
+    eitaaMessages.push({ url: req.url, form: Object.fromEntries(new URLSearchParams(body)) });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ ok: true, result: { message_id: eitaaMessages.length } }));
+  });
+});
+await new Promise((resolve) => eitaa.listen(0, '127.0.0.1', resolve));
+process.env.EITAA_API_BASE = `http://127.0.0.1:${eitaa.address().port}`;
+process.env.EITAA_BOT_TOKEN = 'bot1:local-test';
+process.env.EITAA_CHAT_ID = '1';
 const { db, startAPI, apiURL, proxySecret, errorCode } = await import('./auth-harness.mjs');
 process.env.AUTH_PROXY_SECRET = proxySecret;
-const { createAdmin, createCustomer, createOrderFixture, loginAdmin, adminGql, cleanupAdmin } =
-  await import('./admin-harness.mjs');
+const {
+  createAdmin,
+  createCustomer,
+  createOrderFixture,
+  loginAdmin,
+  adminGql,
+  cleanupAdmin,
+  products,
+} = await import('./admin-harness.mjs');
+async function createProductFixture(category) {
+  const suffix = Math.random().toString(36).slice(2, 10);
+  const product = await db.product.create({
+    data: {
+      title: `پرداخت آزمون ${suffix}`,
+      slug: `payment-test-${suffix}`,
+      price: 100000,
+      weight: '۵۰۰ گرم',
+      categoryId: category.id,
+      shortDescription: '',
+      description: '',
+    },
+  });
+  products.add(product.id);
+  return product;
+}
 const {
   startOrderPayment,
   callback,
@@ -18,7 +57,10 @@ try {
   const ownerSession = await loginAdmin(owner);
   const customer = await createCustomer();
   const other = await createCustomer();
-  const product = await db.product.findFirstOrThrow({ where: { isActive: true } });
+  // Fresh installations have no catalog yet; use a temporary product removed by cleanupAdmin.
+  const product =
+    (await db.product.findFirst({ where: { isActive: true } })) ??
+    (await createProductFixture(await db.category.findFirstOrThrow()));
   async function attempt() {
     const order = await createOrderFixture(customer, product);
     const result = await startOrderPayment(customer.user.id, order.id);
@@ -75,6 +117,15 @@ try {
   );
   assert.ok((await db.order.findUniqueOrThrow({ where: { id: paid.order.id } })).paidAt);
   assert.equal(paid.bank.verifyCalls, 1);
+  for (let i = 0; i < 50 && !eitaaMessages.length; i++)
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  const announced = eitaaMessages.filter((m) =>
+    m.form.text?.includes(`/admin/orders/${paid.order.id}`),
+  );
+  assert.equal(announced.length, 1);
+  assert.equal(announced[0].url, '/bot1:local-test/sendMessage');
+  assert.equal(announced[0].form.chat_id, '1');
+  assert.match(announced[0].form.text, /سفارش جدید پرداخت شد/);
   await assert.rejects(() => startOrderPayment(customer.user.id, paid.order.id));
   await callback(paid.id, paid.key, { resnum: paid.id, state: 'CanceledByUser' });
   assert.equal(
@@ -274,4 +325,5 @@ try {
 } finally {
   await cleanupAdmin();
   await new Promise((resolve) => bank.close(resolve));
+  await new Promise((resolve) => eitaa.close(resolve));
 }

@@ -1,3 +1,4 @@
+import { notifyPaidOrder } from '../notifications/paid-order.js';
 import { randomBytes, randomInt, randomUUID, timingSafeEqual } from 'node:crypto';
 import { Prisma, type Payment } from '@prisma/client';
 import { db } from '../../database/client.js';
@@ -240,6 +241,7 @@ export async function verifyPayment(id: string) {
   if (!claimed.count) return db.payment.findUniqueOrThrow({ where: { id } });
   const p = await db.payment.findUniqueOrThrow({ where: { id } });
   let bankCode: number | null = null;
+  let paidOrderId: string | null = null;
   try {
     const verified = await sepGateway.verify(p.terminalId, p.refNum!, p.sessionKey);
     bankCode = verified.code;
@@ -310,11 +312,17 @@ export async function verifyPayment(id: string) {
               leaseUntil: null,
             },
           });
-          if (!reason && order)
+          if (!reason && order) {
             await tx.order.update({
               where: { id: order.id },
               data: { paidAt: new Date(), status: 'PROCESSING' },
             });
+            return order.id;
+          }
+          return null;
+        }).then((orderId) => {
+          // Only after the commit: a rolled-back acceptance must never be announced.
+          paidOrderId = orderId ?? null;
         });
       }
     } else if ([-2, -6, 5].includes(verified.code)) {
@@ -346,6 +354,8 @@ export async function verifyPayment(id: string) {
       },
     });
   }
+  if (paidOrderId)
+    void notifyPaidOrder(paidOrderId, { test: paymentMode === 'TEST' }).catch(() => undefined);
   const next = await db.payment.findUniqueOrThrow({ where: { id } });
   if (next.status === 'REFUND_PENDING') return reversePayment(id);
   return next;
