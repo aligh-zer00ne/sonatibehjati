@@ -78,6 +78,11 @@ export default function OrdersMap() {
           setSelection(null);
           filters.reset();
         }}
+        statusView={filters.statusView}
+        onStatusView={(view) => {
+          setSelection(null);
+          filters.setStatusView(view);
+        }}
       />
       {filters.error ? (
         <Alert type="error" title={filters.error} role="alert" />

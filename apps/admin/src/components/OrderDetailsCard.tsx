@@ -22,6 +22,7 @@ import { orderStatusTransitions } from '@behjati/shared/admin';
 import { paymentStatusLabels, pendingPaymentStates } from '@behjati/shared/payments';
 import {
   AdminOrderDocument,
+  DeleteAdminOrderDocument,
   RetryAdminPaymentDocument,
   UpdateAdminOrderStatusDocument,
   type OrderStatus as Status,
@@ -144,11 +145,17 @@ export default function OrderDetailsCard({
   const [status, setStatus] = useState<Status | null>(null);
   const [pending, setPending] = useState(false);
   const [paymentPending, setPaymentPending] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [tab, setTab] = useState('products');
   const { message, modal } = App.useApp();
   const order = query.data?.adminOrder;
   const busy =
-    editingInvoice || pending || shipmentBusy || Boolean(paymentPending) || Boolean(printView);
+    deleting ||
+    editingInvoice ||
+    pending ||
+    shipmentBusy ||
+    Boolean(paymentPending) ||
+    Boolean(printView);
   useEffect(() => {
     onBusyChange?.(busy);
   }, [busy, onBusyChange]);
@@ -284,14 +291,70 @@ export default function OrderDetailsCard({
               }}
             />
           )}
-          {order.salesChannel !== 'WEBSITE' && hasPermission(admin, 'ORDERS') && (
-            <Button
-              className="!mb-3"
-              icon={<AdminIcon name="edit" />}
-              onClick={() => setEditingInvoice(true)}
-            >
-              ویرایش فاکتور
-            </Button>
+          {((order.salesChannel !== 'WEBSITE' && hasPermission(admin, 'ORDERS')) ||
+            admin?.role === 'OWNER') && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {order.salesChannel !== 'WEBSITE' && hasPermission(admin, 'ORDERS') && (
+                <Button icon={<AdminIcon name="edit" />} onClick={() => setEditingInvoice(true)}>
+                  ویرایش فاکتور
+                </Button>
+              )}
+              {admin?.role === 'OWNER' && (
+                <Button
+                  danger
+                  data-delete-order
+                  loading={deleting}
+                  disabled={busy && !deleting}
+                  icon={<AdminIcon name="trash" />}
+                  onClick={() =>
+                    modal.confirm({
+                      title: `سفارش ${formatNumber(order.number)} برای همیشه حذف شود؟`,
+                      content: (
+                        <div className="space-y-2 text-[13px] leading-7">
+                          <p>
+                            سفارش، اقلام، تاریخچهٔ وضعیت و برچسب ارسال آن حذف می‌شود و قابل
+                            بازگردانی نیست.
+                          </p>
+                          {order.paidAt && (
+                            <p className="font-bold text-[#b42318]">
+                              پرداخت بانکی این سفارش تأیید شده است؛ سابقهٔ تراکنش بانک حفظ می‌شود
+                              اما در گزارش فروش دیده نخواهد شد.
+                            </p>
+                          )}
+                          {order.offlinePaidAmount > 0 && (
+                            <p>دریافتی‌های تخصیص‌یافته به بستانکاری مشتری برمی‌گردد.</p>
+                          )}
+                        </div>
+                      ),
+                      okText: 'حذف قطعی',
+                      okButtonProps: { danger: true },
+                      cancelText: 'انصراف',
+                      onOk: async () => {
+                        setDeleting(true);
+                        try {
+                          await adminRequest(DeleteAdminOrderDocument, {
+                            id: order.id,
+                            expectedUpdatedAt: order.updatedAt,
+                          });
+                          void message.success(`سفارش ${formatNumber(order.number)} حذف شد.`);
+                          onUpdated?.();
+                          onClose?.();
+                        } catch (error) {
+                          void message.error(
+                            error instanceof Error ? error.message : 'سفارش حذف نشد.',
+                          );
+                          query.refresh();
+                        } finally {
+                          setDeleting(false);
+                        }
+                      },
+                    })
+                  }
+                >
+                  حذف سفارش
+                </Button>
+              )}
+            </div>
           )}
           {editingInvoice && (
             <ManualOrderModal

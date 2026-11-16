@@ -457,6 +457,7 @@ input AdminOrdersInput {
   pageSize: Int
   search: String
   status: OrderStatus
+  excludeStatuses: [OrderStatus!]
   userId: ID
   number: Int
   city: String
@@ -750,6 +751,7 @@ extend type Mutation {
   setStaffPermissions(id: ID!, permissions: [AdminPermission!]!): AdminIdentity!
   setStaffActive(id: ID!, isActive: Boolean!): AdminIdentity!
   deleteAdminCoupon(id: ID!, expectedUpdatedAt: String!): Boolean!
+  deleteAdminOrder(id: ID!, expectedUpdatedAt: String!): Boolean!
   saveAdminCoupon(id: ID, expectedUpdatedAt: String, input: AdminCouponInput!): AdminCoupon!
   createTicket(input: TicketInput!): SupportTicket!
   replyTicket(input: TicketReplyInput!): SupportTicket!

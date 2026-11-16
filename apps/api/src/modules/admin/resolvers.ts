@@ -1,3 +1,4 @@
+import { deleteAdminOrder } from './order-deletion.js';
 import { editCustomer } from './customer-editing.js';
 import { editManualOrder, manualEditQuote } from './manual-editing.js';
 import { readMessageTemplates, saveMessageTemplates } from './message-templates.js';
@@ -16,6 +17,7 @@ import type { Resolvers } from '../../generated/resolvers.js';
 import {
   currentAdmin,
   requirePermission,
+  requireOwner,
   requireAdminOrigin,
   loginAdmin,
   refreshAdmin,
@@ -221,6 +223,11 @@ export const adminResolvers: Resolvers = {
       await requirePermission(context, 'PRODUCTS');
       const result = await deleteAdminProduct(args.id, args.expectedUpdatedAt);
       return { ...result, product: result.product ? serializeDates(result.product) : null };
+    },
+    deleteAdminOrder: async (_parent, { id, expectedUpdatedAt }, context) => {
+      requireAdminOrigin(context);
+      const admin = await requireOwner(context);
+      return deleteAdminOrder(admin, id, expectedUpdatedAt);
     },
     updateAdminOrderStatus: async (_parent, { input }, context) => {
       requireAdminOrigin(context);

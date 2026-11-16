@@ -48,6 +48,8 @@ export async function adminOrdersMap(raw: Record<string, unknown>, selected?: st
   if (input.manualOnly) conditions.push(Prisma.sql`o.salesChannel IN ('INSTAGRAM','IN_PERSON')`);
   if (input.shippingMethod) conditions.push(Prisma.sql`o.shippingMethod = ${input.shippingMethod}`);
   if (input.status) conditions.push(Prisma.sql`o.status = ${input.status}`);
+  else if (input.excludeStatuses?.length)
+    conditions.push(Prisma.sql`o.status NOT IN (${Prisma.join(input.excludeStatuses)})`);
   if (input.userId) conditions.push(Prisma.sql`o.userId = ${input.userId}`);
   if (input.number) conditions.push(Prisma.sql`o.number = ${input.number}`);
   if (input.from) conditions.push(Prisma.sql`o.createdAt >= ${dayStart(input.from)}`);

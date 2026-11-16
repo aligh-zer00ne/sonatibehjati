@@ -8,17 +8,21 @@ import type { AdminOrdersInput } from '../generated/graphql';
 import { useAdmin } from '../auth/AdminProvider';
 import UserFilter from './UserFilter';
 import { FilterButton, FilterChips, FilterBar } from './FilterButtons';
-import type { OrderScope } from '../hooks/useOrderFilters';
+import type { OrderScope, OrderStatusView } from '../hooks/useOrderFilters';
 export default function OrderFilters({
   input,
   onChange,
   onReset,
   scope = 'all',
+  statusView = '',
+  onStatusView,
 }: {
   input: AdminOrdersInput;
   onChange: (v: Partial<AdminOrdersInput>) => void;
   onReset: () => void;
   scope?: OrderScope;
+  statusView?: OrderStatusView;
+  onStatusView?: (view: OrderStatusView) => void;
 }) {
   const carriers = useShippingMethods();
   const { admin } = useAdmin();
@@ -45,16 +49,26 @@ export default function OrderFilters({
         />
       </FilterButton>
       {scope !== 'manual' && (
-        <FilterButton label="وضعیت سفارش" active={!!input.status}>
-          <FilterChips
+        <FilterButton label="وضعیت سفارش" active={!!statusView}>
+          <FilterChips<OrderStatusView>
             label="وضعیت سفارش"
-            value={input.status ?? ''}
+            value={statusView}
             options={[
-              { value: '', label: 'همه وضعیت‌ها' },
+              { value: '', label: 'سفارش‌های جاری' },
+              { value: 'ALL', label: 'همه وضعیت‌ها' },
               ...orderStatuses.map((value) => ({ value, label: orderStatusLabels[value] })),
             ]}
-            onChange={(status) => onChange({ status: status || null })}
+            onChange={(view) =>
+              onStatusView
+                ? onStatusView(view)
+                : onChange({ status: view && view !== 'ALL' ? view : null })
+            }
           />
+          {!statusView && (
+            <p className="text-xs leading-6 text-[#857467]">
+              سفارش‌های لغوشده و در انتظار پرداخت به‌صورت پیش‌فرض نمایش داده نمی‌شوند.
+            </p>
+          )}
         </FilterButton>
       )}
       {scope !== 'website' && (

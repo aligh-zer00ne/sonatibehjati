@@ -365,6 +365,7 @@ export type AdminOrderSummary = {
 
 export type AdminOrdersInput = {
   city?: InputMaybe<Scalars['String']['input']>;
+  excludeStatuses?: InputMaybe<Array<OrderStatus>>;
   from?: InputMaybe<Scalars['String']['input']>;
   manualOnly?: InputMaybe<Scalars['Boolean']['input']>;
   number?: InputMaybe<Scalars['Int']['input']>;
@@ -931,6 +932,7 @@ export type Mutation = {
   createTicket: SupportTicket;
   deleteAddress: Scalars['Boolean']['output'];
   deleteAdminCoupon: Scalars['Boolean']['output'];
+  deleteAdminOrder: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
   editAdminCustomer: AdminUser;
   editAdminManualOrder: AdminOrder;
@@ -1019,6 +1021,12 @@ export type MutationDeleteAddressArgs = {
 
 
 export type MutationDeleteAdminCouponArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteAdminOrderArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
 };
@@ -2623,6 +2631,7 @@ export type MutationResolvers<ContextType = AuthContext, ParentType extends Reso
   createTicket?: Resolver<ResolversTypes['SupportTicket'], ParentType, ContextType, RequireFields<MutationCreateTicketArgs, 'input'>>;
   deleteAddress?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAddressArgs, 'id'>>;
   deleteAdminCoupon?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAdminCouponArgs, 'expectedUpdatedAt' | 'id'>>;
+  deleteAdminOrder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteAdminOrderArgs, 'expectedUpdatedAt' | 'id'>>;
   deleteAdminProduct?: Resolver<ResolversTypes['AdminProductDeletion'], ParentType, ContextType, RequireFields<MutationDeleteAdminProductArgs, 'expectedUpdatedAt' | 'id'>>;
   editAdminCustomer?: Resolver<ResolversTypes['AdminUser'], ParentType, ContextType, RequireFields<MutationEditAdminCustomerArgs, 'input'>>;
   editAdminManualOrder?: Resolver<ResolversTypes['AdminOrder'], ParentType, ContextType, RequireFields<MutationEditAdminManualOrderArgs, 'input'>>;

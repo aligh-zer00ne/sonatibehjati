@@ -187,6 +187,7 @@ export const adminOrdersFilterSchema = z
     ...page,
     search,
     status: z.enum(orderStatuses).nullish(),
+    excludeStatuses: z.array(z.enum(orderStatuses)).max(orderStatuses.length).nullish(),
     userId: text(1, 100).nullish(),
     salesChannel: z.enum(salesChannels).nullish(),
     manualOnly: z.boolean().nullish(),

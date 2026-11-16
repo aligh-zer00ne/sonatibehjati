@@ -82,6 +82,8 @@ export default function Orders({
         input={filters.input}
         onChange={filters.update}
         onReset={filters.reset}
+        statusView={filters.statusView}
+        onStatusView={filters.setStatusView}
         scope={scope}
       />
       {query.data && query.error && (

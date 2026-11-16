@@ -13,6 +13,7 @@ import { resolvers } from './graphql/resolvers.js';
 import { db } from './database/client.js';
 import { paymentRoutes } from './modules/payments/routes.js';
 import { startPaymentWorker } from './modules/payments/worker.js';
+import { startCanceledOrderCleanup } from './modules/admin/order-deletion.js';
 import { adminUploads } from './modules/admin/uploads.js';
 const app = express();
 app.disable('x-powered-by');
@@ -48,8 +49,10 @@ app.use('/graphql', (req, res) => {
 });
 const server = app.listen(env.PORT, () => console.info(`API listening on ${env.PORT}`));
 const stopPaymentWorker = startPaymentWorker();
+const stopOrderCleanup = startCanceledOrderCleanup();
 async function shutdown() {
   stopPaymentWorker();
+  stopOrderCleanup();
   server.close();
   await db.$disconnect();
 }

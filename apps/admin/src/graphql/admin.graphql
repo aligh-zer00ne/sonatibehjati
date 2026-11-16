@@ -924,3 +924,7 @@ mutation EditAdminManualOrder($input: AdminManualOrderEditInput!) {
     ...AdminOrderFields
   }
 }
+
+mutation DeleteAdminOrder($id: ID!, $expectedUpdatedAt: String!) {
+  deleteAdminOrder(id: $id, expectedUpdatedAt: $expectedUpdatedAt)
+}

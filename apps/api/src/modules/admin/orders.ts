@@ -33,7 +33,11 @@ export async function adminOrders(raw: Record<string, unknown>) {
     ...(input.salesChannel ? { salesChannel: input.salesChannel } : {}),
     ...(input.manualOnly ? { AND: [{ salesChannel: { in: ['INSTAGRAM', 'IN_PERSON'] } }] } : {}),
     ...(input.shippingMethod ? { shippingMethod: input.shippingMethod } : {}),
-    ...(input.status ? { status: input.status } : {}),
+    ...(input.status
+      ? { status: input.status }
+      : input.excludeStatuses?.length
+        ? { status: { notIn: input.excludeStatuses } }
+        : {}),
     ...(input.userId ? { userId: input.userId } : {}),
     ...(input.number ? { number: input.number } : {}),
     ...(input.from || input.to
