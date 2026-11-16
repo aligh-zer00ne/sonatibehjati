@@ -66,7 +66,7 @@ export default function ProductImagesFields({
                 </Form.Item>
                 <div className="flex flex-wrap items-center gap-3">
                   <label
-                    className={`relative inline-flex min-h-11 items-center rounded-lg border border-[#6c85a6] px-4 text-sm text-[#23426a] ${disabled || uploading !== null ? 'opacity-50' : 'cursor-pointer hover:bg-[#e6ebf1]'}`}
+                    className={`relative inline-flex min-h-11 items-center rounded-lg border border-[#6c85a6] px-4 text-sm text-[#23426a] ${disabled || uploading !== null ? 'opacity-50' : 'cursor-pointer '}`}
                   >
                     {uploading === name
                       ? 'در حال آپلود…'

@@ -203,7 +203,7 @@ export default function Dashboard() {
             <Link
               key={item.href}
               to={item.href}
-              className="flex min-h-10 items-center gap-2 rounded-xl border border-[#d8dbe0] bg-white px-3 text-xs !text-[#35465c] shadow-[0_2px_6px_#35465c04] transition hover:border-[#5c959e] hover:bg-[#eff2f6] hover:shadow-md motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-reduce:transition-none"
+              className="flex min-h-10 items-center gap-2 rounded-xl border border-[#d8dbe0] bg-white px-3 text-xs !text-[#35465c] shadow-[0_2px_6px_#35465c04] transition motion-safe:active:translate-y-0 motion-reduce:transition-none"
             >
               <AdminIcon name={item.icon} width={15} />
               {item.label}
@@ -226,7 +226,7 @@ export default function Dashboard() {
               onClick={() => setSalesChannel(salesChannel === c.salesChannel ? '' : c.salesChannel)}
               aria-pressed={salesChannel === c.salesChannel}
               aria-label={`نمایش آمار خرید از ${salesChannelLabels[c.salesChannel]}`}
-              className="min-w-0 rounded-2xl border border-[#d7dce2] bg-white p-4 text-start shadow-[0_3px_14px_#35465c06] hover:border-[#5c959e] hover:shadow-[0_10px_24px_#35465c12] aria-pressed:border-[#5c959e] aria-pressed:bg-[linear-gradient(135deg,#f5f7fa,#bddde1)] aria-pressed:shadow-[0_4px_16px_#5c959e24]"
+              className="min-w-0 rounded-2xl border border-[#d7dce2] bg-white p-4 text-start shadow-[0_3px_14px_#35465c06] aria-pressed:border-[#5c959e] aria-pressed:bg-[linear-gradient(135deg,#f5f7fa,#bddde1)] aria-pressed:shadow-[0_4px_16px_#5c959e24]"
             >
               <div className="mb-2 flex items-center gap-2">
                 <span

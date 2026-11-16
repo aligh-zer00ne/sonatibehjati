@@ -164,7 +164,7 @@ export default function PrintWorkspace({
     }
   };
   const toolClass =
-    '!h-10 !rounded-xl !border-white/25 !bg-white/10 !px-3 !text-[#eceff4] hover:!bg-white/20';
+    '!h-10 !rounded-xl !border-white/25 !bg-white/10 !px-3 !text-[#eceff4] ';
   return (
     <Modal
       open
@@ -237,7 +237,7 @@ export default function PrintWorkspace({
                   aria-label="کوچک‌نمایی"
                   disabled={scale <= 0.25}
                   onClick={() => setZoom(Math.max(0.25, Math.round((scale - 0.1) * 100) / 100))}
-                  className="grid size-8 cursor-pointer place-items-center rounded-full hover:bg-white/10 disabled:opacity-40"
+                  className="grid size-8 cursor-pointer place-items-center rounded-full disabled:opacity-40"
                 >
                   <AdminIcon name="minus" width={16} />
                 </button>
@@ -258,7 +258,7 @@ export default function PrintWorkspace({
                   aria-label="بزرگ‌نمایی"
                   disabled={scale >= 1.5}
                   onClick={() => setZoom(Math.min(1.5, Math.round((scale + 0.1) * 100) / 100))}
-                  className="grid size-8 cursor-pointer place-items-center rounded-full hover:bg-white/10 disabled:opacity-40"
+                  className="grid size-8 cursor-pointer place-items-center rounded-full disabled:opacity-40"
                 >
                   <AdminIcon name="plus" width={16} />
                 </button>

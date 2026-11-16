@@ -71,9 +71,9 @@ export default function Settings() {
             label="رمز جدید"
             rules={[
               { required: true, message: 'رمز جدید را وارد کنید.' },
-              { min: 12, message: 'رمز جدید حداقل ۱۲ نویسه باشد.' },
+              { min: 12, message: 'رمز جدید حداقل ۱۲ کاراکتر باشد.' },
             ]}
-            extra="حداقل ۱۲ و حداکثر ۱۲۸ نویسه"
+            extra="حداقل ۱۲ و حداکثر ۱۲۸ کاراکتر"
           >
             <Input.Password autoComplete="new-password" dir="ltr" maxLength={128} />
           </Form.Item>

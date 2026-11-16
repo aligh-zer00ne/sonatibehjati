@@ -188,7 +188,7 @@ function ShippingForm({
                   hidden={builtIn}
                   label="نام روش ارسال"
                   rules={[
-                    { required: true, min: 2, max: 40, message: 'نام ۲ تا ۴۰ نویسه‌ای وارد کنید.' },
+                    { required: true, min: 2, max: 40, message: 'نام ۲ تا ۴۰ کاراکتر‌ای وارد کنید.' },
                   ]}
                 >
                   <Input maxLength={40} placeholder="مثلاً باربری یا اسنپ‌باکس" />

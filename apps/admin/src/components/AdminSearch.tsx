@@ -213,7 +213,7 @@ export default function AdminSearch() {
             aria-label={`محدودهٔ جستجو: ${current.label}`}
             aria-haspopup="true"
             onClick={() => setOpen((value) => !value)}
-            className="me-1 flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[#d6dee8] bg-white px-2.5 text-[13px] font-bold text-[#1e3a5f] hover:border-[#9fb4cc]"
+            className="me-1 flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[#d6dee8] bg-white px-2.5 text-[13px] font-bold text-[#1e3a5f] "
           >
             <AdminIcon name={current.icon} width={16} />
             {current.label}
@@ -245,7 +245,7 @@ export default function AdminSearch() {
                 className={`flex min-h-9 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-2 text-[13px] font-bold transition-colors ${
                   item.id === scope
                     ? 'bg-white text-[#2c5282] shadow-[0_1px_4px_#1e3a5f1f]'
-                    : 'text-[#5f6b7b] hover:bg-white/70'
+                    : 'text-[#5f6b7b] '
                 }`}
               >
                 <AdminIcon name={item.icon} width={16} />
@@ -256,7 +256,7 @@ export default function AdminSearch() {
           <div role="tabpanel" aria-label={`نتایج ${current.label}`} className="p-1.5">
             {debounced.length < 2 || term.trim().length < 2 ? (
               <p className="px-3 py-4 text-[13px] leading-6 text-[#6b7685]">
-                دست‌کم دو نویسه بنویسید تا در «{current.label}» جستجو شود؛ Enter همهٔ نتایج را باز
+                دست‌کم دو کاراکتر بنویسید تا در «{current.label}» جستجو شود؛ Enter همهٔ نتایج را باز
                 می‌کند.
               </p>
             ) : query.error && !query.data ? (
@@ -282,7 +282,7 @@ export default function AdminSearch() {
                       onMouseEnter={() => setActive(index)}
                       onClick={() => go(result.href)}
                       className={`flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-start ${
-                        index === active ? 'bg-[#edf2f8]' : 'hover:bg-[#f4f6f9]'
+                        index === active ? 'bg-[#edf2f8]' : ''
                       }`}
                     >
                       <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#e8eef6] text-[#2c5282]">
@@ -314,7 +314,7 @@ export default function AdminSearch() {
               <button
                 type="button"
                 onClick={() => go(listPath[scope](term.trim()))}
-                className="mt-1 flex w-full cursor-pointer items-center justify-between rounded-xl border-t border-[#eef1f5] px-3 py-2.5 text-[13px] font-bold text-[#2c5282] hover:bg-[#f4f6f9]"
+                className="mt-1 flex w-full cursor-pointer items-center justify-between rounded-xl border-t border-[#eef1f5] px-3 py-2.5 text-[13px] font-bold text-[#2c5282] "
               >
                 <span>
                   همهٔ نتایج در {current.label}

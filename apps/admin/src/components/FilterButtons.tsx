@@ -86,7 +86,7 @@ export function FilterButton({
   }, [open, bar]);
   return (
     <Popover
-      trigger={['hover', 'click']}
+      trigger={['click']}
       open={open}
       onOpenChange={changeOpen}
       mouseEnterDelay={0.12}
@@ -134,7 +134,7 @@ export function FilterButton({
                   changeOpen(false);
                   trigger.current?.focus();
                 }}
-                className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#606873] hover:bg-[#f5f7fa] [@media(pointer:coarse)]:size-10"
+                className="grid size-8 cursor-pointer place-items-center rounded-lg text-[#606873] [@media(pointer:coarse)]:size-10"
               >
                 <AdminIcon name="close" width={15} height={15} />
               </button>
@@ -159,7 +159,7 @@ export function FilterButton({
             changeOpen(true);
           }
         }}
-        className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${active ? 'bg-[#eff2f6] text-[#2c5282]' : open ? 'bg-[#f1f3f5] text-[#202832]' : 'text-[#46505e] hover:bg-[#f1f3f5]'}`}
+        className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${active ? 'bg-[#eff2f6] text-[#2c5282]' : open ? 'bg-[#f1f3f5] text-[#202832]' : 'text-[#46505e] '}`}
       >
         {active && <span aria-hidden="true" className="size-1.5 rounded-full bg-[#2c5282]" />}
         <span className="sm:hidden">{compactLabel}</span>
@@ -206,7 +206,7 @@ export function FilterChips<T extends string>({
             onChange(option.value);
             close?.();
           }}
-          className={`flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-start text-[13px] font-medium transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${value === option.value ? 'bg-[#eff2f6] text-[#2c5282]' : 'text-[#46505e] hover:bg-[#f1f3f5]'} ${close ? 'w-full' : 'border border-[#d7dce2]'}`}
+          className={`flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-start text-[13px] font-medium transition-colors motion-reduce:transition-none [@media(pointer:coarse)]:min-h-11 ${value === option.value ? 'bg-[#eff2f6] text-[#2c5282]' : 'text-[#46505e] '} ${close ? 'w-full' : 'border border-[#d7dce2]'}`}
         >
           <span
             aria-hidden="true"

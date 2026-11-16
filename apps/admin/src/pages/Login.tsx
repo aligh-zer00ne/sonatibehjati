@@ -96,13 +96,13 @@ function LoginLayout({ children }: { children: ReactNode }) {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-2 text-xs text-[#586474] sm:px-4">
           <a
             href="https://sonatibehjati.ir"
-            className="inline-flex min-h-9 items-center gap-2 rounded-md !text-[#586474] font-semibold transition-colors hover:!text-[#2c5282]"
+            className="inline-flex min-h-9 items-center gap-2 rounded-md !text-[#586474] font-semibold transition-colors "
           >
             <AdminIcon name="home" className="size-4" />
             مشاهده فروشگاه
             <AdminIcon name="arrow" className="size-3.5" />
           </a>
-          <DesignCredit className="rounded-full border border-[#afcace] bg-white/70 px-4 py-2 text-[13px] [&_a]:!font-extrabold [&_a]:!text-[#2c5282] [&_a:hover]:underline" />
+          <DesignCredit className="rounded-full border border-[#afcace] bg-white/70 px-4 py-2 text-[13px] [&_a]:!font-extrabold [&_a]:!text-[#2c5282] " />
         </div>
       </div>
     </main>
@@ -223,7 +223,7 @@ export default function Login() {
                   event.stopPropagation();
                   setPasswordVisible((visible) => !visible);
                 }}
-                className="-my-1 -mr-2 grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg text-[#6b7a8c] transition-colors hover:bg-[#e6ebf1] hover:text-[#1e3a5f] disabled:cursor-wait"
+                className="-my-1 -mr-2 grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg text-[#6b7a8c] transition-colors disabled:cursor-wait"
               >
                 <AdminIcon name={passwordVisible ? 'eyeOff' : 'eye'} className="size-5" />
               </button>

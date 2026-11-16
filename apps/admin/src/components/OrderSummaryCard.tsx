@@ -129,7 +129,7 @@ export default function OrderSummaryCard({
               aria-haspopup="dialog"
               aria-controls={detailsId}
               onClick={onToggle}
-              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#bcced1] bg-[#e6eaf0] text-xs font-semibold text-[#1e3a5f] transition hover:border-[#669198] hover:bg-[#d2dae5] aria-expanded:border-[#5c959e] aria-expanded:bg-[linear-gradient(135deg,#a7d4db,#6faeb7)] aria-expanded:shadow-[0_3px_10px_#5c959e30] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#bcced1] bg-[#e6eaf0] text-xs font-semibold text-[#1e3a5f] transition aria-expanded:border-[#5c959e] aria-expanded:bg-[linear-gradient(135deg,#a7d4db,#6faeb7)] aria-expanded:shadow-[0_3px_10px_#5c959e30] motion-safe:active:scale-[0.97] motion-reduce:transition-none"
             >
               <AdminIcon name="receipt" width={20} />
               <span className={order.salesChannel !== 'WEBSITE' ? 'sr-only' : ''}>
@@ -142,7 +142,7 @@ export default function OrderSummaryCard({
                 aria-label={`ویرایش سفارش ${formatNumber(order.number)}`}
                 title="ویرایش فاکتور"
                 onClick={() => setEditing(true)}
-                className="grid min-h-11 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198]"
+                className="grid min-h-11 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] "
               >
                 <AdminIcon name="edit" width={21} />
               </button>
@@ -153,7 +153,7 @@ export default function OrderSummaryCard({
                 aria-label={`ارسال و رهگیری سفارش ${formatNumber(order.number)}`}
                 title="ارسال و رهگیری؛ پیام به مشتری"
                 onClick={onToggle}
-                className="grid min-h-11 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198]"
+                className="grid min-h-11 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] "
               >
                 <AdminIcon name="message" width={21} />
               </button>
@@ -163,7 +163,7 @@ export default function OrderSummaryCard({
               aria-label={`چاپ فاکتور سفارش ${formatNumber(order.number)}`}
               title="چاپ فاکتور"
               onClick={() => setPrint('invoice')}
-              className="grid min-h-10 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198] hover:text-[#1e3a5f]"
+              className="grid min-h-10 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] "
             >
               <AdminIcon name="print" width={21} />
             </button>
@@ -172,7 +172,7 @@ export default function OrderSummaryCard({
               aria-label={`چاپ لیبل سفارش ${formatNumber(order.number)}`}
               title="لیبل پستی"
               onClick={() => setPrint('label')}
-              className="grid min-h-10 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] hover:border-[#669198] hover:text-[#1e3a5f]"
+              className="grid min-h-10 place-items-center rounded-lg border border-[#d8dbe0] bg-[#f3f5f8] text-[#35465c] "
             >
               <AdminIcon name="truck" width={21} />
             </button>

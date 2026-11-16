@@ -170,7 +170,7 @@ export default function PriceAnnouncement() {
                 key={name}
                 aria-pressed={category === name}
                 onClick={() => setCategory(name)}
-                className="flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[#c4d4d6] bg-white px-4 text-sm font-semibold text-[#586474] transition-colors hover:border-[#58868d] aria-pressed:border-[#2c5282] aria-pressed:bg-[#2c5282] aria-pressed:text-[#eceff4]"
+                className="flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[#c4d4d6] bg-white px-4 text-sm font-semibold text-[#586474] transition-colors aria-pressed:border-[#2c5282] aria-pressed:bg-[#2c5282] aria-pressed:text-[#eceff4]"
               >
                 {name || 'همهٔ دسته‌ها'}
                 <span className="rounded-full bg-current/10 px-1.5 text-[13px]">
@@ -271,7 +271,7 @@ export default function PriceAnnouncement() {
                         type="button"
                         aria-label={`برگرداندن قیمت ${row.title}`}
                         disabled={pending}
-                        className="grid size-11 cursor-pointer place-items-center rounded-lg text-[#586474] hover:bg-[#dce2e9]"
+                        className="grid size-11 cursor-pointer place-items-center rounded-lg text-[#586474] "
                         onClick={() =>
                           setDrafts((previous) => {
                             const next = { ...previous };

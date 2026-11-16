@@ -204,7 +204,7 @@ export default function OrdersMap() {
                           aria-label={`فیلتر استان ${p.name}`}
                           aria-pressed={province === p.code}
                           onClick={() => selectProvince(p.code)}
-                          className="w-full cursor-pointer rounded-xl px-2 py-2 text-right hover:bg-[#f3f5f8] aria-pressed:bg-[#dce3eb]"
+                          className="w-full cursor-pointer rounded-xl px-2 py-2 text-right aria-pressed:bg-[#dce3eb]"
                         >
                           <span className="flex justify-between gap-3 text-xs font-bold">
                             <span>{p.name}</span>
@@ -248,7 +248,7 @@ export default function OrdersMap() {
                           aria-label={`نمایش موقعیت سفارش ${formatNumber(order.number)}`}
                           aria-pressed={selected?.id === order.id}
                           onClick={() => selectOrder(order.id, true)}
-                          className="flex w-full cursor-pointer items-start gap-2 rounded-2xl border border-[#dfe3e8] p-3 text-right hover:bg-[#f3f5f8] aria-pressed:border-[#598991] aria-pressed:bg-[#edf0f5]"
+                          className="flex w-full cursor-pointer items-start gap-2 rounded-2xl border border-[#dfe3e8] p-3 text-right aria-pressed:border-[#598991] aria-pressed:bg-[#edf0f5]"
                         >
                           <AdminIcon
                             name="pin"

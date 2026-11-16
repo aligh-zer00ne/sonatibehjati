@@ -78,7 +78,7 @@ function OrderDetailTabs({
               onChange(target.key);
               document.getElementById(`${id}-tab-${target.key}`)?.focus();
             }}
-            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[13px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#accacf] bg-[#dce3eb] font-bold text-[#2c5282]' : 'border-transparent text-[#606873] hover:bg-[#f2f4f7]'}`}
+            className={`flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-1 py-2 text-center text-[13px] leading-5 transition-colors sm:text-xs ${activeKey === item.key ? 'border-[#accacf] bg-[#dce3eb] font-bold text-[#2c5282]' : 'border-transparent text-[#606873] '}`}
           >
             <span className="hidden shrink-0 sm:inline-flex">{item.icon}</span>
             {item.label}

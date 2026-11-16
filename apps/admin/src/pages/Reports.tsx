@@ -109,7 +109,7 @@ export default function Reports() {
                     .toISOString()
                     .slice(0, 10)
               }
-              className="rounded-full border border-white/20 px-4 py-2 text-xs transition hover:bg-white/15 aria-pressed:border-[#88bec7] aria-pressed:bg-[#88bec7] aria-pressed:text-[#172a44]"
+              className="rounded-full border border-white/20 px-4 py-2 text-xs transition aria-pressed:border-[#88bec7] aria-pressed:bg-[#88bec7] aria-pressed:text-[#172a44]"
             >
               {preset.label}
             </button>

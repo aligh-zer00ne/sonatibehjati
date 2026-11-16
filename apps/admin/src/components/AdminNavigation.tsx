@@ -220,7 +220,7 @@ export function AdminSidebarNav({
     `group relative flex min-h-10 items-center gap-3 rounded-lg px-3 text-[14px] leading-6 transition-colors motion-reduce:transition-none ${
       current
         ? 'bg-[#1d3557] font-bold !text-white before:absolute before:inset-y-2 before:start-0 before:w-[3px] before:rounded-full before:bg-[#7cc4cf]'
-        : 'font-medium !text-[#b8c4d4] hover:bg-white/[0.06] hover:!text-white'
+        : 'font-medium !text-[#b8c4d4] '
     }`;
   return (
     <nav id="admin-sidebar-navigation" aria-label="منوی مدیریت" className="flex flex-col gap-5">
@@ -242,7 +242,7 @@ export function AdminSidebarNav({
             aria-current={selected === `/admin/sections/${group.id}` ? 'page' : undefined}
             title={`نمای کلی ${group.label}`}
             className={`mb-1.5 flex items-center justify-between gap-2 rounded-md px-3 py-1 text-[12.5px] font-bold tracking-tight transition-colors ${
-              active === group.id ? '!text-[#7cc4cf]' : '!text-[#7d8ca3] hover:!text-[#b8c4d4]'
+              active === group.id ? '!text-[#7cc4cf]' : '!text-[#7d8ca3] '
             }`}
           >
             {group.label}
@@ -307,7 +307,7 @@ export function AdminBottomNav({
                 to={item.href}
                 aria-current={current ? 'page' : undefined}
                 className={`flex h-full flex-col items-center justify-center gap-1 text-[12px] leading-4 font-semibold transition-colors ${
-                  current ? '!text-[#2c5282]' : '!text-[#6b7685] hover:!text-[#1e3a5f]'
+                  current ? '!text-[#2c5282]' : '!text-[#6b7685] '
                 }`}
               >
                 <span
@@ -352,7 +352,7 @@ function NavigationCard({ item, onNavigate }: { item: Item; onNavigate: () => vo
         <AdminIcon
           name="arrow"
           width={18}
-          className="motion-safe:transition-transform motion-safe:group-hover:-translate-x-1"
+          className="motion-safe:transition-transform "
         />
       </span>
     </ActionCardLink>

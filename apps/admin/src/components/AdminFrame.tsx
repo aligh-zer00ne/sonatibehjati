@@ -89,7 +89,7 @@ export default function AdminFrame() {
             loading={pending}
             onClick={signOut}
             icon={<AdminIcon name="logout" width={18} />}
-            className="!size-9 !min-w-9 !rounded-lg !text-[#b8c4d4] hover:!bg-white/10 hover:!text-white"
+            className="!size-9 !min-w-9 !rounded-lg !text-[#b8c4d4] "
           />
         </div>
       </aside>
@@ -148,7 +148,7 @@ export default function AdminFrame() {
           </div>
         </main>
         <footer className="flex flex-col items-center justify-center gap-2 border-t border-[#e1e6ed] bg-white px-4 py-5 pb-24 text-xs text-[#6b7685] sm:px-6 min-[1100px]:pb-5 print:!hidden">
-          <DesignCredit className="flex flex-wrap items-center justify-center gap-x-1.5 text-[13px] font-semibold text-[#4b5767] [&_a]:!font-extrabold [&_a]:!text-[#2c5282] [&_a]:underline-offset-4 hover:[&_a]:underline" />
+          <DesignCredit className="flex flex-wrap items-center justify-center gap-x-1.5 text-[13px] font-semibold text-[#4b5767] [&_a]:!font-extrabold [&_a]:!text-[#2c5282] [&_a]:underline-offset-4 " />
           <span className="flex flex-wrap items-center justify-center gap-2 text-[12.5px]">
             پنل مدیریت سنتی بهجتی اردکان
             <span aria-hidden="true" className="size-1 rounded-full bg-[#9fb4cc]" />

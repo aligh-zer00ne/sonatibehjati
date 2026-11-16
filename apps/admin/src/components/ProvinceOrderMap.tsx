@@ -58,7 +58,7 @@ export default function ProvinceOrderMap({
               fill={fill}
               stroke={active ? '#4f8992' : '#f7f8fa'}
               strokeWidth={active ? 7 : 2}
-              className="cursor-pointer outline-none transition-[fill] duration-200 hover:brightness-110 focus:stroke-[#4c8189] focus:[stroke-width:7] motion-reduce:transition-none"
+              className="cursor-pointer outline-none transition-[fill] duration-200 focus:stroke-[#4c8189] focus:[stroke-width:7] motion-reduce:transition-none"
             >
               <title>
                 {province.name} · {formatNumber(province.count)} سفارش

@@ -32,7 +32,7 @@ function Editor({ initial }: { initial: AdminAnnouncementQuery['adminHomepageCon
         onFinish={async (raw) => {
           const parsed = announcementSchema.safeParse(raw);
           if (!parsed.success) {
-            setError('متن نوار باید بین ۱ تا ۱۸۰ نویسه باشد.');
+            setError('متن نوار باید بین ۱ تا ۱۸۰ کاراکتر باشد.');
             return;
           }
           setPending(true);

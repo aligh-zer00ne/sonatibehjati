@@ -202,7 +202,7 @@ export default function DashboardCharts({
                   onClick={() =>
                     onInspect(`سفارش‌های ${chartDate(d.date)}`, { from: d.date, to: d.date })
                   }
-                  className="rounded-md border border-[#d7dce2] bg-[#f5f7fa] px-2 py-1 text-[13px] text-[#35465c] hover:bg-[#dce3eb]"
+                  className="rounded-md border border-[#d7dce2] bg-[#f5f7fa] px-2 py-1 text-[13px] text-[#35465c] "
                 >
                   {chartDate(d.date)} · {formatNumber(d.ordersCount)} سفارش
                 </button>
@@ -326,7 +326,7 @@ export default function DashboardCharts({
                     onMouseLeave={() => setActiveStatus(null)}
                     onFocus={() => setActiveStatus(item.status)}
                     onBlur={() => setActiveStatus(null)}
-                    className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-[#dfe3e8] bg-[#f8f9fa] px-3 text-start text-xs hover:border-[#5c959e] hover:bg-[#ebeff4] focus-visible:border-[#5c959e] disabled:cursor-default"
+                    className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-[#dfe3e8] bg-[#f8f9fa] px-3 text-start text-xs focus-visible:border-[#5c959e] disabled:cursor-default"
                   >
                     <span className="flex items-center gap-2">
                       <span
