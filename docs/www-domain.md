@@ -11,8 +11,8 @@
 ```bash
 sudo -iu sonatibehjati
 cd /var/www/sonatibehjati
-git switch dev
-git pull --ff-only origin dev && bash deploy/update-production.sh
+git switch main
+bash deploy/update-production.sh
 exit
 ```
 

@@ -26,13 +26,13 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
   printf 'Inspect and commit existing tracked edits before installing this release.\n' >&2
   exit 1
 fi
-git switch dev
+git switch main
 if ! git bundle verify "$bundle_path"; then
   # Fetches existing prerequisite history only; the release itself comes from the bundle.
-  git fetch origin dev
+  git fetch origin main
   git bundle verify "$bundle_path"
 fi
-git fetch "$bundle_path" dev
+git fetch "$bundle_path" main
 git merge --ff-only FETCH_HEAD
 npm run payments:review -- "--terminal-id=$terminal_id"
 bash deploy/update-production.sh

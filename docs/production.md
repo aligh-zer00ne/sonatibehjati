@@ -43,8 +43,8 @@ sonatibehjati.ir
 ```bash
 sudo -iu sonatibehjati
 cd /var/www/sonatibehjati
-git switch dev
-git pull --ff-only origin dev
+git switch main
+git pull --ff-only origin main
 npm run production:configure -- --sms-mode=soap --body-id=559650 --terminal-id=15855486 && bash deploy/update-production.sh
 ```
 

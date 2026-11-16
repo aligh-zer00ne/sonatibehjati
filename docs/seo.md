@@ -21,7 +21,7 @@
 
 ```bash
 cd /var/www/sonatibehjati
-git pull --ff-only origin dev && bash deploy/update-production.sh
+bash deploy/update-production.sh
 ```
 
 این تغییر migration، تغییر Nginx، سرویس پولی یا فعال‌سازی پیامک لازم ندارد. تنظیمات پرداخت و ورود آزمایشی دست‌نخورده‌اند. پس از استقرار، `https://sonatibehjati.ir/robots.txt` باید `Allow: /` و آدرس sitemap را نشان دهد؛ sitemap نیز باید URL محصولات فعال را داشته باشد. اگر CDN/WAF یا تنظیم سفارشی Nginx دارید، پاسخ صفحات عمومی و فایل‌های robots/sitemap برای خزنده‌ها باید بدون رمز یا چالش باشد.

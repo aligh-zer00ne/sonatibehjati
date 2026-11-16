@@ -13,8 +13,8 @@
 ```bash
 sudo -iu sonatibehjati
 cd /var/www/sonatibehjati
-git switch dev
-git pull --ff-only origin dev && npm run payments:checkout-test -- --terminal-id=15855486 && bash deploy/update-production.sh
+git switch main
+git pull --ff-only origin main && npm run payments:checkout-test -- --terminal-id=15855486 && bash deploy/update-production.sh
 exit
 ```
 
@@ -38,7 +38,7 @@ sudo nginx -t && sudo systemctl reload nginx
 
 ```bash
 cd /var/www/sonatibehjati
-git pull --ff-only origin dev && bash deploy/update-production.sh
+bash deploy/update-production.sh
 ```
 
 اگر حالت `payments:checkout-test` و کانفیگ `payment-live.conf` قبلاً فعال شده‌اند، نیازی به تغییر دوبارهٔ env یا Nginx نیست؛ ورود با کد **۱۲۳۴۵۶** حفظ می‌شود.
@@ -70,8 +70,8 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 ```bash
 sudo -iu sonatibehjati
 cd /var/www/sonatibehjati
-git switch dev
-git pull --ff-only origin dev
+git switch main
+git pull --ff-only origin main
 # پیامک واقعی و کلیدهای احراز هویت باید از قبل در apps/api/.env تنظیم باشند.
 # شناسهٔ ترمینال را فقط در env خصوصی ذخیره کنید.
 npm run payments:configure -- --activate

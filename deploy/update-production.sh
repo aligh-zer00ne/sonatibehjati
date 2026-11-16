@@ -32,11 +32,7 @@ if [[ ! -f apps/api/.env ]]; then
   exit 1
 fi
 
-current_branch=$(git branch --show-current)
-if [[ "$current_branch" != 'dev' ]]; then
-  printf 'Expected branch dev, found: %s\n' "${current_branch:-detached HEAD}" >&2
-  exit 1
-fi
+deploy_branch=${DEPLOY_BRANCH:-main}
 
 if ! git diff --quiet || ! git diff --cached --quiet; then
   printf 'Tracked files contain uncommitted changes. Commit or inspect them before deployment.\n' >&2
@@ -46,9 +42,41 @@ fi
 
 state_directory="$project_root/.deployment/deploy-state"
 mkdir -p "$state_directory"
-exec 9>"$state_directory/deploy.lock"
-if ! flock -n 9; then
-  printf 'Another deployment is already running.\n' >&2
+
+if [[ -z ${SONATIBEHJATI_DEPLOY_SYNCED:-} ]]; then
+  exec 9>"$state_directory/deploy.lock"
+  if ! flock -n 9; then
+    printf 'Another deployment is already running.\n' >&2
+    exit 1
+  fi
+
+  printf '\nFetching the latest %s branch from origin.\n' "$deploy_branch"
+  git fetch --prune origin "+refs/heads/$deploy_branch:refs/remotes/origin/$deploy_branch"
+
+  current_branch=$(git branch --show-current)
+  if [[ "$current_branch" != "$deploy_branch" ]]; then
+    printf 'Switching from %s to %s.\n' "${current_branch:-detached HEAD}" "$deploy_branch"
+    if git show-ref --verify --quiet "refs/heads/$deploy_branch"; then
+      git switch "$deploy_branch"
+    else
+      git switch --create "$deploy_branch" --track "origin/$deploy_branch"
+    fi
+  fi
+  git branch --set-upstream-to="origin/$deploy_branch" "$deploy_branch" >/dev/null
+
+  previous_commit=$(git rev-parse --short HEAD)
+  git merge --ff-only "origin/$deploy_branch"
+  printf 'Code is at %s (was %s).\n' "$(git rev-parse --short HEAD)" "$previous_commit"
+
+  # Bash reads scripts incrementally, so continue from the freshly pulled copy.
+  # The lock on descriptor 9 is inherited by the new process.
+  export SONATIBEHJATI_DEPLOY_SYNCED=1
+  exec bash "$project_root/deploy/update-production.sh" "$@"
+fi
+
+current_branch=$(git branch --show-current)
+if [[ "$current_branch" != "$deploy_branch" ]]; then
+  printf 'Expected branch %s, found: %s\n' "$deploy_branch" "${current_branch:-detached HEAD}" >&2
   exit 1
 fi
 

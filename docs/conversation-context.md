@@ -4,7 +4,7 @@ Recovered on 2026-10-12 from local Codex history for “اجرای فازهای 
 
 ## Explicit ongoing instructions
 
-- The user said: “میخوام هر تغییر که به عنوان یک فچیر محسوب میشه و لایق پوش شدن روی گیت رو داره خودت با کامیت مسیج مناسب روی برنچ dev پوش کنی”. Commit independent changes on `dev` and attempt the push without asking again.
+- The user said: “میخوام هر تغییر که به عنوان یک فچیر محسوب میشه و لایق پوش شدن روی گیت رو داره خودت با کامیت مسیج مناسب روی برنچ dev پوش کنی”. Commit independent changes on `main` (since 2026-11-16; previously `dev`) and attempt the push without asking again.
 - Use npm and Bun instead of pnpm.
 - Keep styling in component `className` using the existing Tailwind/shadcn system.
 - Use “سنتی بهجتی” as the brand name. The correct product name is “حلواارده شکری”, not “شیرینی ارده‌ای”.
@@ -13,7 +13,7 @@ Recovered on 2026-10-12 from local Codex history for “اجرای فازهای 
 
 ## Established deployment
 
-- Repository: `https://github.com/aligh-zer00ne/sonatibehjati`, branch `dev`.
+- Repository: `https://github.com/aligh-zer00ne/sonatibehjati`, primary and deployment branch `main` (the user corrected this on 2026-11-16; `dev` is legacy).
 - Production uses Ubuntu, Nginx and PM2. Storefront: `sonatibehjati.ir`; admin: `admin.sonatibehjati.ir`.
 - Established root: `/var/www/sonatibehjati`, project user `sonatibehjati`; verify actual paths if server evidence changes.
 - Storefront internal port `3100`, API internal port `4100`. Other sites exist on the server; port `4000` belongs to another project.
@@ -22,10 +22,10 @@ Recovered on 2026-10-12 from local Codex history for “اجرای فازهای 
 ```bash
 sudo -iu sonatibehjati
 cd /var/www/sonatibehjati
-git switch dev
-git pull --ff-only origin dev && bash deploy/update-production.sh
+bash deploy/update-production.sh
 ```
 
+- The deployment script itself fetches `origin/main`, switches from `dev` to `main` if needed, fast-forwards, then re-runs from the pulled copy. Before 2026-11-16 it did not pull, so running it alone redeployed the old checkout.
 - The deployment script handles dependencies when needed, generated clients, lint/typecheck/build, migrations and restarting only this project's services. Admin is served as static files.
 - Preserve server `.env`, existing database and uploads. Do not run seed/photo imports or reset administrator passwords as part of routine deployment.
 - The original chat repeatedly encountered missing GitHub authentication. Retry rather than assume that historical failure still applies, and report the actual result.
@@ -544,3 +544,7 @@ git pull --ff-only origin dev && bash deploy/update-production.sh
 - Paid website orders are announced in Eitaa (Eitaayar `sendMessage`) after the payment commit, up to 3 attempts, never affecting payment. Configure `EITAA_BOT_TOKEN` and `EITAA_CHAT_ID` in the private API env (local env configured; production must be added on the server). Tests (`NODE_ENV=test`) only reach an explicit `EITAA_API_BASE` mock. One user-requested connectivity test message was sent on 2026-11-16.
 - The user rejected red: the admin palette is slate-navy (`#2c5282` primary, `#1e3a5f` dark, `#0f1b2d` sidebar), cool neutrals and a muted teal accent; print paper stays monochrome. ≥1100px: sticky grouped sidebar (group header → existing section page, items → pages); <1100px: bottom navigation (dashboard + four sections). The persistent header no longer has particles; heroes/login keep them. Search is a tabbed scope dropdown (orders/customers/products, live preview, keyboard), defaulting to the current page's scope.
 - Fresh local DB has no catalog; several UI checks need a product, so run them with a temporary product fixture. `verify-admin-upgrade.mjs` targets an older sidebar design and was already stale before this change.
+
+## Main branch and self-updating deployment (2026-11-16)
+
+- The user reported that running `deploy/update-production.sh` on the server did not update the site and that `main`, not `dev`, must be the primary branch locally and on the server. The script never ran `git pull`; it rebuilt the existing checkout. `main` was fast-forwarded to `dev`, and the script now fetches and fast-forwards `origin/main` (overridable with `DEPLOY_BRANCH`) before building. Docs, AGENTS.md and gateway-review helpers reference `main`. The user granted SSH access for this deployment (`sonatibehjati@193.242.125.202`); do not store the password in tracked files.

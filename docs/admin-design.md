@@ -36,7 +36,7 @@ npm run verify:invoice-workspace
 این بازطراحی مهاجرت، کلید یا تنظیم Nginx تازه ندارد. با همان روش معمول روی سرور منتشر کنید:
 
 ```bash
-git pull --ff-only origin dev && bash deploy/update-production.sh
+bash deploy/update-production.sh
 ```
 
 فایل خصوصی محیط، تصاویر فروشگاه و داده‌های موجود را تغییر ندهید و برای این به‌روزرسانی seed/reset اجرا نکنید.

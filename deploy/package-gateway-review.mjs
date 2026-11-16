@@ -18,15 +18,15 @@ async function git(args) {
 }
 await git(['diff', '--quiet']);
 await git(['diff', '--cached', '--quiet']);
-if ((await git(['branch', '--show-current'])) !== 'dev')
-  throw new Error('Package the committed dev branch.');
-const head = await git(['rev-parse', 'dev']);
-const base = await git(['rev-parse', 'origin/dev']);
+if ((await git(['branch', '--show-current'])) !== 'main')
+  throw new Error('Package the committed main branch.');
+const head = await git(['rev-parse', 'main']);
+const base = await git(['rev-parse', 'origin/main']);
 await git(['merge-base', '--is-ancestor', base, head]);
 if (base === head) throw new Error('There are no local release commits to package.');
 const path = resolve('.deployment/releases/gateway-review-' + head.slice(0, 7));
 await mkdir(path, { recursive: true });
-await git(['bundle', 'create', path + '/gateway-review.bundle', base + '..dev']);
+await git(['bundle', 'create', path + '/gateway-review.bundle', base + '..main']);
 await git(['bundle', 'verify', path + '/gateway-review.bundle']);
 await copyFile('deploy/install-gateway-review.sh', path + '/install.sh');
 await copyFile('docs/gateway-review-deploy.md', path + '/README.md');
@@ -40,7 +40,7 @@ await writeFile(
     {
       commit: head,
       prerequisite: base,
-      branch: 'dev',
+      branch: 'main',
       profile: 'owner-only-live-gateway-review',
       customerAuthentication: false,
       smsRequired: false,

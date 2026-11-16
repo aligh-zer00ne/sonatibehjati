@@ -392,8 +392,8 @@ bun --version
 sudo -iu sonatibehjati
 source ~/.nvm/nvm.sh
 cd /var/www/sonatibehjati
-git switch dev
-git pull --ff-only origin dev
+git switch main
+git pull --ff-only origin main
 npm run deploy:production
 ```
 
@@ -449,7 +449,7 @@ sudo systemctl reload nginx
 
 پوشهٔ پیش‌فرض `apps/api/uploads` با کاربر PM2 ساخته می‌شود. آن را از نسخه‌های پشتیبان حذف
 نکنید؛ Git و اسکریپت دیپلوی تصاویر آپلودشده را جابه‌جا یا پاک نمی‌کنند. دیپلوی‌های بعدی همان
-`git pull --ff-only origin dev` و `npm run deploy:production` هستند و تغییر مجدد Nginx لازم نیست.
+`git pull --ff-only origin main` و `npm run deploy:production` هستند و تغییر مجدد Nginx لازم نیست.
 
 ## نقش همکار، کد تخفیف، تیکت و تأیید نظرات
 
@@ -460,7 +460,7 @@ sudo systemctl reload nginx
 source ~/.nvm/nvm.sh
 nvm use
 cd /var/www/sonatibehjati
-git pull --ff-only origin dev
+git pull --ff-only origin main
 npm run deploy:production
 ```
 
