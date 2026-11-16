@@ -363,6 +363,7 @@ export type AdminOrderSummary = {
 
 export type AdminOrdersInput = {
   city?: InputMaybe<Scalars['String']['input']>;
+  excludeStatuses?: InputMaybe<Array<OrderStatus>>;
   from?: InputMaybe<Scalars['String']['input']>;
   manualOnly?: InputMaybe<Scalars['Boolean']['input']>;
   number?: InputMaybe<Scalars['Int']['input']>;
@@ -929,6 +930,7 @@ export type Mutation = {
   createTicket: SupportTicket;
   deleteAddress: Scalars['Boolean']['output'];
   deleteAdminCoupon: Scalars['Boolean']['output'];
+  deleteAdminOrder: Scalars['Boolean']['output'];
   deleteAdminProduct: AdminProductDeletion;
   editAdminCustomer: AdminUser;
   editAdminManualOrder: AdminOrder;
@@ -1017,6 +1019,12 @@ export type MutationDeleteAddressArgs = {
 
 
 export type MutationDeleteAdminCouponArgs = {
+  expectedUpdatedAt: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteAdminOrderArgs = {
   expectedUpdatedAt: Scalars['String']['input'];
   id: Scalars['ID']['input'];
 };
