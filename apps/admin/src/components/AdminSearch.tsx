@@ -29,7 +29,7 @@ const scopes: Array<{
     icon: 'orders',
     permission: 'ORDERS',
     placeholder: 'شماره سفارش، نام یا موبایل مشتری…',
-    paths: ['/admin/orders', '/admin/settlements', '/admin/reports'],
+    paths: ['/admin/orders', '/admin/settlements', '/admin/reports', '/admin/sections/sales'],
   },
   {
     id: 'users',
@@ -45,7 +45,7 @@ const scopes: Array<{
     icon: 'products',
     permission: 'PRODUCTS',
     placeholder: 'نام محصول…',
-    paths: ['/admin/products', '/admin/coupons', '/admin/promotions'],
+    paths: ['/admin/products', '/admin/coupons', '/admin/promotions', '/admin/sections/catalog'],
   },
 ];
 const listPath: Record<Scope, (term: string) => string> = {
